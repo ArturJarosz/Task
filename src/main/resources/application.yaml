@@ -26,4 +26,3 @@ spring:
     default-schema: task_schema
 server:
   port: 8099
----
