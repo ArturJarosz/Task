@@ -21,9 +21,9 @@ spring:
       hibernate.generate_statistics: true
   main:
     log-startup-info: false
+    banner-mode: off
   liquibase:
     change-log: classpath:/database/changelogs/changelog-master.xml
     default-schema: task_schema
 server:
   port: 8099
----

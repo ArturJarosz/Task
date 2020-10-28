@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Properties>
+        <Property name="log-path">archive</Property>
+        <Property name="logging-pattern">[%d{ISO8601}] %5p [%t]%x - %C{1}.%M(%F:%L) - %m%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${logging-pattern}"/>
+        </Console>
+        <File name="FileAppender" fileName="${log-path}/loggs2.log">
+            <PatternLayout pattern="${logging-pattern}"/>
+        </File>
+        <File name="LiquibaseFileAppender" fileName="${log-path}/liquibase.log">
+            <PatternLayout pattern="${logging-pattern}"/>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="liquibase" level="debug" additivity="true">
+            <AppenderRef ref="LiquibaseFileAppender"/>
+        </Logger>
+        <Logger name="application" level="info" additivity="true">
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>
