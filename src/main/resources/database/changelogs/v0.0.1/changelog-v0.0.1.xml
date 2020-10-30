@@ -4,7 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <include file="create_sample_table.xml" relativeToChangelogFile="true"/>
+    <include file="create_client_table.xml" relativeToChangelogFile="true"/>
+    <include file="create_architect_table.xml" relativeToChangelogFile="true"/>
 
     <changeSet author="liquibase" id="tag-version_0.0.1">
         <tagDatabase tag="v0.0.1"/>
