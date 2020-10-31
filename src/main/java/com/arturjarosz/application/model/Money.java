@@ -1,7 +1,9 @@
 package com.arturjarosz.application.model;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class Money extends AbstractEntity {
     private static final long serialVersionUID = -5524298857488493145L;
 
