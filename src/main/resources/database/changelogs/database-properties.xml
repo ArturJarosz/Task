@@ -4,9 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <include file="database-properties.xml" relativeToChangelogFile="true"/>
-
-    <!--TODO: TA-20 check if there is possible to migrate changelogs to .YAML-->
-    <include file="v0.0.1/changelog-v0.0.1.xml" relativeToChangelogFile="true"/>
+    <property name="long.type" value="bigint" dbms="postgresql,h2"/>
+    <property name="char.unit" value=" " dbms="postgresql,h2"/>
+    <property name="uuid.type" value="UUID" dbms="postgresql"/>
 
 </databaseChangeLog>

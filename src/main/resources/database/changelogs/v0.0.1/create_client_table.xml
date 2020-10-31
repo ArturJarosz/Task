@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="liquibase" id="create-client-table">
+        <createTable tableName="CLIENT">
+            <column name="ID" type="${long.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FIRST_NAME" type="VARCHAR2(32 ${char.unit})">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LAST_NAME" type="VARCHAR2(32 ${char.unit})">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EMAIL" type="VARCHAR2(50 ${char.unit})">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CITY" type="VARCHAR2(32 ${char.unit})"/>
+            <column name="POST_CODE" type="VARCHAR2(32 ${char.unit})"/>
+            <column name="STREET" type="VARCHAR2(32 ${char.unit})"/>
+            <column name="HOUSE_NUMBER" type="VARCHAR2(5 ${char.unit})"/>
+            <column name="FLAT_NUMBER" type="VARCHAR2(5 ${char.unit})"/>
+        </createTable>
+        <addPrimaryKey tableName="CLIENT" columnNames="ID" constraintName="PK_CLIENT"/>
+    </changeSet>
+
+
+</databaseChangeLog>
