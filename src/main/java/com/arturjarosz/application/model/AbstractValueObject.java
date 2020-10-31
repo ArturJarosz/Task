@@ -1,7 +1,8 @@
 package com.arturjarosz.application.model;
 
 /**
- * Abstraction for all
+ * Abstraction for all abstract values. They don't have own tables
+ * and should not exist without context within other Object.
  *
  * @param <T>
  */
