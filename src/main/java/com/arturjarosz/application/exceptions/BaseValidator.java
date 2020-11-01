@@ -17,10 +17,7 @@ public abstract class BaseValidator<T> {
 
     private static final String DELIMITER = ".";
 
-    private T validatedEntity;
-
-    public BaseValidator(T validatedEntity) {
-        this.validatedEntity = validatedEntity;
+    public BaseValidator() {
     }
 
     /**
