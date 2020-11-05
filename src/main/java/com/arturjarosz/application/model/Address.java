@@ -7,7 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Address extends AbstractValueObject<Address> implements Value<Address> {
+public class Address extends AbstractValueObject<Address> implements ValueObject<Address> {
     private static final long serialVersionUID = -4102560398759336232L;
 
     @Column(name = "POST_CODE")
