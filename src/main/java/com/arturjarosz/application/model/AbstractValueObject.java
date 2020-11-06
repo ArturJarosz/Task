@@ -30,6 +30,9 @@ public abstract class AbstractValueObject<T extends ValueObject<T>> implements V
 
         return this.hasSameValueAs(other);
     }
+
+    @Override
+    public abstract int hashCode();
 }
 
 

@@ -10,18 +10,16 @@ import java.util.Map;
 
 /**
  * Provides validation methods.
- *
- * @param <T>
  */
-public abstract class BaseValidator<T> {
+public abstract class BaseValidator {
 
     private static final String DELIMITER = ".";
 
-    public BaseValidator() {
+    protected BaseValidator() {
     }
 
     /**
-     * Creates code of message.
+     * Creates message code.
      *
      * @param elements
      * @return

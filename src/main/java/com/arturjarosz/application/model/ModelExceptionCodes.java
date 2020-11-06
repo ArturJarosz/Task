@@ -11,8 +11,13 @@ public class ModelExceptionCodes {
     public static final String PERSON_NAME = "personName";
 
     //Fields
+    public static final String CITY = "city";
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
+    public static final String DIVISOR = "divisor";
+
+    //Value
+    public static final String ZERO = "zero";
 
     private ModelExceptionCodes() {
         throw new IllegalStateException("This class should not be instantiated.");

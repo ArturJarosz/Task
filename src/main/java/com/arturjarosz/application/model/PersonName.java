@@ -26,7 +26,7 @@ public class PersonName extends AbstractValueObject<PersonName> implements Value
 
     public PersonName(String firstName, String lastName) {
         this.setFirstName(firstName);
-        this.lastName = lastName;
+        this.setLastName(lastName);
     }
 
     private void setFirstName(String firstName) {

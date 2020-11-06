@@ -13,12 +13,12 @@ public class Email extends AbstractValueObject<Email> implements ValueObject<Ema
     private static final long serialVersionUID = -8861608245148282355L;
 
     private static final Pattern EMAIL_PATTERN = Pattern
-            .compile("^[a-zA-Z0-9.+/=?^_-]+@[a-zA-Z0-9-]+(\\.[\\w])*(\\.[A-Za-z]{2,})+$");
+            .compile("^[\\w+_.?^-]+@+[\\w]+.+([\\w]{2,})");
 
     @Column(name = "EMAIL")
     private String value;
 
-    public Email() {
+    protected Email() {
         //needed by Hibernate
     }
 

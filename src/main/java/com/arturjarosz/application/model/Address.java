@@ -1,10 +1,14 @@
 package com.arturjarosz.application.model;
 
+import com.arturjarosz.application.exceptions.BaseValidator;
+import com.arturjarosz.application.exceptions.ExceptionCodes;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+
+import static com.arturjarosz.application.exceptions.BaseValidator.assertNotEmpty;
 
 @Embeddable
 public class Address extends AbstractValueObject<Address> implements ValueObject<Address> {
@@ -50,6 +54,9 @@ public class Address extends AbstractValueObject<Address> implements ValueObject
     }
 
     public void setCity(String city) {
+        assertNotEmpty(city, BaseValidator
+                .createMessageCode(ExceptionCodes.IS_NULL, ModelExceptionCodes.ADDRESS,
+                        ModelExceptionCodes.CITY));
         this.city = city;
     }
 
@@ -78,29 +85,25 @@ public class Address extends AbstractValueObject<Address> implements ValueObject
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null) return false;
-        if (this == o) return true;
-        if (!(o instanceof Address)) return false;
-        final Address address = (Address) o;
-        return new EqualsBuilder().appendSuper(super.equals(address))
-                .append(this.city, address.city)
-                .append(this.postCode, address.postCode)
-                .append(this.street, address.street)
-                .append(this.houseNumber, address.houseNumber)
-                .append(this.flatNumber, address.flatNumber)
-                .isEquals();
-    }
-
-    @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(this.postCode)
                 .append(this.city)
+                .append(this.postCode)
                 .append(this.street)
                 .append(this.houseNumber)
                 .append(this.flatNumber)
                 .toHashCode();
+    }
+
+    @Override
+    public boolean hasSameValueAs(Address other) {
+        return new EqualsBuilder()
+                .append(this.city, other.city)
+                .append(this.postCode, other.postCode)
+                .append(this.street, other.street)
+                .append(this.houseNumber, other.houseNumber)
+                .append(this.flatNumber, other.flatNumber)
+                .isEquals();
     }
 
     @Override
