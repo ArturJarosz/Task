@@ -7,11 +7,32 @@ package com.arturjarosz.application.model;
  * @param <T>
  */
 
-public abstract class AbstractValueObject<T extends Value<T>> implements Value<T> {
+public abstract class AbstractValueObject<T extends ValueObject<T>> implements ValueObject<T> {
     private static final long serialVersionUID = -8491331532881822544L;
 
     protected AbstractValueObject() {
+        //needed by Hibernate
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (object.getClass() != this.getClass()) {
+            return false;
+        }
+
+        T other = (T) object;
+
+        return this.hasSameValueAs(other);
+    }
+
+    @Override
+    public abstract int hashCode();
 }
 
 

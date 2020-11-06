@@ -21,4 +21,21 @@ public abstract class AbstractEntity implements Serializable {
     public Long getId() {
         return this.id;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+        AbstractEntity other = (AbstractEntity) obj;
+
+        return this.id.equals(other.id);
+    }
+
 }
