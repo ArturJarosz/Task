@@ -22,7 +22,7 @@
         <Logger name="liquibase" level="debug" additivity="true">
             <AppenderRef ref="LiquibaseFileAppender"/>
         </Logger>
-        <Logger name="com.arturjarosz.application" level="info" additivity="true">
+        <Logger name="com.arturjarosz.task" level="info" additivity="true">
             <AppenderRef ref="FileAppender"/>
         </Logger>
         <Root level="info">
