@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="liquibase" id="create-task-table">
+        <createTable tableName="TASK">
+            <column name="ID" type="${long.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR2(60 ${char.unit})">
+                <constraints nullable="false"/>
+            </column>
+            <column name="STATUS" type="VARCHAR2(32 ${char.unit})">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WORK_TIME" type="${long.type}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="START_DATE" type="DATE"/>
+            <column name="END_DATE" type="DATE"/>
+            <column name="STAGE_ID" type="${long.type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="TASK" columnNames="ID" constraintName="PK_TASK"/>
+        <addForeignKeyConstraint baseTableName="TASK" baseColumnNames="STAGE_ID"
+                                 constraintName="FK_TASK_STAGE"
+                                 referencedTableName="STAGE" referencedColumnNames="ID"/>
+    </changeSet>
+</databaseChangeLog>
