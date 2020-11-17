@@ -4,7 +4,17 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <include file="create_sequence.xml" relativeToChangelogFile="true"/>
-    <include file="create_architect_table.xml" relativeToChangelogFile="true"/>
+    <include file="create-architect-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-client-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-stage-type-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-project-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-stage-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-task-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-installment-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-cost-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-constructor-job-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-supply-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-constructor-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-supplier-table.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

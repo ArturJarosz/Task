@@ -2,11 +2,11 @@ package com.arturjarosz.task.sharedkernel.model;
 
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 
@@ -43,7 +43,7 @@ public class Money extends AbstractValueObject<Money> implements ValueObject<Mon
     }
 
     @Override
-    public Money copy(Money money) {
+    public Money copy() {
         return new Money(this.value);
     }
 
@@ -54,7 +54,7 @@ public class Money extends AbstractValueObject<Money> implements ValueObject<Mon
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.value);
+        return new HashCodeBuilder().append(this.value).toHashCode();
     }
 
     public Money add(Money other) {

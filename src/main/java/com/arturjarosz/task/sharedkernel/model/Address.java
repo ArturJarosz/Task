@@ -107,7 +107,7 @@ public class Address extends AbstractValueObject<Address> implements ValueObject
     }
 
     @Override
-    public Address copy(Address address) {
+    public Address copy() {
         return new Address(this.postCode, this.city, this.street, this.houseNumber, this.flatNumber);
     }
 }

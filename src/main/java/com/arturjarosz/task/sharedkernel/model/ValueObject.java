@@ -21,9 +21,8 @@ public interface ValueObject<T extends ValueObject<T>> extends Serializable {
     /**
      * Makes deep copy of T
      *
-     * @param t
-     * @return Safe copy of ValueOject.
+     * @return Safe copy of ValueObject.
      */
-    T copy(T t);
+    T copy();
 }
 

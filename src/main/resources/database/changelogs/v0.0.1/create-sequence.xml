@@ -7,8 +7,6 @@
     <changeSet author="liquibase" id="create-sequence">
         <createSequence sequenceName="hibernate_sequence"
                         startValue="1"/>
-
     </changeSet>
-
 
 </databaseChangeLog>

@@ -61,7 +61,7 @@ public class PersonName extends AbstractValueObject<PersonName> implements Value
     }
 
     @Override
-    public PersonName copy(PersonName personName) {
+    public PersonName copy() {
         return new PersonName(this.getFirstName(), this.getLastName());
     }
 }

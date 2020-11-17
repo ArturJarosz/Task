@@ -54,7 +54,7 @@ public class Email extends AbstractValueObject<Email> implements ValueObject<Ema
     }
 
     @Override
-    public Email copy(Email email) {
+    public Email copy() {
         return new Email(this.value);
     }
 }

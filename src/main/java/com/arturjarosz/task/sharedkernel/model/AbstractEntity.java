@@ -1,6 +1,9 @@
 package com.arturjarosz.task.sharedkernel.model;
 
-import javax.persistence.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 
 /**
@@ -13,7 +16,7 @@ public abstract class AbstractEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "Abs_ent", initialValue = 100)
+    //@SequenceGenerator(name = "Abs_ent", initialValue = 100)
     private Long id;
 
     public Long getId() {
@@ -35,5 +38,4 @@ public abstract class AbstractEntity implements Serializable {
 
         return this.id.equals(other.id);
     }
-
 }
