@@ -3,7 +3,13 @@ package com.arturjarosz.task.project.model;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Entity

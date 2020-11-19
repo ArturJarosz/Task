@@ -9,15 +9,16 @@
             <column name="ID" type="${long.type}">
                 <constraints nullable="false"/>
             </column>
+            <column name="UUID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
             <column name="NAME" type="VARCHAR2(60 ${char.unit})">
                 <constraints nullable="false"/>
             </column>
-            <column name="STAGE_TYPE_ID" type="${long.type}">
-                <constraints nullable="false"/>
-            </column>
-            <column name="PROJECT_ID" type="${long.type}">
-                <constraints nullable="false"/>
-            </column>
+            <column name="STAGE_TYPE_ID" type="${long.type}"/>
+            <column name="PROJECT_ID" type="${long.type}"/>
+
+
         </createTable>
         <addPrimaryKey tableName="STAGE" columnNames="ID" constraintName="PK_STAGE"/>
         <addForeignKeyConstraint baseTableName="STAGE" baseColumnNames="PROJECT_ID"

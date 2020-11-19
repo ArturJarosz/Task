@@ -3,7 +3,11 @@ package com.arturjarosz.task.project.model;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Entity
@@ -31,6 +35,7 @@ public class Installment extends AbstractEntity {
     public Installment(String name, Money amount) {
         this.name = name;
         this.amount = amount;
+        this.isPaid = false;
     }
 
     public void payInstallment(LocalDate date) {

@@ -4,10 +4,15 @@ import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import java.util.List;
+import javax.persistence.Table;
+import java.util.Set;
 
+@Entity
+@Table(name = "PROJECT")
 public class Project extends AbstractAggregateRoot {
     private static final long serialVersionUID = 5437961881026141924L;
 
@@ -20,15 +25,45 @@ public class Project extends AbstractAggregateRoot {
     @Column(name = "CLIENT_ID", nullable = false)
     private Long clientId;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_ID")
-    private List<Cost> costs;
+    private Set<Cost> costs;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_ID")
-    private List<Stage> stages;
+    private Set<Stage> stages;
 
-    protected Project() {
+    public Project() {
         //needed by Hibernate
     }
+
+    public Project(String name, Long architectId, Long clientId,
+                   Set<Cost> costs, Set<Stage> stages) {
+        this.name = name;
+        this.architectId = architectId;
+        this.clientId = clientId;
+        this.costs = costs;
+        this.stages = stages;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public Long getArchitectId() {
+        return this.architectId;
+    }
+
+    public Long getClientId() {
+        return this.clientId;
+    }
+
+    public Set<Cost> getCosts() {
+        return this.costs;
+    }
+
+    public Set<Stage> getStages() {
+        return this.stages;
+    }
+
 }

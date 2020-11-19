@@ -9,6 +9,9 @@
             <column name="ID" type="${long.type}">
                 <constraints nullable="false"/>
             </column>
+            <column name="UUID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
             <column name="FIRST_NAME" type="VARCHAR2(32 ${char.unit})">
                 <constraints nullable="false"/>
             </column>

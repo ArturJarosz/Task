@@ -1,8 +1,16 @@
 package com.arturjarosz.task.client.model;
 
-import com.arturjarosz.task.sharedkernel.model.*;
+import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
+import com.arturjarosz.task.sharedkernel.model.Address;
+import com.arturjarosz.task.sharedkernel.model.Email;
+import com.arturjarosz.task.sharedkernel.model.Money;
+import com.arturjarosz.task.sharedkernel.model.PersonName;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 
 @Entity
@@ -39,10 +47,6 @@ public class Client extends AbstractAggregateRoot {
     @Column(name = "CLIENT_TYPE")
     private ClientType clientType;
 
-    //TODO: implement meeting with clients field, when that entity is ready
-
-    //TODO: implement projects field, when that entity is ready
-
     protected Client() {
         //needed by Hibernate
     }
@@ -50,7 +54,6 @@ public class Client extends AbstractAggregateRoot {
     public Client(PersonName personName, String companyName,
                   Address address, Email email, String note, String telephone,
                   ClientType clientType) {
-        this.projectsValue = this.projectsValue;
         this.personName = personName;
         this.companyName = companyName;
         this.address = address;

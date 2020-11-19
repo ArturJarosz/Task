@@ -9,6 +9,9 @@
             <column name="ID" type="${long.type}">
                 <constraints nullable="false"/>
             </column>
+            <column name="UUID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
             <column name="NAME" type="VARCHAR2(60 ${char.unit})">
                 <constraints nullable="false"/>
             </column>
@@ -20,9 +23,7 @@
             </column>
             <column name="START_DATE" type="DATE"/>
             <column name="END_DATE" type="DATE"/>
-            <column name="STAGE_ID" type="${long.type}">
-                <constraints nullable="false"/>
-            </column>
+            <column name="STAGE_ID" type="${long.type}"/>
         </createTable>
         <addPrimaryKey tableName="TASK" columnNames="ID" constraintName="PK_TASK"/>
         <addForeignKeyConstraint baseTableName="TASK" baseColumnNames="STAGE_ID"

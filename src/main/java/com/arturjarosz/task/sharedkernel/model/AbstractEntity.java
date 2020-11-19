@@ -1,10 +1,12 @@
 package com.arturjarosz.task.sharedkernel.model;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * Base class for Entities providing id.
@@ -16,12 +18,10 @@ public abstract class AbstractEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    //@SequenceGenerator(name = "Abs_ent", initialValue = 100)
     private Long id;
 
-    public Long getId() {
-        return this.id;
-    }
+    @Column(name = "UUID", nullable = false)
+    protected UUID uuid = UUID.randomUUID();
 
     @Override
     public boolean equals(Object obj) {
@@ -36,6 +36,11 @@ public abstract class AbstractEntity implements Serializable {
         }
         AbstractEntity other = (AbstractEntity) obj;
 
-        return this.id.equals(other.id);
+        return this.uuid.equals(other.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.uuid.hashCode();
     }
 }
