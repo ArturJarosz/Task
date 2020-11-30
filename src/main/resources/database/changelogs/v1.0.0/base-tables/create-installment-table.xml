@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="liquibase" id="create-installment-table">
+        <createTable tableName="INSTALLMENT">
+            <column name="ID" type="${long.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UUID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR2(60 ${char.unit})">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AMOUNT" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_PAID" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PAYMENT_DATE" type="DATE"/>
+            <column name="STAGE_ID" type="${long.type}">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="INSTALLMENT" columnNames="ID" constraintName="PK_INSTALLMENT"/>
+        <addForeignKeyConstraint baseTableName="INSTALLMENT" baseColumnNames="STAGE_ID"
+                                 constraintName="FK_INSTALLMENT_STAGE"
+                                 referencedTableName="STAGE" referencedColumnNames="ID"/>
+    </changeSet>
+
+</databaseChangeLog>

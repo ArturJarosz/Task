@@ -4,6 +4,7 @@
     <Properties>
         <Property name="log-path">archive</Property>
         <Property name="logging-pattern">[%d{ISO8601}] %5p [%t]%x - %C{1}.%M(%F:%L) - %m%n</Property>
+        <Property name="additive-logging">false</Property>
     </Properties>
 
     <Appenders>
@@ -19,10 +20,10 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="liquibase" level="debug" additivity="true">
+        <Logger name="liquibase" level="info" additivity="${additive-logging}">
             <AppenderRef ref="LiquibaseFileAppender"/>
         </Logger>
-        <Logger name="com.arturjarosz.application" level="info" additivity="true">
+        <Logger name="com.arturjarosz.task" level="info" additivity="${additive-logging}">
             <AppenderRef ref="FileAppender"/>
         </Logger>
         <Root level="info">
