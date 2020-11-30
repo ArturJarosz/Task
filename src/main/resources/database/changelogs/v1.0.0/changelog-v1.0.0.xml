@@ -6,8 +6,8 @@
 
     <include file="create-sequence.xml" relativeToChangelogFile="true"/>
     <include file="base-tables/base-tables.xml" relativeToChangelogFile="true"/>
-    <changeSet author="liquibase" id="tag-version_0.0.1">
-        <tagDatabase tag="v0.0.1"/>
+    <changeSet author="liquibase" id="tag-version_1.0.0">
+        <tagDatabase tag="v1.0.0"/>
     </changeSet>
 
 </databaseChangeLog>

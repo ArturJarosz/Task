@@ -7,6 +7,6 @@
 
     <include file="database-properties.xml" relativeToChangelogFile="true"/>
 
-    <include file="v0.0.1/changelog-v0.0.1.xml" relativeToChangelogFile="true"/>
+    <include file="v1.0.0/changelog-v1.0.0.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

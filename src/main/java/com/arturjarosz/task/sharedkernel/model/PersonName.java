@@ -29,13 +29,13 @@ public class PersonName extends AbstractValueObject<PersonName> implements Value
         this.setLastName(lastName);
     }
 
-    private void setFirstName(String firstName) {
+    public void setFirstName(String firstName) {
         assertNotEmpty(firstName,
                 BaseValidator.createMessageCode(ExceptionCodes.IS_NULL, ModelExceptionCodes.FIRST_NAME));
         this.firstName = firstName;
     }
 
-    private void setLastName(String lastName) {
+    public void setLastName(String lastName) {
         assertNotEmpty(lastName,
                 BaseValidator.createMessageCode(ExceptionCodes.IS_NULL, ModelExceptionCodes.LAST_NAME));
         this.lastName = lastName;

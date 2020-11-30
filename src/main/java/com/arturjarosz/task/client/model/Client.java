@@ -10,17 +10,15 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "CLIENT")
 public class Client extends AbstractAggregateRoot {
 
     private static final long serialVersionUID = 5821492165714199395L;
-
-    /* TODO: implement reference to Project by ids - its a separate Aggregate - value should be updated
-         everytime a client is chosen in Project and Client removed from the project*/
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "PROJECTS_VALUE"))
@@ -44,6 +42,7 @@ public class Client extends AbstractAggregateRoot {
     @Column(name = "TELEPHONE")
     private String telephone;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "CLIENT_TYPE")
     private ClientType clientType;
 
@@ -51,33 +50,88 @@ public class Client extends AbstractAggregateRoot {
         //needed by Hibernate
     }
 
-    public Client(PersonName personName, String companyName,
-                  Address address, Email email, String note, String telephone,
-                  ClientType clientType) {
+    public Client(PersonName personName, String companyName, ClientType clientType) {
         this.personName = personName;
         this.companyName = companyName;
-        this.address = address;
-        this.email = email;
-        this.note = note;
-        this.telephone = telephone;
         this.clientType = clientType;
         this.projectsValue = new Money(0);
     }
 
-    public void updateProjectsValue() {
-        //TODO: update this method after Project entity and table is fully implemented, for now it is 0
-        this.projectsValue.setValue(new BigDecimal(0));
+    public static Client createPrivateClient(PersonName personName) {
+        return new Client(personName, null, ClientType.PRIVATE);
     }
 
-    public static Client createPrivateClient(PersonName personName, Address address, Email email, String note,
-                                             String telephone) {
-        Client client = new Client(personName, null, address, email, note, telephone, ClientType.PRIVATE);
-        return client;
+    public static Client createCorporateClient(String companyName) {
+        return new Client(null, companyName, ClientType.CORPORATE);
     }
 
-    public static Client createCorporateClient(String companyName, Address address, Email email, String note,
-                                               String telephone) {
-        Client client = new Client(null, companyName, address, email, note, telephone, ClientType.CORPORATE);
-        return client;
+    public Email getEmail() {
+        return this.email;
     }
+
+    public void setEmail(Email email) {
+        this.email = email;
+    }
+
+    public PersonName getPersonName() {
+        return this.personName;
+    }
+
+    public String getCompanyName() {
+        return this.companyName;
+    }
+
+    public boolean isPrivate() {
+        return this.clientType.equals(ClientType.PRIVATE);
+    }
+
+    public boolean isCorporate() {
+        return this.clientType.equals(ClientType.CORPORATE);
+    }
+
+    public Address getAddress() {
+        return this.address;
+    }
+
+    public Money getProjectsValue() {
+        return this.projectsValue;
+    }
+
+    public String getNote() {
+        return this.note;
+    }
+
+    public String getTelephone() {
+        return this.telephone;
+    }
+
+    public void updateProjectsValue(Money newValue) {
+        this.projectsValue = newValue.copy();
+    }
+
+    public void updatePersonName(String firstName, String lastName) {
+        this.personName.setFirstName(firstName);
+        this.personName.setLastName(lastName);
+    }
+
+    public void updateCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public void updateNote(String note) {
+        this.note = note;
+    }
+
+    public void updateTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public void updateAddress(Address address) {
+        this.address = address.copy();
+    }
+
+    public void updateEmail(String email) {
+        this.email = new Email(email);
+    }
+
 }

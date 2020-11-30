@@ -23,6 +23,10 @@ public abstract class AbstractEntity implements Serializable {
     @Column(name = "UUID", nullable = false)
     protected UUID uuid = UUID.randomUUID();
 
+    public Long getId() {
+        return this.id;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
