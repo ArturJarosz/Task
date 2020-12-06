@@ -1,5 +1,7 @@
 package com.arturjarosz.task.sharedkernel.infrastructure.impl;
 
+import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
+import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractBaseRepository;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.QAbstractAggregateRoot;
@@ -69,6 +71,8 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
     @Override
     public void remove(Long id) {
         T aggregate = this.load(id);
+        BaseValidator.assertIsTrue(aggregate != null,
+                BaseValidator.createMessageCode(ExceptionCodes.IS_NULL, ExceptionCodes.AGGREGATE), id);
         this.entityManager.remove(aggregate);
         this.entityManager.flush();
     }

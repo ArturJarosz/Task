@@ -14,9 +14,9 @@ public class BaseConfiguration {
     @Bean
     public ReloadableResourceBundleMessageSource messageSource() {
         ReloadableResourceBundleMessageSource bundleMessageSource = new ReloadableResourceBundleMessageSource();
-        bundleMessageSource.setBasename("classpath:i18n/messages");
+        bundleMessageSource.setBasenames("classpath:/i18n/base/base", "classpath:/i18n/client/client");
         bundleMessageSource.setDefaultEncoding("UTF-8");
-        Locale.setDefault(Locale.US);
+        Locale.setDefault(Locale.ENGLISH);
         return bundleMessageSource;
     }
 

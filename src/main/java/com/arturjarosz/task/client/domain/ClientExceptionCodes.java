@@ -11,6 +11,7 @@ public class ClientExceptionCodes {
     public static final String COMPANY_NAME = "companyName";
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
+    public static final String CLIENT_TYPE = "clientType";
 
     protected ClientExceptionCodes() {
         throw new IllegalStateException("This class should not be instantiated.");

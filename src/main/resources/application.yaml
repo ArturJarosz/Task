@@ -26,11 +26,6 @@ spring:
     change-log: classpath:/database/changelogs/changelog-master.xml
     default-schema: task_schema
     drop-first: true
-  messages:
-    basename: classpath:/i18n/messages
-    encoding: UTF-8
-    fallback-to-system-locale: true
-    cache-duration: 1
   jackson:
     default-property-inclusion: non_null
 server:

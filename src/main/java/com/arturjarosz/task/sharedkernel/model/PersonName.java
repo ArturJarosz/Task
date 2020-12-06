@@ -1,14 +1,10 @@
 package com.arturjarosz.task.sharedkernel.model;
 
-import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
-import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 
 @Embeddable
 public class PersonName extends AbstractValueObject<PersonName> implements ValueObject<PersonName> {
@@ -30,14 +26,10 @@ public class PersonName extends AbstractValueObject<PersonName> implements Value
     }
 
     public void setFirstName(String firstName) {
-        assertNotEmpty(firstName,
-                BaseValidator.createMessageCode(ExceptionCodes.IS_NULL, ModelExceptionCodes.FIRST_NAME));
         this.firstName = firstName;
     }
 
     public void setLastName(String lastName) {
-        assertNotEmpty(lastName,
-                BaseValidator.createMessageCode(ExceptionCodes.IS_NULL, ModelExceptionCodes.LAST_NAME));
         this.lastName = lastName;
     }
 
