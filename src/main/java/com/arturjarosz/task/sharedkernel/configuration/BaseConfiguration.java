@@ -10,11 +10,16 @@ import java.util.Locale;
 
 @Configuration
 public class BaseConfiguration {
+    private final String[] messageSources = {
+            "classpath:/i18n/base/base",
+            "classpath:/i18n/client/client",
+            "classpath:/i18n/architect/architect",
+    };
 
     @Bean
     public ReloadableResourceBundleMessageSource messageSource() {
         ReloadableResourceBundleMessageSource bundleMessageSource = new ReloadableResourceBundleMessageSource();
-        bundleMessageSource.setBasenames("classpath:/i18n/base/base", "classpath:/i18n/client/client");
+        bundleMessageSource.setBasenames(this.messageSources);
         bundleMessageSource.setDefaultEncoding("UTF-8");
         Locale.setDefault(Locale.ENGLISH);
         return bundleMessageSource;
