@@ -57,8 +57,8 @@ public class Client extends AbstractAggregateRoot {
         this.projectsValue = new Money(0);
     }
 
-    public static Client createPrivateClient(PersonName personName) {
-        return new Client(personName, null, ClientType.PRIVATE);
+    public static Client createPrivateClient(String firstName, String lastName) {
+        return new Client(new PersonName(firstName, lastName), null, ClientType.PRIVATE);
     }
 
     public static Client createCorporateClient(String companyName) {

@@ -10,12 +10,15 @@ import com.arturjarosz.task.sharedkernel.annotations.DomainService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
-import com.arturjarosz.task.sharedkernel.model.PersonName;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.arturjarosz.task.client.domain.ClientValidator.*;
+import static com.arturjarosz.task.client.domain.ClientValidator.validateClientBasicDto;
+import static com.arturjarosz.task.client.domain.ClientValidator.validateClientDtoExistance;
+import static com.arturjarosz.task.client.domain.ClientValidator.validateClientExistence;
+import static com.arturjarosz.task.client.domain.ClientValidator.validateCorporateClient;
+import static com.arturjarosz.task.client.domain.ClientValidator.validatePrivateClient;
 
 @DomainService
 public class ClientDomainServiceImpl implements ClientDomainService {
@@ -34,8 +37,8 @@ public class ClientDomainServiceImpl implements ClientDomainService {
         if (clientType.equals(ClientType.CORPORATE)) {
             client = Client.createCorporateClient(clientBasicDto.getCompanyName());
         } else {
-            client = Client.createPrivateClient(new PersonName(clientBasicDto.getFirstName(),
-                    clientBasicDto.getLastName()));
+            client = Client.createPrivateClient(clientBasicDto.getFirstName(),
+                    clientBasicDto.getLastName());
         }
         this.clientRepository.save(client);
         return new CreatedEntityDto(client.getId());
