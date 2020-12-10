@@ -61,7 +61,7 @@ public class ArchitectDomainServiceImpl implements ArchitectDomainService {
     }
 
     @Override
-    public List<ArchitectBasicDto> getClients() {
+    public List<ArchitectBasicDto> getArchitects() {
         return this.architectRepository.loadAll().stream()
                 .map(ArchitectDtoMapper.INSTANCE::architectToArchitectBasicDto)
                 .collect(Collectors.toList());
