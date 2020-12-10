@@ -16,5 +16,5 @@ public interface ArchitectDomainService {
 
     void updateArchitect(Long architectId, ArchitectDto architectDto);
 
-    List<ArchitectBasicDto> getClients();
+    List<ArchitectBasicDto> getArchitects();
 }

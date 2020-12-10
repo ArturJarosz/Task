@@ -43,6 +43,6 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
 
     @Override
     public List<ArchitectBasicDto> getBasicClients() {
-        return this.architectDomainService.getClients();
+        return this.architectDomainService.getArchitects();
     }
 }
