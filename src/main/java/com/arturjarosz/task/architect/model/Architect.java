@@ -1,15 +1,14 @@
 package com.arturjarosz.task.architect.model;
 
-import com.arturjarosz.task.architect.domain.ArchitectExceptionCodes;
-import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.sharedkernel.model.PersonName;
 
-import javax.persistence.*;
-
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "ARCHITECT")
@@ -27,18 +26,31 @@ public class Architect extends AbstractAggregateRoot {
         //needed by Hibernate
     }
 
-    public Architect(PersonName personName) {
+    public Architect(String firstName, String lastName) {
         this.projectsValue = new Money(0);
-        this.updateArchitectName(personName);
+        this.updateArchitectName(firstName, lastName);
     }
 
-    public void updateArchitectName(PersonName personName) {
-        assertIsTrue(personName != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ArchitectExceptionCodes.ARCHITECT,
-                        ArchitectExceptionCodes.PERSON_NAME));
+    public void updateArchitectName(String firstName, String lastName) {
+        PersonName personName = new PersonName(firstName, lastName);
         this.personName = personName;
     }
 
     //TODO: implement method responsible for updating all projects value
 
+    public PersonName getPersonName() {
+        return this.personName;
+    }
+
+    public void setPersonName(PersonName personName) {
+        this.personName = personName;
+    }
+
+    public Money getProjectsValue() {
+        return this.projectsValue;
+    }
+
+    public void setProjectsValue(Money projectsValue) {
+        this.projectsValue = projectsValue;
+    }
 }
