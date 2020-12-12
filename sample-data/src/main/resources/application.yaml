@@ -1,0 +1,7 @@
+server:
+  port: 8002
+spring:
+  jpa:
+    properties:
+      hibernate:
+        default_schema: task_schema

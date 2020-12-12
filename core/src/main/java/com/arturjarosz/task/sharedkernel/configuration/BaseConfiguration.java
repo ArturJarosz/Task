@@ -1,6 +1,5 @@
 package com.arturjarosz.task.sharedkernel.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -12,26 +11,25 @@ import java.util.Locale;
 @Configuration
 public class BaseConfiguration {
 
-    private final String defaultLanguageCode;
-    private final String defaultEncoding;
+    /*    private final String defaultLanguageCode;
+        private final String defaultEncoding;*/
     private final String[] messageSources = {
             "classpath:/i18n/base/base",
             "classpath:/i18n/client/client",
             "classpath:/i18n/architect/architect",
     };
 
-    public BaseConfiguration(@Value("${task.language}") String language,
-                             @Value("${task.default_encoding}") String encoding) {
-        this.defaultLanguageCode = language;
-        this.defaultEncoding = encoding;
+    public BaseConfiguration() {
+/*        this.defaultLanguageCode = language;
+        this.defaultEncoding = encoding;*/
     }
 
     @Bean
     public ReloadableResourceBundleMessageSource messageSource() {
         ReloadableResourceBundleMessageSource bundleMessageSource = new ReloadableResourceBundleMessageSource();
         bundleMessageSource.setBasenames(this.messageSources);
-        bundleMessageSource.setDefaultEncoding(this.defaultEncoding);
-        Locale.setDefault(Locale.forLanguageTag(this.defaultLanguageCode));
+        bundleMessageSource.setDefaultEncoding("UTF-8");
+        Locale.setDefault(Locale.forLanguageTag("en"));
         return bundleMessageSource;
     }
 

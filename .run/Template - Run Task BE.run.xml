@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Template - Run Task BE" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
-    <module name="task-parent" />
+    <module name="task-core" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="com.arturjarosz.task.*" />
