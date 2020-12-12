@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Template - Run Task BE" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="task-parent" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.arturjarosz.task.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.arturjarosz.task.Main" />
+    <option name="PROGRAM_PARAMETERS" value="--spring.datasource.username=username3 --spring.datasource.url=jdbc:postgresql://localhost:5432/database --spring.datasource.password=password --spring.datasource.driver-class-name=org.postgresql.Driver --hibernate.default_schema=public" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
