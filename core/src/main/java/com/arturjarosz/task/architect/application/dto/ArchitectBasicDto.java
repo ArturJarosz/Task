@@ -9,6 +9,9 @@ public class ArchitectBasicDto implements Serializable {
     private String firstName;
     private String lastName;
 
+    public ArchitectBasicDto() {
+    }
+
     public ArchitectBasicDto(Long id, String firstName, String lastName) {
         this.id = id;
         this.firstName = firstName;

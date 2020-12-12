@@ -22,9 +22,11 @@
     <Loggers>
         <Logger name="liquibase" level="info" additivity="${additive-logging}">
             <AppenderRef ref="LiquibaseFileAppender"/>
+            <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Logger name="com.arturjarosz.task" level="info" additivity="${additive-logging}">
             <AppenderRef ref="FileAppender"/>
+            <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Root level="info">
             <AppenderRef ref="ConsoleAppender"/>

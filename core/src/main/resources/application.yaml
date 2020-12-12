@@ -20,13 +20,11 @@ spring:
     properties:
       hibernate.cache.use_query_cache: false
       hibernate.generate_statistics: true
+      hibernate.default_schema: task_schema
   main:
     log-startup-info: false
     banner-mode: off
-  liquibase:
-    change-log: classpath:/database/changelogs/changelog-master.xml
-    default-schema: task_schema
-    drop-first: true
+
   jackson:
     default-property-inclusion: non_null
 server:

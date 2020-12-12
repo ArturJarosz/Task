@@ -11,6 +11,6 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 })
 public class DatabaseMain {
     public static void main(String[] args) {
-        SpringApplication.run(DatabaseMain.class, args);
+        SpringApplication.run(DatabaseMain.class, args).close();
     }
 }
