@@ -5,6 +5,8 @@ import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -33,17 +35,19 @@ public class Project extends AbstractAggregateRoot {
     @JoinColumn(name = "PROJECT_ID")
     private Set<Stage> stages;
 
-    public Project() {
+    @Enumerated(EnumType.STRING)
+    @Column(name = "PROJECT_TYPE")
+    private ProjectType projectType;
+
+    protected Project() {
         //needed by Hibernate
     }
 
-    public Project(String name, Long architectId, Long clientId,
-                   Set<Cost> costs, Set<Stage> stages) {
+    public Project(String name, Long architectId, Long clientId, ProjectType projectType) {
         this.name = name;
         this.architectId = architectId;
         this.clientId = clientId;
-        this.costs = costs;
-        this.stages = stages;
+        this.projectType = projectType;
     }
 
     public String getName() {
@@ -66,4 +70,7 @@ public class Project extends AbstractAggregateRoot {
         return this.stages;
     }
 
+    public ProjectType getProjectType() {
+        return this.projectType;
+    }
 }

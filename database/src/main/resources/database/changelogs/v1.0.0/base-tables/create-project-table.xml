@@ -21,6 +21,9 @@
             <column name="CLIENT_ID" type="${long.type}">
                 <constraints nullable="false"/>
             </column>
+            <column name="CLIENT_TYPE" type="VARCHAR2(30 ${char.unit})">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <addPrimaryKey tableName="PROJECT" columnNames="ID" constraintName="PK_PROJECT"/>
     </changeSet>

@@ -16,7 +16,7 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 public class ClientValidator {
 
     private ClientValidator() {
-        throw new IllegalStateException("This class should not be instantiated.");
+        throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
     }
 
     public static void validateClientDtoExistance(ClientDto clientDto) {

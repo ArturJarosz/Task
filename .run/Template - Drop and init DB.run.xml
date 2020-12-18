@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Template - Update DB" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+  <configuration default="false" name="Template - Drop and Init DB" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <module name="task-database" />
     <extension name="coverage">
       <pattern>
@@ -8,7 +8,7 @@
       </pattern>
     </extension>
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.arturjarosz.task.DatabaseMain" />
-    <option name="PROGRAM_PARAMETERS" value="--spring.datasource.username=username4 --spring.datasource.url=jdbc:postgresql://localhost:5432/database --spring.datasource.password=password --spring.datasource.driver-class-name=org.postgresql.Driver" />
+    <option name="PROGRAM_PARAMETERS" value="--spring.datasource.username=username --spring.datasource.url=jdbc:postgresql://localhost:5432/database --spring.datasource.password=password --spring.datasource.driver-class-name=org.postgresql.Driver --spring.liquibase.drop-first=true" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <method v="2">
       <option name="Make" enabled="true" />

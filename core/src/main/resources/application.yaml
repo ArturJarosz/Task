@@ -31,4 +31,4 @@ server:
   port: 8099
 task:
   language: en
-  default_encoding: UTF-8
+  encoding: UTF-8
