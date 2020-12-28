@@ -6,9 +6,10 @@
 
     <property name="big_decimal.type" value="numeric(19,6)" dbms="postgresql"/>
     <property name="char.unit" value=" " dbms="postgresql,h2"/>
+    <property name="date.type" value="DATE" dbms="postgresql"/>
     <property name="double.type" value="DOUBLE PRECISION" dbms="postgresql"/>
     <property name="long.type" value="bigint" dbms="postgresql,h2"/>
-    <property name="date.type" value="TIMESTAMP(6)" dbms="postgresql"/>
+    <property name="time.type" value="TIMESTAMP(6)" dbms="postgresql"/>
     <property name="uuid.type" value="UUID" dbms="postgresql"/>
 
 </databaseChangeLog>
