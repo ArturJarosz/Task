@@ -12,9 +12,11 @@ public class SampleDataInitializer extends AbstractDataInitializer {
     private static final Logger LOG = LogManager.getLogger(SampleDataInitializer.class);
 
     private final ArchitectsInitializer architectsInitializer;
+    private final ClientInitializer clientInitializer;
 
-    public SampleDataInitializer(ArchitectsInitializer architectsInitializer) {
+    public SampleDataInitializer(ArchitectsInitializer architectsInitializer, ClientInitializer clientInitializer) {
         this.architectsInitializer = architectsInitializer;
+        this.clientInitializer = clientInitializer;
     }
 
     @Override
@@ -22,6 +24,7 @@ public class SampleDataInitializer extends AbstractDataInitializer {
     protected void loadData() {
         LOG.info("Loading sample data.");
         this.architectsInitializer.run();
+        this.clientInitializer.run();
         LOG.info("All sample data loaded.");
     }
 }
