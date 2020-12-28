@@ -26,7 +26,7 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
 
     @Transactional
     @Override
-    public void deleteArchitect(Long architectId) {
+    public void removeArchitect(Long architectId) {
         this.architectDomainService.removeArchitect(architectId);
     }
 
@@ -42,7 +42,7 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     }
 
     @Override
-    public List<ArchitectBasicDto> getBasicClients() {
+    public List<ArchitectBasicDto> getBasicArchitects() {
         return this.architectDomainService.getArchitects();
     }
 }

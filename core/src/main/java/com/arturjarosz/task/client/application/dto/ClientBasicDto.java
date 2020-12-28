@@ -10,6 +10,9 @@ public class ClientBasicDto {
     private String lastName;
     private String companyName;
 
+    public ClientBasicDto() {
+    }
+
     public ClientBasicDto(Long id, ClientType clientType, String firstName, String lastName, String companyName) {
         this.id = id;
         this.clientType = clientType;

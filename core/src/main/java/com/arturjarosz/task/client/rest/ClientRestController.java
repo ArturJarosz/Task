@@ -49,8 +49,9 @@ public class ClientRestController {
         return new ResponseEntity<>(this.clientApplicationService.getClient(clientId), HttpStatus.OK);
     }
 
-    @PutMapping("{clientI}")
-    public ResponseEntity<Void> updateClient(@PathVariable("clientI") Long clientId, @RequestBody ClientDto clientDto) {
+    @PutMapping("{clientId}")
+    public ResponseEntity<Void> updateClient(@PathVariable("clientId") Long clientId,
+                                             @RequestBody ClientDto clientDto) {
         this.clientApplicationService.updateClient(clientId, clientDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }

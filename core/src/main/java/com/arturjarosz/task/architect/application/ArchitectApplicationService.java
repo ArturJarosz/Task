@@ -10,11 +10,11 @@ public interface ArchitectApplicationService {
 
     CreatedEntityDto createClient(ArchitectBasicDto architectBasicDto);
 
-    void deleteArchitect(Long architectId);
+    void removeArchitect(Long architectId);
 
     ArchitectDto getArchitect(Long architectId);
 
     void updateArchitect(Long architectId, ArchitectDto architectDto);
 
-    List<ArchitectBasicDto> getBasicClients();
+    List<ArchitectBasicDto> getBasicArchitects();
 }

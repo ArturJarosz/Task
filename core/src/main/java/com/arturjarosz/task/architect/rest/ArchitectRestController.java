@@ -35,7 +35,7 @@ public class ArchitectRestController {
 
     @DeleteMapping("{architectId}")
     public ResponseEntity<Void> deleteArchitect(@PathVariable("architectId") Long architectId) {
-        this.architectApplicationService.deleteArchitect(architectId);
+        this.architectApplicationService.removeArchitect(architectId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -54,7 +54,7 @@ public class ArchitectRestController {
 
     @GetMapping("")
     public ResponseEntity<List<ArchitectBasicDto>> getBasicArchitects() {
-        return new ResponseEntity<List<ArchitectBasicDto>>(this.architectApplicationService.getBasicClients(),
+        return new ResponseEntity<List<ArchitectBasicDto>>(this.architectApplicationService.getBasicArchitects(),
                 HttpStatus.OK);
     }
 }
