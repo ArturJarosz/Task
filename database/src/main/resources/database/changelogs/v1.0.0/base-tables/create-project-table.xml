@@ -21,6 +21,14 @@
             <column name="CLIENT_ID" type="${long.type}">
                 <constraints nullable="false"/>
             </column>
+            <column name="PROJECT_TYPE" type="VARCHAR2(30 ${char.unit})">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SIGNING_DATE" type="DATE"/>
+            <column name="START_DATE" type="DATE"/>
+            <column name="END_DATE" type="DATE"/>
+            <column name="DEADLINE" type="DATE"/>
+            <column name="NOTE" type="VARCHAR2(1000 ${char.unit})"/>
         </createTable>
         <addPrimaryKey tableName="PROJECT" columnNames="ID" constraintName="PK_PROJECT"/>
     </changeSet>

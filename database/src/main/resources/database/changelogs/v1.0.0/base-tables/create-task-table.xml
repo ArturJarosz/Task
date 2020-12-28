@@ -21,8 +21,8 @@
             <column name="WORK_TIME" type="${long.type}" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="START_DATE" type="DATE"/>
-            <column name="END_DATE" type="DATE"/>
+            <column name="START_DATE" type="${date.type}"/>
+            <column name="END_DATE" type="${date.type}"/>
             <column name="STAGE_ID" type="${long.type}"/>
         </createTable>
         <addPrimaryKey tableName="TASK" columnNames="ID" constraintName="PK_TASK"/>

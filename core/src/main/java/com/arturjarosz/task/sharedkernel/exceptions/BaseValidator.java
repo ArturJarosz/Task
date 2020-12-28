@@ -11,11 +11,14 @@ import java.util.Map;
 /**
  * Provides validation methods.
  */
-public abstract class BaseValidator {
+public abstract class BaseValidator<T> {
 
     private static final String DELIMITER = ".";
 
-    protected BaseValidator() {
+    protected T validatedObject;
+
+    protected BaseValidator(T validatedObject) {
+        this.validatedObject = validatedObject;
     }
 
     /**

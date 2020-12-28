@@ -21,7 +21,7 @@
             <column name="IS_PAID" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
-            <column name="PAYMENT_DATE" type="DATE"/>
+            <column name="PAYMENT_DATE" type="${date.type}"/>
             <column name="STAGE_ID" type="${long.type}">
                 <constraints nullable="true"/>
             </column>

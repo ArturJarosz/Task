@@ -8,7 +8,7 @@
       </pattern>
     </extension>
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.arturjarosz.task.Main" />
-    <option name="PROGRAM_PARAMETERS" value="--spring.datasource.username=username3 --spring.datasource.url=jdbc:postgresql://localhost:5432/database --spring.datasource.password=password --spring.datasource.driver-class-name=org.postgresql.Driver --hibernate.default_schema=public" />
+    <option name="PROGRAM_PARAMETERS" value="--spring.datasource.username=username --spring.datasource.url=jdbc:postgresql://localhost:5432/database --spring.datasource.password=password --spring.datasource.driver-class-name=org.postgresql.Driver" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <method v="2">
       <option name="Make" enabled="true" />

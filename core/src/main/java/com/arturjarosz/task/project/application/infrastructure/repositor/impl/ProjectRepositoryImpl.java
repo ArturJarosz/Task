@@ -1,6 +1,6 @@
-package com.arturjarosz.task.project.infrastructure.repositor.impl;
+package com.arturjarosz.task.project.application.infrastructure.repositor.impl;
 
-import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
+import com.arturjarosz.task.project.application.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.QProject;
 import com.arturjarosz.task.sharedkernel.infrastructure.impl.GenericJpaRepositoryImpl;
