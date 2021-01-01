@@ -2,6 +2,8 @@ package com.arturjarosz.task.architect.domain;
 
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
 import com.arturjarosz.task.architect.application.dto.ArchitectDto;
+import com.arturjarosz.task.architect.model.Architect;
+import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
@@ -29,6 +31,12 @@ public class ArchitectValidator {
                 createMessageCode(ExceptionCodes.IS_NULL, ArchitectExceptionCodes.ARCHITECT, nameExceptionCode));
         assertNotEmpty(name,
                 createMessageCode(ExceptionCodes.EMPTY, ArchitectExceptionCodes.ARCHITECT, nameExceptionCode));
+    }
+
+    public static void validateArchitectExistence(Architect architect, Long architectId) {
+        assertIsTrue(architect != null,
+                BaseValidator.createMessageCode(ExceptionCodes.NOT_EXISTS, ArchitectExceptionCodes.ARCHITECT),
+                architectId);
     }
 
 }

@@ -6,16 +6,14 @@ import com.arturjarosz.task.architect.application.mapper.ArchitectDtoMapper;
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository;
 import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
-import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
-import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.arturjarosz.task.architect.domain.ArchitectValidator.validateArchitectDto;
+import static com.arturjarosz.task.architect.domain.ArchitectValidator.validateArchitectExistence;
 import static com.arturjarosz.task.architect.domain.ArchitectValidator.validateBasicArchitectDto;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 
 @DomainService
 public class ArchitectDomainServiceImpl implements ArchitectDomainService {
@@ -43,18 +41,14 @@ public class ArchitectDomainServiceImpl implements ArchitectDomainService {
     @Override
     public ArchitectDto getArchitect(Long architectId) {
         Architect architect = this.architectRepository.load(architectId);
-        assertIsTrue(architect != null,
-                BaseValidator.createMessageCode(ExceptionCodes.NOT_EXISTS, ArchitectExceptionCodes.ARCHITECT),
-                architectId);
+        validateArchitectExistence(architect, architectId);
         return ArchitectDtoMapper.INSTANCE.architectToArchitectDto(architect);
     }
 
     @Override
     public void updateArchitect(Long architectId, ArchitectDto architectDto) {
         Architect architect = this.architectRepository.load(architectId);
-        assertIsTrue(architect != null,
-                BaseValidator.createMessageCode(ExceptionCodes.NOT_EXISTS, ArchitectExceptionCodes.ARCHITECT),
-                architectId);
+        validateArchitectExistence(architect, architectId);
         validateArchitectDto(architectDto);
         architect.updateArchitectName(architectDto.getFirstName(), architectDto.getLastName());
         this.architectRepository.save(architect);
