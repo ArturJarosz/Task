@@ -34,23 +34,6 @@ public class ProjectDtoValidator {
                 createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.PROJECT), projectId);
     }
 
-    public static void validateProjectDto(ProjectDto projectDto) {
-        validateProjectName(projectDto.getName());
-        assertIsTrue(projectDto.getProjectType() != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.TYPE));
-        assertIsTrue(projectDto.getClient() != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.CLIENT));
-        assertIsTrue(projectDto.getArchitect() != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.ARCHITECT));
-        assertIsTrue(projectDto.getArchitect().getId() != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.ARCHITECT));
-        assertIsTrue(projectDto.getArchitect().getId() != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.ARCHITECT));
-    }
-
     public static void validateProjectName(String projectName) {
         assertIsTrue(projectName != null,
                 createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.NAME));
@@ -61,6 +44,15 @@ public class ProjectDtoValidator {
     public static void validateProjectContractDto(ProjectContractDto projectContractDto) {
         assertIsTrue(projectContractDto != null,
                 createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.CONTRACT));
+        assertIsTrue(projectContractDto.getSigningDate() != null,
+                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT,
+                        ProjectExceptionCodes.SIGNING_DATE));
+        assertIsTrue(projectContractDto.getSigningDate() != null,
+                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT,
+                        ProjectExceptionCodes.START_DATE));
+        assertIsTrue(projectContractDto.getSigningDate() != null,
+                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT,
+                        ProjectExceptionCodes.DEADLINE));
     }
 
     public static void validateUpdateProjectDto(ProjectDto projectDto) {

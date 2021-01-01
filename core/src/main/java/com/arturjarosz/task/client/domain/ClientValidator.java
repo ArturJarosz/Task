@@ -19,7 +19,7 @@ public class ClientValidator {
         throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
     }
 
-    public static void validateClientDtoExistance(ClientDto clientDto) {
+    public static void validateClientDtoPresence(ClientDto clientDto) {
         assertIsTrue(clientDto != null,
                 createMessageCode(ExceptionCodes.IS_NULL, ClientExceptionCodes.CLIENT));
     }
