@@ -1,8 +1,7 @@
 package com.arturjarosz.task.client.application
 
-import com.arturjarosz.task.client.application.ClientApplicationServiceImpl
-import com.arturjarosz.task.client.application.ClientValidator
 import com.arturjarosz.task.client.application.dto.*
+import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
 import com.arturjarosz.task.client.infrastructure.repository.impl.ClientRepositoryImpl
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType

@@ -1,5 +1,8 @@
 package com.arturjarosz.task.sharedkernel.exceptions;
 
+/**
+ * Basic exception for wrong arguments.
+ */
 public class IllegalArgumentException extends BaseRuntimeException {
 
     private static final long serialVersionUID = -9037086014795116707L;

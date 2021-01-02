@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Locale;
 
+/**
+ * Class responsible for handling all error messages in API.
+ * Message codes should be intercepted and proper error message for given language should be returned.
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 

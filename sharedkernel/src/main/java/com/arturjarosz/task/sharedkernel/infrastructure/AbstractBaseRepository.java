@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Repostiroy for AggregateRoot objects. Provides base base methods for all aggregate roots.
+ * Repository for AggregateRoot objects. Provides base base methods for all aggregate roots.
  *
  * @param <T> the aggregate root
  */

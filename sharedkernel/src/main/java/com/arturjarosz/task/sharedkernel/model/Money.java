@@ -10,6 +10,11 @@ import java.math.BigDecimal;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 
+/**
+ * Class to represent money values. For not it has only a value, but it meant to be used along with
+ * currency. Any arithmetic expressions should be only possible when currency is same on both objects.
+ */
+
 @Embeddable
 public class Money extends AbstractValueObject<Money> implements ValueObject<Money>, Comparable<Money> {
     private static final long serialVersionUID = -5524298857488493145L;

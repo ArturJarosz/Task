@@ -17,6 +17,13 @@ import javax.persistence.PersistenceContext;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * An implementation of generic Jpa repository.
+ *
+ * @param <T>
+ * @param <S>
+ */
+
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 @Repository
 public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, S extends EntityPathBase<T>>
@@ -34,22 +41,43 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
         this.qAbstractAggregateRoot = new QAbstractAggregateRoot(qAggregateRoot.getMetadata());
     }
 
+    /**
+     * Returns query for aggregate root T, that can be extended.
+     *
+     * @return
+     */
     @Override
     public JPAQuery<T> queryFromAggregateRoot() {
         JPAQueryFactory queryFactory = new JPAQueryFactory(this.entityManager);
         return queryFactory.selectFrom(this.qAggregateRoot);
     }
 
+    /**
+     * Loads aggregate root T of given id.
+     *
+     * @param id
+     * @return aggregate root T.
+     */
     @Override
     public T load(Long id) {
         return this.queryFromAggregateRoot().where(this.qAbstractAggregateRoot.id.eq(id)).fetchOne();
     }
 
+    /**
+     * Loads all objects that are aggregate root of type T.
+     *
+     * @return List of aggregate roots T.
+     */
     @Override
     public List<T> loadAll() {
         return this.queryFromAggregateRoot().fetch();
     }
 
+    /**
+     * Saves aggregate root T.
+     *
+     * @param aggregate
+     */
     @Override
     public void save(T aggregate) {
         if (!this.entityManager.contains(aggregate)) {
@@ -60,6 +88,11 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
         this.entityManager.flush();
     }
 
+    /**
+     * Saves all given aggregate root T.
+     *
+     * @param aggregates
+     */
     @Override
     public void saveAll(Collection<T> aggregates) {
         for (T aggregate : aggregates) {
@@ -68,6 +101,11 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
         this.entityManager.flush();
     }
 
+    /**
+     * Removes aggregate root T if it exists.
+     *
+     * @param id
+     */
     @Override
     public void remove(Long id) {
         T aggregate = this.load(id);
