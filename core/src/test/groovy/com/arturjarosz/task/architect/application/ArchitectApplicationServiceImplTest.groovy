@@ -1,4 +1,4 @@
-package com.arturjarosz.task.architect.domain
+package com.arturjarosz.task.architect.application
 
 import com.arturjarosz.task.architect.application.ArchitectApplicationServiceImpl
 import com.arturjarosz.task.architect.application.ArchitectValidator
