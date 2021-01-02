@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ArchitectApplicationService {
 
-    CreatedEntityDto createClient(ArchitectBasicDto architectBasicDto);
+    CreatedEntityDto createArchitect(ArchitectBasicDto architectBasicDto);
 
     void removeArchitect(Long architectId);
 

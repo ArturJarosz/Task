@@ -1,5 +1,6 @@
 package com.arturjarosz.task.client.domain
 
+import com.arturjarosz.task.client.application.ClientValidator
 import com.arturjarosz.task.client.application.dto.ClientBasicDto
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
@@ -40,7 +41,7 @@ class ClientValidatorTest extends Specification {
         given:
         ClientBasicDto clientBasicDto = null;
         when:
-        ClientValidator.validateClientBasicDto(clientBasicDto);
+            ClientValidator.validateClientBasicDto(clientBasicDto);
         then:
         Exception ex = thrown();
         ex.message == "isNull.client";

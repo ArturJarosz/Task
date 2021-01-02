@@ -1,5 +1,7 @@
 package com.arturjarosz.task.client.domain
 
+import com.arturjarosz.task.client.application.ClientApplicationServiceImpl
+import com.arturjarosz.task.client.application.ClientValidator
 import com.arturjarosz.task.client.application.dto.*
 import com.arturjarosz.task.client.infrastructure.repository.impl.ClientRepositoryImpl
 import com.arturjarosz.task.client.model.Client
@@ -61,16 +63,17 @@ class ClientApplicationServiceImplTest extends Specification {
         load(EXISTING_CORPORATE_ID) >> { CLIENT_CORPORATE }
     }
 
-    def clientDomainServiceImpl = new ClientDomainServiceImpl(clientRepository);
     ClientValidator clientValidator = Stub {
         validateClientBasicDto(null) >> { throw new IllegalArgumentException() }
     }
+    def ClientApplicationServiceImpl = new ClientApplicationServiceImpl(clientRepository, clientValidator);
+
 
     def "client should not be saved when ClientBasicDto is null"() {
         given:
             ClientBasicDto clientBasicDto = null;
         when:
-            clientDomainServiceImpl.createClient(clientBasicDto);
+            ClientApplicationServiceImpl.createClient(clientBasicDto);
         then:
             thrown(IllegalArgumentException);
             0 * clientRepository.save(_);
@@ -79,7 +82,7 @@ class ClientApplicationServiceImplTest extends Specification {
     def "client should not be saved when ClientBasicDto has no type"() {
         given:
         when:
-            clientDomainServiceImpl.createClient(CLIENT_WITH_NO_TYPE);
+            ClientApplicationServiceImpl.createClient(CLIENT_WITH_NO_TYPE);
         then:
             thrown(IllegalArgumentException);
             0 * clientRepository.save(_);
@@ -88,7 +91,7 @@ class ClientApplicationServiceImplTest extends Specification {
     def "client should be saved when dto with proper private client data passed"() {
         given:
         when:
-            clientDomainServiceImpl.createClient(PRIVATE_CLIENT_DTO);
+            ClientApplicationServiceImpl.createClient(PRIVATE_CLIENT_DTO);
         then:
             noExceptionThrown();
             1 * clientRepository.save(_);
@@ -97,7 +100,7 @@ class ClientApplicationServiceImplTest extends Specification {
     def "client should be saved when dto with proper corporate client data passed"() {
         given:
         when:
-            clientDomainServiceImpl.createClient(CORPORATE_CLIENT_DTO);
+            ClientApplicationServiceImpl.createClient(CORPORATE_CLIENT_DTO);
         then:
             noExceptionThrown();
             1 * clientRepository.save(_);
@@ -106,7 +109,7 @@ class ClientApplicationServiceImplTest extends Specification {
     def "getClient should not return clientDto and exception should be thrown when passing non existing client id"() {
         given:
         when:
-            ClientDto clientDto = clientDomainServiceImpl.getClient(NON_EXISTING_ID);
+            ClientDto clientDto = ClientApplicationServiceImpl.getClient(NON_EXISTING_ID);
         then:
             thrown(IllegalArgumentException);
             clientDto == null;
@@ -115,7 +118,7 @@ class ClientApplicationServiceImplTest extends Specification {
     def "getClient should return clientDto and no exception should be thrown when passing existing client id"() {
         given:
         when:
-            ClientDto clientDto = clientDomainServiceImpl.getClient(EXISTING_PRIVATE_ID);
+            ClientDto clientDto = ClientApplicationServiceImpl.getClient(EXISTING_PRIVATE_ID);
         then:
             noExceptionThrown();
             clientDto.getFirstName() == FIRST_NAME;
@@ -126,7 +129,7 @@ class ClientApplicationServiceImplTest extends Specification {
         given:
             def clientDto = new ClientDto(null, null, null, null, null, null);
         when:
-            clientDomainServiceImpl.updateClient(NON_EXISTING_ID, clientDto)
+            ClientApplicationServiceImpl.updateClient(NON_EXISTING_ID, clientDto)
         then:
             thrown(IllegalArgumentException)
             0 * clientRepository.save(_)
@@ -136,7 +139,7 @@ class ClientApplicationServiceImplTest extends Specification {
         given:
             def clientDto = null;
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
+            ClientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
         then:
             thrown(IllegalArgumentException)
             0 * clientRepository.save(_)
@@ -148,7 +151,7 @@ class ClientApplicationServiceImplTest extends Specification {
             def contact = new ContactDto(address, EMAIL, TELEPHONE);
             def clientDto = new ClientDto("", "", null, contact, null, ClientType.PRIVATE);
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            ClientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:
             Exception ex = thrown()
             ex.message == "isEmpty.client.firstName"
@@ -161,7 +164,7 @@ class ClientApplicationServiceImplTest extends Specification {
             def contact = new ContactDto(address, EMAIL, TELEPHONE);
             def clientDto = new ClientDto(NEW_FIRST_NAME, NEW_LAST_NAME, null, contact, null, ClientType.PRIVATE);
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
+            ClientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
         then:
             noExceptionThrown();
             1 * clientRepository.save({
@@ -177,7 +180,7 @@ class ClientApplicationServiceImplTest extends Specification {
             def contact = new ContactDto(address, EMAIL, TELEPHONE);
             def clientDto = new ClientDto(null, null, "", contact, null, ClientType.CORPORATE);
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_CORPORATE_ID, clientDto);
+            ClientApplicationServiceImpl.updateClient(EXISTING_CORPORATE_ID, clientDto);
         then:
             Exception ex = thrown()
             ex.message == "isEmpty.client.companyName"
@@ -190,7 +193,7 @@ class ClientApplicationServiceImplTest extends Specification {
             def contact = new ContactDto(address, EMAIL, TELEPHONE);
             def clientDto = new ClientDto(null, null, NEW_COMPANY_NAME, contact, null, ClientType.CORPORATE);
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_CORPORATE_ID, clientDto)
+            ClientApplicationServiceImpl.updateClient(EXISTING_CORPORATE_ID, clientDto)
         then:
             noExceptionThrown();
             1 * clientRepository.save({
@@ -203,7 +206,7 @@ class ClientApplicationServiceImplTest extends Specification {
         given:
             def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, "", null, null, ClientType.PRIVATE);
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            ClientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:
             noExceptionThrown()
             1 * clientRepository.save({
@@ -223,7 +226,7 @@ class ClientApplicationServiceImplTest extends Specification {
             def contact = new ContactDto(address, EMAIL, TELEPHONE);
             def clientDto = new ClientDto(NEW_FIRST_NAME, NEW_LAST_NAME, null, contact, null, ClientType.PRIVATE);
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
+            ClientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
         then:
             noExceptionThrown();
             1 * clientRepository.save({
@@ -243,7 +246,7 @@ class ClientApplicationServiceImplTest extends Specification {
             def contact = new ContactDto(address, null, TELEPHONE);
             def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, null, ClientType.PRIVATE);
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            ClientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:
             noExceptionThrown();
             1 * clientRepository.save({
@@ -258,7 +261,7 @@ class ClientApplicationServiceImplTest extends Specification {
             def contact = new ContactDto(address, NEW_EMAIL, TELEPHONE);
             def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, null, ClientType.PRIVATE);
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            ClientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:
             noExceptionThrown();
             1 * clientRepository.save({
@@ -273,7 +276,7 @@ class ClientApplicationServiceImplTest extends Specification {
             def contact = new ContactDto(address, EMAIL, NEW_TELEPHONE);
             def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, null, ClientType.PRIVATE);
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            ClientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:
             noExceptionThrown();
             1 * clientRepository.save({
@@ -288,7 +291,7 @@ class ClientApplicationServiceImplTest extends Specification {
             def contact = new ContactDto(address, EMAIL, null);
             def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, null, ClientType.PRIVATE);
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            ClientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:
             noExceptionThrown();
             1 * clientRepository.save({
@@ -303,7 +306,7 @@ class ClientApplicationServiceImplTest extends Specification {
             def contact = new ContactDto(address, EMAIL, TELEPHONE);
             def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, new ClientAdditionalDataDto(NEW_NOTE, null), ClientType.PRIVATE);
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            ClientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:
             noExceptionThrown();
             1 * clientRepository.save({
@@ -318,7 +321,7 @@ class ClientApplicationServiceImplTest extends Specification {
             def contact = new ContactDto(address, EMAIL, TELEPHONE);
             def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, new ClientAdditionalDataDto(null, null), ClientType.PRIVATE);
         when:
-            clientDomainServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            ClientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:
             noExceptionThrown();
             1 * clientRepository.save({

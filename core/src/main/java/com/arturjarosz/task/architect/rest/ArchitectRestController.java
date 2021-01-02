@@ -29,19 +29,19 @@ public class ArchitectRestController {
 
     @PostMapping("")
     public ResponseEntity<CreatedEntityDto> createArchitect(@RequestBody ArchitectBasicDto architectBasicDto) {
-        return new ResponseEntity<>(this.architectApplicationService.createClient(architectBasicDto),
+        return new ResponseEntity<>(this.architectApplicationService.createArchitect(architectBasicDto),
                 HttpStatus.CREATED);
     }
 
     @DeleteMapping("{architectId}")
-    public ResponseEntity<Void> deleteArchitect(@PathVariable("architectId") Long architectId) {
+    public ResponseEntity<Void> removeArchitect(@PathVariable("architectId") Long architectId) {
         this.architectApplicationService.removeArchitect(architectId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("{architectId}")
     public ResponseEntity<ArchitectDto> getArchitect(@PathVariable("architectId") Long architectId) {
-        return new ResponseEntity<ArchitectDto>(this.architectApplicationService.getArchitect(architectId),
+        return new ResponseEntity<>(this.architectApplicationService.getArchitect(architectId),
                 HttpStatus.OK);
     }
 
@@ -54,7 +54,7 @@ public class ArchitectRestController {
 
     @GetMapping("")
     public ResponseEntity<List<ArchitectBasicDto>> getBasicArchitects() {
-        return new ResponseEntity<List<ArchitectBasicDto>>(this.architectApplicationService.getBasicArchitects(),
+        return new ResponseEntity<>(this.architectApplicationService.getBasicArchitects(),
                 HttpStatus.OK);
     }
 }

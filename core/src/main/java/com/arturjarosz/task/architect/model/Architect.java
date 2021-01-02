@@ -32,8 +32,8 @@ public class Architect extends AbstractAggregateRoot {
     }
 
     public void updateArchitectName(String firstName, String lastName) {
-        PersonName personName = new PersonName(firstName, lastName);
-        this.personName = personName;
+        PersonName name = new PersonName(firstName, lastName);
+        this.personName = name;
     }
 
     //TODO: implement method responsible for updating all projects value

@@ -1,16 +1,28 @@
-package com.arturjarosz.task.architect.domain;
+package com.arturjarosz.task.architect.application;
 
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
 import com.arturjarosz.task.architect.application.dto.ArchitectDto;
+import com.arturjarosz.task.architect.domain.ArchitectExceptionCodes;
+import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository;
 import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
+@Component
 public class ArchitectValidator {
+
+    private final ArchitectRepository architectRepository;
+
+    @Autowired
+    public ArchitectValidator(ArchitectRepository architectRepository) {
+        this.architectRepository = architectRepository;
+    }
 
     public static void validateBasicArchitectDto(ArchitectBasicDto architectBasicDto) {
         assertIsTrue(architectBasicDto != null,
@@ -37,6 +49,11 @@ public class ArchitectValidator {
         assertIsTrue(architect != null,
                 BaseValidator.createMessageCode(ExceptionCodes.NOT_EXISTS, ArchitectExceptionCodes.ARCHITECT),
                 architectId);
+    }
+
+    public void validateArchitectExistence(Long architectId) {
+        Architect architect = this.architectRepository.load(architectId);
+        validateArchitectExistence(architect, architectId);
     }
 
 }

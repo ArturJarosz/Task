@@ -1,8 +1,8 @@
 package com.arturjarosz.task.project.application.impl;
 
 import com.arturjarosz.task.architect.application.ArchitectApplicationService;
+import com.arturjarosz.task.architect.application.ArchitectValidator;
 import com.arturjarosz.task.architect.application.dto.ArchitectDto;
-import com.arturjarosz.task.architect.domain.ArchitectExceptionCodes;
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.client.domain.ClientExceptionCodes;
@@ -19,6 +19,7 @@ import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -33,16 +34,20 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
     private final ClientApplicationService clientApplicationService;
     private final ArchitectApplicationService architectApplicationService;
+    private final ArchitectValidator architectValidator;
     private final ProjectRepository projectRepository;
     private final ProjectDomainService projectDomainService;
 
+    @Autowired
     public ProjectApplicationServiceImpl(ClientApplicationService clientApplicationService,
                                          ArchitectApplicationService architectApplicationService,
+                                         ArchitectValidator architectValidator,
                                          ProjectRepository projectRepository,
                                          ProjectDomainService projectDomainService) {
 
         this.clientApplicationService = clientApplicationService;
         this.architectApplicationService = architectApplicationService;
+        this.architectValidator = architectValidator;
         this.projectRepository = projectRepository;
         this.projectDomainService = projectDomainService;
     }
@@ -54,10 +59,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         Long clientId = projectCreateDto.getClientId();
         BaseValidator.assertIsTrue(this.clientApplicationService.getClient(clientId) != null,
                 BaseValidator.createMessageCode(ExceptionCodes.NOT_EXISTS, ClientExceptionCodes.CLIENT), clientId);
-        Long architectId = projectCreateDto.getArchitectId();
-        BaseValidator.assertIsTrue(this.architectApplicationService.getArchitect(architectId) != null,
-                BaseValidator.createMessageCode(ExceptionCodes.NOT_EXISTS, ArchitectExceptionCodes.ARCHITECT),
-                architectId);
+        this.architectValidator.validateArchitectExistence(projectCreateDto.getArchitectId());
         Project project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto);
         this.projectRepository.save(project);
         return new CreatedEntityDto(project.getId());

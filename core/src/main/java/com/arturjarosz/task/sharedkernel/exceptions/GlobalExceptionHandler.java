@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
         String message = this.messageSource
                 .getMessage(errorMessage, exception.getMessageParameters(), errorMessage,
                         Locale.getDefault());
-        return new ResponseEntity<ErrorMessage>(new ErrorMessage(message),
+        return new ResponseEntity<>(new ErrorMessage(message),
                 HttpStatus.BAD_REQUEST);
     }
 }
