@@ -14,6 +14,9 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertI
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
+/**
+ * Validates architect related dtos and Architect domain model.
+ */
 @Component
 public class ArchitectValidator {
 

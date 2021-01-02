@@ -1,5 +1,7 @@
-package com.arturjarosz.task.client.application;
+package com.arturjarosz.task.client.application.impl;
 
+import com.arturjarosz.task.client.application.ClientApplicationService;
+import com.arturjarosz.task.client.application.ClientValidator;
 import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.client.application.mapper.ClientDtoMapper;

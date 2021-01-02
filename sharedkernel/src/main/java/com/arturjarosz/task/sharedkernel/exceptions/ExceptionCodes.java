@@ -13,6 +13,6 @@ public class ExceptionCodes {
     public static final String AGGREGATE = "aggregate";
 
     private ExceptionCodes() {
-        throw new IllegalStateException("This class should not be instantiated.");
+        throw new IllegalStateException(NOT_FOR_INSTANTIATING);
     }
 }

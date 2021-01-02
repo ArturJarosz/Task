@@ -8,13 +8,49 @@ import java.util.List;
 
 public interface ArchitectApplicationService {
 
+    /**
+     * Creates {@link com.arturjarosz.task.architect.model.Architect} from given {@link ArchitectBasicDto}.
+     * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
+     * is thrown.
+     *
+     * @param architectBasicDto dto with necessary data to creat new architect.
+     * @return CreatedEntityDto with newly created Architect id.
+     */
     CreatedEntityDto createArchitect(ArchitectBasicDto architectBasicDto);
 
+    /**
+     * Removes {@link com.arturjarosz.task.architect.model.Architect} of given Id.
+     * If entity with given Id does not exists then
+     * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
+     *
+     * @param architectId
+     */
     void removeArchitect(Long architectId);
 
+    /**
+     * Loads all architect data by given id.
+     * If entity with given Id does not exists then
+     * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
+     *
+     * @param architectId
+     * @return
+     */
     ArchitectDto getArchitect(Long architectId);
 
+    /**
+     * Updates Architect of given Id with data provided in architectDto.
+     * If entity with given Id does not exists then
+     * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
+     *
+     * @param architectId
+     * @param architectDto
+     */
     void updateArchitect(Long architectId, ArchitectDto architectDto);
 
+    /**
+     * Loads list of basic architect data or all existing architects.
+     *
+     * @return
+     */
     List<ArchitectBasicDto> getBasicArchitects();
 }

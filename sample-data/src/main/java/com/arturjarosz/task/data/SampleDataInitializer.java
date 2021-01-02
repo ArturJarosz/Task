@@ -19,6 +19,9 @@ public class SampleDataInitializer extends AbstractDataInitializer {
         this.clientInitializer = clientInitializer;
     }
 
+    /**
+     * Loading all sample data.
+     */
     @Override
     @Transactional
     protected void loadData() {

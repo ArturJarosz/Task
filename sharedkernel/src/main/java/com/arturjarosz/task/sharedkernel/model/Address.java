@@ -10,6 +10,10 @@ import javax.persistence.Embeddable;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 
+/**
+ * Class that represents an address.
+ */
+
 @Embeddable
 public class Address extends AbstractValueObject<Address> implements ValueObject<Address> {
     private static final long serialVersionUID = -4102560398759336232L;

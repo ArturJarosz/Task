@@ -1,5 +1,7 @@
 package com.arturjarosz.task.sharedkernel.model;
 
+import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+
 public class ModelExceptionCodes {
 
     //Classes
@@ -20,6 +22,6 @@ public class ModelExceptionCodes {
     public static final String ZERO = "zero";
 
     private ModelExceptionCodes() {
-        throw new IllegalStateException("This class should not be instantiated.");
+        throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
     }
 }
