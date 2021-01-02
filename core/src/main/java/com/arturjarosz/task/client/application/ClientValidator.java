@@ -2,9 +2,11 @@ package com.arturjarosz.task.client.domain;
 
 import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.client.application.dto.ClientDto;
+import com.arturjarosz.task.client.infrastructure.repository.ClientRepository;
 import com.arturjarosz.task.client.model.Client;
 import com.arturjarosz.task.client.model.ClientType;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import org.springframework.stereotype.Component;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
@@ -13,10 +15,13 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 /**
  * Validates Client entity and Client related Dtos.
  */
+@Component
 public class ClientValidator {
 
-    private ClientValidator() {
-        throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
+    private final ClientRepository clientRepository;
+
+    public ClientValidator(ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
     }
 
     public static void validateClientDtoPresence(ClientDto clientDto) {
@@ -65,6 +70,11 @@ public class ClientValidator {
                 createMessageCode(ExceptionCodes.IS_NULL, ClientExceptionCodes.CLIENT,
                         nameExceptionCode));
         assertNotEmpty(name, createMessageCode(ExceptionCodes.EMPTY, ClientExceptionCodes.CLIENT, nameExceptionCode));
+    }
+
+    public void validateClientExistence(Long clientId) {
+        Client client = this.clientRepository.load(clientId);
+        validateClientExistence(client, clientId);
     }
 
 }
