@@ -18,6 +18,11 @@
         <!--TASK-->
         <dependency>
             <groupId>com.arturjarosz</groupId>
+            <artifactId>task-sharedkernel</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.arturjarosz</groupId>
             <artifactId>task-core</artifactId>
             <version>${project.version}</version>
         </dependency>
