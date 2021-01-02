@@ -8,6 +8,7 @@
         <module>core</module>
         <module>database</module>
         <module>sample-data</module>
+        <module>sharedkernel</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

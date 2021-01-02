@@ -16,6 +16,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.arturjarosz</groupId>
+            <artifactId>task-sharedkernel</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--SPRING-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
