@@ -1,4 +1,4 @@
-package com.arturjarosz.task.client.domain
+package com.arturjarosz.task.client.application
 
 import com.arturjarosz.task.client.application.ClientApplicationServiceImpl
 import com.arturjarosz.task.client.application.ClientValidator
