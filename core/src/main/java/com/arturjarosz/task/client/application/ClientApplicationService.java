@@ -12,7 +12,7 @@ public interface ClientApplicationService {
 
     ClientBasicDto getClientBasicData(Long clientId);
 
-    void deleteClient(Long clientId);
+    void removeClient(Long clientId);
 
     ClientDto getClient(Long clientId);
 

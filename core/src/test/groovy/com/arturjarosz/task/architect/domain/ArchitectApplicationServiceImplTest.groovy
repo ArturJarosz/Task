@@ -1,5 +1,7 @@
 package com.arturjarosz.task.architect.domain
 
+import com.arturjarosz.task.architect.application.ArchitectApplicationServiceImpl
+import com.arturjarosz.task.architect.application.ArchitectValidator
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
 import com.arturjarosz.task.architect.application.dto.ArchitectDto
 import com.arturjarosz.task.architect.infrastructure.repository.impl.ArchitectRepositoryImpl
@@ -31,7 +33,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         remove(NON_EXISTING_ID) >> { throw new IllegalArgumentException() }
     }
 
-    def architectDomainService = new ArchitectDomainServiceImpl(architectRepository);
+    def architectApplicationService = new ArchitectApplicationServiceImpl(architectRepository);
 
     def architectValidator = Stub(ArchitectValidator) {
         validateArchitectDto(null) >> { throw new IllegalArgumentException() }
@@ -42,7 +44,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         given:
             ArchitectBasicDto architectBasicDto = null;
         when:
-            architectDomainService.createArchitect(architectBasicDto);
+            architectApplicationService.createArchitect(architectBasicDto);
         then:
             thrown(IllegalArgumentException);
             0 * architectRepository.save(_)
@@ -52,7 +54,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         given:
             ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(null, FIRST_NAME, "");
         when:
-            architectDomainService.createArchitect(architectBasicDto);
+            architectApplicationService.createArchitect(architectBasicDto);
         then:
             thrown(IllegalArgumentException);
             0 * architectRepository.save(_)
@@ -62,7 +64,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         given:
             ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(null, FIRST_NAME, LAST_NAME);
         when:
-            architectDomainService.createArchitect(architectBasicDto);
+            architectApplicationService.createArchitect(architectBasicDto);
         then:
             noExceptionThrown();
             1 * architectRepository.save({
@@ -75,15 +77,15 @@ class ArchitectApplicationServiceImplTest extends Specification {
     def "when passing non existing architect id removeArchitect should throw an exception"() {
         given:
         when:
-            architectDomainService.removeArchitect(NON_EXISTING_ID);
+            architectApplicationService.removeArchitect(NON_EXISTING_ID);
         then:
             thrown(IllegalArgumentException);
     }
 
-    def "when passing existing architect id removeArchitect no should throw an exception and architect should be deleted"() {
+    def "when passing existing architect id removeArchitect no should throw an exception and architect should be removed"() {
         given:
         when:
-            architectDomainService.removeArchitect(EXISTING_ID);
+            architectApplicationService.removeArchitect(EXISTING_ID);
         then:
             noExceptionThrown();
             1 * architectRepository.remove(EXISTING_ID);
@@ -92,7 +94,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
     def "when passing existing architect id getArchitect should return architect"() {
         given:
         when:
-            ArchitectDto architectDto = architectDomainService.getArchitect(EXISTING_ID);
+            ArchitectDto architectDto = architectApplicationService.getArchitect(EXISTING_ID);
         then:
             architectDto.getFirstName() == FIRST_NAME;
             architectDto.getLastName() == LAST_NAME;
@@ -101,7 +103,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
     def "when passing non existing architect id getArchitect should return not architect and exception should be thrown"() {
         given:
         when:
-            ArchitectDto architectDto = architectDomainService.getArchitect(NON_EXISTING_ID);
+            ArchitectDto architectDto = architectApplicationService.getArchitect(NON_EXISTING_ID);
         then:
             thrown(IllegalArgumentException)
             architectDto == null;
@@ -110,7 +112,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
     def "getArchitects should get list of architects"() {
         given:
         when:
-            ArchitectBasicDto[] architectBasicDtos = architectDomainService.getArchitects();
+            ArchitectBasicDto[] architectBasicDtos = architectApplicationService.getBasicArchitects();
         then:
             architectBasicDtos.length == 2;
     }
@@ -119,7 +121,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         given:
             ArchitectDto architectDto = new ArchitectDto(NEW_FIRST_NAME, NEW_LAST_NAME, null);
         when:
-            architectDomainService.updateArchitect(NON_EXISTING_ID, architectDto);
+            architectApplicationService.updateArchitect(NON_EXISTING_ID, architectDto);
         then:
             thrown(IllegalArgumentException)
     }
@@ -128,7 +130,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         given:
             ArchitectDto architectDto = new ArchitectDto(NEW_FIRST_NAME, null, null);
         when:
-            architectDomainService.updateArchitect(EXISTING_ID, architectDto);
+            architectApplicationService.updateArchitect(EXISTING_ID, architectDto);
         then:
             thrown(IllegalArgumentException)
     }
@@ -137,7 +139,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         given:
             ArchitectDto architectDto = new ArchitectDto(NEW_FIRST_NAME, NEW_LAST_NAME, null);
         when:
-            architectDomainService.updateArchitect(EXISTING_ID, architectDto);
+            architectApplicationService.updateArchitect(EXISTING_ID, architectDto);
         then:
             noExceptionThrown();
             1 * architectRepository.save({

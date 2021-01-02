@@ -1,7 +1,8 @@
-package com.arturjarosz.task.client.domain;
+package com.arturjarosz.task.client.application;
 
 import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.client.application.dto.ClientDto;
+import com.arturjarosz.task.client.domain.ClientExceptionCodes;
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository;
 import com.arturjarosz.task.client.model.Client;
 import com.arturjarosz.task.client.model.ClientType;

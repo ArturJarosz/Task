@@ -47,7 +47,7 @@ public class ProjectRestController {
     }
 
     @DeleteMapping("{projectId}")
-    public ResponseEntity<Void> deleteProject(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<Void> removeProject(@PathVariable("projectId") Long projectId) {
         this.projectApplicationService.removeProject(projectId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

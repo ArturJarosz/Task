@@ -34,8 +34,8 @@ public class ClientRestController {
     }
 
     @DeleteMapping("{clientId}")
-    public ResponseEntity<Void> deleteClient(@PathVariable("clientId") Long clientId) {
-        this.clientApplicationService.deleteClient(clientId);
+    public ResponseEntity<Void> removeClient(@PathVariable("clientId") Long clientId) {
+        this.clientApplicationService.removeClient(clientId);
         return new ResponseEntity(HttpStatus.OK);
     }
 

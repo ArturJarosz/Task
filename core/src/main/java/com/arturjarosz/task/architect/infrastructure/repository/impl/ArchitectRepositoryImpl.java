@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional(readOnly = true)
-public class ArchitectRepositoryImpl extends GenericJpaRepositoryImpl<Architect, QArchitect> implements ArchitectRepository {
+public class ArchitectRepositoryImpl extends GenericJpaRepositoryImpl<Architect, QArchitect>
+        implements ArchitectRepository {
 
     private static final QArchitect ARCHITECT = QArchitect.architect;
 

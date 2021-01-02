@@ -37,7 +37,7 @@ public class ArchitectsInitializer {
 
     private void importArchitectsFromFile() {
         List<ArchitectBasicDto> architectBasicDtos = this.prepareArchitects("architectsSample.json");
-        architectBasicDtos.forEach(this.architectApplicationService::createClient);
+        architectBasicDtos.forEach(this.architectApplicationService::createArchitect);
     }
 
     private List<ArchitectBasicDto> prepareArchitects(String filename) {

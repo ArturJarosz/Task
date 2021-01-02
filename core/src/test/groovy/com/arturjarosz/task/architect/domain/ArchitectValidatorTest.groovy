@@ -1,5 +1,6 @@
 package com.arturjarosz.task.architect.domain
 
+import com.arturjarosz.task.architect.application.ArchitectValidator
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
 import com.arturjarosz.task.architect.application.dto.ArchitectDto
 import spock.lang.Specification
