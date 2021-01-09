@@ -67,6 +67,12 @@ public abstract class BaseValidator<T> {
         }
     }
 
+    public static void assertNotNull(Object object, String messageCode, Object... parameters) {
+        if (object == null) {
+            throw new IllegalArgumentException(messageCode, parameters);
+        }
+    }
+
     public static void assertIsEmpty(String value, String messageCode, Object... parameters) {
         if (StringUtils.isNotBlank(value)) {
             throw new IllegalArgumentException(messageCode, parameters);
