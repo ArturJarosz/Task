@@ -1,13 +1,13 @@
 package com.arturjarosz.task.sharedkernel.infrastructure.impl;
 
-import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
-import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractBaseRepository;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.QAbstractAggregateRoot;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,16 +29,20 @@ import java.util.List;
 public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, S extends EntityPathBase<T>>
         implements AbstractBaseRepository<T> {
 
+    private AutowireCapableBeanFactory spring;
     @PersistenceContext
     private EntityManager entityManager;
-    private Class<T> tClass;
     private S qAggregateRoot;
     private QAbstractAggregateRoot qAbstractAggregateRoot;
 
     public GenericJpaRepositoryImpl(S qAggregateRoot) {
-        this.tClass = (Class<T>) qAggregateRoot.getType();
         this.qAggregateRoot = qAggregateRoot;
         this.qAbstractAggregateRoot = new QAbstractAggregateRoot(qAggregateRoot.getMetadata());
+    }
+
+    @Autowired
+    public void setSpring(AutowireCapableBeanFactory spring) {
+        this.spring = spring;
     }
 
     /**
@@ -60,7 +64,8 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
      */
     @Override
     public T load(Long id) {
-        return this.queryFromAggregateRoot().where(this.qAbstractAggregateRoot.id.eq(id)).fetchOne();
+        T aggregate = this.queryFromAggregateRoot().where(this.qAbstractAggregateRoot.id.eq(id)).fetchOne();
+        return aggregate;
     }
 
     /**
@@ -70,7 +75,9 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
      */
     @Override
     public List<T> loadAll() {
-        return this.queryFromAggregateRoot().fetch();
+        List<T> aggregates = this.queryFromAggregateRoot().fetch();
+        this.autowire(aggregates);
+        return aggregates;
     }
 
     /**
@@ -109,9 +116,24 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
     @Override
     public void remove(Long id) {
         T aggregate = this.load(id);
-        BaseValidator.assertIsTrue(aggregate != null,
-                BaseValidator.createMessageCode(ExceptionCodes.IS_NULL, ExceptionCodes.AGGREGATE), id);
+
         this.entityManager.remove(aggregate);
         this.entityManager.flush();
+    }
+
+    /**
+     * Autowire Entity.
+     */
+    private void autowire(T aggregate) {
+        this.spring.autowireBean(aggregate);
+    }
+
+    /**
+     * Autowire all elements of aggregates collection.
+     */
+    private void autowire(Collection<T> aggregates) {
+        for (T aggregate : aggregates) {
+            this.autowire(aggregate);
+        }
     }
 }
