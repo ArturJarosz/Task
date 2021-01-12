@@ -18,9 +18,9 @@ public interface AbstractBaseRepository<T extends AbstractAggregateRoot> {
 
     List<T> loadAll();
 
-    void save(T aggregate);
+    T save(T aggregate);
 
-    void saveAll(Collection<T> aggregates);
+    Collection<T> saveAll(Collection<T> aggregates);
 
     void remove(Long id);
 

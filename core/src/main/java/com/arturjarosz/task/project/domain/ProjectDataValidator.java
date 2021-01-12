@@ -7,10 +7,10 @@ import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 
 import java.time.LocalDate;
 
-public class ProjectValidator extends BaseValidator<Project> {
+public class ProjectDataValidator extends BaseValidator<Project> {
     public static final String VALIDATED_OBJECT = "project";
 
-    public ProjectValidator(Project validatedObject) {
+    public ProjectDataValidator(Project validatedObject) {
         super(validatedObject);
     }
 
@@ -34,4 +34,5 @@ public class ProjectValidator extends BaseValidator<Project> {
         assertIsTrue(!deadline.isBefore(startDate),
                 createMessageCode(ExceptionCodes.NOT_VALID, VALIDATED_OBJECT, ProjectExceptionCodes.DEADLINE));
     }
+
 }

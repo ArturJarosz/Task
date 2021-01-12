@@ -1,14 +1,14 @@
 package com.arturjarosz.task.architect.application
 
-import com.arturjarosz.task.architect.application.ArchitectApplicationServiceImpl
-import com.arturjarosz.task.architect.application.ArchitectValidator
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
 import com.arturjarosz.task.architect.application.dto.ArchitectDto
 import com.arturjarosz.task.architect.infrastructure.repository.impl.ArchitectRepositoryImpl
 import com.arturjarosz.task.architect.model.Architect
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
-import spock.lang.Shared
+import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto
 import spock.lang.Specification
+
+import java.lang.reflect.Field
 
 class ArchitectApplicationServiceImplTest extends Specification {
 
@@ -18,19 +18,25 @@ class ArchitectApplicationServiceImplTest extends Specification {
     private static final String NEW_LAST_NAME = "newLastName";
     private static final Long EXISTING_ID = 1L;
     private static final Long EXISTING_ID2 = 12L;
-    private static final Long NON_EXISTING_ID = 999L;
+    private static final Long NOT_EXISTING_ID = 999L;
 
-    @Shared
-    private static final Architect ARCHITECT = new Architect(FIRST_NAME, LAST_NAME);
+    private static final Architect ARCHITECT_ONE = new Architect(FIRST_NAME, LAST_NAME);
     private static final Architect ANOTHER_ARCHITECT = new Architect(NEW_FIRST_NAME, NEW_LAST_NAME);
 
     def architectRepository = Mock(ArchitectRepositoryImpl) {
-        load(NON_EXISTING_ID) >> { null };
-        load(EXISTING_ID) >> { ARCHITECT };
-        load(EXISTING_ID2) >> { ANOTHER_ARCHITECT };
-        loadAll() >> { [ARCHITECT, ANOTHER_ARCHITECT] }
+        load(NOT_EXISTING_ID) >> { null }
+        load(EXISTING_ID) >> { ARCHITECT_ONE }
+        load(EXISTING_ID2) >> { ANOTHER_ARCHITECT }
+        loadAll() >> { [ARCHITECT_ONE, ANOTHER_ARCHITECT] }
         remove(EXISTING_ID) >> {};
-        remove(NON_EXISTING_ID) >> { throw new IllegalArgumentException() }
+        remove(NOT_EXISTING_ID) >> { throw new IllegalArgumentException() }
+        save(_ as Architect) >> {
+            ARCHITECT_ONE
+            Field field = Architect.superclass.superclass.getDeclaredField("id");
+            field.setAccessible(true);
+            field.set(ARCHITECT_ONE, EXISTING_ID);
+            return ARCHITECT_ONE;
+        }
     }
 
     def architectApplicationService = new ArchitectApplicationServiceImpl(architectRepository);
@@ -64,20 +70,17 @@ class ArchitectApplicationServiceImplTest extends Specification {
         given:
             ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(null, FIRST_NAME, LAST_NAME);
         when:
-            architectApplicationService.createArchitect(architectBasicDto);
+            CreatedEntityDto createdEntityDto = architectApplicationService.createArchitect(architectBasicDto);
         then:
             noExceptionThrown();
-            1 * architectRepository.save({
-                Architect architect ->
-                    architect.getPersonName().getFirstName() == FIRST_NAME;
-                    architect.getPersonName().getLastName() == LAST_NAME;
-            })
+            createdEntityDto.getId() == EXISTING_ID;
+
     }
 
     def "when passing non existing architect id removeArchitect should throw an exception"() {
         given:
         when:
-            architectApplicationService.removeArchitect(NON_EXISTING_ID);
+            architectApplicationService.removeArchitect(NOT_EXISTING_ID);
         then:
             thrown(IllegalArgumentException);
     }
@@ -103,7 +106,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
     def "when passing non existing architect id getArchitect should return not architect and exception should be thrown"() {
         given:
         when:
-            ArchitectDto architectDto = architectApplicationService.getArchitect(NON_EXISTING_ID);
+            ArchitectDto architectDto = architectApplicationService.getArchitect(NOT_EXISTING_ID);
         then:
             thrown(IllegalArgumentException)
             architectDto == null;
@@ -121,7 +124,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         given:
             ArchitectDto architectDto = new ArchitectDto(NEW_FIRST_NAME, NEW_LAST_NAME, null);
         when:
-            architectApplicationService.updateArchitect(NON_EXISTING_ID, architectDto);
+            architectApplicationService.updateArchitect(NOT_EXISTING_ID, architectDto);
         then:
             thrown(IllegalArgumentException)
     }
@@ -148,6 +151,4 @@ class ArchitectApplicationServiceImplTest extends Specification {
                     architect.getPersonName().getLastName() == NEW_LAST_NAME
             })
     }
-
-
 }

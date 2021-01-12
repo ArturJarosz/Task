@@ -86,13 +86,14 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
      * @param aggregate
      */
     @Override
-    public void save(T aggregate) {
+    public T save(T aggregate) {
         if (!this.entityManager.contains(aggregate)) {
             this.entityManager.persist(aggregate);
         } else {
             this.entityManager.merge(aggregate);
         }
         this.entityManager.flush();
+        return aggregate;
     }
 
     /**
@@ -101,11 +102,12 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
      * @param aggregates
      */
     @Override
-    public void saveAll(Collection<T> aggregates) {
+    public Collection<T> saveAll(Collection<T> aggregates) {
         for (T aggregate : aggregates) {
             this.save(aggregate);
         }
         this.entityManager.flush();
+        return aggregates;
     }
 
     /**
