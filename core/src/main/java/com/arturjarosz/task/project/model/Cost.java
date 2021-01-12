@@ -18,30 +18,58 @@ public class Cost extends AbstractEntity {
 
     private static final long serialVersionUID = 4833869293487851155L;
     @Column(name = "name", nullable = false)
-    private String costName;
+    private String name;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "COST_VALUE"))
-    private Money costValue;
+    private Money value;
 
     @Column(name = "CATEGORY", nullable = false)
     @Enumerated(EnumType.STRING)
-    private CostCategory costCategory;
+    private CostCategory category;
 
     @Column(name = "DATE")
-    private LocalDate costDate;
+    private LocalDate date;
 
-    @Column(name = "NOTE")
-    private String note;
+    @Column(name = "DESCRIPTION")
+    private String description;
+
+    @Column(name = "PROJECT_ID")
+    private Long projectId;
 
     protected Cost() {
         //needed by Hibernate
     }
 
-    public Cost(String costName, Money costValue, CostCategory costCategory, LocalDate costDate) {
-        this.costName = costName;
-        this.costValue = costValue;
-        this.costCategory = costCategory;
-        this.costDate = costDate;
+    public Cost(String name, Money value, CostCategory category, LocalDate date, String description) {
+        this.name = name;
+        this.value = value;
+        this.category = category;
+        this.date = date;
+        this.description = description;
+    }
+
+    public void setValue(Money value) {
+        this.value = value;
+    }
+
+    protected String getName() {
+        return this.name;
+    }
+
+    protected Money getValue() {
+        return this.value;
+    }
+
+    protected CostCategory getCategory() {
+        return this.category;
+    }
+
+    protected LocalDate getDate() {
+        return this.date;
+    }
+
+    protected String getDescription() {
+        return this.description;
     }
 }

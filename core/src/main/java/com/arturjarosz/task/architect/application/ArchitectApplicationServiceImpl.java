@@ -36,7 +36,7 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
 
         validateBasicArchitectDto(architectBasicDto);
         Architect architect = ArchitectDtoMapper.INSTANCE.architectBasicDtoToArchitect(architectBasicDto);
-        this.architectRepository.save(architect);
+        architect = this.architectRepository.save(architect);
 
         LOG.debug("architect created");
         return new CreatedEntityDto(architect.getId());
@@ -73,8 +73,8 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
         validateArchitectDto(architectDto);
         architect.updateArchitectName(architectDto.getFirstName(), architectDto.getLastName());
 
+        architect = this.architectRepository.save(architect);
         LOG.debug("architect with id {} updated", architectId);
-        this.architectRepository.save(architect);
     }
 
     @Override

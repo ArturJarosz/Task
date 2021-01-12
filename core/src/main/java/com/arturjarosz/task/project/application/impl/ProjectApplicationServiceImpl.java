@@ -7,7 +7,7 @@ import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.client.domain.ClientExceptionCodes;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
-import com.arturjarosz.task.project.application.ProjectDtoValidator;
+import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
@@ -25,9 +25,9 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.arturjarosz.task.project.application.ProjectDtoValidator.validateProjectContractDto;
-import static com.arturjarosz.task.project.application.ProjectDtoValidator.validateProjectExistence;
-import static com.arturjarosz.task.project.application.ProjectDtoValidator.validateUpdateProjectDto;
+import static com.arturjarosz.task.project.application.ProjectValidator.validateProjectContractDto;
+import static com.arturjarosz.task.project.application.ProjectValidator.validateProjectExistence;
+import static com.arturjarosz.task.project.application.ProjectValidator.validateUpdateProjectDto;
 
 @ApplicationService
 public class ProjectApplicationServiceImpl implements ProjectApplicationService {
@@ -55,7 +55,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Transactional
     @Override
     public CreatedEntityDto createProject(ProjectCreateDto projectCreateDto) {
-        ProjectDtoValidator.validateProjectBasicDto(projectCreateDto);
+        ProjectValidator.validateProjectBasicDto(projectCreateDto);
         Long clientId = projectCreateDto.getClientId();
         BaseValidator.assertIsTrue(this.clientApplicationService.getClient(clientId) != null,
                 BaseValidator.createMessageCode(ExceptionCodes.NOT_EXISTS, ClientExceptionCodes.CLIENT), clientId);

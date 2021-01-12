@@ -3,18 +3,27 @@ package com.arturjarosz.task.project.application;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import org.springframework.stereotype.Component;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
-public class ProjectDtoValidator {
+/**
+ * Validates project dtos and Project Entities.
+ */
 
-    private ProjectDtoValidator() {
-        throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
+@Component
+public class ProjectValidator {
+
+    private final ProjectRepository projectRepository;
+
+    public ProjectValidator(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
     }
 
     public static void validateProjectBasicDto(ProjectCreateDto projectCreateDto) {
@@ -32,6 +41,11 @@ public class ProjectDtoValidator {
     public static void validateProjectExistence(Project project, Long projectId) {
         assertIsTrue(project != null,
                 createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.PROJECT), projectId);
+    }
+
+    public void validateProjectExistence(Long projectId) {
+        Project project = this.projectRepository.load(projectId);
+        validateProjectExistence(project, projectId);
     }
 
     public static void validateProjectName(String projectName) {

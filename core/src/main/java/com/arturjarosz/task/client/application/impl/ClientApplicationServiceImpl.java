@@ -49,7 +49,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
             client = Client.createPrivateClient(clientBasicDto.getFirstName(),
                     clientBasicDto.getLastName());
         }
-        this.clientRepository.save(client);
+        client = this.clientRepository.save(client);
 
         LOG.debug("client created");
         return new CreatedEntityDto(client.getId());
