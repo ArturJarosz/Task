@@ -16,7 +16,7 @@ import spock.lang.Specification
 import java.lang.reflect.Field
 import java.time.LocalDate
 
-class ProjectCostApplicationServiceImplTest extends Specification {
+class CostApplicationServiceImplTest extends Specification {
 
     private final static Double VALUE = 100.0;
     private final static Long ARCHITECT_ID = 33L;
@@ -62,7 +62,7 @@ class ProjectCostApplicationServiceImplTest extends Specification {
         }
     }
 
-    def projectCostApplicationService = new ProjectCostApplicationServiceImpl(projectValidator, projectRepository,
+    def projectCostApplicationService = new CostApplicationServiceImpl(projectValidator, projectRepository,
             projectQueryService);
 
     def cleanup() {

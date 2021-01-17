@@ -9,7 +9,7 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertN
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
-public class ProjectCostValidator {
+public class CostValidator {
 
     public static void validateCostDto(CostDto costDto) {
         assertNotNull(costDto,

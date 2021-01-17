@@ -4,8 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet author="liquibase" id="create-stage-type-table">
-        <createTable tableName="STAGE_TYPE">
+    <changeSet author="liquibase" id="create-contractor-table">
+        <createTable tableName="CONTRACTOR">
             <column name="ID" type="${long.type}">
                 <constraints nullable="false"/>
             </column>
@@ -15,7 +15,15 @@
             <column name="NAME" type="VARCHAR2(60 ${char.unit})">
                 <constraints nullable="false"/>
             </column>
+            <column name="TYPE" type="VARCHAR2(32 ${char.unit})">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NOTE" type="VARCHAR2(1000 ${char.unit})"/>
+            <column name="EMAIL" type="VARCHAR2(50 ${char.unit})"/>
+            <column name="TELEPHONE" type="VARCHAR2(20 ${char.unit})"/>
+            <column name="JOBS_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
-        <addPrimaryKey tableName="STAGE_TYPE" columnNames="ID" constraintName="PK_STAGE_TYPE"/>
     </changeSet>
 </databaseChangeLog>

@@ -110,7 +110,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         //TODO: TA-62 update conditions on that project can be ended
         Project project = this.projectRepository.load(projectId);
         validateProjectExistence(project, projectId);
-        project.finishProject(projectContractDto.getEndDate());
+        this.projectDomainService.finishProject(projectId, projectContractDto.getEndDate());
         this.projectRepository.save(project);
     }
 

@@ -1,6 +1,6 @@
 package com.arturjarosz.task.project.rest;
 
-import com.arturjarosz.task.project.application.ProjectCostApplicationService;
+import com.arturjarosz.task.project.application.CostApplicationService;
 import com.arturjarosz.task.project.application.dto.CostDto;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.springframework.http.HttpStatus;
@@ -16,30 +16,34 @@ import java.util.List;
 
 @RestController
 @RequestMapping("projects")
-public class ProjectCostRestController {
+public class CostRestController {
 
-    private final ProjectCostApplicationService projectCostApplicationService;
+    private final CostApplicationService costApplicationService;
 
-    public ProjectCostRestController(
-            ProjectCostApplicationService projectCostApplicationService) {
-        this.projectCostApplicationService = projectCostApplicationService;
+    public CostRestController(
+            CostApplicationService costApplicationService) {
+        this.costApplicationService = costApplicationService;
     }
 
     @PostMapping("{projectId}/costs")
     public ResponseEntity<CreatedEntityDto> createCost(@PathVariable("projectId") Long projectId,
                                                        @RequestBody CostDto costDto) {
-        return new ResponseEntity<>(this.projectCostApplicationService.createCost(projectId, costDto),
+        return new ResponseEntity<>(this.costApplicationService.createCost(projectId, costDto),
                 HttpStatus.CREATED);
     }
 
     @GetMapping("costs/{costId}")
     public ResponseEntity<CostDto> getCost(@PathVariable("costId") Long costId) {
-        return new ResponseEntity<CostDto>(this.projectCostApplicationService.getCost(costId), HttpStatus.OK);
+        return new ResponseEntity<CostDto>(this.costApplicationService.getCost(costId), HttpStatus.OK);
     }
 
     @GetMapping("{projectId}/costs")
     public ResponseEntity<List<CostDto>> getCostsForProject(@PathVariable("projectId") Long projectId) {
-        return new ResponseEntity<>(this.projectCostApplicationService.getCosts(projectId), HttpStatus.OK);
+        return new ResponseEntity<>(this.costApplicationService.getCosts(projectId), HttpStatus.OK);
     }
+
+    //TODO: delete
+
+    //TODO: udapte
 
 }

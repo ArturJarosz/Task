@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.application.impl;
 
-import com.arturjarosz.task.project.application.ProjectCostApplicationService;
-import com.arturjarosz.task.project.application.ProjectCostValidator;
+import com.arturjarosz.task.project.application.CostApplicationService;
+import com.arturjarosz.task.project.application.CostValidator;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.dto.CostDto;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
@@ -12,6 +12,7 @@ import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -20,15 +21,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationService
-public class ProjectCostApplicationServiceImpl implements ProjectCostApplicationService {
+public class CostApplicationServiceImpl implements CostApplicationService {
 
     private final ProjectValidator projectValidator;
     private final ProjectRepository projectRepository;
     private final ProjectQueryService projectQueryService;
 
-    public ProjectCostApplicationServiceImpl(ProjectValidator projectValidator,
-                                             ProjectRepository projectRepository,
-                                             ProjectQueryService projectQueryService) {
+    @Autowired
+    public CostApplicationServiceImpl(ProjectValidator projectValidator,
+                                      ProjectRepository projectRepository,
+                                      ProjectQueryService projectQueryService) {
         this.projectValidator = projectValidator;
         this.projectRepository = projectRepository;
         this.projectQueryService = projectQueryService;
@@ -39,7 +41,7 @@ public class ProjectCostApplicationServiceImpl implements ProjectCostApplication
     public CreatedEntityDto createCost(Long projectId,
                                        CostDto costDto) {
         this.projectValidator.validateProjectExistence(projectId);
-        ProjectCostValidator.validateCostDto(costDto);
+        CostValidator.validateCostDto(costDto);
         Project project = this.projectRepository.load(projectId);
         Cost cost = CostDtoMapper.INSTANCE.costCreateDtoToCost(costDto);
         project.addCost(cost);
@@ -50,7 +52,7 @@ public class ProjectCostApplicationServiceImpl implements ProjectCostApplication
     @Override
     public CostDto getCost(Long costId) {
         Cost cost = this.projectQueryService.getCostById(costId);
-        ProjectCostValidator.validateCostExistence(cost, costId);
+        CostValidator.validateCostExistence(cost, costId);
         return CostDtoMapper.INSTANCE.costToCostDto(cost);
     }
 

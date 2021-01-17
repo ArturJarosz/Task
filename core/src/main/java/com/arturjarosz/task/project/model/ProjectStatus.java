@@ -1,4 +1,4 @@
-package com.arturjarosz.task.sharedkernel.model;
+package com.arturjarosz.task.project.model;
 
 public enum ProjectStatus {
     TO_DO,

@@ -28,6 +28,9 @@ public class Installment extends AbstractEntity {
     @Column(name = "PAYMENT_DATE")
     private LocalDate paymentDate;
 
+/*    @OneToOne(mappedBy = "STAGE")
+    private Stage stage;*/
+
     protected Installment() {
         //needed by Hibernate
     }

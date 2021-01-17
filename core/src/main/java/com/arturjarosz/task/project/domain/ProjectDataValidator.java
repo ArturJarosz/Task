@@ -1,22 +1,24 @@
 package com.arturjarosz.task.project.domain;
 
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
-import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
-public class ProjectDataValidator extends BaseValidator<Project> {
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
+
+@Component
+public class ProjectDataValidator {
     public static final String VALIDATED_OBJECT = "project";
 
-    public ProjectDataValidator(Project validatedObject) {
-        super(validatedObject);
+    public ProjectDataValidator() {
     }
 
     public void signingDateNotInFuture(LocalDate signingDate) {
         assertIsTrue(!signingDate.isAfter(LocalDate.now()),
-                BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID, VALIDATED_OBJECT,
+                createMessageCode(ExceptionCodes.NOT_VALID, VALIDATED_OBJECT,
                         ProjectExceptionCodes.SIGNING_DATE));
     }
 
