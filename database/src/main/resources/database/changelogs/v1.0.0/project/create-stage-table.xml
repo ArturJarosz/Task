@@ -21,7 +21,7 @@
             <column name="START_DATE" type="DATE"/>
             <column name="END_DATE" type="DATE"/>
             <column name="DEADLINE" type="DATE"/>
-            <column name="STAGE_NOTE" type="VARCHAR2(1000 ${char.unit})"/>
+            <column name="NOTE" type="VARCHAR2(1000 ${char.unit})"/>
             <column name="PROJECT_ID" type="${long.type}"/>
         </createTable>
         <addPrimaryKey tableName="STAGE" columnNames="ID" constraintName="PK_STAGE"/>
