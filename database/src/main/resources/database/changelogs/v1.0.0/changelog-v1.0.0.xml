@@ -5,7 +5,13 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <include file="create-sequence.xml" relativeToChangelogFile="true"/>
-    <include file="base-tables/base-tables.xml" relativeToChangelogFile="true"/>
+    <include file="architect/architect-tables.xml" relativeToChangelogFile="true"/>
+    <include file="client/client-tables.xml" relativeToChangelogFile="true"/>
+    <include file="project/project-tables.xml" relativeToChangelogFile="true"/>
+    <include file="cost/cost-tables.xml" relativeToChangelogFile="true"/>
+    <include file="installment/installment-tables.xml" relativeToChangelogFile="true"/>
+    <include file="contractor/contractor-tables.xml" relativeToChangelogFile="true"/>
+    <include file="supplier/supplier-tables.xml" relativeToChangelogFile="true"/>
     <changeSet author="liquibase" id="tag-version_1.0.0">
         <tagDatabase tag="v1.0.0"/>
     </changeSet>

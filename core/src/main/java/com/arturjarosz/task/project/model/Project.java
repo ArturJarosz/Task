@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.model;
 
-import com.arturjarosz.task.project.domain.ProjectDataValidator;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 
 import javax.persistence.CascadeType;
@@ -12,18 +11,16 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "PROJECT")
 public class Project extends AbstractAggregateRoot {
     private static final long serialVersionUID = 5437961881026141924L;
-
-    @Transient
-    private final ProjectDataValidator projectDataValidator = new ProjectDataValidator(this);
 
     @Column(name = "NAME", nullable = false)
     private String name;
@@ -49,9 +46,9 @@ public class Project extends AbstractAggregateRoot {
     @Column(name = "NOTE")
     private String note;
 
-/*    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_ID")
-    private Set<Stage> stages;*/
+    private List<Stage> stages;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "PROJECT_TYPE")
@@ -77,23 +74,12 @@ public class Project extends AbstractAggregateRoot {
     }
 
     public void updateProjectDates(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
-        //signing date can't be future date
-        this.projectDataValidator.signingDateNotInFuture(signingDate);
-        //start date can't be before signing date
-        this.projectDataValidator.startDateNotBeforeSigningDate(startDate, signingDate);
         this.signingDate = signingDate;
-        //deadline can't be before start date
-        this.projectDataValidator.deadlineNotBeforeStartDate(startDate, deadline);
         this.startDate = startDate;
         this.deadline = deadline;
     }
 
     public void finishProject(LocalDate endDate) {
-        if (endDate == null) {
-            endDate = LocalDate.now();
-        }
-        //end date can't be before start date
-        this.projectDataValidator.endDateNotBeforeStartDate(this.startDate, endDate);
         this.endDate = endDate;
     }
 
@@ -152,5 +138,26 @@ public class Project extends AbstractAggregateRoot {
 
     public Set<Cost> getCosts() {
         return new HashSet<>(this.costs);
+    }
+
+    public void addStage(Stage stage) {
+        if (this.stages == null) {
+            this.stages = new ArrayList<>();
+        }
+        this.stages.add(stage);
+    }
+
+    public List<Stage> getStages() {
+        return new ArrayList<>(this.stages);
+    }
+
+    public void removeStage(Long stageId) {
+        this.stages.removeIf(stage -> stageId.equals(stage.getId()));
+    }
+
+    public void updateStage(Long stageId, String stageName, String note,
+                            StageType stageType, LocalDate deadline) {
+        Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId() == stageId).findFirst().get();
+        stageToUpdate.update(stageName, note, stageType, deadline);
     }
 }

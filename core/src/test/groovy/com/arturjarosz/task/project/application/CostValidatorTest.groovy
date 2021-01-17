@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 import java.time.LocalDate
 
-class ProjectCostValidatorTest extends Specification {
+class CostValidatorTest extends Specification {
 
     private static final Long COST_ID = 1L;
     private static final String DESCRIPTION = "description";
@@ -22,7 +22,7 @@ class ProjectCostValidatorTest extends Specification {
         given:
             CostDto costDto = null;
         when:
-            ProjectCostValidator.validateCostDto(costDto);
+            CostValidator.validateCostDto(costDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.cost";
@@ -32,7 +32,7 @@ class ProjectCostValidatorTest extends Specification {
         given:
             CostDto costDto = new CostDto(NAME, null, VALUE, DATE, DESCRIPTION);
         when:
-            ProjectCostValidator.validateCostDto(costDto);
+            CostValidator.validateCostDto(costDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.cost.category";
@@ -42,7 +42,7 @@ class ProjectCostValidatorTest extends Specification {
         given:
             CostDto costDto = new CostDto(NAME, CATEGORY_FUEL, VALUE, null, DESCRIPTION);
         when:
-            ProjectCostValidator.validateCostDto(costDto);
+            CostValidator.validateCostDto(costDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.cost.costDate";
@@ -52,7 +52,7 @@ class ProjectCostValidatorTest extends Specification {
         given:
             CostDto costDto = new CostDto(null, CATEGORY_FUEL, VALUE, DATE, DESCRIPTION);
         when:
-            ProjectCostValidator.validateCostDto(costDto);
+            CostValidator.validateCostDto(costDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.cost.name";
@@ -62,7 +62,7 @@ class ProjectCostValidatorTest extends Specification {
         given:
             CostDto costDto = new CostDto("", CATEGORY_FUEL, VALUE, DATE, DESCRIPTION);
         when:
-            ProjectCostValidator.validateCostDto(costDto);
+            CostValidator.validateCostDto(costDto);
         then:
             Exception ex = thrown();
             ex.message == "isEmpty.cost.name";
@@ -72,7 +72,7 @@ class ProjectCostValidatorTest extends Specification {
         given:
             CostDto costDto = new CostDto(NAME, CATEGORY_FUEL, VALUE, DATE, DESCRIPTION);
         when:
-            ProjectCostValidator.validateCostDto(costDto);
+            CostValidator.validateCostDto(costDto);
         then:
             noExceptionThrown();
     }
@@ -81,7 +81,7 @@ class ProjectCostValidatorTest extends Specification {
         given:
             Cost cost = null;
         when:
-            ProjectCostValidator.validateCostExistence(cost, COST_ID);
+            CostValidator.validateCostExistence(cost, COST_ID);
         then:
             Exception ex = thrown();
             ex.message == "notExists.cost";

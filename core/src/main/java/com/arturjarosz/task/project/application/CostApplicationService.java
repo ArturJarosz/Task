@@ -5,7 +5,7 @@ import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
 import java.util.List;
 
-public interface ProjectCostApplicationService {
+public interface CostApplicationService {
     /**
      * Creates Cost from CostDto for project with given projectId and return its Id.
      *
