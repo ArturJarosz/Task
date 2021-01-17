@@ -8,9 +8,11 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
+@SequenceGenerator(name = "sequence_generator", sequenceName = "architect_sequence", allocationSize = 1)
 @Table(name = "ARCHITECT")
 public class Architect extends AbstractAggregateRoot {
     private static final long serialVersionUID = -194851694606886763L;

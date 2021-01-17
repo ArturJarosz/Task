@@ -7,10 +7,12 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Entity
+@SequenceGenerator(name = "sequence_generator", sequenceName = "installment_sequence", allocationSize = 1)
 @Table(name = "INSTALLMENT")
 public class Installment extends AbstractEntity {
 

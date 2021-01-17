@@ -4,6 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <include file="create-supply-sequence.xml" relativeToChangelogFile="true"/>
+    <include file="create-supplier-sequence.xml" relativeToChangelogFile="true"/>
     <include file="create-supply-table.xml" relativeToChangelogFile="true"/>
     <include file="create-supplier-table.xml" relativeToChangelogFile="true"/>
 

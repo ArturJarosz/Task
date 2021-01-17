@@ -12,9 +12,11 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
+@SequenceGenerator(name = "sequence_generator", sequenceName = "client_sequence", allocationSize = 1)
 @Table(name = "CLIENT")
 public class Client extends AbstractAggregateRoot {
 

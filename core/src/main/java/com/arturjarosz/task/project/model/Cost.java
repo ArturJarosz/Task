@@ -9,10 +9,12 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Entity
+@SequenceGenerator(name = "sequence_generator", sequenceName = "cost_sequence", allocationSize = 1)
 @Table(name = "COST")
 public class Cost extends AbstractEntity {
 

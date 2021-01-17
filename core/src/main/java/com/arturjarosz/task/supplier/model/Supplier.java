@@ -1,13 +1,21 @@
 package com.arturjarosz.task.supplier.model;
 
-import com.arturjarosz.task.constructor.model.ConstructorType;
+import com.arturjarosz.task.contractor.model.ContractorType;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Email;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 @Entity
+@SequenceGenerator(name = "sequence_generator", sequenceName = "supplier_sequence", allocationSize = 1)
 @Table(name = "SUPPLIER")
 public class Supplier extends AbstractAggregateRoot {
     private static final long serialVersionUID = 8869912706093861909L;
@@ -17,7 +25,7 @@ public class Supplier extends AbstractAggregateRoot {
 
     @Column(name = "TYPE", nullable = false)
     @Enumerated(EnumType.STRING)
-    private ConstructorType constructorType;
+    private ContractorType contractorType;
 
     @Column(name = "NOTE")
     private String note;
