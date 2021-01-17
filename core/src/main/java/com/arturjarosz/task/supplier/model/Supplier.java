@@ -5,9 +5,17 @@ import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Email;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 @Entity
+@SequenceGenerator(initialValue = 1, name = "idgen")
 @Table(name = "SUPPLIER")
 public class Supplier extends AbstractAggregateRoot {
     private static final long serialVersionUID = 8869912706093861909L;

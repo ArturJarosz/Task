@@ -4,6 +4,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <include file="create-project-sequence.xml" relativeToChangelogFile="true"/>
+    <include file="create-stage-sequence.xml" relativeToChangelogFile="true"/>
+    <include file="create-task-sequence.xml" relativeToChangelogFile="true"/>
     <include file="create-project-table.xml" relativeToChangelogFile="true"/>
     <include file="create-stage-table.xml" relativeToChangelogFile="true"/>
     <include file="create-task-table.xml" relativeToChangelogFile="true"/>

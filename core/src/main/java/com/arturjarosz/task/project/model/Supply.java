@@ -6,9 +6,11 @@ import com.arturjarosz.task.sharedkernel.model.Money;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
+@SequenceGenerator(name = "sequence_generator", sequenceName = "supply_sequence", allocationSize = 1)
 @Table(name = "SUPPLY")
 public class Supply extends AbstractEntity {
 

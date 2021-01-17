@@ -4,9 +4,9 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet author="liquibase" id="create-sequence">
-        <createSequence sequenceName="hibernate_sequence"
-                        startValue="1"/>
+    <changeSet author="liquibase" id="create-contractor-sequence">
+        <createSequence sequenceName="contractor_sequence"
+                        startValue="100" cacheSize="10"/>
     </changeSet>
 
 </databaseChangeLog>

@@ -16,8 +16,10 @@ import java.util.UUID;
 public abstract class AbstractEntity implements Serializable {
     private static final long serialVersionUID = -1221112071690776121L;
 
+    private static final String SEQUENCE_NAME = "sequence_generator";
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQUENCE_NAME)
     private Long id;
 
     @Column(name = "UUID", nullable = false)
