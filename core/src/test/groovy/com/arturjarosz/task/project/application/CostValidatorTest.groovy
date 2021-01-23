@@ -12,6 +12,7 @@ class CostValidatorTest extends Specification {
     private static final Long COST_ID = 1L;
     private static final String DESCRIPTION = "description";
     private static final String NAME = "cost_name";
+    private static final Double NEGATIVE_VALUE = -1.0;
     private static final Double VALUE = 10.0;
 
     private static final CostCategory CATEGORY_FUEL = CostCategory.FUEL;
@@ -75,6 +76,16 @@ class CostValidatorTest extends Specification {
             CostValidator.validateCostDto(costDto);
         then:
             noExceptionThrown();
+    }
+
+    def "when cost has negative value, validateCostDto should throw an exception"() {
+        given:
+            CostDto costDto = new CostDto(NAME, CATEGORY_FUEL, NEGATIVE_VALUE, DATE, DESCRIPTION);
+        when:
+            CostValidator.validateCostDto(costDto);
+        then:
+            Exception ex = thrown();
+            ex.message == "notValid.cost.negative";
     }
 
     def "when cost is null, validateCostExistence should throw an exception with specific error message"() {
