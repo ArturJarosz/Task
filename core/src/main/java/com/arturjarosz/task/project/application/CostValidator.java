@@ -5,6 +5,7 @@ import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -18,6 +19,8 @@ public class CostValidator {
                 .createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.CATEGORY));
         assertNotNull(costDto.getDate(),
                 createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.COST_DATE));
+        assertIsTrue(costDto.getValue() >= 0, createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.COST,
+                ProjectExceptionCodes.NEGATIVE));
         validateCostName(costDto.getName());
     }
 

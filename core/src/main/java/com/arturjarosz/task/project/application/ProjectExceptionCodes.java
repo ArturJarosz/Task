@@ -20,4 +20,6 @@ public class ProjectExceptionCodes {
     public static final String TYPE = "type";
 
     public static final String UPDATE = "update";
+    public static final String NEGATIVE = "negative";
+
 }
