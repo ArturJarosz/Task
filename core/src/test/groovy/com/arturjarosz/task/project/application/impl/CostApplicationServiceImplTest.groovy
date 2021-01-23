@@ -43,11 +43,12 @@ class CostApplicationServiceImplTest extends Specification {
         load(EXISTING_PROJECT_ID) >> {
             return project;
         };
-        save(project) >> {
+        save(_ as Project) >> {
             Field field = Cost.superclass.getDeclaredField("id");
             field.setAccessible(true);
             Cost cost = project.getCosts().iterator().next();
             field.set(cost, COST_ID);
+            return project;
         }
     }
 
@@ -129,6 +130,5 @@ class CostApplicationServiceImplTest extends Specification {
             noExceptionThrown();
             costs.size() == 1;
     }
-
 
 }

@@ -55,7 +55,7 @@ public class ProjectRestController {
     @PostMapping("{projectId}/sign")
     public ResponseEntity<Void> signProjectContract(@PathVariable("projectId") Long projectId, @RequestBody
             ProjectContractDto projectContractDto) {
-        this.projectApplicationService.singProjectContract(projectId, projectContractDto);
+        this.projectApplicationService.signProjectContract(projectId, projectContractDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

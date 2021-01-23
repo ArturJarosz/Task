@@ -6,12 +6,20 @@ import com.arturjarosz.task.sharedkernel.utils.BuilderUtils;
 
 public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
 
-    public ProjectBuilder(Project project) {
+    private static final String NAME = "name";
+    private static final String ID = "id";
+
+    public ProjectBuilder() {
         super(Project.class);
     }
 
+    public ProjectBuilder withId(Long id) {
+        BuilderUtils.setFieldForObject(this.object, ID, id);
+        return this;
+    }
+
     public ProjectBuilder withName(String name) {
-        BuilderUtils.setFieldForObject(this.object, "name", name);
+        BuilderUtils.setFieldForObject(this.object, NAME, name);
         return this;
     }
 

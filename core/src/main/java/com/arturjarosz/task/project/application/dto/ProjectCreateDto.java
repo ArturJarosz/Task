@@ -13,6 +13,10 @@ public class ProjectCreateDto implements Serializable {
     private Long clientId;
     private ProjectType projectType;
 
+    public ProjectCreateDto() {
+
+    }
+
     public ProjectCreateDto(Long id, String name, Long architectId, Long clientId, ProjectType projectType) {
         this.id = id;
         this.name = name;
