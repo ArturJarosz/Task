@@ -56,7 +56,7 @@ public interface ProjectApplicationService {
      * @param projectId
      * @param projectContractDto
      */
-    void singProjectContract(Long projectId, ProjectContractDto projectContractDto);
+    void signProjectContract(Long projectId, ProjectContractDto projectContractDto);
 
     /**
      * Finishes {@link com.arturjarosz.task.project.model.Project}.

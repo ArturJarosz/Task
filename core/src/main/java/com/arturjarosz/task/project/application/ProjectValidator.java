@@ -9,8 +9,8 @@ import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 /**
@@ -27,20 +27,18 @@ public class ProjectValidator {
     }
 
     public static void validateProjectBasicDto(ProjectCreateDto projectCreateDto) {
+        assertNotNull(projectCreateDto, createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT));
         validateProjectName(projectCreateDto.getName());
-        assertIsTrue(projectCreateDto.getClientId() != null, BaseValidator
-                .createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.CLIENT));
-        assertIsTrue(projectCreateDto.getArchitectId() != null, BaseValidator
-                .createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.ARCHITECT));
-        assertIsTrue(projectCreateDto.getProjectType() != null, BaseValidator
-                .createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.TYPE));
+        assertNotNull(projectCreateDto.getClientId(), BaseValidator.createMessageCode(ExceptionCodes.IS_NULL,
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.CLIENT));
+        assertNotNull(projectCreateDto.getArchitectId(), BaseValidator.createMessageCode(ExceptionCodes.IS_NULL,
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.ARCHITECT));
+        assertNotNull(projectCreateDto.getProjectType(), BaseValidator.createMessageCode(ExceptionCodes.IS_NULL,
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.TYPE));
     }
 
     public static void validateProjectExistence(Project project, Long projectId) {
-        assertIsTrue(project != null,
-                createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.PROJECT), projectId);
+        assertNotNull(project, createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.PROJECT), projectId);
     }
 
     public void validateProjectExistence(Long projectId) {
@@ -48,28 +46,26 @@ public class ProjectValidator {
         validateProjectExistence(project, projectId);
     }
 
-    public static void validateProjectName(String projectName) {
-        assertIsTrue(projectName != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.NAME));
-        assertNotEmpty(projectName, ExceptionCodes.EMPTY, ProjectExceptionCodes.PROJECT,
-                ProjectExceptionCodes.NAME);
+    private static void validateProjectName(String projectName) {
+        assertNotNull(projectName, createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT,
+                ProjectExceptionCodes.NAME));
+        assertNotEmpty(projectName, createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.PROJECT,
+                ProjectExceptionCodes.NAME));
     }
 
     public static void validateProjectContractDto(ProjectContractDto projectContractDto) {
-        assertIsTrue(projectContractDto != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.CONTRACT));
-        assertIsTrue(projectContractDto.getSigningDate() != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.SIGNING_DATE));
-        assertIsTrue(projectContractDto.getSigningDate() != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.START_DATE));
-        assertIsTrue(projectContractDto.getSigningDate() != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.DEADLINE));
+        assertNotNull(projectContractDto, createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.CONTRACT));
+        assertNotNull(projectContractDto.getSigningDate(), createMessageCode(ExceptionCodes.IS_NULL,
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.SIGNING_DATE));
+        assertNotNull(projectContractDto.getStartDate(), createMessageCode(ExceptionCodes.IS_NULL,
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.START_DATE));
+        assertNotNull(projectContractDto.getDeadline(), createMessageCode(ExceptionCodes.IS_NULL,
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.DEADLINE));
     }
 
     public static void validateUpdateProjectDto(ProjectDto projectDto) {
+        assertNotNull(projectDto, createMessageCode(ExceptionCodes.IS_NULL,
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.UPDATE));
         validateProjectName(projectDto.getName());
     }
 

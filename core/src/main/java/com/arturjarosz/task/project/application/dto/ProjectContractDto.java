@@ -13,6 +13,10 @@ public class ProjectContractDto implements Serializable {
     private LocalDate endDate;
     //TODO: TA-34 add project value when signing contract
 
+    public ProjectContractDto() {
+
+    }
+
     public ProjectContractDto(Long id, LocalDate signingDate, LocalDate startDate, LocalDate deadline,
                               LocalDate endDate) {
         this.id = id;

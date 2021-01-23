@@ -19,4 +19,5 @@ public class ProjectExceptionCodes {
     public static final String START_DATE = "startDate";
     public static final String TYPE = "type";
 
+    public static final String UPDATE = "update";
 }
