@@ -17,8 +17,6 @@ import java.time.LocalDate;
 public class Installment extends AbstractEntity {
 
     private static final long serialVersionUID = -8420590861357070177L;
-    @Column(name = "NAME", nullable = false)
-    private String name;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "AMOUNT"))
@@ -30,16 +28,15 @@ public class Installment extends AbstractEntity {
     @Column(name = "PAYMENT_DATE")
     private LocalDate paymentDate;
 
-/*    @OneToOne(mappedBy = "STAGE")
-    private Stage stage;*/
+    @Column(name = "DESCRIPTION")
+    private String description;
 
     protected Installment() {
         //needed by Hibernate
     }
 
-    public Installment(String name, Money amount) {
-        this.name = name;
-        this.amount = amount;
+    public Installment(Double amount) {
+        this.amount = new Money(amount);
         this.isPaid = false;
     }
 
@@ -48,8 +45,29 @@ public class Installment extends AbstractEntity {
         this.paymentDate = date;
     }
 
-    public void changeAmount(Money amount) {
-
+    public void update(Double amount, String description, LocalDate date) {
+        this.amount = new Money(amount);
+        this.description = description;
+        this.paymentDate = date;
     }
 
+    public Boolean isPaid() {
+        return this.isPaid;
+    }
+
+    Money getAmount() {
+        return this.amount;
+    }
+
+    Boolean getPaid() {
+        return this.isPaid;
+    }
+
+    LocalDate getPaymentDate() {
+        return this.paymentDate;
+    }
+
+    String getDescription() {
+        return this.description;
+    }
 }

@@ -23,11 +23,15 @@
             <column name="DEADLINE" type="DATE"/>
             <column name="NOTE" type="VARCHAR2(1000 ${char.unit})"/>
             <column name="PROJECT_ID" type="${long.type}"/>
+            <column name="INSTALLMENT_ID" type="${long.type}"/>
         </createTable>
         <addPrimaryKey tableName="STAGE" columnNames="ID" constraintName="PK_STAGE"/>
         <addForeignKeyConstraint baseTableName="STAGE" baseColumnNames="PROJECT_ID"
                                  constraintName="FK_STAGE_PROJECT"
                                  referencedTableName="PROJECT"
                                  referencedColumnNames="ID"/>
+        <!--        <addForeignKeyConstraint baseTableName="STAGE" baseColumnNames="INSTALLMENT_ID"
+                                         constraintName="FK_STAGE_INSTALLMENT"
+                                         referencedTableName="INSTALLMENT" referencedColumnNames="ID"/>-->
     </changeSet>
 </databaseChangeLog>
