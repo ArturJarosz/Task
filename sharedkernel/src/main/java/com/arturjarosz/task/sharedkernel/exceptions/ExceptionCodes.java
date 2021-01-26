@@ -4,6 +4,7 @@ public class ExceptionCodes {
 
     public static final String NOT_FOR_INSTANTIATING = "This class should not be instantiated.";
 
+    public static final String ALREADY_SET = "alreadySet";
     public static final String EMPTY = "isEmpty";
     public static final String IS_NULL = "isNull";
     public static final String NOT_EXISTS = "notExists";

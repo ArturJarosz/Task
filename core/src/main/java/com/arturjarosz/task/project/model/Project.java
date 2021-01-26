@@ -162,4 +162,8 @@ public class Project extends AbstractAggregateRoot {
         Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId() == stageId).findFirst().get();
         stageToUpdate.update(stageName, note, stageType, deadline);
     }
+
+    public void addInstallmentToStage(Long stageId, Installment installment) {
+
+    }
 }
