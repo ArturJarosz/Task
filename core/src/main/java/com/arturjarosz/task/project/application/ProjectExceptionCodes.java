@@ -15,6 +15,7 @@ public class ProjectExceptionCodes {
     public static final String COST_DATE = "costDate";
     public static final String DEADLINE = "deadline";
     public static final String END_DATE = "endDate";
+    public static final String IS_PAID = "isPaid";
     public static final String NAME = "name";
     public static final String PAY_DATE = "payDate";
     public static final String SIGNING_DATE = "signingDate";

@@ -2,7 +2,7 @@ package com.arturjarosz.task.architect.utils;
 
 import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
-import com.arturjarosz.task.sharedkernel.utils.BuilderUtils;
+import com.arturjarosz.task.sharedkernel.utils.TestUtils;
 
 public class ArchitectBuilder extends AbstractBuilder<Architect, ArchitectBuilder> {
 
@@ -13,7 +13,7 @@ public class ArchitectBuilder extends AbstractBuilder<Architect, ArchitectBuilde
     }
 
     public ArchitectBuilder withId(Long id) {
-        BuilderUtils.setFieldForObject(this.object, ID, id);
+        TestUtils.setFieldForObject(this.object, ID, id);
         return this;
     }
 }
