@@ -2,7 +2,7 @@ package com.arturjarosz.task.project.utils;
 
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
-import com.arturjarosz.task.sharedkernel.utils.BuilderUtils;
+import com.arturjarosz.task.sharedkernel.utils.TestUtils;
 
 public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
 
@@ -14,12 +14,12 @@ public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
     }
 
     public ProjectBuilder withId(Long id) {
-        BuilderUtils.setFieldForObject(this.object, ID, id);
+        TestUtils.setFieldForObject(this.object, ID, id);
         return this;
     }
 
     public ProjectBuilder withName(String name) {
-        BuilderUtils.setFieldForObject(this.object, NAME, name);
+        TestUtils.setFieldForObject(this.object, NAME, name);
         return this;
     }
 

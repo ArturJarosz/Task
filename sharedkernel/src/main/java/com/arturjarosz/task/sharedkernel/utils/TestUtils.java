@@ -8,11 +8,11 @@ import java.lang.reflect.Field;
 /**
  * Util class for building Entities for tests and sample data.
  */
-public final class BuilderUtils {
+public final class TestUtils {
 
     public static final String NO_SUCH_FIELD = "No such field {0} for class {1}";
 
-    private BuilderUtils() {
+    private TestUtils() {
         throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
     }
 
@@ -59,6 +59,26 @@ public final class BuilderUtils {
             field = getDeclaredField(theClass, fieldName);
         }
         return field;
+    }
+
+    /**
+     * Returns value of field with fieldName for object of generic type C.
+     *
+     * @param object
+     * @param fieldName
+     * @param <C>
+     * @return
+     */
+    public static <C extends Object> Object getFieldValue(C object, String fieldName) {
+        Field field = getDeclaredField(object.getClass(), fieldName);
+        ensureFieldIsAccessible(field, object);
+        Object fieldValue = null;
+        try {
+            fieldValue = field.get(object);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return fieldValue;
     }
 
     /**

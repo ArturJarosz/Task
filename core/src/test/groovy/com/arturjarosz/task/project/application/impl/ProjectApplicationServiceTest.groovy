@@ -21,7 +21,7 @@ import com.arturjarosz.task.project.utils.ClientBuilder
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto
-import com.arturjarosz.task.sharedkernel.utils.BuilderUtils
+import com.arturjarosz.task.sharedkernel.utils.TestUtils
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -60,7 +60,7 @@ class ProjectApplicationServiceTest extends Specification {
         load(NOT_EXISTING_PROJECT_ID) >> { null }
         loadAll() >> { Collections.singletonList(project) };
         save(_ as Project) >> {
-            BuilderUtils.setFieldForObject(this.project, "id", EXISTING_PROJECT_ID);
+            TestUtils.setFieldForObject(this.project, "id", EXISTING_PROJECT_ID);
             return this.project;
         }
     }
