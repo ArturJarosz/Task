@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "891cc54d-0ebd-43cf-b700-389a44dca3b9",
+    "_postman_id": "fcd56c50-5f30-4d35-bdd5-f51306909386",
     "name": "Task",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -31,37 +31,6 @@
           },
           "response": [
             {
-              "name": "create corporate client",
-              "originalRequest": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"companyName\": \"SomeCompany\",\n    \"clientType\": \"CORPORATE\"    \n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "localhost:8099/clients/",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8099",
-                  "path": [
-                    "clients",
-                    ""
-                  ]
-                }
-              },
-              "_postman_previewlanguage": null,
-              "header": null,
-              "cookie": [],
-              "body": null
-            },
-            {
               "name": "create private client",
               "originalRequest": {
                 "method": "POST",
@@ -89,8 +58,39 @@
               },
               "status": "OK",
               "code": 200,
-              "_postman_previewlanguage": null,
-              "header": null,
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "create corporate client",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"companyName\": \"SomeCompany\",\n    \"clientType\": \"CORPORATE\"    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "localhost:8099/clients/",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8099",
+                  "path": [
+                    "clients",
+                    ""
+                  ]
+                }
+              },
+              "_postman_previewlanguage": "Text",
+              "header": [],
               "cookie": [],
               "body": ""
             }
@@ -166,10 +166,10 @@
                   ]
                 }
               },
-              "_postman_previewlanguage": null,
-              "header": null,
+              "_postman_previewlanguage": "Text",
+              "header": [],
               "cookie": [],
-              "body": null
+              "body": ""
             }
           ]
         },
@@ -511,6 +511,199 @@
                     "{{projectId}}",
                     "stages",
                     ""
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Installment",
+          "item": [
+            {
+              "name": "create installment",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"value\": 10.0\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "stages",
+                    "{{stageId}}",
+                    "installments"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update installment",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"value\": 10.0,\n    \"description\": \"some description\",\n    \"payDate\": \"2020-10-10\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "stages",
+                    "{{stageId}}",
+                    "installments"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "remove installment",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "stages",
+                    "{{stageId}}",
+                    "installments"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "pay installment",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"payDate\": \"2020-10-10\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments/pay",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "stages",
+                    "{{stageId}}",
+                    "installments",
+                    "pay"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get installment for stage",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments/pay",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "stages",
+                    "{{stageId}}",
+                    "installments",
+                    "pay"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get installments for project",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/installments/pay",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "stages",
+                    "installments",
+                    "pay"
                   ]
                 }
               },
