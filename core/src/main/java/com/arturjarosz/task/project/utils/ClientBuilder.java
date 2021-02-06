@@ -2,7 +2,8 @@ package com.arturjarosz.task.project.utils;
 
 import com.arturjarosz.task.client.model.Client;
 import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
-import com.arturjarosz.task.sharedkernel.utils.TestUtils;
+
+import static com.arturjarosz.task.sharedkernel.utils.TestUtils.setFieldForObject;
 
 public class ClientBuilder extends AbstractBuilder<Client, ClientBuilder> {
 
@@ -13,7 +14,7 @@ public class ClientBuilder extends AbstractBuilder<Client, ClientBuilder> {
     }
 
     public ClientBuilder withId(Long id) {
-        TestUtils.setFieldForObject(this.object, ID, id);
+        setFieldForObject(this.object, ID, id);
         return this;
     }
 }

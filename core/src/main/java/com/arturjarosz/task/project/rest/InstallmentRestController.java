@@ -54,7 +54,7 @@ public class InstallmentRestController {
     public ResponseEntity<Void> payForInstallment(@PathVariable("projectId") Long projectId,
                                                   @PathVariable("stageId") Long stageId,
                                                   @RequestBody InstallmentDto installmentDto) {
-        this.installmentApplicationService.payForInstallment(projectId, stageId, installmentDto);
+        this.installmentApplicationService.payInstallment(projectId, stageId, installmentDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
