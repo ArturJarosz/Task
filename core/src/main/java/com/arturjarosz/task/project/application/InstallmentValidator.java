@@ -23,4 +23,11 @@ public class InstallmentValidator {
                 createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.INSTALLMENT,
                         ProjectExceptionCodes.PAY_DATE));
     }
+
+    public static void validateUpdateInstallmentDto(InstallmentDto installmentDto) {
+        assertNotNull(installmentDto, createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.INSTALLMENT));
+        assertNotNull(installmentDto.getValue(),
+                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.INSTALLMENT,
+                        ProjectExceptionCodes.VALUE));
+    }
 }

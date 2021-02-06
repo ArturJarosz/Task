@@ -50,7 +50,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.stageValidator.validateStageNotHavingInstallment(stageId);
         Project project = this.projectRepository.load(projectId);
         stage.setInstallment(installment);
-        this.projectRepository.save(project);
+        project = this.projectRepository.save(project);
         return new CreatedEntityDto(this.getIdForInstallmentInStage(project, stageId));
     }
 
@@ -78,7 +78,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     }
 
     @Override
-    public void payForInstallment(Long projectId, Long stageId, InstallmentDto installmentDto) {
+    public void payInstallment(Long projectId, Long stageId, InstallmentDto installmentDto) {
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateStageExistence(stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);

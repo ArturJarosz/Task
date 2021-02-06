@@ -36,7 +36,7 @@ public interface InstallmentApplicationService {
      */
     void removeInstallment(Long projectId, Long stageId);
 
-    void payForInstallment(Long projectId, Long stageId, InstallmentDto installmentDto);
+    void payInstallment(Long projectId, Long stageId, InstallmentDto installmentDto);
 
     List<InstallmentDto> getInstallmentList(Long projectId);
 
