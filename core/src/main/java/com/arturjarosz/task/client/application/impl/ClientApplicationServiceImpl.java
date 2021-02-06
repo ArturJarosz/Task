@@ -25,7 +25,7 @@ import static com.arturjarosz.task.client.application.ClientValidator.validatePr
 
 @ApplicationService
 public class ClientApplicationServiceImpl implements ClientApplicationService {
-    private final static Logger LOG = LoggerFactory.getLogger(ClientApplicationServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ClientApplicationServiceImpl.class);
 
     private final ClientRepository clientRepository;
     private final ClientValidator clientValidator;
