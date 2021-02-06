@@ -51,9 +51,9 @@ public class InstallmentRestController {
     }
 
     @PostMapping("{projectId}/stages/{stageId}/installments/pay")
-    public ResponseEntity<Void> payForInstallment(@PathVariable("projectId") Long projectId,
-                                                  @PathVariable("stageId") Long stageId,
-                                                  @RequestBody InstallmentDto installmentDto) {
+    public ResponseEntity<Void> payInstallment(@PathVariable("projectId") Long projectId,
+                                               @PathVariable("stageId") Long stageId,
+                                               @RequestBody InstallmentDto installmentDto) {
         this.installmentApplicationService.payInstallment(projectId, stageId, installmentDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
