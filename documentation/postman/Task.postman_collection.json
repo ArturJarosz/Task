@@ -392,6 +392,55 @@
                 }
               },
               "response": []
+            },
+            {
+              "name": "remove cost from project",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/costs/{{costId}}",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "costs",
+                    "{{costId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update cost on project",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"new cost name\",\n    \"category\": \"FUEL\",\n    \"value\": 150.0,\n    \"date\": \"2020-01-01\",\n    \"description\": \"new cost description\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/costs/{{costId}}",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "costs",
+                    "{{costId}}"
+                  ]
+                }
+              },
+              "response": []
             }
           ]
         },
