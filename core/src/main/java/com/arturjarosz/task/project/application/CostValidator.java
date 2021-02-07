@@ -2,15 +2,24 @@ package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.project.application.dto.CostDto;
 import com.arturjarosz.task.project.model.Cost;
+import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import org.springframework.stereotype.Component;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
+@Component
 public class CostValidator {
+
+    private ProjectQueryService projectQueryService;
+
+    public CostValidator(ProjectQueryService projectQueryService) {
+        this.projectQueryService = projectQueryService;
+    }
 
     public static void validateCostDto(CostDto costDto) {
         assertNotNull(costDto,
@@ -34,5 +43,14 @@ public class CostValidator {
                 createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.NAME));
         assertNotEmpty(costName,
                 createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.COST, ProjectExceptionCodes.NAME));
+    }
+
+    public static void validateUpdateCostDto(CostDto costDto) {
+
+    }
+
+    public void validateCostExistence(Long costId) {
+        Cost cost = this.projectQueryService.getCostById(costId);
+        validateCostExistence(cost, costId);
     }
 }

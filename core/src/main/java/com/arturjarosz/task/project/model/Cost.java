@@ -74,4 +74,12 @@ public class Cost extends AbstractEntity {
     protected String getDescription() {
         return this.description;
     }
+
+    public void updateCost(String name, Double value, LocalDate date, String description, CostCategory category) {
+        this.name = name;
+        this.value = new Money(value);
+        this.date = date;
+        this.description = description;
+        this.category = category;
+    }
 }

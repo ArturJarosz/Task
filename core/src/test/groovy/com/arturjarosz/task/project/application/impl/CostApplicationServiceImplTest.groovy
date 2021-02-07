@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application.impl
 
+import com.arturjarosz.task.project.application.CostValidator
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.CostDto
 import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
@@ -63,8 +64,10 @@ class CostApplicationServiceImplTest extends Specification {
         }
     }
 
-    def projectCostApplicationService = new CostApplicationServiceImpl(projectValidator, projectRepository,
-            projectQueryService);
+    def costValidator = new CostValidator(projectQueryService);
+
+    def projectCostApplicationService = new CostApplicationServiceImpl(costValidator, projectValidator,
+            projectRepository, projectQueryService);
 
     def cleanup() {
         //cleaning up project costs
@@ -97,7 +100,8 @@ class CostApplicationServiceImplTest extends Specification {
     def "when passing existing project id and proper costDto, no exception thrown, cost is created and project is saved()"() {
         given:
         when:
-            CreatedEntityDto createdEntityDto = this.projectCostApplicationService.createCost(EXISTING_PROJECT_ID, COST_DTO);
+            CreatedEntityDto createdEntityDto =
+                    this.projectCostApplicationService.createCost(EXISTING_PROJECT_ID, COST_DTO);
         then:
             noExceptionThrown();
             createdEntityDto.getId() == COST_ID;

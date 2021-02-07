@@ -32,4 +32,23 @@ public interface CostApplicationService {
      * @return
      */
     List<CostDto> getCosts(Long projectId);
+
+    /**
+     * Removes Cost with costId from given Project of projectId. If cost or project does not exist, then
+     * exception is thrown.
+     *
+     * @param projectId
+     * @param costId
+     */
+    void deleteCost(Long projectId, Long costId);
+
+    /**
+     * Update Cost of given costId on Project with given projectId according to data in CostDto.
+     * If Project or Cost does not exist new exception is thrown.
+     *
+     * @param projectId
+     * @param costId
+     * @param costDto
+     */
+    void updateCost(Long projectId, Long costId, CostDto costDto);
 }

@@ -23,14 +23,17 @@ import java.util.stream.Collectors;
 @ApplicationService
 public class CostApplicationServiceImpl implements CostApplicationService {
 
+    private CostValidator costValidator;
     private final ProjectValidator projectValidator;
     private final ProjectRepository projectRepository;
     private final ProjectQueryService projectQueryService;
 
     @Autowired
-    public CostApplicationServiceImpl(ProjectValidator projectValidator,
+    public CostApplicationServiceImpl(CostValidator costValidator,
+                                      ProjectValidator projectValidator,
                                       ProjectRepository projectRepository,
                                       ProjectQueryService projectQueryService) {
+        this.costValidator = costValidator;
         this.projectValidator = projectValidator;
         this.projectRepository = projectRepository;
         this.projectQueryService = projectQueryService;
@@ -65,6 +68,27 @@ public class CostApplicationServiceImpl implements CostApplicationService {
                 .map(CostDtoMapper.INSTANCE::costToCostDto)
                 .collect(Collectors.toList())
         );
+    }
+
+    @Override
+    public void deleteCost(Long projectId, Long costId) {
+        this.projectValidator.validateProjectExistence(projectId);
+        this.costValidator.validateCostExistence(costId);
+        Project project = this.projectRepository.load(projectId);
+        Cost cost = this.projectQueryService.getCostById(costId);
+        project.getCosts().remove(cost);
+        this.projectRepository.save(project);
+    }
+
+    @Override
+    public void updateCost(Long projectId, Long costId, CostDto costDto) {
+        this.projectValidator.validateProjectExistence(projectId);
+        this.costValidator.validateCostExistence(costId);
+        CostValidator.validateUpdateCostDto(costDto);
+        Project project = this.projectRepository.load(projectId);
+        project.updateCost(costId, costDto.getName(), costDto.getDate(), costDto.getValue(), costDto.getCategory(),
+                costDto.getDescription());
+        this.projectRepository.save(project);
     }
 
     /**

@@ -5,9 +5,11 @@ import com.arturjarosz.task.project.application.dto.CostDto;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,8 +44,18 @@ public class CostRestController {
         return new ResponseEntity<>(this.costApplicationService.getCosts(projectId), HttpStatus.OK);
     }
 
-    //TODO: delete
+    @PutMapping("{projectId}/costs/{costId}")
+    public ResponseEntity<Void> updateCost(@PathVariable("projectId") Long projectId,
+                                           @PathVariable("costId") Long costId, @RequestBody CostDto costDto) {
+        this.costApplicationService.updateCost(projectId, costId, costDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-    //TODO: udapte
+    @DeleteMapping("{projectId}/costs/{costId}")
+    public ResponseEntity<Void> deleteCost(@PathVariable("projectId") Long projectId,
+                                           @PathVariable("costId") Long costId) {
+        this.costApplicationService.deleteCost(projectId, costId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }
