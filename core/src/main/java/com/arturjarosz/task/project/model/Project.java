@@ -159,11 +159,22 @@ public class Project extends AbstractAggregateRoot {
 
     public void updateStage(Long stageId, String stageName, String note,
                             StageType stageType, LocalDate deadline) {
-        Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId() == stageId).findFirst().get();
+        Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
+                .orElseThrow();
         stageToUpdate.update(stageName, note, stageType, deadline);
     }
 
     public void addInstallmentToStage(Long stageId, Installment installment) {
+        Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
+                .orElseThrow();
+        stageToUpdate.setInstallment(installment);
 
+    }
+
+    public void updateCost(Long costId, String name, LocalDate date, Double value, CostCategory category,
+                           String description) {
+        Cost cost = this.getCosts().stream().filter(costOnProject -> costOnProject.getId().equals(costId)).findFirst()
+                .orElseThrow();
+        cost.updateCost(name, value, date, description, category);
     }
 }
