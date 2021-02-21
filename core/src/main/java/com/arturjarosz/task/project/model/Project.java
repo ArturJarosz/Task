@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.model;
 
+import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 
 import javax.persistence.CascadeType;
@@ -172,9 +173,28 @@ public class Project extends AbstractAggregateRoot {
     }
 
     public void updateCost(Long costId, String name, LocalDate date, Double value, CostCategory category,
-                           String description) {
+                           String note) {
         Cost cost = this.getCosts().stream().filter(costOnProject -> costOnProject.getId().equals(costId)).findFirst()
                 .orElseThrow();
-        cost.updateCost(name, value, date, description, category);
+        cost.updateCost(name, value, date, note, category);
+    }
+
+    public void addTaskToStage(Long stageId, Task task) {
+        Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
+                .orElse(null);
+        stageToUpdate.addTask(task);
+    }
+
+    public void removeTaskFromStage(Long stageId, Long taskId) {
+        Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
+                .orElse(null);
+        stageToUpdate.removeTask(taskId);
+    }
+
+    public void updateTaskOnStage(Long stageId, Long taskId,
+                                  TaskInnerDto taskInnerDto) {
+        Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
+                .orElse(null);
+        stageToUpdate.updateTask(taskId, taskInnerDto);
     }
 }

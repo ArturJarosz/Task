@@ -7,7 +7,7 @@ import java.time.LocalDate
 
 class InstallmentValidatorTest extends Specification {
 
-    private static final String DESCRIPTION = "description";
+    private static final String NOTE = "note";
     private static final Double VALUE = 20.0D;
     private static final LocalDate PAY_DATE = LocalDate.now();
 
@@ -36,7 +36,7 @@ class InstallmentValidatorTest extends Specification {
         given:
             InstallmentDto installmentDto = new InstallmentDto();
             installmentDto.setValue(VALUE);
-            installmentDto.setDescription(DESCRIPTION);
+            installmentDto.setNote(NOTE);
             installmentDto.setPayDate(PAY_DATE);
         when:
             InstallmentValidator.validateCreateInstallmentDto(installmentDto);

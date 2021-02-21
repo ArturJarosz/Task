@@ -33,8 +33,8 @@ public class Cost extends AbstractEntity {
     @Column(name = "DATE")
     private LocalDate date;
 
-    @Column(name = "DESCRIPTION")
-    private String description;
+    @Column(name = "NOTE")
+    private String note;
 
     @Column(name = "PROJECT_ID")
     private Long projectId;
@@ -43,12 +43,12 @@ public class Cost extends AbstractEntity {
         //needed by Hibernate
     }
 
-    public Cost(String name, Money value, CostCategory category, LocalDate date, String description) {
+    public Cost(String name, Money value, CostCategory category, LocalDate date, String note) {
         this.name = name;
         this.value = value;
         this.category = category;
         this.date = date;
-        this.description = description;
+        this.note = note;
     }
 
     public void setValue(Money value) {
@@ -71,15 +71,15 @@ public class Cost extends AbstractEntity {
         return this.date;
     }
 
-    protected String getDescription() {
-        return this.description;
+    protected String getNote() {
+        return this.note;
     }
 
-    public void updateCost(String name, Double value, LocalDate date, String description, CostCategory category) {
+    public void updateCost(String name, Double value, LocalDate date, String note, CostCategory category) {
         this.name = name;
         this.value = new Money(value);
         this.date = date;
-        this.description = description;
+        this.note = note;
         this.category = category;
     }
 }

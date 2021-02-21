@@ -87,7 +87,7 @@ public class CostApplicationServiceImpl implements CostApplicationService {
         CostValidator.validateUpdateCostDto(costDto);
         Project project = this.projectRepository.load(projectId);
         project.updateCost(costId, costDto.getName(), costDto.getDate(), costDto.getValue(), costDto.getCategory(),
-                costDto.getDescription());
+                costDto.getNote());
         this.projectRepository.save(project);
     }
 

@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.model;
 
+import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 
 import javax.persistence.CascadeType;
@@ -9,10 +10,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "stage_sequence", allocationSize = 1)
@@ -23,9 +27,9 @@ public class Stage extends AbstractEntity {
     @Column(name = "NAME")
     private String name;
 
-/*    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "STAGE_ID")
-    private Set<Task> tasks;*/
+    private List<Task> tasks;
 
     @Column(name = "START_DATE")
     private LocalDate startDate;
@@ -73,5 +77,27 @@ public class Stage extends AbstractEntity {
 
     public void removeInstallment() {
         this.installment = null;
+    }
+
+    public void addTask(Task task) {
+        if (this.tasks == null) {
+            this.tasks = new ArrayList<>();
+        }
+        this.tasks.add(task);
+    }
+
+    public List<Task> getTasks() {
+        return new ArrayList<>(this.tasks);
+    }
+
+    public void removeTask(Long taskId) {
+        this.tasks.removeIf(task -> task.getId().equals(taskId));
+    }
+
+    public void updateTask(Long taskId, TaskInnerDto taskInnerDto) {
+        Task taskToUpdate = this.tasks.stream()
+                .filter(task -> task.getId().equals(taskId))
+                .findFirst().orElse(null);
+        taskToUpdate.update(taskInnerDto);
     }
 }

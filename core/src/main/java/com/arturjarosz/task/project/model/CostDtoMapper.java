@@ -30,9 +30,9 @@ public interface CostDtoMapper {
         CostCategory category = cost.getCategory();
         Double value = cost.getValue().getValue().doubleValue();
         LocalDate date = cost.getDate();
-        String description = cost.getDescription();
+        String note = cost.getNote();
 
-        CostDto costDto = new CostDto(name, category, value, date, description);
+        CostDto costDto = new CostDto(name, category, value, date, note);
 
         costDto.setId(cost.getId());
 

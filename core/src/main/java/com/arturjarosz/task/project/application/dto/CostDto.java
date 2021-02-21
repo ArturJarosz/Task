@@ -13,14 +13,14 @@ public class CostDto implements Serializable {
     private CostCategory category;
     private Double value;
     private LocalDate date;
-    private String description;
+    private String note;
 
-    public CostDto(String name, CostCategory category, Double value, LocalDate date, String description) {
+    public CostDto(String name, CostCategory category, Double value, LocalDate date, String note) {
         this.name = name;
         this.category = category;
         this.value = value;
         this.date = date;
-        this.description = description;
+        this.note = note;
     }
 
     public Long getId() {
@@ -55,12 +55,12 @@ public class CostDto implements Serializable {
         this.date = date;
     }
 
-    public String getDescription() {
-        return this.description;
+    public String getNote() {
+        return this.note;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public Double getValue() {

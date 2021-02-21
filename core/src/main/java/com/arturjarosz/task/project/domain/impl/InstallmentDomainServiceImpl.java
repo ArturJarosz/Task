@@ -19,13 +19,13 @@ public class InstallmentDomainServiceImpl implements InstallmentDomainService {
     }
 
     @Override
-    public void updateInstallment(Stage stage, Double value, LocalDate payDate, String description) {
+    public void updateInstallment(Stage stage, Double value, LocalDate payDate, String note) {
         Installment installment = stage.getInstallment();
         if (!installment.isPaid()) {
-            installment.update(value, description, null);
+            installment.update(value, note, null);
         } else {
             InstallmentValidator.validatePayDateNotFuture(payDate);
-            installment.update(value, description, payDate);
+            installment.update(value, note, payDate);
         }
     }
 

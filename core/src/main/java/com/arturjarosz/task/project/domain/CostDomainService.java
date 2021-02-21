@@ -7,8 +7,8 @@ import java.time.LocalDate;
 
 public class CostDomainService {
 
-    public void updateCost(String name, Double value, CostCategory category, LocalDate date, String description,
+    public void updateCost(String name, Double value, CostCategory category, LocalDate date, String note,
                            Cost cost) {
-        cost.updateCost(name, value, date, description, category);
+        cost.updateCost(name, value, date, note, category);
     }
 }

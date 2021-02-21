@@ -9,7 +9,7 @@ public class InstallmentDto implements Serializable {
 
     private Double value;
     private Boolean isPaid;
-    private String description;
+    private String note;
     private LocalDate payDate;
 
     public InstallmentDto() {
@@ -31,12 +31,12 @@ public class InstallmentDto implements Serializable {
         this.isPaid = paid;
     }
 
-    public String getDescription() {
-        return this.description;
+    public String getNote() {
+        return this.note;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public LocalDate getPayDate() {

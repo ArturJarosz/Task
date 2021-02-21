@@ -7,8 +7,9 @@ public class ProjectExceptionCodes {
     public static final String CONTRACT = "contract";
     public static final String COST = "cost";
     public static final String INSTALLMENT = "installment";
-    public static final String STAGE = "stage";
     public static final String PROJECT = "project";
+    public static final String STAGE = "stage";
+    public static final String TASK = "task";
 
     //Fields
     public static final String CATEGORY = "category";

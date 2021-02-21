@@ -28,8 +28,8 @@ public class Installment extends AbstractEntity {
     @Column(name = "PAYMENT_DATE")
     private LocalDate paymentDate;
 
-    @Column(name = "DESCRIPTION")
-    private String description;
+    @Column(name = "NOTE")
+    private String note;
 
     protected Installment() {
         //needed by Hibernate
@@ -45,9 +45,9 @@ public class Installment extends AbstractEntity {
         this.paymentDate = date;
     }
 
-    public void update(Double amount, String description, LocalDate date) {
+    public void update(Double amount, String note, LocalDate date) {
         this.amount = new Money(amount);
-        this.description = description;
+        this.note = note;
         this.paymentDate = date;
     }
 
@@ -67,7 +67,7 @@ public class Installment extends AbstractEntity {
         return this.paymentDate;
     }
 
-    String getDescription() {
-        return this.description;
+    String getNote() {
+        return this.note;
     }
 }

@@ -18,7 +18,7 @@
             <column name="IS_PAID" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
-            <column name="DESCRIPTION" type="VARCHAR2(1000 ${char.unit})"/>
+            <column name="NOTE" type="VARCHAR2(1000 ${char.unit})"/>
             <column name="PAYMENT_DATE" type="${date.type}"/>
         </createTable>
         <addPrimaryKey tableName="INSTALLMENT" columnNames="ID" constraintName="PK_INSTALLMENT"/>
