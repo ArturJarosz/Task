@@ -16,7 +16,7 @@ public interface InstallmentDtoMapper {
         InstallmentDto installmentDto = new InstallmentDto();
         installmentDto.setPaid(installment.isPaid());
         installmentDto.setValue(installment.getAmount().getValue().doubleValue());
-        installmentDto.setDescription(installment.getDescription());
+        installmentDto.setNote(installment.getNote());
         installmentDto.setPayDate(installment.getPaymentDate());
         return installmentDto;
     }

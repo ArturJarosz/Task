@@ -26,15 +26,15 @@ class CostApplicationServiceImplTest extends Specification {
     private final static Long EXISTING_PROJECT_ID = 1L;
     private final static Long NOT_EXISTING_PROJECT_ID = 900L;
     private final static String NAME = "name";
-    private final static String DESCRIPTION = "description";
+    private final static String NOTE = "note";
     private final static String PROJECT_NAME = "project";
 
     private final static LocalDate DATE = LocalDate.now();
     private final static CostCategory CATEGORY_FUEL = CostCategory.FUEL;
     private final static ProjectType PROJECT_TYPE_CONCEPT = ProjectType.CONCEPT;
 
-    static final CostDto COST_DTO = new CostDto(NAME, CATEGORY_FUEL, VALUE, DATE, DESCRIPTION);
-    static final Cost COST = new Cost(NAME, new Money(VALUE), CATEGORY_FUEL, DATE, DESCRIPTION);
+    static final CostDto COST_DTO = new CostDto(NAME, CATEGORY_FUEL, VALUE, DATE, NOTE);
+    static final Cost COST = new Cost(NAME, new Money(VALUE), CATEGORY_FUEL, DATE, NOTE);
 
     @Shared
     Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, PROJECT_TYPE_CONCEPT);

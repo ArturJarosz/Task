@@ -1,10 +1,9 @@
 package com.arturjarosz.task.project.model;
 
+import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
-import com.arturjarosz.task.sharedkernel.model.WorkTime;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -21,12 +20,18 @@ public class Task extends AbstractEntity {
     @Column(name = "NAME", nullable = false)
     private String name;
 
+    /*    //TODO: implement with TA-62
     @Column(name = "STATUS", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private WorkStatus status;
 
+    //TODO: TA-95
     @Embedded
-    private WorkTime workTime;
+    private WorkTime workTime;*/
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TASK_TYPE")
+    private TaskType type;
 
     @Column(name = "START_DATE")
     private LocalDate startDate;
@@ -34,30 +39,20 @@ public class Task extends AbstractEntity {
     @Column(name = "END_DATE")
     private LocalDate endDate;
 
+    @Column(name = "NOTE")
+    private String note;
+
     public Task() {
         //needed by Hibernate
     }
 
-    public Task(String name) {
+    public Task(String name, TaskType taskType) {
         this.name = name;
-    }
-
-    public Task(String name, WorkStatus status, WorkTime workTime) {
-        this.name = name;
-        this.status = status;
-        this.workTime = workTime;
+        this.type = taskType;
     }
 
     public String getName() {
         return this.name;
-    }
-
-    public WorkStatus getStatus() {
-        return this.status;
-    }
-
-    public WorkTime getWorkTime() {
-        return this.workTime;
     }
 
     public LocalDate getStartDate() {
@@ -68,4 +63,11 @@ public class Task extends AbstractEntity {
         return this.endDate;
     }
 
+    public void update(TaskInnerDto taskInnerDto) {
+        this.name = taskInnerDto.getName();
+        this.type = taskInnerDto.getTaskType();
+        this.startDate = taskInnerDto.getStartDate();
+        this.endDate = taskInnerDto.getEndDate();
+        this.note = taskInnerDto.getNote();
+    }
 }

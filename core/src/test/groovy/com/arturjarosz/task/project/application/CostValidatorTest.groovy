@@ -10,7 +10,7 @@ import java.time.LocalDate
 class CostValidatorTest extends Specification {
 
     private static final Long COST_ID = 1L;
-    private static final String DESCRIPTION = "description";
+    private static final String NOTE = "note";
     private static final String NAME = "cost_name";
     private static final Double NEGATIVE_VALUE = -1.0;
     private static final Double VALUE = 10.0;
@@ -31,7 +31,7 @@ class CostValidatorTest extends Specification {
 
     def "when costDto category is null, validateCostDto should thrown an exception with specific error message"() {
         given:
-            CostDto costDto = new CostDto(NAME, null, VALUE, DATE, DESCRIPTION);
+            CostDto costDto = new CostDto(NAME, null, VALUE, DATE, NOTE);
         when:
             CostValidator.validateCostDto(costDto);
         then:
@@ -41,7 +41,7 @@ class CostValidatorTest extends Specification {
 
     def "when costDto date is null, validateCostDto should thrown an exception with specific error message"() {
         given:
-            CostDto costDto = new CostDto(NAME, CATEGORY_FUEL, VALUE, null, DESCRIPTION);
+            CostDto costDto = new CostDto(NAME, CATEGORY_FUEL, VALUE, null, NOTE);
         when:
             CostValidator.validateCostDto(costDto);
         then:
@@ -51,7 +51,7 @@ class CostValidatorTest extends Specification {
 
     def "when costDto name is null, validateCostDto should thrown an exception with specific error message"() {
         given:
-            CostDto costDto = new CostDto(null, CATEGORY_FUEL, VALUE, DATE, DESCRIPTION);
+            CostDto costDto = new CostDto(null, CATEGORY_FUEL, VALUE, DATE, NOTE);
         when:
             CostValidator.validateCostDto(costDto);
         then:
@@ -61,7 +61,7 @@ class CostValidatorTest extends Specification {
 
     def "when costDto name is empty, validateCostDto should thrown an exception with specific error message"() {
         given:
-            CostDto costDto = new CostDto("", CATEGORY_FUEL, VALUE, DATE, DESCRIPTION);
+            CostDto costDto = new CostDto("", CATEGORY_FUEL, VALUE, DATE, NOTE);
         when:
             CostValidator.validateCostDto(costDto);
         then:
@@ -71,7 +71,7 @@ class CostValidatorTest extends Specification {
 
     def "when costData is provided, validateCostDto should not thrown any exception"() {
         given:
-            CostDto costDto = new CostDto(NAME, CATEGORY_FUEL, VALUE, DATE, DESCRIPTION);
+            CostDto costDto = new CostDto(NAME, CATEGORY_FUEL, VALUE, DATE, NOTE);
         when:
             CostValidator.validateCostDto(costDto);
         then:
@@ -80,7 +80,7 @@ class CostValidatorTest extends Specification {
 
     def "when cost has negative value, validateCostDto should throw an exception"() {
         given:
-            CostDto costDto = new CostDto(NAME, CATEGORY_FUEL, NEGATIVE_VALUE, DATE, DESCRIPTION);
+            CostDto costDto = new CostDto(NAME, CATEGORY_FUEL, NEGATIVE_VALUE, DATE, NOTE);
         when:
             CostValidator.validateCostDto(costDto);
         then:

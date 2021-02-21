@@ -59,9 +59,9 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Override
     public CreatedEntityDto createProject(ProjectCreateDto projectCreateDto) {
         ProjectValidator.validateProjectBasicDto(projectCreateDto);
+        this.architectValidator.validateArchitectExistence(projectCreateDto.getArchitectId());
         Long clientId = projectCreateDto.getClientId();
         this.clientValidator.validateClientExistence(clientId);
-        this.architectValidator.validateArchitectExistence(projectCreateDto.getArchitectId());
         Project project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto);
         project = this.projectRepository.save(project);
         return new CreatedEntityDto(project.getId());

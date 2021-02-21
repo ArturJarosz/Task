@@ -19,47 +19,47 @@ class InstallmentDomainServiceImplTest extends Specification {
     private static final LocalDate OLD_DATE = LocalDate.now().minusDays(10);
     private static final LocalDate NEW_DATE = LocalDate.now();
     private static final LocalDate FUTURE_DATE = LocalDate.now().plusDays(10);
-    private static final String NEW_DESCRIPTION = "some description";
-    private static final String OLD_DESCRIPTION = "old description";
+    private static final String NEW_NOTE = "some note";
+    private static final String OLD_NOTE = "old note";
 
     def installmentDomainService = new InstallmentDomainServiceImpl();
 
-    def "updateInstallment should update value and description when updating not paid installment"() {
+    def "updateInstallment should update value and note when updating not paid installment"() {
         given:
             Stage stage = new Stage(STAGE_NAME, STAGE_TYPE);
             Installment installment = new InstallmentBuilder()
                     .withAmount(new Money(OLD_AMOUNT))
-                    .withDescription(OLD_DESCRIPTION)
+                    .withNote(OLD_NOTE)
                     .withPayDate(null)
                     .withIsPaid(false)
                     .build();
             stage.setInstallment(installment);
         when:
-            this.installmentDomainService.updateInstallment(stage, NEW_AMOUNT, OLD_DATE, NEW_DESCRIPTION);
+            this.installmentDomainService.updateInstallment(stage, NEW_AMOUNT, OLD_DATE, NEW_NOTE);
         then:
-            String desc = (String) TestUtils.getFieldValue(installment, "description");
-            desc == NEW_DESCRIPTION;
+            String note = (String) TestUtils.getFieldValue(installment, "note");
+            note == NEW_NOTE;
             Double value = ((Money) TestUtils.getFieldValue(installment, "amount")).value.doubleValue();
             value == NEW_AMOUNT;
             LocalDate date = (LocalDate) TestUtils.getFieldValue(installment, "paymentDate");
             date == null;
     }
 
-    def "updateInstallment should update value, description and date when updating paid installment"() {
+    def "updateInstallment should update value, note and date when updating paid installment"() {
         given:
             Stage stage = new Stage(STAGE_NAME, STAGE_TYPE);
             Installment installment = new InstallmentBuilder()
                     .withAmount(new Money(OLD_AMOUNT))
-                    .withDescription(OLD_DESCRIPTION)
+                    .withNote(OLD_NOTE)
                     .withPayDate(OLD_DATE)
                     .withIsPaid(true)
                     .build();
             stage.setInstallment(installment);
         when:
-            this.installmentDomainService.updateInstallment(stage, NEW_AMOUNT, NEW_DATE, NEW_DESCRIPTION);
+            this.installmentDomainService.updateInstallment(stage, NEW_AMOUNT, NEW_DATE, NEW_NOTE);
         then:
-            String desc = (String) TestUtils.getFieldValue(installment, "description");
-            desc == NEW_DESCRIPTION;
+            String note = (String) TestUtils.getFieldValue(installment, "note");
+            note == NEW_NOTE;
             Double value = ((Money) TestUtils.getFieldValue(installment, "amount")).value.doubleValue();
             value == NEW_AMOUNT;
             LocalDate date = (LocalDate) TestUtils.getFieldValue(installment, "paymentDate");

@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public class InstallmentBuilder extends AbstractBuilder<Installment, InstallmentBuilder> {
 
     public static final String AMOUNT = "amount";
-    public static final String DESCRIPTION = "description";
+    public static final String NOTE = "note";
     public static final String IS_PAID = "isPaid";
     public static final String PAYMENT_DATE = "paymentDate";
 
@@ -18,8 +18,8 @@ public class InstallmentBuilder extends AbstractBuilder<Installment, Installment
         super(Installment.class);
     }
 
-    public InstallmentBuilder withDescription(String description) {
-        TestUtils.setFieldForObject(this.object, DESCRIPTION, description);
+    public InstallmentBuilder withNote(String note) {
+        TestUtils.setFieldForObject(this.object, NOTE, note);
         return this;
     }
 
