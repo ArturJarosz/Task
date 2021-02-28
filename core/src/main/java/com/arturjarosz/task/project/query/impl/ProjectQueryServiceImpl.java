@@ -1,6 +1,8 @@
 package com.arturjarosz.task.project.query.impl;
 
+import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.Cost;
+import com.arturjarosz.task.project.model.QCooperatorJob;
 import com.arturjarosz.task.project.model.QCost;
 import com.arturjarosz.task.project.model.QProject;
 import com.arturjarosz.task.project.model.QStage;
@@ -14,6 +16,7 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
 
     private static final QProject PROJECT = QProject.project;
 
+    private static final QCooperatorJob COOPERATOR_JOB = QCooperatorJob.cooperatorJob;
     private static final QCost COST = QCost.cost;
     private static final QStage STAGE = QStage.stage;
 
@@ -29,6 +32,12 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     @Override
     public Stage getStageById(Long stageId) {
         return this.query().from(STAGE).select(STAGE).where(STAGE.id.eq(stageId)).fetchOne();
+    }
+
+    @Override
+    public CooperatorJob getCooperatorJobByIdForProject(Long cooperatorJobId) {
+        return this.query().from(COOPERATOR_JOB).select(COOPERATOR_JOB).where(COOPERATOR_JOB.id.eq(cooperatorJobId))
+                .fetchOne();
     }
 
 }

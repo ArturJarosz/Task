@@ -1,27 +1,14 @@
 package com.arturjarosz.task.project.model;
 
-import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
-import com.arturjarosz.task.sharedkernel.model.Money;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Table;
 
-@Entity
-@SequenceGenerator(name = "sequence_generator", sequenceName = "supply_sequence", allocationSize = 1)
-@Table(name = "SUPPLY")
-public class Supply extends AbstractEntity {
+@Table(name = "CONTRACTOR_JOB")
+@DiscriminatorValue(value = "SUPPLY")
+public class Supply extends CooperatorJob {
+    private static final long serialVersionUID = 5502825087405032096L;
 
-    private static final long serialVersionUID = -8876043250299302884L;
-    @Column(name = "NAME", nullable = false)
-    private String name;
-
-    @Column(name = "SUPPLIER_ID", nullable = false)
-    private Long supplierId;
-
-    @Embedded
-    private Money value;
-
+    public Supply(String name, Long cooperatorId) {
+        super(name, cooperatorId);
+    }
 }

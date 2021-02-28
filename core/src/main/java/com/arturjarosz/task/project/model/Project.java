@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.model;
 
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
+import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 
 import javax.persistence.CascadeType;
@@ -14,9 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -51,7 +50,7 @@ public class Project extends AbstractAggregateRoot {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_ID")
-    private List<Stage> stages;
+    private Set<Stage> stages;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "PROJECT_TYPE")
@@ -60,6 +59,10 @@ public class Project extends AbstractAggregateRoot {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_ID")
     private Set<Cost> costs;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "PROJECT_ID")
+    private Set<CooperatorJob> cooperatorJobs;
 
     protected Project() {
         //needed by Hibernate
@@ -145,13 +148,13 @@ public class Project extends AbstractAggregateRoot {
 
     public void addStage(Stage stage) {
         if (this.stages == null) {
-            this.stages = new ArrayList<>();
+            this.stages = new HashSet<>();
         }
         this.stages.add(stage);
     }
 
-    public List<Stage> getStages() {
-        return new ArrayList<>(this.stages);
+    public Set<Stage> getStages() {
+        return new HashSet<>(this.stages);
     }
 
     public void removeStage(Long stageId) {
@@ -161,13 +164,13 @@ public class Project extends AbstractAggregateRoot {
     public void updateStage(Long stageId, String stageName, String note,
                             StageType stageType, LocalDate deadline) {
         Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
-                .orElseThrow();
+                .orElseThrow(IllegalArgumentException::new);
         stageToUpdate.update(stageName, note, stageType, deadline);
     }
 
     public void addInstallmentToStage(Long stageId, Installment installment) {
         Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
-                .orElseThrow();
+                .orElseThrow(IllegalArgumentException::new);
         stageToUpdate.setInstallment(installment);
 
     }
@@ -175,26 +178,50 @@ public class Project extends AbstractAggregateRoot {
     public void updateCost(Long costId, String name, LocalDate date, Double value, CostCategory category,
                            String note) {
         Cost cost = this.getCosts().stream().filter(costOnProject -> costOnProject.getId().equals(costId)).findFirst()
-                .orElseThrow();
+                .orElseThrow(IllegalArgumentException::new);
         cost.updateCost(name, value, date, note, category);
     }
 
     public void addTaskToStage(Long stageId, Task task) {
         Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
-                .orElse(null);
+                .orElseThrow(IllegalArgumentException::new);
         stageToUpdate.addTask(task);
     }
 
     public void removeTaskFromStage(Long stageId, Long taskId) {
         Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
-                .orElse(null);
+                .orElseThrow(IllegalArgumentException::new);
         stageToUpdate.removeTask(taskId);
     }
 
     public void updateTaskOnStage(Long stageId, Long taskId,
                                   TaskInnerDto taskInnerDto) {
         Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
-                .orElse(null);
+                .orElseThrow(IllegalArgumentException::new);
         stageToUpdate.updateTask(taskId, taskInnerDto);
+    }
+
+    public void addCooperatorJob(CooperatorJob cooperatorJob) {
+        if (this.cooperatorJobs == null) {
+            this.cooperatorJobs = new HashSet<>();
+        }
+        this.cooperatorJobs.add(cooperatorJob);
+    }
+
+    public Set<CooperatorJob> getCooperatorJobs() {
+        return this.cooperatorJobs;
+    }
+
+    public void removeContractorJob(Long contractorJobId) {
+        this.cooperatorJobs.removeIf(cooperatorJob -> cooperatorJob.getId().equals(contractorJobId));
+    }
+
+    public void updateContractorJob(Long contractorJobId, String name, Double value, String note) {
+        CooperatorJob cooperatorJob = this.cooperatorJobs.stream()
+                .filter(cooperatorJobOnProject -> cooperatorJobOnProject.getId().equals(contractorJobId)).findFirst()
+                .orElseThrow(IllegalArgumentException::new);
+        cooperatorJob.setName(name);
+        cooperatorJob.setValue(value);
+        cooperatorJob.setNote(note);
     }
 }

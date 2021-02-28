@@ -17,6 +17,7 @@ public class BaseConfiguration {
     private final String[] messageSources = {
             "classpath:/i18n/base/base",
             "classpath:/i18n/client/client",
+            "classpath:/i18n/contractor/contractor",
             "classpath:/i18n/architect/architect",
             "classpath:/i18n/project/project"
     };

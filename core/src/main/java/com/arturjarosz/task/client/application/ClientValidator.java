@@ -27,14 +27,14 @@ public class ClientValidator {
 
     public static void validateClientDtoPresence(ClientDto clientDto) {
         assertIsTrue(clientDto != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ClientExceptionCodes.CLIENT));
+                createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT));
     }
 
     public static void validateClientBasicDto(ClientBasicDto clientBasicDto) {
         assertIsTrue(clientBasicDto != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ClientExceptionCodes.CLIENT));
+                createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT));
         assertIsTrue(clientBasicDto.getClientType() != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ClientExceptionCodes.CLIENT,
+                createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT,
                         ClientExceptionCodes.CLIENT_TYPE));
         if (clientBasicDto.getClientType().equals(ClientType.CORPORATE)) {
             validateCorporateClient(clientBasicDto);
@@ -68,7 +68,7 @@ public class ClientValidator {
 
     private static void validateName(String name, String nameExceptionCode) {
         assertIsTrue(name != null,
-                createMessageCode(ExceptionCodes.IS_NULL, ClientExceptionCodes.CLIENT,
+                createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT,
                         nameExceptionCode));
         assertNotEmpty(name, createMessageCode(ExceptionCodes.EMPTY, ClientExceptionCodes.CLIENT, nameExceptionCode));
     }

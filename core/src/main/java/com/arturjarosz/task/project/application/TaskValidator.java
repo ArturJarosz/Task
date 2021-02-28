@@ -26,13 +26,13 @@ public class TaskValidator {
      * @param taskDto
      */
     public static void validateCreateTaskDto(TaskDto taskDto) {
-        assertNotNull(taskDto, createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.TASK));
+        assertNotNull(taskDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK));
         assertNotNull(taskDto.getName(),
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.TASK, ProjectExceptionCodes.NAME));
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK, ProjectExceptionCodes.NAME));
         assertNotEmpty(taskDto.getName(),
                 createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.TASK, ProjectExceptionCodes.NAME));
         assertNotNull(taskDto.getType(),
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.TASK, ProjectExceptionCodes.TYPE));
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK, ProjectExceptionCodes.TYPE));
     }
 
     public void validateExistenceOfTaskInStage(Long stageId, Long taskId) {

@@ -4,8 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet author="liquibase" id="create-supplier-sequence">
-        <createSequence sequenceName="supplier_sequence"
+    <changeSet author="liquibase" id="create-cooperatorData-sequence">
+        <createSequence sequenceName="cooperator_sequence"
                         startValue="100" cacheSize="10"/>
     </changeSet>
 

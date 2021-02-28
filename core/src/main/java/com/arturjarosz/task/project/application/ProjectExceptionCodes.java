@@ -5,6 +5,7 @@ public class ProjectExceptionCodes {
     public static final String ARCHITECT = "architect";
     public static final String CLIENT = "client";
     public static final String CONTRACT = "contract";
+    public static final String CONTRACTOR_JOB = "contractorJob";
     public static final String COST = "cost";
     public static final String INSTALLMENT = "installment";
     public static final String PROJECT = "project";
@@ -13,6 +14,7 @@ public class ProjectExceptionCodes {
 
     //Fields
     public static final String CATEGORY = "category";
+    public static final String CONTRACTOR = "contractor";
     public static final String COST_DATE = "costDate";
     public static final String DEADLINE = "deadline";
     public static final String END_DATE = "endDate";
@@ -26,5 +28,4 @@ public class ProjectExceptionCodes {
 
     public static final String UPDATE = "update";
     public static final String NEGATIVE = "negative";
-
 }
