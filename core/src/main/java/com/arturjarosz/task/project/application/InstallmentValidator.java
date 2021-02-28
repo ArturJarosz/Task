@@ -12,9 +12,9 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 public class InstallmentValidator {
 
     public static void validateCreateInstallmentDto(InstallmentDto installmentDto) {
-        assertNotNull(installmentDto, createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.INSTALLMENT));
+        assertNotNull(installmentDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.INSTALLMENT));
         assertNotNull(installmentDto.getValue(),
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.INSTALLMENT,
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.INSTALLMENT,
                         ProjectExceptionCodes.VALUE));
     }
 
@@ -25,9 +25,9 @@ public class InstallmentValidator {
     }
 
     public static void validateUpdateInstallmentDto(InstallmentDto installmentDto) {
-        assertNotNull(installmentDto, createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.INSTALLMENT));
+        assertNotNull(installmentDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.INSTALLMENT));
         assertNotNull(installmentDto.getValue(),
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.INSTALLMENT,
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.INSTALLMENT,
                         ProjectExceptionCodes.VALUE));
     }
 }

@@ -54,13 +54,13 @@ public class StageValidator {
      * @param stageDto
      */
     private static void validateBasicDate(StageDto stageDto) {
-        assertNotNull(stageDto, createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.STAGE));
+        assertNotNull(stageDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE));
         assertNotNull(stageDto.getName(),
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.NAME));
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.NAME));
         assertNotEmpty(stageDto.getName(),
                 createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.NAME));
         assertNotNull(stageDto.getStageType(),
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TYPE));
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TYPE));
     }
 
     /**

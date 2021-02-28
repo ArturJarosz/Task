@@ -59,7 +59,7 @@ public class Address extends AbstractValueObject<Address> implements ValueObject
 
     public void setCity(String city) {
         assertNotEmpty(city, BaseValidator
-                .createMessageCode(ExceptionCodes.IS_NULL, ModelExceptionCodes.ADDRESS,
+                .createMessageCode(ExceptionCodes.NULL, ModelExceptionCodes.ADDRESS,
                         ModelExceptionCodes.CITY));
         this.city = city;
     }

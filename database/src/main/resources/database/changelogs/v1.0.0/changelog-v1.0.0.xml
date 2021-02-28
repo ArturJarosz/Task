@@ -9,8 +9,7 @@
     <include file="project/project-tables.xml" relativeToChangelogFile="true"/>
     <include file="cost/cost-tables.xml" relativeToChangelogFile="true"/>
     <include file="installment/installment-tables.xml" relativeToChangelogFile="true"/>
-    <include file="contractor/contractor-tables.xml" relativeToChangelogFile="true"/>
-    <include file="supplier/supplier-tables.xml" relativeToChangelogFile="true"/>
+    <include file="cooperatorData/cooperatorData-tables.xml" relativeToChangelogFile="true"/>
     <changeSet author="liquibase" id="tag-version_1.0.0">
         <tagDatabase tag="v1.0.0"/>
     </changeSet>

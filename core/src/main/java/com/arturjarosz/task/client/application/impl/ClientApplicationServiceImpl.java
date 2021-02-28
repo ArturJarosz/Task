@@ -38,7 +38,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     @Transactional
     @Override
     public CreatedEntityDto createClient(ClientBasicDto clientBasicDto) {
-        LOG.debug("creating client");
+        LOG.debug("Creating client");
 
         validateClientBasicDto(clientBasicDto);
         ClientType clientType = clientBasicDto.getClientType();
@@ -51,7 +51,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         }
         client = this.clientRepository.save(client);
 
-        LOG.debug("client created");
+        LOG.debug("Client created");
         return new CreatedEntityDto(client.getId());
     }
 

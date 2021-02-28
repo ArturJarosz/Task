@@ -23,11 +23,11 @@ public class CostValidator {
 
     public static void validateCostDto(CostDto costDto) {
         assertNotNull(costDto,
-                BaseValidator.createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.COST));
+                BaseValidator.createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST));
         assertNotNull(costDto.getCategory(), BaseValidator
-                .createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.CATEGORY));
+                .createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.CATEGORY));
         assertNotNull(costDto.getDate(),
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.COST_DATE));
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.COST_DATE));
         assertIsTrue(costDto.getValue() >= 0, createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.COST,
                 ProjectExceptionCodes.NEGATIVE));
         validateCostName(costDto.getName());
@@ -40,13 +40,13 @@ public class CostValidator {
 
     private static void validateCostName(String costName) {
         assertNotNull(costName,
-                createMessageCode(ExceptionCodes.IS_NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.NAME));
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.NAME));
         assertNotEmpty(costName,
                 createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.COST, ProjectExceptionCodes.NAME));
     }
 
     public static void validateUpdateCostDto(CostDto costDto) {
-
+        //TODO: what data should be updatable on Cost?
     }
 
     public void validateCostExistence(Long costId) {
