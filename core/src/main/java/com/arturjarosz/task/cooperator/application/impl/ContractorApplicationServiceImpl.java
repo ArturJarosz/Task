@@ -20,9 +20,10 @@ import static com.arturjarosz.task.cooperator.application.ContractorValidator.va
 
 @ApplicationService
 public class ContractorApplicationServiceImpl implements ContractorApplicationService {
-    public static final Logger LOG = LoggerFactory.getLogger(ContractorApplicationService.class);
-    private CooperatorRepository cooperatorRepository;
-    private ContractorValidator contractorValidator;
+    private static final Logger LOG = LoggerFactory.getLogger(ContractorApplicationServiceImpl.class);
+
+    private final CooperatorRepository cooperatorRepository;
+    private final ContractorValidator contractorValidator;
 
     @Autowired
     public ContractorApplicationServiceImpl(CooperatorRepository cooperatorRepository,
@@ -36,7 +37,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     public CreatedEntityDto createContractor(ContractorDto contractorDto) {
         LOG.debug("Creating Contractor.");
         validateCreateContractorDto(contractorDto);
-        Cooperator cooperator = ContractorDtoMapper.INSTANCE.createContractorDtoToContractor(contractorDto);
+        Cooperator cooperator = ContractorDtoMapper.INSTANCE.createContractorDtoToCooperator(contractorDto);
         this.cooperatorRepository.save(cooperator);
         LOG.debug("Contractor created.");
         return new CreatedEntityDto(cooperator.getId());
@@ -70,7 +71,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
         LOG.debug("Loading Contractor with id {}.", contractorId);
         this.contractorValidator.validateContractorExistence(contractorId);
         Cooperator cooperator = this.cooperatorRepository.load(contractorId);
-        ContractorDto contractorDto = ContractorDtoMapper.INSTANCE.cooperatorToContractor(cooperator);
+        ContractorDto contractorDto = ContractorDtoMapper.INSTANCE.cooperatorToContractorDto(cooperator);
         LOG.debug("Contractor with id {} loaded", contractorId);
         return contractorDto;
     }

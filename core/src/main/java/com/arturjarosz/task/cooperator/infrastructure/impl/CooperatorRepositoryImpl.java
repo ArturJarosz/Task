@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CooperatorRepositoryImpl extends GenericJpaRepositoryImpl<Cooperator, QCooperator>
         implements CooperatorRepository {
 
-    private final static QCooperator COOPERATOR = QCooperator.cooperator;
+    private static final QCooperator COOPERATOR = QCooperator.cooperator;
 
     public CooperatorRepositoryImpl() {
         super(COOPERATOR);
