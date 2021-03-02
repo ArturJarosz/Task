@@ -13,7 +13,7 @@ public class Email extends AbstractValueObject<Email> implements ValueObject<Ema
     private static final long serialVersionUID = -8861608245148282355L;
 
     private static final Pattern EMAIL_PATTERN = Pattern
-            .compile("^[\\w+_.?^-]+@+[\\w]+.+([\\w]{2,})");
+            .compile("^[\\w+_.?^-]+@+[\\w]+\\.+([\\w]{2,})");
 
     @Column(name = "EMAIL")
     private String value;
