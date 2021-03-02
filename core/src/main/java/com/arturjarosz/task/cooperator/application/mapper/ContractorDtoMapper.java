@@ -13,7 +13,7 @@ public interface ContractorDtoMapper {
 
     ContractorDtoMapper INSTANCE = Mappers.getMapper(ContractorDtoMapper.class);
 
-    default Cooperator createContractorDtoToContractor(ContractorDto contractorDto) {
+    default Cooperator createContractorDtoToCooperator(ContractorDto contractorDto) {
         return Cooperator.createContractor(contractorDto.getName(), contractorDto.getCategory());
     }
 
@@ -23,7 +23,7 @@ public interface ContractorDtoMapper {
     @Mapping(source = "telephone", target = "telephone")
     @Mapping(source = "category", target = "category", qualifiedByName = "cooperatorCategoryToContractorCategory")
     @Mapping(source = "value", target = "jobsValue")
-    ContractorDto cooperatorToContractor(Cooperator cooperator);
+    ContractorDto cooperatorToContractorDto(Cooperator cooperator);
 
     @Named("cooperatorCategoryToContractorCategory")
     default CooperatorCategory.ContractorCategory cooperatorCategoryToContractorCategory(

@@ -16,7 +16,7 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 @Component
 public class ContractorValidator {
 
-    private CooperatorRepository cooperatorRepository;
+    private final CooperatorRepository cooperatorRepository;
 
     public ContractorValidator(CooperatorRepository cooperatorRepository) {
         this.cooperatorRepository = cooperatorRepository;

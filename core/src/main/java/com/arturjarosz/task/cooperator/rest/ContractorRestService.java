@@ -51,7 +51,7 @@ public class ContractorRestService {
         return new ResponseEntity<>(this.contractorApplicationService.getContractor(contractorId), HttpStatus.OK);
     }
 
-    @GetMapping()
+    @GetMapping("")
     public ResponseEntity<List<ContractorDto>> getBasicContractors() {
         return new ResponseEntity<>(this.contractorApplicationService.getBasicContractors(), HttpStatus.OK);
     }
