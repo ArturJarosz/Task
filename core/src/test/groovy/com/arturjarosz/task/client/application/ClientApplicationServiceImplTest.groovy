@@ -43,12 +43,17 @@ class ClientApplicationServiceImplTest extends Specification {
     private static final Long EXISTING_CORPORATE_ID = 2L;
 
     @Shared
-    private static final Client CLIENT_PRIVATE = new Client(new PersonName(FIRST_NAME, LAST_NAME), COMPANY_NAME, ClientType.PRIVATE)
+    private static final Client CLIENT_PRIVATE = new Client(new PersonName(FIRST_NAME, LAST_NAME), COMPANY_NAME,
+            ClientType.PRIVATE)
     @Shared
-    private static final Client CLIENT_CORPORATE = new Client(new PersonName(FIRST_NAME, LAST_NAME), COMPANY_NAME, ClientType.CORPORATE)
-    private static final ClientBasicDto CLIENT_WITH_NO_TYPE = new ClientBasicDto(null, null, FIRST_NAME, LAST_NAME, COMPANY_NAME);
-    private static final ClientBasicDto PRIVATE_CLIENT_DTO = new ClientBasicDto(null, ClientType.PRIVATE, FIRST_NAME, LAST_NAME, null);
-    private static final ClientBasicDto CORPORATE_CLIENT_DTO = new ClientBasicDto(null, ClientType.CORPORATE, null, null, COMPANY_NAME);
+    private static final Client CLIENT_CORPORATE = new Client(new PersonName(FIRST_NAME, LAST_NAME), COMPANY_NAME,
+            ClientType.CORPORATE)
+    private static final ClientBasicDto CLIENT_WITH_NO_TYPE = new ClientBasicDto(null, null, FIRST_NAME, LAST_NAME,
+            COMPANY_NAME);
+    private static final ClientBasicDto PRIVATE_CLIENT_DTO = new ClientBasicDto(null, ClientType.PRIVATE, FIRST_NAME,
+            LAST_NAME, null);
+    private static final ClientBasicDto CORPORATE_CLIENT_DTO = new ClientBasicDto(null, ClientType.CORPORATE, null,
+            null, COMPANY_NAME);
 
     def setupSpec() {
         def address = new Address(POST_CODE, CITY, STREET, HOUSE, FLAT);
@@ -74,7 +79,8 @@ class ClientApplicationServiceImplTest extends Specification {
     ClientValidator clientValidator = Stub {
         validateClientBasicDto(null) >> { throw new IllegalArgumentException() }
     }
-    def clientApplicationServiceImpl = new ClientApplicationServiceImpl(clientRepository, clientValidator);
+    def clientApplicationServiceImpl = new ClientApplicationServiceImpl(clientRepository, clientValidator,
+            projectQueryService);
 
 
     def "client should not be saved when ClientBasicDto is null"() {
@@ -304,7 +310,8 @@ class ClientApplicationServiceImplTest extends Specification {
         given:
             def address = new AddressDto(CITY, POST_CODE, STREET, HOUSE, FLAT);
             def contact = new ContactDto(address, EMAIL, TELEPHONE);
-            def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, new ClientAdditionalDataDto(NEW_NOTE, null), ClientType.PRIVATE);
+            def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact,
+                    new ClientAdditionalDataDto(NEW_NOTE, null), ClientType.PRIVATE);
         when:
             clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:
@@ -319,7 +326,8 @@ class ClientApplicationServiceImplTest extends Specification {
         given:
             def address = new AddressDto(CITY, POST_CODE, STREET, HOUSE, FLAT);
             def contact = new ContactDto(address, EMAIL, TELEPHONE);
-            def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, new ClientAdditionalDataDto(null, null), ClientType.PRIVATE);
+            def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, new ClientAdditionalDataDto(null, null),
+                    ClientType.PRIVATE);
         when:
             clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:

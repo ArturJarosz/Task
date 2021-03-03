@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ClientRepositoryImpl extends GenericJpaRepositoryImpl<Client, QClient>
         implements ClientRepository {
 
-    private final static QClient CLIENT = QClient.client;
+    private static final QClient CLIENT = QClient.client;
 
     public ClientRepositoryImpl() {
         super(CLIENT);
