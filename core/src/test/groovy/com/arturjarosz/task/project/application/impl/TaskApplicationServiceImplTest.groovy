@@ -32,7 +32,7 @@ class TaskApplicationServiceImplTest extends Specification {
         load(NOT_EXISTING_PROJECT_ID) >> null;
         load(EXISTING_PROJECT_ID) >> project;
         save(_ as Project) >> {
-            Task task = project.getStages().get(0).getTasks().get(0);
+            Task task = project.getStages().iterator().next().getTasks().get(0);
             TestUtils.setFieldForObject(task, "id", TASK_ID);
             return project;
         }

@@ -17,6 +17,7 @@ import com.arturjarosz.task.project.domain.impl.ProjectDomainServiceImpl
 import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
+import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.utils.ClientBuilder
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
@@ -44,7 +45,7 @@ class ProjectApplicationServiceTest extends Specification {
 
     private static final ProjectType PROJECT_TYPE_CONCEPT = ProjectType.CONCEPT;
     private static final Architect ARCHITECT = new ArchitectBuilder().withId(EXISTING_ARCHITECT_ID).build();
-    private static final Client CLIENT = new ClientBuilder().withId(EXISTING_CLIENT_ID).build();
+    private static final Client EXISTING_CLIENT = new ClientBuilder().withId(EXISTING_CLIENT_ID).build();
     private Project project = new ProjectBuilder().withName(PROJECT_NAME).build();
 
     def clientApplicationService = Mock(ClientApplicationServiceImpl) {
@@ -69,12 +70,15 @@ class ProjectApplicationServiceTest extends Specification {
         load(NOT_EXISTING_ARCHITECT_ID) >> { null };
         load(EXISTING_ARCHITECT_ID) >> { this.ARCHITECT };
     }
+    def projectQueryService = Mock(ProjectQueryServiceImpl) {
+
+    }
     def architectValidator = new ArchitectValidator(architectRepository);
     def clientRepository = Mock(ClientRepositoryImpl) {
         load(NOT_EXISTING_CLIENT_ID) >> { null };
-        load(EXISTING_CLIENT_ID) >> { CLIENT }
+        load(EXISTING_CLIENT_ID) >> { EXISTING_CLIENT }
     }
-    def clientValidator = new ClientValidator(clientRepository);
+    def clientValidator = new ClientValidator(clientRepository, projectQueryService);
     def projectValidator = new ProjectValidator(projectRepository);
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator);

@@ -5,8 +5,8 @@ import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
 import com.arturjarosz.task.sharedkernel.utils.TestUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
 
@@ -29,7 +29,7 @@ public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
     }
 
     public ProjectBuilder withStage(Stage stage) {
-        List<Stage> stages = new ArrayList<>();
+        Set<Stage> stages = new HashSet<>();
         stages.add(stage);
         TestUtils.setFieldForObject(this.object, STAGES, stages);
         return this;
