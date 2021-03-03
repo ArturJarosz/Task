@@ -53,8 +53,8 @@ class InstallmentApplicationServiceImplTest extends Specification {
         load(EXISTING_PROJECT_ID) >> { project };
         load(EXISTING_PROJECT_WITH_INSTALLMENT_ID) >> { projectWithInstallment };
         save(_ as Project) >> {
-            List<Stage> stages = this.project.getStages();
-            Installment installmentFromStage = stages.get(0).getInstallment();
+            Set<Stage> stages = this.project.getStages();
+            Installment installmentFromStage = stages.iterator().next().getInstallment();
             if (installmentFromStage != null) {
                 TestUtils.setFieldForObject(installmentFromStage, "id", INSTALLMENT_ID);
             }
@@ -171,8 +171,9 @@ class InstallmentApplicationServiceImplTest extends Specification {
             noExceptionThrown();
             1 * this.projectRepository.save({
                 Project projectResult ->
-                    List<Stage> stagesFromProject = projectResult.getStages();
-                    Installment installmentFromUpdate = stagesFromProject[0].getInstallment();
+                    Set<Stage> stagesFromProject = projectResult.getStages();
+                    Installment installmentFromUpdate = stagesFromProject.iterator().next().getInstallment();
+                    installmentFromUpdate.getAmount().getValue().doubleValue() == NEW_VALUE;
             });
     }
 
@@ -202,8 +203,8 @@ class InstallmentApplicationServiceImplTest extends Specification {
         then:
             1 * this.projectRepository.save({
                 Project projectResult ->
-                    List<Stage> stagesFromProject = projectResult.getStages();
-                    stagesFromProject[0].getInstallment() == null;
+                    Set<Stage> stagesFromProject = projectResult.getStages();
+                    stagesFromProject.iterator().next().getInstallment() == null;
             })
     }
 
@@ -254,8 +255,8 @@ class InstallmentApplicationServiceImplTest extends Specification {
             noExceptionThrown();
             1 * this.projectRepository.save({
                 Project projectResult ->
-                    List<Stage> stagesFromProject = projectResult.getStages();
-                    stagesFromProject[0].getInstallment().isPaid();
+                    Set<Stage> stagesFromProject = projectResult.getStages();
+                    stagesFromProject.iterator().next().getInstallment().isPaid();
             })
     }
 

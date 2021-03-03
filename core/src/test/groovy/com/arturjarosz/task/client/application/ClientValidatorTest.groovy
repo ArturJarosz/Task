@@ -5,6 +5,7 @@ import com.arturjarosz.task.client.application.dto.ClientBasicDto
 import com.arturjarosz.task.client.infrastructure.repository.impl.ClientRepositoryImpl
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
+import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.PersonName
 import spock.lang.Shared
@@ -28,7 +29,11 @@ class ClientValidatorTest extends Specification {
         load(EXISTING_ID) >> { CLIENT };
     }
 
-    def clientValidator = new ClientValidator(clientRepository);
+    def projectQueryService = Mock(ProjectQueryServiceImpl) {
+
+    }
+
+    def clientValidator = new ClientValidator(clientRepository, projectQueryService);
 
 
     def "Should not throw any exception when private client data provided"() {

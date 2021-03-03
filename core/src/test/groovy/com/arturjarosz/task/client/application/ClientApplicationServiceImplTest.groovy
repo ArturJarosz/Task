@@ -5,6 +5,7 @@ import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
 import com.arturjarosz.task.client.infrastructure.repository.impl.ClientRepositoryImpl
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
+import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.Address
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto
@@ -74,6 +75,10 @@ class ClientApplicationServiceImplTest extends Specification {
             field.set(CLIENT_PRIVATE, EXISTING_PRIVATE_ID);
             return CLIENT_PRIVATE
         }
+    }
+
+    def projectQueryService = Mock(ProjectQueryServiceImpl) {
+
     }
 
     ClientValidator clientValidator = Stub {
