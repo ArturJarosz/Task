@@ -2,7 +2,10 @@ package com.arturjarosz.task.client.application.dto;
 
 import com.arturjarosz.task.client.model.ClientType;
 
-public class ClientBasicDto {
+import java.io.Serializable;
+
+public class ClientBasicDto implements Serializable {
+    private static final long serialVersionUID = -2559284074492299009L;
 
     private Long id;
     private ClientType clientType;

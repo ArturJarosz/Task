@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("clients")
 public class ClientRestController {
 
-    private ClientApplicationService clientApplicationService;
+    private final ClientApplicationService clientApplicationService;
 
     public ClientRestController(
             ClientApplicationService clientApplicationService) {

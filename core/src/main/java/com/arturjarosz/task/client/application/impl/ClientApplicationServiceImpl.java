@@ -8,6 +8,7 @@ import com.arturjarosz.task.client.application.mapper.ClientDtoMapper;
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository;
 import com.arturjarosz.task.client.model.Client;
 import com.arturjarosz.task.client.model.ClientType;
+import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
@@ -29,10 +30,13 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
     private final ClientRepository clientRepository;
     private final ClientValidator clientValidator;
+    private final ProjectQueryService projectQueryService;
 
-    public ClientApplicationServiceImpl(ClientRepository clientRepository, ClientValidator clientValidator) {
+    public ClientApplicationServiceImpl(ClientRepository clientRepository, ClientValidator clientValidator,
+                                        ProjectQueryService projectQueryService) {
         this.clientRepository = clientRepository;
         this.clientValidator = clientValidator;
+        this.projectQueryService = projectQueryService;
     }
 
     @Transactional
@@ -58,28 +62,29 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     @Transactional
     @Override
     public void removeClient(Long clientId) {
-        //TODO: check is client has project - if has, can't be removed
-        LOG.debug("removing client with id {}", clientId);
+        LOG.debug("Removing Client with id {}.", clientId);
 
         this.clientValidator.validateClientExistence(clientId);
+        this.clientValidator.validateClientHasNoProjects(clientId);
         this.clientRepository.remove(clientId);
 
-        LOG.debug("client with id {} removed", clientId);
+        LOG.debug("Client with id {} removed.", clientId);
     }
 
     @Override
     public ClientDto getClient(Long clientId) {
+        LOG.debug("Loading Client with id {}", clientId);
         Client client = this.clientRepository.load(clientId);
         validateClientExistence(client, clientId);
 
-        LOG.debug("client with id {} loaded", clientId);
+        LOG.debug("Client with id {} loaded.", clientId);
         return ClientDtoMapper.INSTANCE.clientToClientDto(client);
     }
 
     @Transactional
     @Override
     public void updateClient(Long clientId, ClientDto clientDto) {
-        LOG.debug("updating client with id {}", clientId);
+        LOG.debug("Updating Client with id {}.", clientId);
 
         Client client = this.clientRepository.load(clientId);
         validateClientExistence(client, clientId);
@@ -106,7 +111,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         }
         this.clientRepository.save(client);
 
-        LOG.debug("client with id {} updated", clientId);
+        LOG.debug("Client with id {} updated.", clientId);
     }
 
     @Override

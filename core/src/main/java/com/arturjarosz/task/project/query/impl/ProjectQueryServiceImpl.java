@@ -2,6 +2,7 @@ package com.arturjarosz.task.project.query.impl;
 
 import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.Cost;
+import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.QCooperatorJob;
 import com.arturjarosz.task.project.model.QCost;
 import com.arturjarosz.task.project.model.QProject;
@@ -10,6 +11,8 @@ import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> implements ProjectQueryService {
@@ -38,6 +41,11 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     public CooperatorJob getCooperatorJobByIdForProject(Long cooperatorJobId) {
         return this.query().from(COOPERATOR_JOB).select(COOPERATOR_JOB).where(COOPERATOR_JOB.id.eq(cooperatorJobId))
                 .fetchOne();
+    }
+
+    @Override
+    public List<Project> getProjectForClientId(Long clientId) {
+        return this.query().from(PROJECT).select(PROJECT).where(PROJECT.clientId.eq(clientId)).fetch();
     }
 
 }

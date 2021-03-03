@@ -3,8 +3,8 @@ package com.arturjarosz.task.client.application.dto;
 import java.io.Serializable;
 
 public class AddressDto implements Serializable {
-
     private static final long serialVersionUID = 6200531143119979541L;
+
     private String city;
     private String postCode;
     private String street;
