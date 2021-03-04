@@ -1,36 +1,40 @@
 package com.arturjarosz.task.client.application
 
-
 import com.arturjarosz.task.client.application.dto.ClientBasicDto
 import com.arturjarosz.task.client.infrastructure.repository.impl.ClientRepositoryImpl
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
+import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
+import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.PersonName
-import spock.lang.Shared
 import spock.lang.Specification
 
 class ClientValidatorTest extends Specification {
 
     private static final Long EXISTING_ID = 1L;
     private static final Long NON_EXISTING_ID = 999L;
+    private static final Long CLIENT_ID_WITHOUT_PROJECTS = 899L;
+    private static final Long CLIENT_ID_WITH_PROJECTS = 10L;
     private static final ClientType PRIVATE_CLIENT_TYPE = ClientType.PRIVATE;
     private static final ClientType CORPORATE_CLIENT_TYPE = ClientType.CORPORATE;
     private static final String FIRST_NAME = "first";
     private static final String LAST_NAME = "last";
     private static final String COMPANY_NAME = "company";
 
-    @Shared
-    private static final Client CLIENT = new Client(new PersonName(FIRST_NAME, LAST_NAME), null, PRIVATE_CLIENT_TYPE);
+    private static Project emptyProject = new ProjectBuilder().build();
+
+    private static Client client = new Client(new PersonName(FIRST_NAME, LAST_NAME), null, PRIVATE_CLIENT_TYPE);
 
     def clientRepository = Mock(ClientRepositoryImpl) {
         load(NON_EXISTING_ID) >> { null };
-        load(EXISTING_ID) >> { CLIENT };
+        load(EXISTING_ID) >> { client };
     }
 
     def projectQueryService = Mock(ProjectQueryServiceImpl) {
-
+        getProjectForClientId(CLIENT_ID_WITHOUT_PROJECTS) >> { Collections.emptyList() }
+        getProjectForClientId(CLIENT_ID_WITH_PROJECTS) >> { Collections.singletonList(emptyProject) }
     }
 
     def clientValidator = new ClientValidator(clientRepository, projectQueryService);
@@ -176,6 +180,23 @@ class ClientValidatorTest extends Specification {
             this.clientValidator.validateClientExistence(EXISTING_ID);
         then:
             noExceptionThrown();
+    }
+
+    def "when passing client id that has project, exception should be thrown"() {
+        given:
+        when:
+            this.clientValidator.validateClientHasNoProjects(CLIENT_ID_WITHOUT_PROJECTS);
+        then:
+            noExceptionThrown();
+    }
+
+    def "when passing client id with no projects, exception should not be thrown"() {
+        given:
+        when:
+            this.clientValidator.validateClientHasNoProjects(CLIENT_ID_WITH_PROJECTS);
+        then:
+            Exception ex = thrown();
+            ex.message == "notValid.client.projects";
     }
 
 }
