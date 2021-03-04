@@ -24,9 +24,12 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     private static final Logger LOG = LoggerFactory.getLogger(ArchitectApplicationServiceImpl.class);
 
     private final ArchitectRepository architectRepository;
+    private final ArchitectValidator architectValidator;
 
-    public ArchitectApplicationServiceImpl(ArchitectRepository architectRepository) {
+    public ArchitectApplicationServiceImpl(ArchitectRepository architectRepository,
+                                           ArchitectValidator architectValidator) {
         this.architectRepository = architectRepository;
+        this.architectValidator = architectValidator;
     }
 
     @Transactional
@@ -49,6 +52,7 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
 
         Architect architect = this.architectRepository.load(architectId);
         validateArchitectExistence(architect, architectId);
+        this.architectValidator.validateArchitectHasNoProjects(architectId);
         this.architectRepository.remove(architectId);
 
         LOG.debug("architect with id {} removed", architectId);

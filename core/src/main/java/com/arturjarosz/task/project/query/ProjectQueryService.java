@@ -39,5 +39,13 @@ public interface ProjectQueryService {
      * @param clientId
      * @return
      */
-    List<Project> getProjectForClientId(Long clientId);
+    List<Project> getProjectsForClientId(Long clientId);
+
+    /**
+     * Load list of Project for given Architect with architectId.
+     *
+     * @param architectId
+     * @return
+     */
+    List<Project> getProjectsForArchitect(Long architectId);
 }
