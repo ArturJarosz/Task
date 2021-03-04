@@ -44,8 +44,13 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     }
 
     @Override
-    public List<Project> getProjectForClientId(Long clientId) {
+    public List<Project> getProjectsForClientId(Long clientId) {
         return this.query().from(PROJECT).select(PROJECT).where(PROJECT.clientId.eq(clientId)).fetch();
+    }
+
+    @Override
+    public List<Project> getProjectsForArchitect(Long architectId) {
+        return this.query().from(PROJECT).select(PROJECT).where(PROJECT.architectId.eq(architectId)).fetch();
     }
 
 }

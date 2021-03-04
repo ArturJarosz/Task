@@ -5,10 +5,14 @@ import com.arturjarosz.task.architect.application.dto.ArchitectDto;
 import com.arturjarosz.task.architect.domain.ArchitectExceptionCodes;
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository;
 import com.arturjarosz.task.architect.model.Architect;
+import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
@@ -21,10 +25,13 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 public class ArchitectValidator {
 
     private final ArchitectRepository architectRepository;
+    private final ProjectQueryService projectQueryService;
 
     @Autowired
-    public ArchitectValidator(ArchitectRepository architectRepository) {
+    public ArchitectValidator(ArchitectRepository architectRepository,
+                              ProjectQueryService projectQueryService) {
         this.architectRepository = architectRepository;
+        this.projectQueryService = projectQueryService;
     }
 
     public static void validateBasicArchitectDto(ArchitectBasicDto architectBasicDto) {
@@ -57,6 +64,13 @@ public class ArchitectValidator {
     public void validateArchitectExistence(Long architectId) {
         Architect architect = this.architectRepository.load(architectId);
         validateArchitectExistence(architect, architectId);
+    }
+
+    public void validateArchitectHasNoProjects(Long architectId) {
+        List<Project> projectList = this.projectQueryService.getProjectsForArchitect(architectId);
+        assertIsTrue(projectList.size() == 0,
+                createMessageCode(ExceptionCodes.NOT_VALID, ArchitectExceptionCodes.ARCHITECT,
+                        ArchitectExceptionCodes.PROJECTS));
     }
 
 }

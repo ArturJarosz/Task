@@ -1,11 +1,12 @@
 package com.arturjarosz.task.architect.application
 
-import com.arturjarosz.task.architect.application.ArchitectValidator
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
 import com.arturjarosz.task.architect.application.dto.ArchitectDto
 import com.arturjarosz.task.architect.infrastructure.repository.impl.ArchitectRepositoryImpl
 import com.arturjarosz.task.architect.model.Architect
-import spock.lang.Shared
+import com.arturjarosz.task.project.model.Project
+import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
+import com.arturjarosz.task.project.utils.ProjectBuilder
 import spock.lang.Specification
 
 class ArchitectValidatorTest extends Specification {
@@ -14,15 +15,24 @@ class ArchitectValidatorTest extends Specification {
     private static final String LAST_NAME = "last";
     private static final Long EXISTING_ID = 1L;
     private static final Long NON_EXISTING_ID = 999L;
-    @Shared
-    private static final Architect ARCHITECT = new Architect(FIRST_NAME, LAST_NAME);
+    private static final Long ARCHITECT_WITH_PROJECTS = 10L;
+    private static final Long ARCHITECT_WITHOUT_PROJECTS = 888L;
+
+    private static Architect architect = new Architect(FIRST_NAME, LAST_NAME);
+
+    private static Project project = new ProjectBuilder().build();
 
     def architectRepository = Mock(ArchitectRepositoryImpl) {
         load(NON_EXISTING_ID) >> { null };
-        load(EXISTING_ID) >> { ARCHITECT };
+        load(EXISTING_ID) >> { architect };
     }
 
-    def architectValidator = new ArchitectValidator(architectRepository);
+    def projectQueryService = Mock(ProjectQueryServiceImpl) {
+        getProjectsForArchitect(ARCHITECT_WITH_PROJECTS) >> { Arrays.asList(project) };
+        getProjectsForArchitect(ARCHITECT_WITHOUT_PROJECTS) >> { Collections.emptyList() }
+    }
+
+    def architectValidator = new ArchitectValidator(architectRepository, projectQueryService);
 
     def "when passing null architectBasicDtoValidator should throw an exception with specific error message"() {
         given:
@@ -157,5 +167,22 @@ class ArchitectValidatorTest extends Specification {
             this.architectValidator.validateArchitectExistence(EXISTING_ID);
         then:
             noExceptionThrown();
+    }
+
+    def "when passing architect id with no Projects validate should not throw an exception"() {
+        given:
+        when:
+            this.architectValidator.validateArchitectHasNoProjects(ARCHITECT_WITHOUT_PROJECTS);
+        then:
+            noExceptionThrown();
+    }
+
+    def "when passing architect id with Projects validate should throw an exception"() {
+        given:
+        when:
+            this.architectValidator.validateArchitectHasNoProjects(ARCHITECT_WITH_PROJECTS);
+        then:
+            Exception ex = thrown();
+            ex.message == "notValid.architect.projects";
     }
 }

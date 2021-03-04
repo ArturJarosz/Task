@@ -73,7 +73,7 @@ class ProjectApplicationServiceTest extends Specification {
     def projectQueryService = Mock(ProjectQueryServiceImpl) {
 
     }
-    def architectValidator = new ArchitectValidator(architectRepository);
+    def architectValidator = new ArchitectValidator(architectRepository, projectQueryService);
     def clientRepository = Mock(ClientRepositoryImpl) {
         load(NOT_EXISTING_CLIENT_ID) >> { null };
         load(EXISTING_CLIENT_ID) >> { EXISTING_CLIENT }

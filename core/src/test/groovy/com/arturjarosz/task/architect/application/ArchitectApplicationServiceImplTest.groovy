@@ -39,7 +39,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         }
     }
 
-    def architectApplicationService = new ArchitectApplicationServiceImpl(architectRepository);
+    def architectApplicationService = new ArchitectApplicationServiceImpl(architectRepository, architectValidator);
 
     def architectValidator = Stub(ArchitectValidator) {
         validateArchitectDto(null) >> { throw new IllegalArgumentException() }
