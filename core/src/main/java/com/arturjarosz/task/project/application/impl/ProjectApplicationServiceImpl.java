@@ -17,6 +17,8 @@ import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
@@ -28,9 +30,10 @@ import static com.arturjarosz.task.project.application.ProjectValidator.validate
 
 @ApplicationService
 public class ProjectApplicationServiceImpl implements ProjectApplicationService {
+    public static final Logger LOG = LoggerFactory.getLogger(ProjectApplicationServiceImpl.class);
 
     private final ClientApplicationService clientApplicationService;
-    private ClientValidator clientValidator;
+    private final ClientValidator clientValidator;
     private final ArchitectApplicationService architectApplicationService;
     private final ArchitectValidator architectValidator;
     private final ProjectRepository projectRepository;
@@ -58,21 +61,25 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Transactional
     @Override
     public CreatedEntityDto createProject(ProjectCreateDto projectCreateDto) {
+        LOG.debug("Creating Project.");
         ProjectValidator.validateProjectBasicDto(projectCreateDto);
         this.architectValidator.validateArchitectExistence(projectCreateDto.getArchitectId());
         Long clientId = projectCreateDto.getClientId();
         this.clientValidator.validateClientExistence(clientId);
         Project project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto);
         project = this.projectRepository.save(project);
+        LOG.debug("Project created.");
         return new CreatedEntityDto(project.getId());
     }
 
     @Override
     public ProjectDto getProject(Long projectId) {
+        LOG.debug("Loading Project with id {}.", projectId);
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
         ClientBasicDto clientBasicData = this.clientApplicationService.getClientBasicData(project.getClientId());
         ArchitectDto architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
+        LOG.debug("Project with id {} loaded.", projectId);
         return ProjectDtoMapper.INSTANCE
                 .clientArchitectProjectToProjectDto(clientBasicData, architectDto, project);
     }
@@ -80,44 +87,54 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Transactional
     @Override
     public void updateProject(Long projectId, ProjectDto projectDto) {
+        LOG.debug("Updating Project with id {}.", projectId);
         //TODO: TA-62 update of the Project should be different to project in different statuses
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
         validateUpdateProjectDto(projectDto);
         this.projectDomainService.updateProject(project, projectDto);
         this.projectRepository.save(project);
+        LOG.debug("Project with id {} updated", projectId);
     }
 
     @Transactional
     @Override
     public void removeProject(Long projectId) {
+        LOG.debug("Removing Project with id {}.", projectId);
+        this.projectValidator.validateProjectExistence(projectId);
         this.projectRepository.remove(projectId);
+        LOG.debug("Project with id {} removed.", projectId);
     }
 
     @Transactional
     @Override
     public void signProjectContract(Long projectId,
                                     ProjectContractDto projectContractDto) {
+        LOG.debug("Signing Project with id {}", projectId);
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
         validateProjectContractDto(projectContractDto);
         this.projectDomainService.signProjectContract(project, projectContractDto);
         this.projectRepository.save(project);
+        LOG.debug("Project with id {} signed.", projectId);
     }
 
     @Transactional
     @Override
     public void finishProject(Long projectId,
                               ProjectContractDto projectContractDto) {
+        LOG.debug("Finishing Project with id {}.", projectId);
         //TODO: TA-62 update conditions on that project can be ended
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.projectDomainService.finishProject(projectId, projectContractDto.getEndDate());
         this.projectRepository.save(project);
+        LOG.debug("Project with id {} is finished.", projectId);
     }
 
     @Override
     public List<ProjectDto> getProjects() {
+        LOG.debug("Loading list of projects.");
         return this.projectRepository.loadAll().stream().map(project -> {
             ClientBasicDto clientBasicData = this.clientApplicationService.getClientBasicData(project.getClientId());
             ArchitectDto architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
