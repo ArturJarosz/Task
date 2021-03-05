@@ -874,14 +874,14 @@
               }
             },
             "url": {
-              "raw": "{{taskAddress}}/projects/{{projectId}}/sign",
+              "raw": "{{taskAddress}}/projects/{{projectId}}/finish",
               "host": [
                 "{{taskAddress}}"
               ],
               "path": [
                 "projects",
                 "{{projectId}}",
-                "sign"
+                "finish"
               ]
             }
           },
