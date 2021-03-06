@@ -40,7 +40,7 @@ public class Cooperator extends AbstractAggregateRoot {
     private String note;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "COST_VALUE"))
+    @AttributeOverride(name = "value", column = @Column(name = "VALUE"))
     private Money value;
 
     protected Cooperator() {

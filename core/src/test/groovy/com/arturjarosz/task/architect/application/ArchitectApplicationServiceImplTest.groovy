@@ -4,6 +4,7 @@ import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
 import com.arturjarosz.task.architect.application.dto.ArchitectDto
 import com.arturjarosz.task.architect.infrastructure.repository.impl.ArchitectRepositoryImpl
 import com.arturjarosz.task.architect.model.Architect
+import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto
 import spock.lang.Specification
@@ -39,12 +40,13 @@ class ArchitectApplicationServiceImplTest extends Specification {
         }
     }
 
-    def architectApplicationService = new ArchitectApplicationServiceImpl(architectRepository, architectValidator);
-
-    def architectValidator = Stub(ArchitectValidator) {
-        validateArchitectDto(null) >> { throw new IllegalArgumentException() }
-        validateBasicArchitectDto(null) >> { throw new IllegalArgumentException() }
+    def projectQueryService = Mock(ProjectQueryServiceImpl) {
+        getProjectsForArchitect(_ as Long) >> { Collections.emptyList() };
     }
+
+    def architectValidator = new ArchitectValidator(architectRepository, projectQueryService);
+
+    def architectApplicationService = new ArchitectApplicationServiceImpl(architectRepository, architectValidator);
 
     def "when passing null an exception should be thrown and architect should not be saved"() {
         given:

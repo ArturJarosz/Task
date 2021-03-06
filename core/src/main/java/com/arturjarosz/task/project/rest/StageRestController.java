@@ -1,7 +1,6 @@
 package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.project.application.StageApplicationService;
-import com.arturjarosz.task.project.application.dto.StageBasicDto;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("projects")
+@RequestMapping("projects/{projectId}")
 public class StageRestController {
 
     private StageApplicationService stageApplicationService;
@@ -27,20 +26,20 @@ public class StageRestController {
         this.stageApplicationService = stageApplicationService;
     }
 
-    @PostMapping("{projectId}/stages")
+    @PostMapping("stages")
     public ResponseEntity<CreatedEntityDto> createStage(@PathVariable("projectId") Long projectId,
                                                         @RequestBody StageDto stageDto) {
         return new ResponseEntity<>(this.stageApplicationService.createStage(projectId, stageDto), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("{projectId}/stages/{stageId}")
+    @DeleteMapping("stages/{stageId}")
     public ResponseEntity<Void> removeStage(@PathVariable("projectId") Long projectId,
                                             @PathVariable("stageId") Long stageId) {
         this.stageApplicationService.removeStage(projectId, stageId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("{projectId}stages/{stageId}")
+    @PutMapping("stages/{stageId}")
     public ResponseEntity<Void> updateStage(@PathVariable("projectId") Long projectId,
                                             @PathVariable("stageId") Long stageId, @RequestBody StageDto stageDto) {
         this.stageApplicationService.updateStage(projectId, stageId, stageDto);
@@ -48,12 +47,13 @@ public class StageRestController {
     }
 
     @GetMapping("stages/{stageId}")
-    public ResponseEntity<StageDto> getStage(@PathVariable("stageId") Long stageId) {
-        return new ResponseEntity<>(this.stageApplicationService.getStage(stageId), HttpStatus.OK);
+    public ResponseEntity<StageDto> getStage(@PathVariable("projectId") Long projectId,
+                                             @PathVariable("stageId") Long stageId) {
+        return new ResponseEntity<>(this.stageApplicationService.getStage(projectId, stageId), HttpStatus.OK);
     }
 
-    @GetMapping("{projectId}/stages/getBasic")
-    public ResponseEntity<List<StageBasicDto>> getBasicStages(@PathVariable("projectId") Long projectId) {
+    @GetMapping("stages")
+    public ResponseEntity<List<StageDto>> getBasicStages(@PathVariable("projectId") Long projectId) {
         return new ResponseEntity<>(this.stageApplicationService.getStageBasicList(projectId), HttpStatus.OK);
     }
 

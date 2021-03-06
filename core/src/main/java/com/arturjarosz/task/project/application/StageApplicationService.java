@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.application;
 
-import com.arturjarosz.task.project.application.dto.StageBasicDto;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
@@ -39,12 +38,14 @@ public interface StageApplicationService {
     void updateStage(Long projectId, Long stageId, StageDto stageDto);
 
     /**
-     * Return Stage of given stageId.
+     * Return Stage of given stageId for Project with given projectId. If Project or Stage do not exist, then
+     * new exception will be thrown.
      *
+     * @param projectId
      * @param stageId
      * @return
      */
-    StageDto getStage(Long stageId);
+    StageDto getStage(Long projectId, Long stageId);
 
     /**
      * Return List of StageBasicDto for Project with given projectId.
@@ -52,5 +53,5 @@ public interface StageApplicationService {
      * @param projectId
      * @return
      */
-    List<StageBasicDto> getStageBasicList(Long projectId);
+    List<StageDto> getStageBasicList(Long projectId);
 }
