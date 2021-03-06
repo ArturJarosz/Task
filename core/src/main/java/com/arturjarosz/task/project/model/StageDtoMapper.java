@@ -1,8 +1,8 @@
 package com.arturjarosz.task.project.model;
 
-import com.arturjarosz.task.project.application.dto.StageBasicDto;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -13,5 +13,9 @@ public interface StageDtoMapper {
 
     StageDto stageDtoFromStage(Stage stage);
 
-    StageBasicDto stageToStageBasicDto(Stage stage);
+    @Mapping(target = "startDate", ignore = true)
+    @Mapping(target = "endDate", ignore = true)
+    @Mapping(target = "installmentDto", ignore = true)
+    @Mapping(target = "note", ignore = true)
+    StageDto stageToStageBasicDto(Stage stage);
 }

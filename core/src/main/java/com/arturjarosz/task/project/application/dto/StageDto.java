@@ -15,6 +15,8 @@ public class StageDto implements Serializable {
     private LocalDate deadline;
     private StageType stageType;
     private String note;
+    private InstallmentDto installmentDto;
+    private Integer tasksNumber;
 
     public StageDto() {
 
@@ -74,5 +76,21 @@ public class StageDto implements Serializable {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public InstallmentDto getInstallmentDto() {
+        return this.installmentDto;
+    }
+
+    public void setInstallmentDto(InstallmentDto installmentDto) {
+        this.installmentDto = installmentDto;
+    }
+
+    public Integer getTasksNumber() {
+        return this.tasksNumber;
+    }
+
+    public void setTasksNumber(Integer tasksNumber) {
+        this.tasksNumber = tasksNumber;
     }
 }

@@ -100,4 +100,28 @@ public class Stage extends AbstractEntity {
                 .findFirst().orElse(null);
         taskToUpdate.update(taskInnerDto);
     }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public LocalDate getStartDate() {
+        return this.startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return this.endDate;
+    }
+
+    public LocalDate getDeadline() {
+        return this.deadline;
+    }
+
+    public String getNote() {
+        return this.note;
+    }
+
+    public StageType getStageType() {
+        return this.stageType;
+    }
 }
