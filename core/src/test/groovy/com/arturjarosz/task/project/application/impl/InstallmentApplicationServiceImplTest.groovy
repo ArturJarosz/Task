@@ -72,7 +72,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def projectValidator = new ProjectValidator(projectRepository);
 
-    def stageValidator = new StageValidator(projectQueryService);
+    def stageValidator = new StageValidator(projectRepository, projectQueryService);
 
     def installmentApplicationService = new InstallmentApplicationServiceImpl(installmentDomainService,
             projectValidator, projectQueryService, projectRepository, stageValidator);
@@ -98,7 +98,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
                     createInstallment(EXISTING_PROJECT_ID, NOT_EXISTING_STAGE_ID, installmentDto);
         then:
             Exception exception = thrown();
-            exception.message == "notExists.stage"
+            exception.message == "notExists.project.stage"
     }
 
     def "createInstallment should throw an exception, when trying to add installment to stage that has installment"() {
@@ -106,8 +106,9 @@ class InstallmentApplicationServiceImplTest extends Specification {
             InstallmentDto installmentDto = new InstallmentDto();
             installmentDto.setValue(OLD_VALUE);
         when:
-            this.installmentApplicationService.createInstallment(EXISTING_PROJECT_ID, STAGE_WITH_INSTALLMENT_ID,
-                    installmentDto);
+            this.installmentApplicationService.
+                    createInstallment(EXISTING_PROJECT_WITH_INSTALLMENT_ID, STAGE_WITH_INSTALLMENT_ID,
+                            installmentDto);
         then:
             Exception exception = thrown();
             exception.message == "alreadySet.stage.installment";
@@ -157,7 +158,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
                     updateInstallment(EXISTING_PROJECT_ID, NOT_EXISTING_STAGE_ID, installmentDto)
         then:
             Exception exception = thrown();
-            exception.message == "notExists.stage"
+            exception.message == "notExists.project.stage"
     }
 
     def "updateInstallment should update installment if dto is correct and both project and stage exist"() {
@@ -192,7 +193,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
             this.installmentApplicationService.removeInstallment(EXISTING_PROJECT_ID, NOT_EXISTING_STAGE_ID);
         then:
             Exception exception = thrown();
-            exception.message == "notExists.stage";
+            exception.message == "notExists.project.stage";
     }
 
     def "removeInstallment should remove installment from stage if both project and stage exist"() {
@@ -229,7 +230,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
                     NOT_EXISTING_STAGE_ID, installmentDto);
         then:
             Exception exception = thrown();
-            exception.message == "notExists.stage";
+            exception.message == "notExists.project.stage";
     }
 
     def "payInstallment should throw an exception if dto is not correct"() {
@@ -299,7 +300,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
                             getInstallment(EXISTING_PROJECT_WITH_INSTALLMENT_ID, NOT_EXISTING_STAGE_ID);
         then:
             Exception exception = thrown();
-            exception.message == "notExists.stage";
+            exception.message == "notExists.project.stage";
     }
 
     def "getInstallment should return installment when both project and stage exist"() {

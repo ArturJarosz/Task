@@ -54,21 +54,23 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         return new CreatedEntityDto(this.getIdForCreatedStage(project, stage));
     }
 
+    @Transactional
     @Override
     public void removeStage(Long projectId, Long stageId) {
         LOG.debug("Removing Stage with id {} for Project with id {}.", stageId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        this.stageValidator.validateStageExistence(stageId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
         project.removeStage(stageId);
         LOG.debug("Stage with id {} for Project with id {} removed.", stageId, projectId);
     }
 
+    @Transactional
     @Override
     public void updateStage(Long projectId, Long stageId, StageDto stageDto) {
         LOG.debug("Updating Stage with id {} for Project with id {}", stageId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        this.stageValidator.validateStageExistence(stageId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
         StageValidator.validateUpdateStageDto(stageDto);
         project.updateStage(stageId, stageDto.getName(), stageDto.getNote(), stageDto.getStageType(),
@@ -81,7 +83,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     public StageDto getStage(Long projectId, Long stageId) {
         LOG.debug("Loading Stage with id {} for Project with id {}.", stageId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        this.stageValidator.validateStageExistence(stageId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);
         LOG.debug("Stage loaded.");
         return StageDtoMapper.INSTANCE.stageDtoFromStage(stage);

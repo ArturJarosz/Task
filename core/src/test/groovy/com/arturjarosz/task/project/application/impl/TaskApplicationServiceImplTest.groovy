@@ -44,7 +44,7 @@ class TaskApplicationServiceImplTest extends Specification {
     }
 
     def projectValidator = new ProjectValidator(projectRepositoryMock);
-    def stageValidator = new StageValidator(projectQueryServiceMock);
+    def stageValidator = new StageValidator(projectRepositoryMock, projectQueryServiceMock);
     def taskValidator = new TaskValidator(projectQueryServiceMock);
 
     def taskApplicationServiceTest = new TaskApplicationServiceImpl(projectRepositoryMock, projectValidator,
@@ -73,7 +73,7 @@ class TaskApplicationServiceImplTest extends Specification {
                     this.taskApplicationServiceTest.createTask(EXISTING_PROJECT_ID, NOT_EXISTING_STAGE_ID, taskDto);
         then: "exception should be thrown with specific message and repository should not save changes"
             Exception exception = thrown();
-            exception.message == "notExists.stage";
+            exception.message == "notExists.project.stage";
             0 * this.projectRepositoryMock.save(_);
     }
 
