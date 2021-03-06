@@ -39,7 +39,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
                                        TaskDto taskDto) {
         LOG.debug("Creating Task for Project with id {} and Stage with id {}", projectId, stageId);
         this.projectValidator.validateProjectExistence(projectId);
-        this.stageValidator.validateStageExistence(stageId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         TaskValidator.validateCreateTaskDto(taskDto);
         Task task = TaskDtoMapper.INSTANCE.createDtoToTask(taskDto);
         Project project = this.projectRepository.load(projectId);
@@ -53,7 +53,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     public void deleteTask(Long projectId, Long stageId, Long taskId) {
         LOG.debug("Removing Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        this.stageValidator.validateStageExistence(stageId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         Project project = this.projectRepository.load(projectId);
         project.removeTaskFromStage(stageId, taskId);
@@ -66,7 +66,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
                            TaskDto taskDto) {
         LOG.debug("Updating Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        this.stageValidator.validateStageExistence(stageId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         Project project = this.projectRepository.load(projectId);
         TaskInnerDto taskInnerDto = TaskDtoMapper.INSTANCE.updateDtoToInnerDto(taskDto);

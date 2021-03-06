@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.project.application.dto.StageDto;
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
@@ -14,9 +15,11 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 @Component
 public class StageValidator {
 
+    private ProjectRepository projectRepository;
     ProjectQueryService projectQueryService;
 
-    public StageValidator(ProjectQueryService projectQueryService) {
+    public StageValidator(ProjectRepository projectRepository, ProjectQueryService projectQueryService) {
+        this.projectRepository = projectRepository;
         this.projectQueryService = projectQueryService;
     }
 
@@ -43,9 +46,14 @@ public class StageValidator {
      *
      * @param stageId
      */
-    public void validateStageExistence(Long stageId) {
-        assertNotNull(this.projectQueryService.getStageById(stageId),
-                createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.STAGE));
+    public void validateExistenceOfStageInProject(Long projectId, Long stageId) {
+        Stage stage = this.projectRepository.load(projectId).getStages().stream()
+                .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
+                .findFirst()
+                .orElse(null);
+        assertNotNull(stage, createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.PROJECT,
+                ProjectExceptionCodes.STAGE));
+
     }
 
     /**
