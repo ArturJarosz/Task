@@ -2,6 +2,9 @@ package com.arturjarosz.task.project.model;
 
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
+import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
+import com.arturjarosz.task.status.domain.TaskStatus;
+import com.arturjarosz.task.status.domain.TaskWorkflow;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,19 +17,14 @@ import java.time.LocalDate;
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "task_sequence", allocationSize = 1)
 @Table(name = "TASK")
-public class Task extends AbstractEntity {
+public class Task extends AbstractEntity implements WorkflowAware<TaskStatus> {
     private static final long serialVersionUID = 9208147376126632528L;
 
     @Column(name = "NAME", nullable = false)
     private String name;
 
-    /*    //TODO: implement with TA-62
-    @Column(name = "STATUS", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private WorkStatus status;
-
     //TODO: TA-95
-    @Embedded
+    /* @Embedded
     private WorkTime workTime;*/
 
     @Enumerated(EnumType.STRING)
@@ -42,13 +40,22 @@ public class Task extends AbstractEntity {
     @Column(name = "NOTE")
     private String note;
 
+    @Column(name = "STATUS", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private TaskStatus status;
+
+    @Column(name = "WORKFLOW_NAME", nullable = false)
+    private String workflowName;
+
     public Task() {
         //needed by Hibernate
     }
 
-    public Task(String name, TaskType taskType) {
+    public Task(String name, TaskType taskType, TaskWorkflow taskWorkflow) {
         this.name = name;
         this.type = taskType;
+        this.status = taskWorkflow.getInitialStatus();
+        this.workflowName = taskWorkflow.getName();
     }
 
     public String getName() {
@@ -70,4 +77,20 @@ public class Task extends AbstractEntity {
         this.endDate = taskInnerDto.getEndDate();
         this.note = taskInnerDto.getNote();
     }
+
+    @Override
+    public TaskStatus getStatus() {
+        return this.status;
+    }
+
+    @Override
+    public String getWorkflowName() {
+        return this.workflowName;
+    }
+
+    @Override
+    public void changeStatus(TaskStatus newStatus) {
+        this.status = newStatus;
+    }
+
 }

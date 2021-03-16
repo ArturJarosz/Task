@@ -44,8 +44,17 @@ public class TaskRestController {
     public ResponseEntity<Void> updateTask(@PathVariable("projectId") Long projectId,
                                            @PathVariable("stageId") Long stageId,
                                            @PathVariable("taskId") Long taskId,
-                                           TaskDto taskDto) {
+                                           @RequestBody TaskDto taskDto) {
         this.taskApplicationService.updateTask(projectId, stageId, taskId, taskDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("{projectId}/stages/{stageId}/tasks/{taskId}/updateStatus")
+    public ResponseEntity<Void> updateStatus(@PathVariable("projectId") Long projectId,
+                                             @PathVariable("stageId") Long stageId,
+                                             @PathVariable("taskId") Long taskId,
+                                             @RequestBody TaskDto taskDto) {
+        this.taskApplicationService.updateTaskStatus(projectId, stageId, taskId, taskDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

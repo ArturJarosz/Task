@@ -37,4 +37,15 @@ public interface TaskApplicationService {
      * @param taskDto
      */
     void updateTask(Long projectId, Long stageId, Long taskId, TaskDto taskDto);
+
+    /**
+     * Update Status of Task with given taskId, on Stage with stageId on Project with projectId. If Project, Stage or
+     * Status does not exist or Stage is not valid Status on used Workflow an exception will be thrown.
+     *
+     * @param projectId
+     * @param stageId
+     * @param taskId
+     * @param taskDto
+     */
+    void updateTaskStatus(Long projectId, Long stageId, Long taskId, TaskDto taskDto);
 }

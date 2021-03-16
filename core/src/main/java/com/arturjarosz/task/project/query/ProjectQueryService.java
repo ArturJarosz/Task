@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.query;
 
+import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
@@ -48,4 +49,11 @@ public interface ProjectQueryService {
      * @return
      */
     List<Project> getProjectsForArchitect(Long architectId);
+
+    /**
+     * Retrieve Task as TaskDto of given TaskId.
+     *
+     * @return
+     */
+    TaskDto getTaskForProjectAndStage(Long taskId);
 }

@@ -7,7 +7,7 @@ import spock.lang.Specification
 class TaskValidatorTest extends Specification {
 
     private static final String NAME = "name";
-    private static final TaskType TASK_TYPE = TaskType.RENDERS;
+    private static final TaskType TASK_TYPE = TaskType.RENDER;
 
     def "when taskDto in null, validateCreateTaskDto should throw an exception with specific error message"() {
         given:
