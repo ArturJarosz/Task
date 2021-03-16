@@ -23,7 +23,7 @@ class TaskApplicationServiceImplTest extends Specification {
     private static final Long NOT_EXISTING_STAGE_ID = 199L;
     private static final Long EXISTING_STAGE_ID = 101L;
     private static final String NAME = "name";
-    private static final TaskType TASK_TYPE = TaskType.RENDERS;
+    private static final TaskType TASK_TYPE = TaskType.RENDER;
 
     def stage = new StageBuilder().withId(EXISTING_STAGE_ID).build();
     def project = new ProjectBuilder().withId(EXISTING_PROJECT_ID).withStage(stage).build();
@@ -47,8 +47,9 @@ class TaskApplicationServiceImplTest extends Specification {
     def stageValidator = new StageValidator(projectRepositoryMock, projectQueryServiceMock);
     def taskValidator = new TaskValidator(projectQueryServiceMock);
 
-    def taskApplicationServiceTest = new TaskApplicationServiceImpl(projectRepositoryMock, projectValidator,
-            stageValidator, taskValidator);
+    def taskApplicationServiceTest = new TaskApplicationServiceImpl(projectQueryService, projectRepositoryMock,
+            projectValidator,
+            stageValidator, taskDomainService, taskWorkflowService, taskValidator);
 
     def "createTask should throw an exception on passing wrong project id"() {
         given: "proper task dto data"

@@ -8,11 +8,15 @@ import java.time.LocalDate;
 public class TaskDto implements Serializable {
 
     private static final long serialVersionUID = 6275436633825075027L;
+
+    public static final String STATUS_NAME = "statusName";
+
     private String name;
     private TaskType type;
     private LocalDate startDate;
     private LocalDate endDate;
     private String note;
+    private String statusName;
 
     public TaskDto() {
     }
@@ -55,5 +59,13 @@ public class TaskDto implements Serializable {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getStatusName() {
+        return this.statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
     }
 }

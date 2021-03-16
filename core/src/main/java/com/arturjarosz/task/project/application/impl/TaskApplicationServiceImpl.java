@@ -6,34 +6,51 @@ import com.arturjarosz.task.project.application.TaskApplicationService;
 import com.arturjarosz.task.project.application.TaskValidator;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.application.mapper.TaskDtoMapper;
+import com.arturjarosz.task.project.domain.TaskDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
+import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import com.arturjarosz.task.status.domain.TaskStatus;
+import com.arturjarosz.task.status.domain.TaskWorkflowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.transaction.Transactional;
 
 @ApplicationService
 public class TaskApplicationServiceImpl implements TaskApplicationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TaskApplicationService.class);
 
+    private final ProjectQueryService projectQueryService;
     private final ProjectRepository projectRepository;
     private final ProjectValidator projectValidator;
     private final StageValidator stageValidator;
-    private TaskValidator taskValidator;
+    private final TaskDomainService taskDomainService;
+    private final TaskWorkflowService taskWorkflowService;
+    private final TaskValidator taskValidator;
 
-    public TaskApplicationServiceImpl(ProjectRepository projectRepository, ProjectValidator projectValidator,
-                                      StageValidator stageValidator, TaskValidator taskValidator) {
+    public TaskApplicationServiceImpl(ProjectQueryService projectQueryService,
+                                      ProjectRepository projectRepository, ProjectValidator projectValidator,
+                                      StageValidator stageValidator,
+                                      TaskDomainService taskDomainService,
+                                      TaskWorkflowService taskWorkflowService,
+                                      TaskValidator taskValidator) {
+        this.projectQueryService = projectQueryService;
         this.projectRepository = projectRepository;
         this.projectValidator = projectValidator;
         this.stageValidator = stageValidator;
+        this.taskDomainService = taskDomainService;
+        this.taskWorkflowService = taskWorkflowService;
         this.taskValidator = taskValidator;
     }
 
+    @Transactional
     @Override
     public CreatedEntityDto createTask(Long projectId, Long stageId,
                                        TaskDto taskDto) {
@@ -41,7 +58,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         TaskValidator.validateCreateTaskDto(taskDto);
-        Task task = TaskDtoMapper.INSTANCE.createDtoToTask(taskDto);
+        Task task = this.taskDomainService.createTask(taskDto);
         Project project = this.projectRepository.load(projectId);
         project.addTaskToStage(stageId, task);
         project = this.projectRepository.save(project);
@@ -49,6 +66,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         return new CreatedEntityDto(this.getCreatedTaskId(stageId, project, task));
     }
 
+    @Transactional
     @Override
     public void deleteTask(Long projectId, Long stageId, Long taskId) {
         LOG.debug("Removing Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);
@@ -61,6 +79,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         LOG.debug("Task removed.");
     }
 
+    @Transactional
     @Override
     public void updateTask(Long projectId, Long stageId, Long taskId,
                            TaskDto taskDto) {
@@ -73,6 +92,22 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         project.updateTaskOnStage(stageId, taskId, taskInnerDto);
         this.projectRepository.save(project);
         LOG.debug("Task updated.");
+    }
+
+    @Transactional
+    @Override
+    public void updateTaskStatus(Long projectId, Long stageId, Long taskId,
+                                 TaskDto taskDto) {
+        LOG.debug("Updating status on Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId,
+                projectId);
+        this.projectValidator.validateProjectExistence(projectId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
+        this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
+        Project project = this.projectRepository.load(projectId);
+        this.taskWorkflowService
+                .changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.valueOf(taskDto.getStatusName()));
+        this.projectRepository.save(project);
+        LOG.debug("Task status updated.");
     }
 
     /**
