@@ -1,8 +1,8 @@
-package com.arturjarosz.task.status.domain.validator.impl;
+package com.arturjarosz.task.project.status.domain.validator.impl;
 
 import com.arturjarosz.task.project.model.Task;
-import com.arturjarosz.task.status.domain.TaskStatusTransition;
-import com.arturjarosz.task.status.domain.validator.TaskStatusTransitionValidator;
+import com.arturjarosz.task.project.status.domain.TaskStatusTransition;
+import com.arturjarosz.task.project.status.domain.validator.TaskStatusTransitionValidator;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,4 +1,4 @@
-package com.arturjarosz.task.status.domain;
+package com.arturjarosz.task.project.status.domain;
 
 import com.arturjarosz.task.sharedkernel.status.Workflow;
 import org.springframework.stereotype.Component;

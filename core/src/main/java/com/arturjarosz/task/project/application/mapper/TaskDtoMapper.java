@@ -3,7 +3,7 @@ package com.arturjarosz.task.project.application.mapper;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
-import com.arturjarosz.task.status.domain.TaskWorkflow;
+import com.arturjarosz.task.project.status.domain.TaskWorkflow;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
