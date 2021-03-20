@@ -13,10 +13,10 @@ import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.query.ProjectQueryService;
+import com.arturjarosz.task.project.status.domain.TaskStatus;
+import com.arturjarosz.task.project.status.domain.TaskWorkflowService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
-import com.arturjarosz.task.status.domain.TaskStatus;
-import com.arturjarosz.task.status.domain.TaskWorkflowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

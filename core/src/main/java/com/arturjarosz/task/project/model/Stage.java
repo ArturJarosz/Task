@@ -1,7 +1,9 @@
 package com.arturjarosz.task.project.model;
 
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
+import com.arturjarosz.task.project.status.domain.StageStatus;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
+import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,7 +23,7 @@ import java.util.List;
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "stage_sequence", allocationSize = 1)
 @Table(name = "STAGE")
-public class Stage extends AbstractEntity {
+public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> {
 
     private static final long serialVersionUID = 3201266147496282083L;
     @Column(name = "NAME")
@@ -50,6 +52,13 @@ public class Stage extends AbstractEntity {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "INSTALLMENT_ID", referencedColumnName = "ID")
     private Installment installment;
+
+    @Column(name = "STATUS", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private StageStatus status;
+
+    @Column(name = "WORKFLOW_NAME", nullable = false)
+    private String workflowName;
 
     protected Stage() {
         //needed by Hibernate
@@ -123,5 +132,20 @@ public class Stage extends AbstractEntity {
 
     public StageType getStageType() {
         return this.stageType;
+    }
+
+    @Override
+    public StageStatus getStatus() {
+        return this.status;
+    }
+
+    @Override
+    public String getWorkflowName() {
+        return this.workflowName;
+    }
+
+    @Override
+    public void changeStatus(StageStatus status) {
+        this.status = status;
     }
 }

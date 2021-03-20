@@ -1,13 +1,13 @@
-package com.arturjarosz.task.status.domain.impl;
+package com.arturjarosz.task.project.status.domain.impl;
 
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
+import com.arturjarosz.task.project.status.domain.TaskStatus;
+import com.arturjarosz.task.project.status.domain.TaskStatusTransition;
+import com.arturjarosz.task.project.status.domain.TaskWorkflowService;
+import com.arturjarosz.task.project.status.domain.validator.TaskStatusTransitionValidator;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
-import com.arturjarosz.task.status.domain.TaskStatus;
-import com.arturjarosz.task.status.domain.TaskStatusTransition;
-import com.arturjarosz.task.status.domain.TaskWorkflowService;
-import com.arturjarosz.task.status.domain.validator.TaskStatusTransitionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
