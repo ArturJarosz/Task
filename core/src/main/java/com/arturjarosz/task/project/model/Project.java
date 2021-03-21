@@ -1,8 +1,10 @@
 package com.arturjarosz.task.project.model;
 
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
+import com.arturjarosz.task.project.status.domain.ProjectStatus;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
+import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,7 +23,7 @@ import java.util.Set;
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "project_sequence", allocationSize = 1)
 @Table(name = "PROJECT")
-public class Project extends AbstractAggregateRoot {
+public class Project extends AbstractAggregateRoot implements WorkflowAware<ProjectStatus> {
     private static final long serialVersionUID = 5437961881026141924L;
 
     @Column(name = "NAME", nullable = false)
@@ -63,6 +65,13 @@ public class Project extends AbstractAggregateRoot {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_ID")
     private Set<CooperatorJob> cooperatorJobs;
+
+    @Column(name = "STATUS", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private ProjectStatus status;
+
+    @Column(name = "WORKFLOW_NAME", nullable = false)
+    private String workflowName;
 
     protected Project() {
         //needed by Hibernate
@@ -223,5 +232,20 @@ public class Project extends AbstractAggregateRoot {
         cooperatorJob.setName(name);
         cooperatorJob.setValue(value);
         cooperatorJob.setNote(note);
+    }
+
+    @Override
+    public ProjectStatus getStatus() {
+        return this.status;
+    }
+
+    @Override
+    public String getWorkflowName() {
+        return this.workflowName;
+    }
+
+    @Override
+    public void changeStatus(ProjectStatus status) {
+        this.status = status;
     }
 }
