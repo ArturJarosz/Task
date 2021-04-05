@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.application.dto;
 
 import com.arturjarosz.task.project.model.TaskType;
+import com.arturjarosz.task.project.status.domain.TaskStatus;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -9,14 +10,19 @@ public class TaskDto implements Serializable {
 
     private static final long serialVersionUID = 6275436633825075027L;
 
-    public static final String STATUS_NAME = "statusName";
+    public static final String END_DATE = "endDate";
+    public static final String NAME = "name";
+    public static final String NOTE = "note";
+    public static final String START_DATE = "startDate";
+    public static final String STATUS = "status";
+    public static final String TASK_TYPE = "type";
 
     private String name;
     private TaskType type;
     private LocalDate startDate;
     private LocalDate endDate;
     private String note;
-    private String statusName;
+    private TaskStatus status;
 
     public TaskDto() {
     }
@@ -61,11 +67,11 @@ public class TaskDto implements Serializable {
         this.note = note;
     }
 
-    public String getStatusName() {
-        return this.statusName;
+    public TaskStatus getStatus() {
+        return this.status;
     }
 
-    public void setStatusName(String statusName) {
-        this.statusName = statusName;
+    public void setStatus(TaskStatus status) {
+        this.status = status;
     }
 }

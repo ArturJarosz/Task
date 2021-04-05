@@ -13,7 +13,6 @@ import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.query.ProjectQueryService;
-import com.arturjarosz.task.project.status.domain.TaskStatus;
 import com.arturjarosz.task.project.status.domain.TaskWorkflowService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
@@ -21,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationService
 public class TaskApplicationServiceImpl implements TaskApplicationService {
@@ -105,9 +106,32 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         Project project = this.projectRepository.load(projectId);
         this.taskWorkflowService
-                .changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.valueOf(taskDto.getStatusName()));
+                .changeTaskStatusOnProject(project, stageId, taskId, taskDto.getStatus());
         this.projectRepository.save(project);
         LOG.debug("Task status updated.");
+    }
+
+    @Override
+    public TaskDto getTask(Long projectId, Long stageId, Long taskId) {
+        LOG.debug("Loading Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);
+        this.projectValidator.validateProjectExistence(projectId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
+        this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
+        return this.projectQueryService.getTaskByTaskId(taskId);
+    }
+
+    @Override
+    public List<TaskDto> getTaskList(Long projectId, Long stageId) {
+        LOG.debug("Loading list of Tasks for Stage with id {} on Project with id {}", stageId, projectId);
+        this.projectValidator.validateProjectExistence(projectId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
+        Project project = this.projectRepository.load(projectId);
+        return project.getStages().stream()
+                .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
+                .flatMap(stageOnProject -> stageOnProject.getTasks().stream())
+                .map(TaskDtoMapper.INSTANCE::taskToTaskBasicDto)
+                .collect(Collectors.toList());
+
     }
 
     /**

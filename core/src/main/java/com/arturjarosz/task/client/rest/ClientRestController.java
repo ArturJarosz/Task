@@ -39,11 +39,6 @@ public class ClientRestController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("{clientId}/basic")
-    public ResponseEntity<ClientBasicDto> getBasicClientData(@PathVariable("clientId") Long clientId) {
-        return new ResponseEntity<>(this.clientApplicationService.getClientBasicData(clientId), HttpStatus.OK);
-    }
-
     @GetMapping("{clientId}")
     public ResponseEntity<ClientDto> getClient(@PathVariable("clientId") Long clientId) {
         return new ResponseEntity<>(this.clientApplicationService.getClient(clientId), HttpStatus.OK);
