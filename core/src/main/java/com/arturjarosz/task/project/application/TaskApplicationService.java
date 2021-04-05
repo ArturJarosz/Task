@@ -3,6 +3,8 @@ package com.arturjarosz.task.project.application;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
+import java.util.List;
+
 public interface TaskApplicationService {
 
     /**
@@ -48,4 +50,25 @@ public interface TaskApplicationService {
      * @param taskDto
      */
     void updateTaskStatus(Long projectId, Long stageId, Long taskId, TaskDto taskDto);
+
+    /**
+     * Return Task as TaskDto for Task on Stage on Project with given taskId, stageId and projectId. If Project,
+     * Stage or Task does not exist, new Exception will be thrown.
+     *
+     * @param projectId
+     * @param stageId
+     * @param taskId
+     * @return
+     */
+    TaskDto getTask(Long projectId, Long stageId, Long taskId);
+
+    /**
+     * Return list of Tasks as TasksDtos for Stage on Project with stageId and ProjectId. If Project or Stage
+     * does not exist, then new Exception will be thrown.
+     *
+     * @param projectId
+     * @param stageId
+     * @return
+     */
+    List<TaskDto> getTaskList(Long projectId, Long stageId);
 }

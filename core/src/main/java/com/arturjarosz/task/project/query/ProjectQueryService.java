@@ -55,5 +55,5 @@ public interface ProjectQueryService {
      *
      * @return
      */
-    TaskDto getTaskForProjectAndStage(Long taskId);
+    TaskDto getTaskByTaskId(Long taskId);
 }

@@ -111,7 +111,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
      */
     private Long getIdForCreatedStage(Project project, Stage stage) {
         return project.getStages().stream()
-                .filter(projectCost -> projectCost.equals(stage))
+                .filter(projectStage -> projectStage.equals(stage))
                 .findFirst()
                 .map(AbstractEntity::getId).orElseThrow();
     }

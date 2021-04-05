@@ -28,7 +28,6 @@ public class ProjectRestController {
         this.projectApplicationService = projectApplicationService;
     }
 
-    //create project
     @PostMapping("")
     public ResponseEntity<CreatedEntityDto> createProject(@RequestBody ProjectCreateDto projectCreateDto) {
         return new ResponseEntity<>(this.projectApplicationService.createProject(projectCreateDto), HttpStatus.CREATED);

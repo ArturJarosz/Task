@@ -23,4 +23,12 @@ public interface TaskDtoMapper {
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "note", target = "note")
     TaskInnerDto updateDtoToInnerDto(TaskDto taskDto);
+
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "type", target = "type")
+    @Mapping(source = "status", target = "status")
+    @Mapping(target = "note", ignore = true)
+    @Mapping(target = "startDate", ignore = true)
+    @Mapping(target = "endDate", ignore = true)
+    TaskDto taskToTaskBasicDto(Task task);
 }
