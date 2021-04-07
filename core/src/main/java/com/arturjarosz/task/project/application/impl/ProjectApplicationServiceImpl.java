@@ -15,6 +15,7 @@ import com.arturjarosz.task.project.application.mapper.ProjectDtoMapper;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.status.domain.ProjectWorkflow;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
@@ -38,6 +39,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final ArchitectValidator architectValidator;
     private final ProjectRepository projectRepository;
     private final ProjectDomainService projectDomainService;
+    private final ProjectWorkflow projectWorkflow;
     private final ProjectValidator projectValidator;
 
     @Autowired
@@ -47,6 +49,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
                                          ArchitectValidator architectValidator,
                                          ProjectRepository projectRepository,
                                          ProjectDomainService projectDomainService,
+                                         ProjectWorkflow projectWorkflow,
                                          ProjectValidator projectValidator) {
 
         this.clientApplicationService = clientApplicationService;
@@ -55,6 +58,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.architectValidator = architectValidator;
         this.projectRepository = projectRepository;
         this.projectDomainService = projectDomainService;
+        this.projectWorkflow = projectWorkflow;
         this.projectValidator = projectValidator;
     }
 
@@ -66,7 +70,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.architectValidator.validateArchitectExistence(projectCreateDto.getArchitectId());
         Long clientId = projectCreateDto.getClientId();
         this.clientValidator.validateClientExistence(clientId);
-        Project project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto);
+        Project project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto, this.projectWorkflow);
         project = this.projectRepository.save(project);
         LOG.debug("Project created.");
         return new CreatedEntityDto(project.getId());

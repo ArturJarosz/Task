@@ -81,7 +81,8 @@ class ProjectApplicationServiceTest extends Specification {
     def clientValidator = new ClientValidator(clientRepository, projectQueryService);
     def projectValidator = new ProjectValidator(projectRepository);
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
-            architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator);
+            architectApplicationService, architectValidator, projectRepository, projectDomainService, projectWorkflow,
+            projectValidator);
 
     def "when passing not correct projectCreateDto, IllegalArgumentException should be thrown and project should not be created"() {
         given:

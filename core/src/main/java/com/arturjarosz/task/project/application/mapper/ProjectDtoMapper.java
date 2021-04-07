@@ -5,6 +5,7 @@ import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.status.domain.ProjectWorkflow;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -14,7 +15,9 @@ public interface ProjectDtoMapper {
 
     ProjectDtoMapper INSTANCE = Mappers.getMapper(ProjectDtoMapper.class);
 
-    Project projectCreateDtoToProject(ProjectCreateDto projectCreateDto);
+    @Mapping(target = "projectWorkflow", source = "projectWorkflow")
+    @Mapping(source = "projectCreateDto.name", target = "name")
+    Project projectCreateDtoToProject(ProjectCreateDto projectCreateDto, ProjectWorkflow projectWorkflow);
 
     @Mapping(source = "projectType", target = "projectType")
     @Mapping(source = "name", target = "name")

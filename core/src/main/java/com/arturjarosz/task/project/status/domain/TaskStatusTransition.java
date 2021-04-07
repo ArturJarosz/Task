@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.status.domain;
 import com.arturjarosz.task.sharedkernel.status.StatusTransition;
 
 public enum TaskStatusTransition implements StatusTransition<TaskStatus> {
+    CREATE_TASK(null, TaskStatus.TO_DO),
     // from TO_DO
     START_PROGRESS(TaskStatus.TO_DO, TaskStatus.IN_PROGRESS),
     REJECT_FROM_TO_DO(TaskStatus.TO_DO, TaskStatus.REJECTED),
