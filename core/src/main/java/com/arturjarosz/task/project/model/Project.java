@@ -2,6 +2,7 @@ package com.arturjarosz.task.project.model;
 
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.status.domain.ProjectStatus;
+import com.arturjarosz.task.project.status.domain.ProjectWorkflow;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
@@ -77,11 +78,14 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         //needed by Hibernate
     }
 
-    public Project(String name, Long architectId, Long clientId, ProjectType projectType) {
+    public Project(String name, Long architectId, Long clientId, ProjectType projectType,
+                   ProjectWorkflow projectWorkflow) {
         this.name = name;
         this.architectId = architectId;
         this.clientId = clientId;
         this.projectType = projectType;
+        this.status = projectWorkflow.getInitialStatus();
+        this.workflowName = projectWorkflow.getName();
     }
 
     public void signContract(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {

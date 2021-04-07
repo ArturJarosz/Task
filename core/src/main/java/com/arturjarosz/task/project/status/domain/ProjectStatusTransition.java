@@ -8,6 +8,8 @@ public enum ProjectStatusTransition implements StatusTransition<ProjectStatus> {
     OFFER_ACCEPTED(ProjectStatus.OFFER, ProjectStatus.TO_DO),
     // from REJECTED
     NEW_OFFER(ProjectStatus.REJECTED, ProjectStatus.OFFER),
+    REOPEN(ProjectStatus.REJECTED, ProjectStatus.TO_DO),
+    RESUME_WORK(ProjectStatus.REJECTED, ProjectStatus.IN_PROGRESS),
     // from TO_DO
     REJECTED_FROM_SIGNED(ProjectStatus.TO_DO, ProjectStatus.REJECTED),
     START_PROGRESS(ProjectStatus.TO_DO, ProjectStatus.IN_PROGRESS),

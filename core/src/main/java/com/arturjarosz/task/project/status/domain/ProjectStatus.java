@@ -16,7 +16,7 @@ public enum ProjectStatus implements Status<ProjectStatus> {
     REJECTED {
         @Override
         public Collection<ProjectStatus> getPossibleStatusTransitions() {
-            return Collections.singletonList(OFFER);
+            return Arrays.asList(OFFER, TO_DO, IN_PROGRESS);
         }
     },
     TO_DO {
