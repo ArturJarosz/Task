@@ -2,6 +2,7 @@ package com.arturjarosz.task.project.model;
 
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.status.domain.StageStatus;
+import com.arturjarosz.task.project.status.domain.StageWorkflow;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 
@@ -64,9 +65,11 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
         //needed by Hibernate
     }
 
-    public Stage(String name, StageType stageType) {
+    public Stage(String name, StageType stageType, StageWorkflow stageWorkflow) {
         this.name = name;
         this.stageType = stageType;
+        this.status = stageWorkflow.getInitialStatus();
+        this.workflowName = stageWorkflow.getName();
     }
 
     public void update(String name, String note, StageType stageType, LocalDate deadline) {

@@ -9,6 +9,7 @@ import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.StageDtoMapper;
 import com.arturjarosz.task.project.query.ProjectQueryService;
+import com.arturjarosz.task.project.status.domain.StageWorkflow;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
@@ -28,15 +29,18 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     private final ProjectValidator projectValidator;
     private final ProjectRepository projectRepository;
     private final StageValidator stageValidator;
+    private final StageWorkflow stageWorkflow;
 
     @Autowired
     public StageApplicationServiceImpl(ProjectQueryService projectQueryService,
                                        ProjectValidator projectValidator, ProjectRepository projectRepository,
-                                       StageValidator stageValidator) {
+                                       StageValidator stageValidator,
+                                       StageWorkflow stageWorkflow) {
         this.projectQueryService = projectQueryService;
         this.projectValidator = projectValidator;
         this.projectRepository = projectRepository;
         this.stageValidator = stageValidator;
+        this.stageWorkflow = stageWorkflow;
     }
 
     @Transactional
@@ -46,7 +50,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         LOG.debug("Creating Stage for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         StageValidator.validateCreateStageDto(stageDto);
-        Stage stage = StageDtoMapper.INSTANCE.stageCreateDtoToStage(stageDto);
+        Stage stage = StageDtoMapper.INSTANCE.stageCreateDtoToStage(stageDto, this.stageWorkflow);
         Project project = this.projectRepository.load(projectId);
         project.addStage(stage);
         project = this.projectRepository.save(project);
