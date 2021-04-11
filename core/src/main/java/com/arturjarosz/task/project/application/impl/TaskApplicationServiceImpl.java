@@ -13,6 +13,7 @@ import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.query.ProjectQueryService;
+import com.arturjarosz.task.project.status.domain.TaskStatus;
 import com.arturjarosz.task.project.status.domain.TaskWorkflowService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
@@ -132,6 +133,18 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
                 .map(TaskDtoMapper.INSTANCE::taskToTaskBasicDto)
                 .collect(Collectors.toList());
 
+    }
+
+    @Transactional
+    @Override
+    public void rejectTask(Long projectId, Long stageId, Long taskId) {
+        LOG.debug("Rejecting Task with id {}", taskId);
+        this.projectValidator.validateProjectExistence(projectId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
+        this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
+        Project project = this.projectRepository.load(projectId);
+        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.REJECTED);
+        this.projectRepository.save(project);
     }
 
     /**

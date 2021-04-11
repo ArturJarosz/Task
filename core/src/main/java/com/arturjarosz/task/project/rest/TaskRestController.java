@@ -73,4 +73,12 @@ public class TaskRestController {
                                                   @PathVariable("stageId") Long stageId) {
         return new ResponseEntity<>(this.taskApplicationService.getTaskList(projectId, stageId), HttpStatus.OK);
     }
+
+    @PostMapping("{projectId}/stages/{stageId}/tasks/{taskId}/reject")
+    public ResponseEntity<Void> rejectTask(@PathVariable("projectId") Long projectId,
+                                           @PathVariable("stageId") Long stageId,
+                                           @PathVariable("taskId") Long taskId) {
+        this.taskApplicationService.rejectTask(projectId, stageId, taskId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

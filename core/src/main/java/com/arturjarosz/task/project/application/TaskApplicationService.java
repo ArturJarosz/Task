@@ -71,4 +71,14 @@ public interface TaskApplicationService {
      * @return
      */
     List<TaskDto> getTaskList(Long projectId, Long stageId);
+
+    /**
+     * Set Task with taskId as rejected for Stage with stageId on Project with ProjectId. If Project, Stage or Task
+     * does not exist, new exception will be thrown.
+     *
+     * @param projectId
+     * @param stageId
+     * @param taskId
+     */
+    void rejectTask(Long projectId, Long stageId, Long taskId);
 }

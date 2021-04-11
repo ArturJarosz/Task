@@ -23,9 +23,11 @@ public class ProjectExceptionCodes {
     public static final String PAY_DATE = "payDate";
     public static final String SIGNING_DATE = "signingDate";
     public static final String START_DATE = "startDate";
+    public static final String STATUS = "status";
     public static final String TYPE = "type";
     public static final String VALUE = "value";
 
-    public static final String UPDATE = "update";
     public static final String NEGATIVE = "negative";
+    public static final String TRANSITION = "transition";
+    public static final String UPDATE = "update";
 }
