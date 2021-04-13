@@ -34,11 +34,17 @@ public enum ProjectStatusTransition implements StatusTransition<ProjectStatus> {
 
     @Override
     public ProjectStatus getCurrentStatus() {
-        return null;
+        return this.currentStatus;
     }
 
     @Override
     public ProjectStatus getNextStatus() {
-        return null;
+        return this.nextStatus;
     }
+
+    @Override
+    public String getName() {
+        return this.name();
+    }
+
 }

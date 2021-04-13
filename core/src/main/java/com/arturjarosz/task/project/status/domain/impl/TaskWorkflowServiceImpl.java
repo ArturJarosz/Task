@@ -27,11 +27,12 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
     private Map<String, List<TaskStatusTransitionValidator>> mapNameToStatusTransitionValidators;
 
     @Autowired
-    public TaskWorkflowServiceImpl(List<TaskStatusTransitionValidator> transitionList) {
+    public TaskWorkflowServiceImpl(List<TaskStatusTransitionValidator> transitionValidatorList) {
         this.mapNameToStatusTransitionValidators = new HashMap<>();
-        this.mapNameToStatusTransitionValidators = transitionList.stream()
+        this.mapNameToStatusTransitionValidators = transitionValidatorList.stream()
                 .collect(Collectors.groupingBy(
-                        taskStatusTransitionValidator -> taskStatusTransitionValidator.getStatusTransition().name()));
+                        taskStatusTransitionValidator -> taskStatusTransitionValidator.getStatusTransition()
+                                .getName()));
     }
 
     @Override
@@ -72,7 +73,7 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
 
     private List<TaskStatusTransitionValidator> getStatusTransitionValidators(TaskStatusTransition statusTransition) {
         List<TaskStatusTransitionValidator> validators = this.mapNameToStatusTransitionValidators
-                .get(statusTransition.name());
+                .get(statusTransition.getName());
         if (validators == null) {
             return Collections.emptyList();
         }

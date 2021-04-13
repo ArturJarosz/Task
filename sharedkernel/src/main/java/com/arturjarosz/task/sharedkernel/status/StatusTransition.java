@@ -5,4 +5,6 @@ public interface StatusTransition<TStatus extends Status> {
     TStatus getCurrentStatus();
 
     TStatus getNextStatus();
+
+    String getName();
 }

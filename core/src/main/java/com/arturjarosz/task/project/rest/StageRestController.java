@@ -57,4 +57,11 @@ public class StageRestController {
         return new ResponseEntity<>(this.stageApplicationService.getStageBasicList(projectId), HttpStatus.OK);
     }
 
+    @PostMapping("stages/{stageId}/reject")
+    public ResponseEntity<Void> rejectStage(@PathVariable("projectId") Long projectId,
+                                            @PathVariable("stageId") Long stageId) {
+        this.stageApplicationService.rejectStage(projectId, stageId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

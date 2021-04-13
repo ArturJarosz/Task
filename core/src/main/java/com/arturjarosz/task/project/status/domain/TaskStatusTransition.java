@@ -32,4 +32,9 @@ public enum TaskStatusTransition implements StatusTransition<TaskStatus> {
     public TaskStatus getNextStatus() {
         return this.nextStatus;
     }
+
+    @Override
+    public String getName() {
+        return this.name();
+    }
 }
