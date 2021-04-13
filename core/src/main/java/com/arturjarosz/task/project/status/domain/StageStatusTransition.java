@@ -33,4 +33,10 @@ public enum StageStatusTransition implements StatusTransition<StageStatus> {
     public StageStatus getNextStatus() {
         return this.nextStatus;
     }
+
+    @Override
+    public String getName() {
+        return this.name();
+    }
+
 }

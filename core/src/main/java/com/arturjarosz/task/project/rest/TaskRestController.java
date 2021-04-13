@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("projects")
+@RequestMapping("projects/{projectId}")
 public class TaskRestController {
 
     private TaskApplicationService taskApplicationService;
@@ -27,7 +27,7 @@ public class TaskRestController {
         this.taskApplicationService = taskApplicationService;
     }
 
-    @PostMapping("{projectId}/stages/{stageId}/tasks")
+    @PostMapping("stages/{stageId}/tasks")
     public ResponseEntity<CreatedEntityDto> createTask(@PathVariable("projectId") Long projectId,
                                                        @PathVariable("stageId") Long stageId,
                                                        @RequestBody TaskDto taskDto) {
@@ -35,7 +35,7 @@ public class TaskRestController {
                 HttpStatus.CREATED);
     }
 
-    @DeleteMapping("{projectId}/stages/{stageId}/tasks/{taskId}")
+    @DeleteMapping("stages/{stageId}/tasks/{taskId}")
     public ResponseEntity<Void> deleteTask(@PathVariable("projectId") Long projectId,
                                            @PathVariable("stageId") Long stageId,
                                            @PathVariable("taskId") Long taskId) {
@@ -43,7 +43,7 @@ public class TaskRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("{projectId}/stages/{stageId}/tasks/{taskId}")
+    @PutMapping("stages/{stageId}/tasks/{taskId}")
     public ResponseEntity<Void> updateTask(@PathVariable("projectId") Long projectId,
                                            @PathVariable("stageId") Long stageId,
                                            @PathVariable("taskId") Long taskId,
@@ -52,7 +52,7 @@ public class TaskRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("{projectId}/stages/{stageId}/tasks/{taskId}/updateStatus")
+    @PutMapping("stages/{stageId}/tasks/{taskId}/updateStatus")
     public ResponseEntity<Void> updateStatus(@PathVariable("projectId") Long projectId,
                                              @PathVariable("stageId") Long stageId,
                                              @PathVariable("taskId") Long taskId,
@@ -61,20 +61,20 @@ public class TaskRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("{projectId}/stages/{stageId}/tasks/{taskId}")
+    @GetMapping("stages/{stageId}/tasks/{taskId}")
     public ResponseEntity<TaskDto> getTask(@PathVariable("projectId") Long projectId,
                                            @PathVariable("stageId") Long stageId,
                                            @PathVariable("taskId") Long taskId) {
         return new ResponseEntity<>(this.taskApplicationService.getTask(projectId, stageId, taskId), HttpStatus.OK);
     }
 
-    @GetMapping("{projectId}/stages/{stageId}/tasks")
+    @GetMapping("stages/{stageId}/tasks")
     public ResponseEntity<List<TaskDto>> getTasks(@PathVariable("projectId") Long projectId,
                                                   @PathVariable("stageId") Long stageId) {
         return new ResponseEntity<>(this.taskApplicationService.getTaskList(projectId, stageId), HttpStatus.OK);
     }
 
-    @PostMapping("{projectId}/stages/{stageId}/tasks/{taskId}/reject")
+    @PostMapping("stages/{stageId}/tasks/{taskId}/reject")
     public ResponseEntity<Void> rejectTask(@PathVariable("projectId") Long projectId,
                                            @PathVariable("stageId") Long stageId,
                                            @PathVariable("taskId") Long taskId) {

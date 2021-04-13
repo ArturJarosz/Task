@@ -9,7 +9,9 @@ import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.StageDtoMapper;
 import com.arturjarosz.task.project.query.ProjectQueryService;
+import com.arturjarosz.task.project.status.domain.StageStatus;
 import com.arturjarosz.task.project.status.domain.StageWorkflow;
+import com.arturjarosz.task.project.status.domain.StageWorkflowService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
@@ -30,17 +32,20 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     private final ProjectRepository projectRepository;
     private final StageValidator stageValidator;
     private final StageWorkflow stageWorkflow;
+    private final StageWorkflowService stageWorkflowService;
 
     @Autowired
     public StageApplicationServiceImpl(ProjectQueryService projectQueryService,
                                        ProjectValidator projectValidator, ProjectRepository projectRepository,
                                        StageValidator stageValidator,
-                                       StageWorkflow stageWorkflow) {
+                                       StageWorkflow stageWorkflow,
+                                       StageWorkflowService stageWorkflowService) {
         this.projectQueryService = projectQueryService;
         this.projectValidator = projectValidator;
         this.projectRepository = projectRepository;
         this.stageValidator = stageValidator;
         this.stageWorkflow = stageWorkflow;
+        this.stageWorkflowService = stageWorkflowService;
     }
 
     @Transactional
@@ -103,6 +108,17 @@ public class StageApplicationServiceImpl implements StageApplicationService {
                 .stream()
                 .map(StageDtoMapper.INSTANCE::stageToStageBasicDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public void rejectStage(Long projectId, Long stageId) {
+        LOG.debug("Rejecting Stage with id {}", stageId);
+        this.projectValidator.validateProjectExistence(projectId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
+        Project project = this.projectRepository.load(projectId);
+        this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.REJECTED);
+        this.projectRepository.save(project);
     }
 
     /**

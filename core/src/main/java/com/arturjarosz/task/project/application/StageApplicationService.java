@@ -54,4 +54,13 @@ public interface StageApplicationService {
      * @return
      */
     List<StageDto> getStageBasicList(Long projectId);
+
+    /**
+     * Set Stage with stageId as rejected for Project with projectId. If Project or Stage does not exist, new exception
+     * will be thrown.
+     *
+     * @param projectId
+     * @param stageId
+     */
+    void rejectStage(Long projectId, Long stageId);
 }
