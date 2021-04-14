@@ -480,6 +480,27 @@
               "response": []
             },
             {
+              "name": "reject Stage",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/reject",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "stages",
+                    "{{stageId}}",
+                    "reject"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
               "name": "remove stage from project",
               "request": {
                 "method": "DELETE",
@@ -797,6 +818,27 @@
               "response": []
             },
             {
+              "name": "reject Task",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "stages",
+                    "{{stageId}}",
+                    "tasks"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
               "name": "remove Task",
               "request": {
                 "method": "DELETE",
@@ -1016,6 +1058,25 @@
                 "projects",
                 "{{projectId}}",
                 "finish"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "reject Project",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{taskAddress}}/projects/{{projectId}}/reject",
+              "host": [
+                "{{taskAddress}}"
+              ],
+              "path": [
+                "projects",
+                "{{projectId}}",
+                "reject"
               ]
             }
           },
