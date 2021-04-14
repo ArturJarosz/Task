@@ -69,4 +69,10 @@ public class ProjectRestController {
     public ResponseEntity<List<ProjectDto>> getProjects() {
         return new ResponseEntity<>(this.projectApplicationService.getProjects(), HttpStatus.OK);
     }
+
+    @PostMapping("{projectId}/reject")
+    public ResponseEntity<Void> rejectProject(@PathVariable("projectId") Long projectId) {
+        this.projectApplicationService.rejectProject(projectId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

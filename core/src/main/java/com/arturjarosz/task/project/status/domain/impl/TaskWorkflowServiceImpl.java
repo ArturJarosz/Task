@@ -36,13 +36,13 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
     }
 
     @Override
-    public void changeStatus(Task task, TaskStatus status) {
-        TaskStatusTransition taskStatusTransition = this.getTransitionForStatuses(task.getStatus(), status);
+    public void changeStatus(Task task, TaskStatus newStatus) {
+        TaskStatusTransition taskStatusTransition = this.getTransitionForStatuses(task.getStatus(), newStatus);
         BaseValidator.assertNotNull(taskStatusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
                 ProjectExceptionCodes.TASK, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION,
-                task.getStatus().getStatusName(), status.getStatusName()));
+                task.getStatus().getStatusName(), newStatus.getStatusName()));
         this.beforeStatusChange(task, taskStatusTransition);
-        task.changeStatus(status);
+        task.changeStatus(newStatus);
         this.afterStatusChange(task, taskStatusTransition);
 
     }

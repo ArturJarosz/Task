@@ -73,4 +73,11 @@ public interface ProjectApplicationService {
      * @return
      */
     List<ProjectDto> getProjects();
+
+    /**
+     * Set Project with projectId as rejected. If Project does not exist, new exception will be thrown.
+     *
+     * @param projectId
+     */
+    void rejectProject(Long projectId);
 }

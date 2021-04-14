@@ -15,7 +15,9 @@ import com.arturjarosz.task.project.application.mapper.ProjectDtoMapper;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.status.domain.ProjectStatus;
 import com.arturjarosz.task.project.status.domain.ProjectWorkflow;
+import com.arturjarosz.task.project.status.domain.ProjectWorkflowService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
@@ -39,8 +41,9 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final ArchitectValidator architectValidator;
     private final ProjectRepository projectRepository;
     private final ProjectDomainService projectDomainService;
-    private final ProjectWorkflow projectWorkflow;
     private final ProjectValidator projectValidator;
+    private final ProjectWorkflow projectWorkflow;
+    private final ProjectWorkflowService projectWorkflowService;
 
     @Autowired
     public ProjectApplicationServiceImpl(ClientApplicationService clientApplicationService,
@@ -50,7 +53,8 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
                                          ProjectRepository projectRepository,
                                          ProjectDomainService projectDomainService,
                                          ProjectWorkflow projectWorkflow,
-                                         ProjectValidator projectValidator) {
+                                         ProjectValidator projectValidator,
+                                         ProjectWorkflowService projectWorkflowService) {
 
         this.clientApplicationService = clientApplicationService;
         this.clientValidator = clientValidator;
@@ -58,8 +62,9 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.architectValidator = architectValidator;
         this.projectRepository = projectRepository;
         this.projectDomainService = projectDomainService;
-        this.projectWorkflow = projectWorkflow;
         this.projectValidator = projectValidator;
+        this.projectWorkflow = projectWorkflow;
+        this.projectWorkflowService = projectWorkflowService;
     }
 
     @Transactional
@@ -145,5 +150,15 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
             return ProjectDtoMapper.INSTANCE
                     .clientArchitectProjectToBasicProjectDto(clientBasicData, architectDto, project);
         }).collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public void rejectProject(Long projectId) {
+        LOG.debug("Rejecting Project with id {}.", projectId);
+        this.projectValidator.validateProjectExistence(projectId);
+        Project project = this.projectRepository.load(projectId);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.REJECTED);
+        this.projectRepository.save(project);
     }
 }
