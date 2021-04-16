@@ -45,7 +45,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
                 project.getStatus().getStatusName(), newStatus.getStatusName()));
         this.beforeStatusChange(project, projectStatusTransition);
         project.changeStatus(newStatus);
-        this.afterStatusChange(project, projectStatusTransition);
+        //this.afterStatusChange(project, projectStatusTransition);
     }
 
     @Override
@@ -54,11 +54,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
         validators.forEach(validator -> validator.validate(project, statusTransition));
     }
 
-    @Override
+/*    @Override
     public void afterStatusChange(Project project, ProjectStatusTransition statusTransition) {
         //TODO: run loggers
         //TODO: run listeners for status change on project
-    }
+    }*/
 
     private ProjectStatusTransition getTransitionForStatuses(ProjectStatus status, ProjectStatus newStatus) {
         return Arrays.stream(ProjectStatusTransition.values())
