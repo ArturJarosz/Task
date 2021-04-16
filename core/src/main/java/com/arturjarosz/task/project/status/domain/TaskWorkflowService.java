@@ -16,4 +16,5 @@ public interface TaskWorkflowService extends WorkflowService<TaskStatus, TaskSta
      */
     void changeTaskStatusOnProject(Project project, Long stageId, Long taskId, TaskStatus newStatus);
 
+    void afterStatusChange(Project project, Long stageId, TaskStatusTransition statusTransition);
 }

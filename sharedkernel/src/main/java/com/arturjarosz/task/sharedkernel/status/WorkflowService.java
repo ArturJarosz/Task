@@ -12,6 +12,4 @@ public interface WorkflowService<TStatus extends Status, TStatusTransition exten
 
     void beforeStatusChange(TObject object, TStatusTransition statusTransition);
 
-    void afterStatusChange(TObject object, TStatusTransition statusTransition);
-
 }

@@ -14,4 +14,6 @@ public interface StageWorkflowService extends WorkflowService<StageStatus, Stage
      * @param newStatus
      */
     void changeStageStatusOnProject(Project project, Long stageId, StageStatus newStatus);
+
+    void afterStatusChange(Project project, StageStatusTransition statusTransition);
 }

@@ -40,18 +40,18 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
         Stage stage = project.getStages().stream()
                 .filter(stagePredicate)
                 .findFirst().orElse(null);
+        StageStatusTransition stageStatusTransition = this.getTransitionForStatuses(stage.getStatus(), newStatus);
+        BaseValidator.assertNotNull(stageStatusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
+                ProjectExceptionCodes.STAGE, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION,
+                stage.getStatus().getStatusName(), newStatus.getStatusName()));
+        this.beforeStatusChange(stage, stageStatusTransition);
         this.changeStatus(stage, newStatus);
+        this.afterStatusChange(project, stageStatusTransition);
     }
 
     @Override
     public void changeStatus(Stage stage, StageStatus status) {
-        StageStatusTransition stageStatusTransition = this.getTransitionForStatuses(stage.getStatus(), status);
-        BaseValidator.assertNotNull(stageStatusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
-                ProjectExceptionCodes.STAGE, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION,
-                stage.getStatus().getStatusName(), status.getStatusName()));
-        this.beforeStatusChange(stage, stageStatusTransition);
         stage.changeStatus(status);
-        this.afterStatusChange(stage, stageStatusTransition);
     }
 
     @Override
@@ -61,10 +61,15 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
     }
 
     @Override
+    public void afterStatusChange(Project project, StageStatusTransition statusTransition) {
+
+    }
+
+/*    @Override
     public void afterStatusChange(Stage stage, StageStatusTransition statusTransition) {
         // TODO: run loggers
         // TODO: run listeners for status change on stage
-    }
+    }*/
 
     private StageStatusTransition getTransitionForStatuses(StageStatus oldStatus, StageStatus newStatus) {
         return Arrays.stream(StageStatusTransition.values())
