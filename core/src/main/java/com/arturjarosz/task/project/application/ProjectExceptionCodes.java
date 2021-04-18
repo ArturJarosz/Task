@@ -31,6 +31,6 @@ public class ProjectExceptionCodes {
     public static final String TRANSITION = "transition";
 
     public static final String CREATE = "create";
+    public static final String START_PROGRESS = "startProgress";
     public static final String UPDATE = "update";
-
 }

@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreateTaskListener implements TaskStatusTransitionListener {
+public class TaskCreateTaskListener implements TaskStatusTransitionListener {
     private final TaskStatusTransition transition = TaskStatusTransition.CREATE_TASK;
 
     private final StageWorkflowService stageWorkflowService;
 
     @Autowired
-    public CreateTaskListener(StageWorkflowService stageWorkflowService) {
+    public TaskCreateTaskListener(StageWorkflowService stageWorkflowService) {
         this.stageWorkflowService = stageWorkflowService;
     }
 

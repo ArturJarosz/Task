@@ -818,12 +818,21 @@
               "response": []
             },
             {
-              "name": "reject Task",
+              "name": "change Task status",
               "request": {
                 "method": "POST",
                 "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"status\": \"IN_PROGRESS\" \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
                 "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks",
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/changeStatus",
                   "host": [
                     "{{taskAddress}}"
                   ],
@@ -832,7 +841,32 @@
                     "{{projectId}}",
                     "stages",
                     "{{stageId}}",
-                    "tasks"
+                    "tasks",
+                    "{{taskId}}",
+                    "changeStatus"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "reject Task",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/reject",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "stages",
+                    "{{stageId}}",
+                    "tasks",
+                    "{{taskId}}",
+                    "reject"
                   ]
                 }
               },
