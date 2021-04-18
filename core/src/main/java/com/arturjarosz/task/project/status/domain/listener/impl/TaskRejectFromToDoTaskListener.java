@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class RejectFromToDoTaskListener implements TaskStatusTransitionListener {
+public class TaskRejectFromToDoTaskListener implements TaskStatusTransitionListener {
     private final TaskStatusTransition statusTransition = TaskStatusTransition.REJECT_FROM_TO_DO;
     private final List<TaskStatus> finalStatuses;
     private final StageWorkflowService stageWorkflowService;
 
     @Autowired
-    public RejectFromToDoTaskListener(StageWorkflowService stageWorkflowService) {
+    public TaskRejectFromToDoTaskListener(StageWorkflowService stageWorkflowService) {
         this.stageWorkflowService = stageWorkflowService;
         this.finalStatuses = new ArrayList<>();
         this.finalStatuses.add(TaskStatus.REJECTED);
