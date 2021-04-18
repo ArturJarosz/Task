@@ -19,7 +19,8 @@ public class BaseConfiguration {
             "classpath:/i18n/client/client",
             "classpath:/i18n/contractor/contractor",
             "classpath:/i18n/architect/architect",
-            "classpath:/i18n/project/project"
+            "classpath:/i18n/project/project",
+            "classpath:/i18n/project/status"
     };
 
     public BaseConfiguration(@Value("${task.language}") String defaultLanguageCode,

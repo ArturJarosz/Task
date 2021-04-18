@@ -142,6 +142,10 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
         return this.status;
     }
 
+    public void setStatus(StageStatus status) {
+        this.status = status;
+    }
+
     @Override
     public String getWorkflowName() {
         return this.workflowName;

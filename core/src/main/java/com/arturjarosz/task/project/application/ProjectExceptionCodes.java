@@ -29,5 +29,8 @@ public class ProjectExceptionCodes {
 
     public static final String NEGATIVE = "negative";
     public static final String TRANSITION = "transition";
+
+    public static final String CREATE = "create";
     public static final String UPDATE = "update";
+
 }
