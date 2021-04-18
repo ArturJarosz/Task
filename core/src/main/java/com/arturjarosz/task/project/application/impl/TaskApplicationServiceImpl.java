@@ -54,15 +54,15 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
 
     @Transactional
     @Override
-    public CreatedEntityDto createTask(Long projectId, Long stageId,
-                                       TaskDto taskDto) {
+    public CreatedEntityDto createTask(Long projectId, Long stageId, TaskDto taskDto) {
         LOG.debug("Creating Task for Project with id {} and Stage with id {}", projectId, stageId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         TaskValidator.validateCreateTaskDto(taskDto);
-        Task task = this.taskDomainService.createTask(taskDto);
         Project project = this.projectRepository.load(projectId);
+        Task task = this.taskDomainService.createTask(project, stageId, taskDto);
         project.addTaskToStage(stageId, task);
+        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, task.getId(), TaskStatus.TO_DO);
         project = this.projectRepository.save(project);
         LOG.debug("Task created.");
         return new CreatedEntityDto(this.getCreatedTaskId(stageId, project, task));
@@ -83,8 +83,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
 
     @Transactional
     @Override
-    public void updateTask(Long projectId, Long stageId, Long taskId,
-                           TaskDto taskDto) {
+    public void updateTask(Long projectId, Long stageId, Long taskId, TaskDto taskDto) {
         LOG.debug("Updating Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
@@ -98,8 +97,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
 
     @Transactional
     @Override
-    public void updateTaskStatus(Long projectId, Long stageId, Long taskId,
-                                 TaskDto taskDto) {
+    public void updateTaskStatus(Long projectId, Long stageId, Long taskId, TaskDto taskDto) {
         LOG.debug("Updating status on Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId,
                 projectId);
         this.projectValidator.validateProjectExistence(projectId);

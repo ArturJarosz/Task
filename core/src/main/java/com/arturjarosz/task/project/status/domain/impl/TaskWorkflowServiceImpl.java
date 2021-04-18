@@ -45,27 +45,30 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
 
     @Override
     public void changeStatus(Task task, TaskStatus newStatus) {
-
         task.changeStatus(newStatus);
-
     }
 
     @Override
     public void changeTaskStatusOnProject(Project project, Long stageId, Long taskId, TaskStatus newStatus) {
         Task task = this.getTask(project, stageId, taskId);
-        TaskStatusTransition taskStatusTransition = this.getTransitionForStatuses(task.getStatus(), newStatus);
+        /*
+        In case of newly created Task, there is no status transition. For avoiding nullPointerException
+        old status is set to TO_DO as well, as there is no status before.
+         */
+        TaskStatus oldStatus = task.getStatus() != null ? task.getStatus() : TaskStatus.TO_DO;
+        TaskStatusTransition taskStatusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
         BaseValidator.assertNotNull(taskStatusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
                 ProjectExceptionCodes.TASK, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION,
-                task.getStatus().getStatusName(), newStatus.getStatusName()));
-        this.beforeStatusChange(task, taskStatusTransition);
+                oldStatus.getStatusName(), newStatus.getStatusName()));
+        this.beforeStatusChange(project, task, stageId, taskStatusTransition);
         this.changeStatus(task, newStatus);
         this.afterStatusChange(project, stageId, taskStatusTransition);
     }
 
     @Override
-    public void beforeStatusChange(Task task, TaskStatusTransition statusTransition) {
+    public void beforeStatusChange(Project project, Task task, Long stageId, TaskStatusTransition statusTransition) {
         List<TaskStatusTransitionValidator> validators = this.getStatusTransitionValidators(statusTransition);
-        validators.forEach(validator -> validator.validate(task, statusTransition));
+        validators.forEach(validator -> validator.validate(project, task, stageId, statusTransition));
     }
 
     @Override
@@ -101,7 +104,9 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
 
     private Task getTask(Project project, Long stageId, Long taskId) {
         Predicate<Stage> stagePredicate = stage -> stage.getId().equals(stageId);
-        Predicate<Task> taskPredicate = task -> task.getId().equals(taskId);
+        //Newly created Task do not have assigned ids yet.
+        Predicate<Task> taskPredicate = taskId != null ? task -> task.getId().equals(taskId) : task -> task
+                .getId() == null;
         return project.getStages().stream()
                 .filter(stagePredicate)
                 .flatMap(stage -> stage.getTasks().stream())
