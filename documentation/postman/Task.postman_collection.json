@@ -873,6 +873,29 @@
               "response": []
             },
             {
+              "name": "reopen Task",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/reopen",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "stages",
+                    "{{stageId}}",
+                    "tasks",
+                    "{{taskId}}",
+                    "reopen"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
               "name": "remove Task",
               "request": {
                 "method": "DELETE",

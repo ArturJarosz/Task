@@ -81,4 +81,14 @@ public interface TaskApplicationService {
      * @param taskId
      */
     void rejectTask(Long projectId, Long stageId, Long taskId);
+
+    /**
+     * Allows to continue work on Task, changing its status to To Do. If Project, Stage or Task do not exist,
+     * new exception will be thrown.
+     *
+     * @param projectId
+     * @param stageId
+     * @param taskId
+     */
+    void reopenTask(Long projectId, Long stageId, Long taskId);
 }

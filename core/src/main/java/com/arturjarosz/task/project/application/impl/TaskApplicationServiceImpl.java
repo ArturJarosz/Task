@@ -145,6 +145,17 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.projectRepository.save(project);
     }
 
+    @Override
+    public void reopenTask(Long projectId, Long stageId, Long taskId) {
+        LOG.debug("Reopening Task with id {}", taskId);
+        this.projectValidator.validateProjectExistence(projectId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
+        this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
+        Project project = this.projectRepository.load(projectId);
+        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.TO_DO);
+        this.projectRepository.save(project);
+    }
+
     /**
      * Retrieve id of given Task in Stage in Project. When Task is added to the Project it does not have any id yet.
      * After it is saved by repository to the database the Id is generated.
