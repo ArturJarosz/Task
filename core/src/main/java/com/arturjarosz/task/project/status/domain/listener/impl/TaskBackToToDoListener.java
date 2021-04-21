@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class TaskBackToProgressListener implements TaskStatusTransitionListener {
-    private final TaskStatusTransition transition = TaskStatusTransition.BACK_TO_IN_PROGRESS;
+public class TaskBackToToDoListener implements TaskStatusTransitionListener {
+    private final TaskStatusTransition transition = TaskStatusTransition.BACK_TO_TO_DO;
     private final StageWorkflowService stageWorkflowService;
 
     @Autowired
-    public TaskBackToProgressListener(StageWorkflowService stageWorkflowService) {
+    public TaskBackToToDoListener(StageWorkflowService stageWorkflowService) {
         this.stageWorkflowService = stageWorkflowService;
     }
 
