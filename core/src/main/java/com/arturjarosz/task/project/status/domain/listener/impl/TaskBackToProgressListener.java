@@ -12,19 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 @Component
-public class TaskRejectFromToDoTaskListener implements TaskStatusTransitionListener {
-    private final TaskStatusTransition transition = TaskStatusTransition.REJECT_FROM_TO_DO;
-    private final EnumSet<TaskStatus> finalStatuses;
+public class TaskBackToProgressListener implements TaskStatusTransitionListener {
+    private final TaskStatusTransition transition = TaskStatusTransition.BACK_TO_IN_PROGRESS;
     private final StageWorkflowService stageWorkflowService;
 
     @Autowired
-    public TaskRejectFromToDoTaskListener(StageWorkflowService stageWorkflowService) {
+    public TaskBackToProgressListener(StageWorkflowService stageWorkflowService) {
         this.stageWorkflowService = stageWorkflowService;
-        this.finalStatuses = EnumSet.of(TaskStatus.REJECTED, TaskStatus.DONE);
     }
 
     @Override
@@ -33,19 +30,19 @@ public class TaskRejectFromToDoTaskListener implements TaskStatusTransitionListe
                 .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .findFirst().orElse(null);
         assert stage != null;
-        if (stage.getStatus().equals(StageStatus.IN_PROGRESS) && this.hasNoTasksInNotFinalStatuses(stage)) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.DONE);
+        if (stage.getStatus().equals(StageStatus.IN_PROGRESS) && this.hasOnlyTasksInToDo(stage)) {
+            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.TO_DO);
         }
+    }
+
+    private boolean hasOnlyTasksInToDo(Stage stage) {
+        List<Task> allTasks = new ArrayList<>(stage.getTasks());
+        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.TO_DO));
+        return allTasks.isEmpty();
     }
 
     @Override
     public TaskStatusTransition getStatusTransition() {
-        return this.transition;
-    }
-
-    private boolean hasNoTasksInNotFinalStatuses(Stage stage) {
-        List<Task> allTasks = new ArrayList<>(stage.getTasks());
-        allTasks.removeIf(task -> this.finalStatuses.contains(task.getStatus()));
-        return allTasks.isEmpty();
+        return transition;
     }
 }

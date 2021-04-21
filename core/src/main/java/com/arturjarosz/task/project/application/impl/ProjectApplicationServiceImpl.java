@@ -117,8 +117,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
     @Transactional
     @Override
-    public void signProjectContract(Long projectId,
-                                    ProjectContractDto projectContractDto) {
+    public void signProjectContract(Long projectId, ProjectContractDto projectContractDto) {
         LOG.debug("Signing Project with id {}", projectId);
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
@@ -130,8 +129,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
     @Transactional
     @Override
-    public void finishProject(Long projectId,
-                              ProjectContractDto projectContractDto) {
+    public void finishProject(Long projectId, ProjectContractDto projectContractDto) {
         LOG.debug("Finishing Project with id {}.", projectId);
         //TODO: TA-62 update conditions on that project can be ended
         Project project = this.projectRepository.load(projectId);
