@@ -5,16 +5,13 @@ import com.arturjarosz.task.project.application.mapper.TaskDtoMapper;
 import com.arturjarosz.task.project.domain.TaskDomainService;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Task;
-import com.arturjarosz.task.project.status.domain.TaskStatus;
-import com.arturjarosz.task.project.status.domain.TaskStatusTransition;
-import com.arturjarosz.task.project.status.domain.TaskWorkflow;
-import com.arturjarosz.task.project.status.domain.TaskWorkflowService;
-import com.arturjarosz.task.project.status.domain.listener.TaskStatusTransitionListener;
-import com.arturjarosz.task.project.status.domain.listener.impl.CreateTaskListener;
+import com.arturjarosz.task.project.status.task.TaskStatusTransition;
+import com.arturjarosz.task.project.status.task.TaskWorkflow;
+import com.arturjarosz.task.project.status.task.TaskWorkflowService;
+import com.arturjarosz.task.project.status.task.listener.TaskStatusTransitionListener;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.awt.*;
 import java.util.List;
 
 @DomainService

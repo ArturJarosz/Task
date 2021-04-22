@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.application.dto;
 
 import com.arturjarosz.task.project.model.TaskType;
-import com.arturjarosz.task.project.status.domain.TaskStatus;
+import com.arturjarosz.task.project.status.task.TaskStatus;
 
 import java.io.Serializable;
 import java.time.LocalDate;

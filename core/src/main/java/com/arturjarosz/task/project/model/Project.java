@@ -1,8 +1,8 @@
 package com.arturjarosz.task.project.model;
 
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
-import com.arturjarosz.task.project.status.domain.ProjectStatus;
-import com.arturjarosz.task.project.status.domain.ProjectWorkflow;
+import com.arturjarosz.task.project.status.project.ProjectStatus;
+import com.arturjarosz.task.project.status.project.ProjectWorkflow;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;

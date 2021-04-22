@@ -5,7 +5,7 @@ import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.project.status.domain.ProjectWorkflow;
+import com.arturjarosz.task.project.status.project.ProjectWorkflow;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
