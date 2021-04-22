@@ -1,8 +1,8 @@
 package com.arturjarosz.task.project.model;
 
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
-import com.arturjarosz.task.project.status.domain.StageStatus;
-import com.arturjarosz.task.project.status.domain.StageWorkflow;
+import com.arturjarosz.task.project.status.stage.StageStatus;
+import com.arturjarosz.task.project.status.stage.StageWorkflow;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 
