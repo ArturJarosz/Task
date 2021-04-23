@@ -501,6 +501,27 @@
               "response": []
             },
             {
+              "name": "reopen Stage",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/reopen",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "stages",
+                    "{{stageId}}",
+                    "reopen"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
               "name": "remove stage from project",
               "request": {
                 "method": "DELETE",
@@ -824,7 +845,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"status\": \"IN_PROGRESS\" \n}",
+                  "raw": "{\n    \"status\": \"IN_PROGRESS\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -832,7 +853,7 @@
                   }
                 },
                 "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/changeStatus",
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/updateStatus",
                   "host": [
                     "{{taskAddress}}"
                   ],
@@ -843,7 +864,7 @@
                     "{{stageId}}",
                     "tasks",
                     "{{taskId}}",
-                    "changeStatus"
+                    "updateStatus"
                   ]
                 }
               },
