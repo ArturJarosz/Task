@@ -64,4 +64,10 @@ public class StageRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("stages/{stageId}/reopen")
+    public ResponseEntity<Void> reopenStage(@PathVariable("projectId") Long projectId,
+                                            @PathVariable("stageId") Long stageId) {
+        this.stageApplicationService.reopenStage(projectId, stageId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

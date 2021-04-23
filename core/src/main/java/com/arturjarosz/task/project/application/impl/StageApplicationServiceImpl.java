@@ -8,10 +8,12 @@ import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.StageDtoMapper;
+import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.project.status.stage.StageWorkflow;
 import com.arturjarosz.task.project.status.stage.StageWorkflowService;
+import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
@@ -20,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -119,6 +122,26 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         Project project = this.projectRepository.load(projectId);
         this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.REJECTED);
         this.projectRepository.save(project);
+    }
+
+    @Transactional
+    @Override
+    public void reopenStage(Long projectId, Long stageId) {
+        LOG.debug("Reopening Stage with id {}", stageId);
+        this.projectValidator.validateProjectExistence(projectId);
+        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
+        Project project = this.projectRepository.load(projectId);
+        StageStatus newStatus = this
+                .stageHasOnlyTasksInToDoStatus(stageId) ? StageStatus.TO_DO : StageStatus.IN_PROGRESS;
+        this.stageWorkflowService.changeStageStatusOnProject(project, stageId, newStatus);
+        this.projectRepository.save(project);
+    }
+
+    private boolean stageHasOnlyTasksInToDoStatus(Long stageId) {
+        Stage stage = this.projectQueryService.getStageById(stageId);
+        List<Task> allTasks = new ArrayList<>(stage.getTasks());
+        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.TO_DO));
+        return !allTasks.isEmpty();
     }
 
     /**
