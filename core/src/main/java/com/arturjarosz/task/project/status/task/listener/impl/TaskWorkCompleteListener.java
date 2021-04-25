@@ -17,15 +17,11 @@ import java.util.List;
 @Component
 public class TaskWorkCompleteListener implements TaskStatusTransitionListener {
     private final TaskStatusTransition transition = TaskStatusTransition.COMPLETE_WORK;
-    private final List<TaskStatus> finalStatuses;
     private final StageWorkflowService stageWorkflowService;
 
     @Autowired
     public TaskWorkCompleteListener(StageWorkflowService stageWorkflowService) {
         this.stageWorkflowService = stageWorkflowService;
-        this.finalStatuses = new ArrayList<>();
-        this.finalStatuses.add(TaskStatus.REJECTED);
-        this.finalStatuses.add(TaskStatus.DONE);
     }
 
     @Override
@@ -34,19 +30,21 @@ public class TaskWorkCompleteListener implements TaskStatusTransitionListener {
                 .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .findFirst().orElse(null);
         assert stage != null;
-        if (stage.getStatus().equals(StageStatus.IN_PROGRESS) && this.hasNoTasksInNotFinalStatuses(stage)) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.DONE);
+        if (stage.getStatus().equals(StageStatus.IN_PROGRESS) && this
+                .hasTasksOnlyInRejectedAndCompletedStatuses(stage)) {
+            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.COMPLETED);
         }
     }
 
     @Override
     public TaskStatusTransition getStatusTransition() {
-        return null;
+        return this.transition;
     }
 
-    private boolean hasNoTasksInNotFinalStatuses(Stage stage) {
+    private boolean hasTasksOnlyInRejectedAndCompletedStatuses(Stage stage) {
         List<Task> allTasks = new ArrayList<>(stage.getTasks());
-        allTasks.removeIf(task -> this.finalStatuses.contains(task.getStatus()));
+        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.REJECTED));
+        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.COMPLETED));
         return allTasks.isEmpty();
     }
 }

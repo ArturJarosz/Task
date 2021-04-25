@@ -104,8 +104,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         Project project = this.projectRepository.load(projectId);
-        this.taskWorkflowService
-                .changeTaskStatusOnProject(project, stageId, taskId, taskDto.getStatus());
+        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, taskDto.getStatus());
         this.projectRepository.save(project);
         LOG.debug("Task status updated.");
     }

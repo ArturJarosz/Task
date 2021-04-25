@@ -36,6 +36,6 @@ public class TaskStartProgressValidator implements TaskStatusTransitionValidator
     }
 
     private boolean stageNotRejectedOrDone(Stage stage) {
-        return (!stage.getStatus().equals(StageStatus.REJECTED)) && (stage.getStatus().equals(StageStatus.DONE));
+        return (!stage.getStatus().equals(StageStatus.REJECTED)) && (stage.getStatus().equals(StageStatus.COMPLETED));
     }
 }

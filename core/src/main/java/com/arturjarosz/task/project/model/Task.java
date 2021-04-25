@@ -54,7 +54,6 @@ public class Task extends AbstractEntity implements WorkflowAware<TaskStatus> {
     public Task(String name, TaskType taskType, TaskWorkflow taskWorkflow) {
         this.name = name;
         this.type = taskType;
-        //this.status = taskWorkflow.getInitialStatus();
         this.workflowName = taskWorkflow.getName();
     }
 

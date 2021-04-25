@@ -39,13 +39,18 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
     @Override
     public void changeStatus(Project project, ProjectStatus newStatus) {
-        ProjectStatusTransition projectStatusTransition = this.getTransitionForStatuses(project.getStatus(), newStatus);
+        /*
+        In case of newly created Project, there is no status transition. For avoiding nullPointerException
+        old status is set to OFFER as well, as there is no status before.
+         */
+        ProjectStatus oldStatus = project.getStatus() != null ? project.getStatus() : ProjectStatus.OFFER;
+        ProjectStatusTransition projectStatusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
         BaseValidator.assertNotNull(projectStatusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
                 ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION,
                 project.getStatus().getStatusName(), newStatus.getStatusName()));
         this.beforeStatusChange(project, projectStatusTransition);
         project.changeStatus(newStatus);
-        //this.afterStatusChange(project, projectStatusTransition);
+        this.afterStatusChange(project, projectStatusTransition);
     }
 
     @Override
@@ -54,11 +59,10 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
         validators.forEach(validator -> validator.validate(project, statusTransition));
     }
 
-/*    @Override
+    @Override
     public void afterStatusChange(Project project, ProjectStatusTransition statusTransition) {
-        //TODO: run loggers
-        //TODO: run listeners for status change on project
-    }*/
+        //TODO: run Project listeners
+    }
 
     private ProjectStatusTransition getTransitionForStatuses(ProjectStatus status, ProjectStatus newStatus) {
         return Arrays.stream(ProjectStatusTransition.values())

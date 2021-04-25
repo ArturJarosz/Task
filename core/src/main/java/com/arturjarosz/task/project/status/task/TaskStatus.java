@@ -19,10 +19,10 @@ public enum TaskStatus implements Status<TaskStatus> {
     IN_PROGRESS {
         @Override
         public Collection<TaskStatus> getPossibleStatusTransitions() {
-            return Arrays.asList(TO_DO, DONE, REJECTED);
+            return Arrays.asList(TO_DO, COMPLETED, REJECTED);
         }
     },
-    DONE {
+    COMPLETED {
         @Override
         public Collection<TaskStatus> getPossibleStatusTransitions() {
             return Collections.singletonList(IN_PROGRESS);

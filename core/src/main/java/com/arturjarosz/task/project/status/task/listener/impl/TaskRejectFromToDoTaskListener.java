@@ -12,19 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 @Component
 public class TaskRejectFromToDoTaskListener implements TaskStatusTransitionListener {
     private final TaskStatusTransition transition = TaskStatusTransition.REJECT_FROM_TO_DO;
-    private final EnumSet<TaskStatus> finalStatuses;
     private final StageWorkflowService stageWorkflowService;
 
     @Autowired
     public TaskRejectFromToDoTaskListener(StageWorkflowService stageWorkflowService) {
         this.stageWorkflowService = stageWorkflowService;
-        this.finalStatuses = EnumSet.of(TaskStatus.REJECTED, TaskStatus.DONE);
     }
 
     @Override
@@ -33,8 +30,8 @@ public class TaskRejectFromToDoTaskListener implements TaskStatusTransitionListe
                 .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .findFirst().orElse(null);
         assert stage != null;
-        if (stage.getStatus().equals(StageStatus.IN_PROGRESS) && this.hasNoTasksInNotFinalStatuses(stage)) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.DONE);
+        if (stage.getStatus().equals(StageStatus.IN_PROGRESS) && (this.allTasksInCompletedOrRejected(stage))) {
+            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.COMPLETED);
         }
     }
 
@@ -43,9 +40,12 @@ public class TaskRejectFromToDoTaskListener implements TaskStatusTransitionListe
         return this.transition;
     }
 
-    private boolean hasNoTasksInNotFinalStatuses(Stage stage) {
+    private boolean allTasksInCompletedOrRejected(Stage stage) {
         List<Task> allTasks = new ArrayList<>(stage.getTasks());
-        allTasks.removeIf(task -> this.finalStatuses.contains(task.getStatus()));
+        //we are removing Task in Rejected status, because they should not be taken into account
+        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.REJECTED));
+        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.COMPLETED));
         return allTasks.isEmpty();
     }
+
 }
