@@ -20,11 +20,11 @@ public enum StageStatus implements Status<StageStatus> {
     IN_PROGRESS {
         @Override
         public Collection<StageStatus> getPossibleStatusTransitions() {
-            return Arrays.asList(TO_DO, DONE, REJECTED);
+            return Arrays.asList(TO_DO, COMPLETED, REJECTED);
         }
     },
 
-    DONE {
+    COMPLETED {
         @Override
         public Collection<StageStatus> getPossibleStatusTransitions() {
             return Collections.singletonList(IN_PROGRESS);

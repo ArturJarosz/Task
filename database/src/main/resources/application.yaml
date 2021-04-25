@@ -25,8 +25,10 @@ spring:
   main:
     log-startup-info: false
     banner-mode: off
-
   jackson:
     default-property-inclusion: non_null
 server:
   port: 8099
+task:
+  language: en
+  encoding: UTF-8

@@ -84,7 +84,6 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         this.architectId = architectId;
         this.clientId = clientId;
         this.projectType = projectType;
-        this.status = projectWorkflow.getInitialStatus();
         this.workflowName = projectWorkflow.getName();
     }
 

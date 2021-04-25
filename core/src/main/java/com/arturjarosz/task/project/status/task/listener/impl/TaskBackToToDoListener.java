@@ -37,6 +37,8 @@ public class TaskBackToToDoListener implements TaskStatusTransitionListener {
 
     private boolean hasOnlyTasksInToDo(Stage stage) {
         List<Task> allTasks = new ArrayList<>(stage.getTasks());
+        //we are removing Task in Rejected status, because they should not be taken into account
+        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.REJECTED));
         allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.TO_DO));
         return allTasks.isEmpty();
     }

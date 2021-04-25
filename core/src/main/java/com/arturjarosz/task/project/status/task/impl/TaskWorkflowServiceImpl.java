@@ -104,7 +104,7 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
 
     private Task getTask(Project project, Long stageId, Long taskId) {
         Predicate<Stage> stagePredicate = stage -> stage.getId().equals(stageId);
-        //Newly created Task do not have assigned ids yet.
+        //Newly created Task do not have assigned id yet.
         Predicate<Task> taskPredicate = taskId != null ? task -> task.getId().equals(taskId) : task -> task
                 .getId() == null;
         return project.getStages().stream()
