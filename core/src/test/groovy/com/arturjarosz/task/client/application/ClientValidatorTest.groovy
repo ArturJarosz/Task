@@ -33,8 +33,8 @@ class ClientValidatorTest extends Specification {
     }
 
     def projectQueryService = Mock(ProjectQueryServiceImpl) {
-        getProjectForClientId(CLIENT_ID_WITHOUT_PROJECTS) >> { Collections.emptyList() }
-        getProjectForClientId(CLIENT_ID_WITH_PROJECTS) >> { Collections.singletonList(emptyProject) }
+        getProjectsForClientId(CLIENT_ID_WITHOUT_PROJECTS) >> { Collections.emptyList() }
+        getProjectsForClientId(CLIENT_ID_WITH_PROJECTS) >> { Collections.singletonList(emptyProject) }
     }
 
     def clientValidator = new ClientValidator(clientRepository, projectQueryService);
