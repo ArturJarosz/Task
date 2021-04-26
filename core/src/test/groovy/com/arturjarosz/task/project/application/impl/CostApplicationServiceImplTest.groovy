@@ -9,6 +9,7 @@ import com.arturjarosz.task.project.model.CostCategory
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
+import com.arturjarosz.task.project.status.project.ProjectWorkflow
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto
 import com.arturjarosz.task.sharedkernel.model.Money
 import spock.lang.Shared
@@ -32,12 +33,13 @@ class CostApplicationServiceImplTest extends Specification {
     private final static LocalDate DATE = LocalDate.now();
     private final static CostCategory CATEGORY_FUEL = CostCategory.FUEL;
     private final static ProjectType PROJECT_TYPE_CONCEPT = ProjectType.CONCEPT;
+    private final static ProjectWorkflow PROJECT_WORKFLOW = new ProjectWorkflow();
 
     static final CostDto COST_DTO = new CostDto(NAME, CATEGORY_FUEL, VALUE, DATE, NOTE);
     static final Cost COST = new Cost(NAME, new Money(VALUE), CATEGORY_FUEL, DATE, NOTE);
 
     @Shared
-    Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, PROJECT_TYPE_CONCEPT);
+    Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, PROJECT_TYPE_CONCEPT, PROJECT_WORKFLOW);
 
     def projectRepository = Mock(ProjectRepositoryImpl) {
         load(NOT_EXISTING_PROJECT_ID) >> { null };
