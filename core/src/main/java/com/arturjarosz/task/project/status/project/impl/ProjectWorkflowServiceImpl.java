@@ -47,7 +47,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
         ProjectStatusTransition projectStatusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
         BaseValidator.assertNotNull(projectStatusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
                 ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION,
-                project.getStatus().getStatusName(), newStatus.getStatusName()));
+                oldStatus.getStatusName(), newStatus.getStatusName()));
         this.beforeStatusChange(project, projectStatusTransition);
         project.changeStatus(newStatus);
         this.afterStatusChange(project, projectStatusTransition);

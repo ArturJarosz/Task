@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.application.dto;
 
 import com.arturjarosz.task.project.model.StageType;
+import com.arturjarosz.task.project.status.stage.StageStatus;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ public class StageDto implements Serializable {
     private String note;
     private InstallmentDto installmentDto;
     private Integer tasksNumber;
+    private StageStatus status;
 
     public StageDto() {
 
@@ -92,5 +94,13 @@ public class StageDto implements Serializable {
 
     public void setTasksNumber(Integer tasksNumber) {
         this.tasksNumber = tasksNumber;
+    }
+
+    public StageStatus getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(StageStatus status) {
+        this.status = status;
     }
 }

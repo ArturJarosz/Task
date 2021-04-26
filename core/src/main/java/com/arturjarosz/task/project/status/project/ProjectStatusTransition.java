@@ -3,6 +3,8 @@ package com.arturjarosz.task.project.status.project;
 import com.arturjarosz.task.sharedkernel.status.StatusTransition;
 
 public enum ProjectStatusTransition implements StatusTransition<ProjectStatus> {
+    // creating Project
+    CREATE_PROJECT(ProjectStatus.OFFER, ProjectStatus.OFFER),
     // from OFFER
     OFFER_REJECTED(ProjectStatus.OFFER, ProjectStatus.REJECTED),
     OFFER_ACCEPTED(ProjectStatus.OFFER, ProjectStatus.TO_DO),

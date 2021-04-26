@@ -60,8 +60,8 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         StageValidator.validateCreateStageDto(stageDto);
         Stage stage = StageDtoMapper.INSTANCE.stageCreateDtoToStage(stageDto, this.stageWorkflow);
         Project project = this.projectRepository.load(projectId);
-        this.stageWorkflowService.changeStageStatusOnProject(project, stage.getId(), StageStatus.TO_DO);
         project.addStage(stage);
+        this.stageWorkflowService.changeStageStatusOnProject(project, stage.getId(), StageStatus.TO_DO);
         project = this.projectRepository.save(project);
         LOG.debug("Stage for Project with id {} created.", projectId);
         return new CreatedEntityDto(this.getIdForCreatedStage(project, stage));

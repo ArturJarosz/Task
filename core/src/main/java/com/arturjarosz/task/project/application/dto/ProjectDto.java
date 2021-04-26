@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.application.dto;
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
 import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.project.model.ProjectType;
+import com.arturjarosz.task.project.status.project.ProjectStatus;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ public class ProjectDto implements Serializable {
     private LocalDate endDate;
     private LocalDate deadline;
     private String note;
+    private ProjectStatus status;
 
     public ProjectDto() {
     }
@@ -93,5 +95,13 @@ public class ProjectDto implements Serializable {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public ProjectStatus getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(ProjectStatus status) {
+        this.status = status;
     }
 }
