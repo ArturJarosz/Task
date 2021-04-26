@@ -76,6 +76,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         Long clientId = projectCreateDto.getClientId();
         this.clientValidator.validateClientExistence(clientId);
         Project project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto, this.projectWorkflow);
+        this.projectWorkflowService.changeProjectStatus(project, this.projectWorkflow.getInitialStatus());
         project = this.projectRepository.save(project);
         LOG.debug("Project created.");
         return new CreatedEntityDto(project.getId());
@@ -90,7 +91,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         ArchitectDto architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
         LOG.debug("Project with id {} loaded.", projectId);
         return ProjectDtoMapper.INSTANCE
-                .clientArchitectProjectToProjectDto(clientBasicData, architectDto, project);
+                .projectToProjectDto(clientBasicData, architectDto, project);
     }
 
     @Transactional
@@ -146,7 +147,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
             ClientBasicDto clientBasicData = this.clientApplicationService.getClientBasicData(project.getClientId());
             ArchitectDto architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
             return ProjectDtoMapper.INSTANCE
-                    .clientArchitectProjectToBasicProjectDto(clientBasicData, architectDto, project);
+                    .projectToBasicProjectDto(clientBasicData, architectDto, project);
         }).collect(Collectors.toList());
     }
 

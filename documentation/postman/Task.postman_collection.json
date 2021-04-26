@@ -576,13 +576,13 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{taskAddress}}/projects//stages/{{stageId}}",
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}",
                   "host": [
                     "{{taskAddress}}"
                   ],
                   "path": [
                     "projects",
-                    "",
+                    "{{projectId}}",
                     "stages",
                     "{{stageId}}"
                   ]

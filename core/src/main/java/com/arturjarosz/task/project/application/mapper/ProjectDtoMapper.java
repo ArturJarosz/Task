@@ -37,8 +37,8 @@ public interface ProjectDtoMapper {
     @Mapping(source = "clientBasicDto.companyName", target = "client.companyName")
     @Mapping(source = "clientBasicDto.clientType", target = "client.clientType")
     @Mapping(source = "architectDto", target = "architect")
-    ProjectDto clientArchitectProjectToProjectDto(ClientBasicDto clientBasicDto, ArchitectDto architectDto,
-                                                  Project project);
+    ProjectDto projectToProjectDto(ClientBasicDto clientBasicDto, ArchitectDto architectDto,
+                                   Project project);
 
     @Mapping(source = "project.projectType", target = "projectType")
     @Mapping(source = "project.name", target = "name")
@@ -51,7 +51,7 @@ public interface ProjectDtoMapper {
     @Mapping(source = "clientBasicDto.companyName", target = "client.companyName")
     @Mapping(source = "clientBasicDto.clientType", target = "client.clientType")
     @Mapping(source = "architectDto", target = "architect")
-    ProjectDto clientArchitectProjectToBasicProjectDto(ClientBasicDto clientBasicDto, ArchitectDto architectDto,
-                                                       Project project);
+    ProjectDto projectToBasicProjectDto(ClientBasicDto clientBasicDto, ArchitectDto architectDto,
+                                        Project project);
 
 }
