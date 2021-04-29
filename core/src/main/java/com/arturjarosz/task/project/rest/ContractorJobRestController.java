@@ -2,7 +2,8 @@ package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.project.application.ContractorJobApplicationService;
 import com.arturjarosz.task.project.application.dto.ContractorJobDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,11 +26,15 @@ public class ContractorJobRestController {
     }
 
     @PostMapping("{projectId}/contractorJobs")
-    public ResponseEntity<CreatedEntityDto> createContractorJob(@PathVariable("projectId") Long projectId,
+    public ResponseEntity<ContractorJobDto> createContractorJob(@PathVariable("projectId") Long projectId,
                                                                 @RequestBody ContractorJobDto contractorJobDto) {
-        return new ResponseEntity<>(
-                this.contractorJobApplicationService.createContractorJob(projectId, contractorJobDto),
-                HttpStatus.CREATED);
+        ContractorJobDto createdContractorJobDto = this.contractorJobApplicationService
+                .createContractorJob(projectId, contractorJobDto);
+        HttpHeaders headers = new HttpHeadersBuilder()
+                .withLocation("projects/{projectId}/contractorJobs/{contractorJobId}", projectId,
+                        createdContractorJobDto.getId())
+                .build();
+        return new ResponseEntity<>(contractorJobDto, headers, HttpStatus.CREATED);
     }
 
     @DeleteMapping("{projectId}/contractorJobs/{contractorJobId}")
@@ -40,9 +45,9 @@ public class ContractorJobRestController {
     }
 
     @PutMapping("{projectId}/contractorJobs/{contractorJobId}")
-    public ResponseEntity<Void> updateContractorJob(@PathVariable("projectId") Long projectId,
-                                                    @PathVariable("contractorJobId") Long contractorJobId,
-                                                    @RequestBody ContractorJobDto contractorJobDto) {
+    public ResponseEntity<ContractorJobDto> updateContractorJob(@PathVariable("projectId") Long projectId,
+                                                                @PathVariable("contractorJobId") Long contractorJobId,
+                                                                @RequestBody ContractorJobDto contractorJobDto) {
         this.contractorJobApplicationService.updateContractorJob(projectId, contractorJobId, contractorJobDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }

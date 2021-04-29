@@ -1,7 +1,6 @@
 package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.project.application.dto.ContractorJobDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
 public interface ContractorJobApplicationService {
     /**
@@ -12,7 +11,7 @@ public interface ContractorJobApplicationService {
      * @param contractorJobDto
      * @return
      */
-    CreatedEntityDto createContractorJob(Long projectId, ContractorJobDto contractorJobDto);
+    ContractorJobDto createContractorJob(Long projectId, ContractorJobDto contractorJobDto);
 
     /**
      * Remove ContractorJob with contractorJobId on Project with projectId. If Project or ContractorJob do not exit,
@@ -32,7 +31,7 @@ public interface ContractorJobApplicationService {
      * @param contractorJobId
      * @param contractorJobDto
      */
-    void updateContractorJob(Long projectId, Long contractorJobId, ContractorJobDto contractorJobDto);
+    ContractorJobDto updateContractorJob(Long projectId, Long contractorJobId, ContractorJobDto contractorJobDto);
 
     /**
      * Return ContractorJob with contractorJobId on Project with projectId. If Project or ContractorJob do not exist or

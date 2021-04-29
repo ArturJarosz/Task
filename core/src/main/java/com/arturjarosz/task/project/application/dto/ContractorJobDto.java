@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class ContractorJobDto implements Serializable {
     private static final long serialVersionUID = -532775551414801250L;
 
+    private Long id;
     private String name;
     private Double value;
     private Long contractorId;
@@ -43,5 +44,13 @@ public class ContractorJobDto implements Serializable {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

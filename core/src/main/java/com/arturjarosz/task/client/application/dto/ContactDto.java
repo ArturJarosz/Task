@@ -9,10 +9,7 @@ public class ContactDto implements Serializable {
     private String email;
     private String telephone;
 
-    public ContactDto(AddressDto address, String email, String telephone) {
-        this.address = address;
-        this.email = email;
-        this.telephone = telephone;
+    public ContactDto() {
     }
 
     public AddressDto getAddress() {

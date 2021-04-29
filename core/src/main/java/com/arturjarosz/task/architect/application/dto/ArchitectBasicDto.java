@@ -12,12 +12,6 @@ public class ArchitectBasicDto implements Serializable {
     public ArchitectBasicDto() {
     }
 
-    public ArchitectBasicDto(Long id, String firstName, String lastName) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
     public Long getId() {
         return this.id;
     }

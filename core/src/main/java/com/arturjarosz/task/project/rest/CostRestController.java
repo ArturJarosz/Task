@@ -2,7 +2,8 @@ package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.project.application.CostApplicationService;
 import com.arturjarosz.task.project.application.dto.CostDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,10 +29,13 @@ public class CostRestController {
     }
 
     @PostMapping("{projectId}/costs")
-    public ResponseEntity<CreatedEntityDto> createCost(@PathVariable("projectId") Long projectId,
-                                                       @RequestBody CostDto costDto) {
-        return new ResponseEntity<>(this.costApplicationService.createCost(projectId, costDto),
-                HttpStatus.CREATED);
+    public ResponseEntity<CostDto> createCost(@PathVariable("projectId") Long projectId,
+                                              @RequestBody CostDto costDto) {
+        CostDto createdCostDto = this.costApplicationService.createCost(projectId, costDto);
+        HttpHeaders headers = new HttpHeadersBuilder()
+                .withLocation("/projects/{projectId}/costs/{costId}", projectId, createdCostDto.getId())
+                .build();
+        return new ResponseEntity<>(createdCostDto, headers, HttpStatus.CREATED);
     }
 
     @GetMapping("costs/{costId}")
@@ -45,8 +49,8 @@ public class CostRestController {
     }
 
     @PutMapping("{projectId}/costs/{costId}")
-    public ResponseEntity<Void> updateCost(@PathVariable("projectId") Long projectId,
-                                           @PathVariable("costId") Long costId, @RequestBody CostDto costDto) {
+    public ResponseEntity<CostDto> updateCost(@PathVariable("projectId") Long projectId,
+                                              @PathVariable("costId") Long costId, @RequestBody CostDto costDto) {
         this.costApplicationService.updateCost(projectId, costId, costDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -11,12 +11,7 @@ public class AddressDto implements Serializable {
     private String houseNumber;
     private String flatNumber;
 
-    public AddressDto(String city, String postCode, String street, String houseNumber, String flatNumber) {
-        this.city = city;
-        this.postCode = postCode;
-        this.street = street;
-        this.houseNumber = houseNumber;
-        this.flatNumber = flatNumber;
+    public AddressDto() {
     }
 
     public String getCity() {

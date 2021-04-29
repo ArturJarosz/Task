@@ -44,8 +44,8 @@ public class CooperatorJob extends AbstractEntity {
         return this.name;
     }
 
-    public Double getValue() {
-        return this.value.getValue().doubleValue();
+    public Money getValue() {
+        return this.value;
     }
 
     public String getNote() {

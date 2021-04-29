@@ -1,7 +1,6 @@
 package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.project.application.dto.StageDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ public interface StageApplicationService {
      * @param stageDto
      * @return
      */
-    CreatedEntityDto createStage(Long projectId, StageDto stageDto);
+    StageDto createStage(Long projectId, StageDto stageDto);
 
     /**
      * Removes stage with stageId, from project of given projectId.
@@ -35,7 +34,7 @@ public interface StageApplicationService {
      * @param stageId
      * @param stageDto
      */
-    void updateStage(Long projectId, Long stageId, StageDto stageDto);
+    StageDto updateStage(Long projectId, Long stageId, StageDto stageDto);
 
     /**
      * Return Stage of given stageId for Project with given projectId. If Project or Stage do not exist, then

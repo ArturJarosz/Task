@@ -11,6 +11,7 @@ import java.time.LocalDate;
 public class ProjectDto implements Serializable {
     private static final long serialVersionUID = 8501354213746117568L;
 
+    private Long id;
     private ClientBasicDto client;
     private ArchitectBasicDto architect;
     private String name;
@@ -103,5 +104,13 @@ public class ProjectDto implements Serializable {
 
     public void setStatus(ProjectStatus status) {
         this.status = status;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

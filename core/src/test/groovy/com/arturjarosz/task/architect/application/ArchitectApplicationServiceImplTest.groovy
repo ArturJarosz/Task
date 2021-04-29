@@ -2,11 +2,11 @@ package com.arturjarosz.task.architect.application
 
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
 import com.arturjarosz.task.architect.application.dto.ArchitectDto
+import com.arturjarosz.task.architect.application.impl.ArchitectApplicationServiceImpl
 import com.arturjarosz.task.architect.infrastructure.repository.impl.ArchitectRepositoryImpl
 import com.arturjarosz.task.architect.model.Architect
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto
 import spock.lang.Specification
 
 import java.lang.reflect.Field
@@ -72,10 +72,10 @@ class ArchitectApplicationServiceImplTest extends Specification {
         given:
             ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(null, FIRST_NAME, LAST_NAME);
         when:
-            CreatedEntityDto createdEntityDto = architectApplicationService.createArchitect(architectBasicDto);
+            ArchitectDto architectDto = architectApplicationService.createArchitect(architectBasicDto);
         then:
             noExceptionThrown();
-            createdEntityDto.getId() == EXISTING_ID;
+            architectDto.getId() == EXISTING_ID;
 
     }
 

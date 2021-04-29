@@ -10,7 +10,6 @@ import com.arturjarosz.task.client.model.Client;
 import com.arturjarosz.task.client.model.ClientType;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
     @Transactional
     @Override
-    public CreatedEntityDto createClient(ClientBasicDto clientBasicDto) {
+    public ClientDto createClient(ClientBasicDto clientBasicDto) {
         LOG.debug("Creating client");
 
         validateClientBasicDto(clientBasicDto);
@@ -56,7 +55,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         client = this.clientRepository.save(client);
 
         LOG.debug("Client created");
-        return new CreatedEntityDto(client.getId());
+        return ClientDtoMapper.INSTANCE.clientToClientDto(client);
     }
 
     @Transactional
@@ -83,7 +82,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
     @Transactional
     @Override
-    public void updateClient(Long clientId, ClientDto clientDto) {
+    public ClientDto updateClient(Long clientId, ClientDto clientDto) {
         LOG.debug("Updating Client with id {}.", clientId);
 
         Client client = this.clientRepository.load(clientId);
@@ -112,6 +111,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         this.clientRepository.save(client);
 
         LOG.debug("Client with id {} updated.", clientId);
+        return ClientDtoMapper.INSTANCE.clientToClientDto(client);
     }
 
     @Override

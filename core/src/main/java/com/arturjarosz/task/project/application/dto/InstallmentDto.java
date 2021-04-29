@@ -7,6 +7,7 @@ public class InstallmentDto implements Serializable {
 
     private static final long serialVersionUID = -4338716799879536304L;
 
+    private Long id;
     private Double value;
     private Boolean isPaid;
     private String note;
@@ -45,5 +46,13 @@ public class InstallmentDto implements Serializable {
 
     public void setPayDate(LocalDate payDate) {
         this.payDate = payDate;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -17,15 +17,6 @@ public class ProjectContractDto implements Serializable {
 
     }
 
-    public ProjectContractDto(Long id, LocalDate signingDate, LocalDate startDate, LocalDate deadline,
-                              LocalDate endDate) {
-        this.id = id;
-        this.signingDate = signingDate;
-        this.startDate = startDate;
-        this.deadline = deadline;
-        this.endDate = endDate;
-    }
-
     public Long getId() {
         return this.id;
     }

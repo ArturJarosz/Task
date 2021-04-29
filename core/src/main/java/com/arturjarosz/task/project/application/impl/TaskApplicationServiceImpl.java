@@ -9,14 +9,12 @@ import com.arturjarosz.task.project.application.mapper.TaskDtoMapper;
 import com.arturjarosz.task.project.domain.TaskDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.project.status.task.TaskWorkflowService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +52,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
 
     @Transactional
     @Override
-    public CreatedEntityDto createTask(Long projectId, Long stageId, TaskDto taskDto) {
+    public TaskDto createTask(Long projectId, Long stageId, TaskDto taskDto) {
         LOG.debug("Creating Task for Project with id {} and Stage with id {}", projectId, stageId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
@@ -65,7 +63,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, task.getId(), TaskStatus.TO_DO);
         project = this.projectRepository.save(project);
         LOG.debug("Task created.");
-        return new CreatedEntityDto(this.getCreatedTaskId(stageId, project, task));
+        return TaskDtoMapper.INSTANCE.taskToTaskDto(task);
     }
 
     @Transactional
@@ -83,16 +81,17 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
 
     @Transactional
     @Override
-    public void updateTask(Long projectId, Long stageId, Long taskId, TaskDto taskDto) {
+    public TaskDto updateTask(Long projectId, Long stageId, Long taskId, TaskDto taskDto) {
         LOG.debug("Updating Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         Project project = this.projectRepository.load(projectId);
         TaskInnerDto taskInnerDto = TaskDtoMapper.INSTANCE.updateDtoToInnerDto(taskDto);
-        project.updateTaskOnStage(stageId, taskId, taskInnerDto);
+        Task task = project.updateTaskOnStage(stageId, taskId, taskInnerDto);
         this.projectRepository.save(project);
         LOG.debug("Task updated.");
+        return TaskDtoMapper.INSTANCE.taskToTaskDto(task);
     }
 
     @Transactional
@@ -153,24 +152,5 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         Project project = this.projectRepository.load(projectId);
         this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.TO_DO);
         this.projectRepository.save(project);
-    }
-
-    /**
-     * Retrieve id of given Task in Stage in Project. When Task is added to the Project it does not have any id yet.
-     * After it is saved by repository to the database the Id is generated.
-     *
-     * @param stageId
-     * @param project
-     * @param task
-     * @return id of Task
-     */
-    private Long getCreatedTaskId(Long stageId, Project project, Task task) {
-        Stage stage = project.getStages().stream()
-                .filter(stageOnProject -> stageOnProject.getId().equals(stageId)).findFirst().orElseThrow();
-        return stage.getTasks().stream()
-                .filter(taskOnStage -> taskOnStage.equals(task))
-                .findFirst()
-                .map(taskOnStage -> taskOnStage.getId())
-                .orElseThrow();
     }
 }

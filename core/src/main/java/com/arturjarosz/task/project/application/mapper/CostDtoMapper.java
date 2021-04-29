@@ -1,13 +1,12 @@
-package com.arturjarosz.task.project.model;
+package com.arturjarosz.task.project.application.mapper;
 
 import com.arturjarosz.task.project.application.dto.CostDto;
+import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-
-import java.time.LocalDate;
 
 @Mapper
 public interface CostDtoMapper {
@@ -21,22 +20,11 @@ public interface CostDtoMapper {
         return new Money(value);
     }
 
-    default CostDto costToCostDto(Cost cost) {
-        if (cost == null) {
-            return null;
-        }
+    @Mapping(source = "value", target = "value", qualifiedByName = "moneyToDouble")
+    CostDto costToCostDto(Cost cost);
 
-        String name = cost.getName();
-        CostCategory category = cost.getCategory();
-        Double value = cost.getValue().getValue().doubleValue();
-        LocalDate date = cost.getDate();
-        String note = cost.getNote();
-
-        CostDto costDto = new CostDto(name, category, value, date, note);
-
-        costDto.setId(cost.getId());
-
-        return costDto;
+    @Named("moneyToDouble")
+    default Double moneyToDouble(Money money) {
+        return money.getValue().doubleValue();
     }
-
 }

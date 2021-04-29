@@ -17,6 +17,7 @@ public class TaskDto implements Serializable {
     public static final String STATUS = "status";
     public static final String TASK_TYPE = "type";
 
+    private Long id;
     private String name;
     private TaskType type;
     private LocalDate startDate;
@@ -73,5 +74,13 @@ public class TaskDto implements Serializable {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

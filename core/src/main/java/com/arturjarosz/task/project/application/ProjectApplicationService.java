@@ -3,7 +3,6 @@ package com.arturjarosz.task.project.application;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
 import java.util.List;
 
@@ -17,7 +16,7 @@ public interface ProjectApplicationService {
      * @param projectCreateDto
      * @return CreatedEntityDto with newly created Project id.
      */
-    CreatedEntityDto createProject(ProjectCreateDto projectCreateDto);
+    ProjectDto createProject(ProjectCreateDto projectCreateDto);
 
     /**
      * Load all {@link com.arturjarosz.task.project.model.Project} data.
@@ -37,7 +36,7 @@ public interface ProjectApplicationService {
      * @param projectId
      * @param projectDto
      */
-    void updateProject(Long projectId, ProjectDto projectDto);
+    ProjectDto updateProject(Long projectId, ProjectDto projectDto);
 
     /**
      * Removes {@link com.arturjarosz.task.project.model.Project} of given Id.

@@ -1,7 +1,6 @@
 package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.project.application.dto.InstallmentDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public interface InstallmentApplicationService {
      * @param installmentDto
      * @return
      */
-    CreatedEntityDto createInstallment(Long projectId, Long stageId, InstallmentDto installmentDto);
+    InstallmentDto createInstallment(Long projectId, Long stageId, InstallmentDto installmentDto);
 
     /**
      * Updates installment according to installmentDto for stage in given project.

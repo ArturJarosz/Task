@@ -55,23 +55,23 @@ public class Cost extends AbstractEntity {
         this.value = value;
     }
 
-    protected String getName() {
+    public String getName() {
         return this.name;
     }
 
-    protected Money getValue() {
+    public Money getValue() {
         return this.value;
     }
 
-    protected CostCategory getCategory() {
+    public CostCategory getCategory() {
         return this.category;
     }
 
-    protected LocalDate getDate() {
+    public LocalDate getDate() {
         return this.date;
     }
 
-    protected String getNote() {
+    public String getNote() {
         return this.note;
     }
 

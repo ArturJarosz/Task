@@ -4,7 +4,8 @@ import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,8 +30,12 @@ public class ProjectRestController {
     }
 
     @PostMapping("")
-    public ResponseEntity<CreatedEntityDto> createProject(@RequestBody ProjectCreateDto projectCreateDto) {
-        return new ResponseEntity<>(this.projectApplicationService.createProject(projectCreateDto), HttpStatus.CREATED);
+    public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectCreateDto projectCreateDto) {
+        ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
+        HttpHeaders header = new HttpHeadersBuilder()
+                .withLocation("projects/{projectId}", createdProjectDto.getId())
+                .build();
+        return new ResponseEntity<>(createdProjectDto, header, HttpStatus.CREATED);
     }
 
     @GetMapping("{projectId}")
@@ -39,8 +44,8 @@ public class ProjectRestController {
     }
 
     @PutMapping("{projectId}")
-    public ResponseEntity<Void> updateProject(@PathVariable("projectId") Long projectId,
-                                              @RequestBody ProjectDto projectDto) {
+    public ResponseEntity<ProjectDto> updateProject(@PathVariable("projectId") Long projectId,
+                                                    @RequestBody ProjectDto projectDto) {
         this.projectApplicationService.updateProject(projectId, projectDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }

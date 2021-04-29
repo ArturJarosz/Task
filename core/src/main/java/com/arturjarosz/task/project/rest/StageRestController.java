@@ -2,7 +2,8 @@ package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.dto.StageDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,9 +28,13 @@ public class StageRestController {
     }
 
     @PostMapping("stages")
-    public ResponseEntity<CreatedEntityDto> createStage(@PathVariable("projectId") Long projectId,
-                                                        @RequestBody StageDto stageDto) {
-        return new ResponseEntity<>(this.stageApplicationService.createStage(projectId, stageDto), HttpStatus.CREATED);
+    public ResponseEntity<StageDto> createStage(@PathVariable("projectId") Long projectId,
+                                                @RequestBody StageDto stageDto) {
+        StageDto createdStageDto = this.stageApplicationService.createStage(projectId, stageDto);
+        HttpHeaders headers = new HttpHeadersBuilder()
+                .withLocation("projects/{projectId}/stages/{stageId}", projectId, createdStageDto.getId())
+                .build();
+        return new ResponseEntity<>(createdStageDto, headers, HttpStatus.CREATED);
     }
 
     @DeleteMapping("stages/{stageId}")
@@ -40,10 +45,11 @@ public class StageRestController {
     }
 
     @PutMapping("stages/{stageId}")
-    public ResponseEntity<Void> updateStage(@PathVariable("projectId") Long projectId,
-                                            @PathVariable("stageId") Long stageId, @RequestBody StageDto stageDto) {
-        this.stageApplicationService.updateStage(projectId, stageId, stageDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<StageDto> updateStage(@PathVariable("projectId") Long projectId,
+                                                @PathVariable("stageId") Long stageId, @RequestBody StageDto stageDto) {
+
+        return new ResponseEntity<>(this.stageApplicationService.updateStage(projectId, stageId, stageDto),
+                HttpStatus.OK);
     }
 
     @GetMapping("stages/{stageId}")

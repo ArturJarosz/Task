@@ -10,8 +10,6 @@ import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +34,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
     }
 
     @Override
-    public CreatedEntityDto createContractorJob(Long projectId,
+    public ContractorJobDto createContractorJob(Long projectId,
                                                 ContractorJobDto contractorJobDto) {
         LOG.debug("Creating ContractorJob for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
@@ -47,7 +45,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
                 .contractorJobCreateDtoToCooperatorJob(contractorJobDto);
         project.addCooperatorJob(cooperatorJob);
         this.projectRepository.save(project);
-        return new CreatedEntityDto(this.getIdForCreatedContractorJob(project, cooperatorJob));
+        return CooperatorJobDtoMapper.INSTANCE.cooperatorJobToContractorJobDto(cooperatorJob);
     }
 
     @Override
@@ -62,17 +60,19 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
     }
 
     @Override
-    public void updateContractorJob(Long projectId, Long contractorJobId,
-                                    ContractorJobDto contractorJobDto) {
+    public ContractorJobDto updateContractorJob(Long projectId, Long contractorJobId,
+                                                ContractorJobDto contractorJobDto) {
         LOG.debug("Updating ContractorJob with id {} from Project with id {}", contractorJobId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
         this.contractorJobValidator.validateContractorJobOnProjectExistence(project, contractorJobId);
         this.contractorJobValidator.validateUpdateContractorJobDto(contractorJobDto);
-        project.updateContractorJob(contractorJobId, contractorJobDto.getName(), contractorJobDto.getValue(),
-                contractorJobDto.getNote());
+        CooperatorJob cooperatorJob = project
+                .updateContractorJob(contractorJobId, contractorJobDto.getName(), contractorJobDto.getValue(),
+                        contractorJobDto.getNote());
         this.projectRepository.save(project);
         LOG.debug("ContractorJob with id {} updated on Project with id {}", contractorJobId, projectId);
+        return CooperatorJobDtoMapper.INSTANCE.cooperatorJobToContractorJobDto(cooperatorJob);
     }
 
     @Override
@@ -83,21 +83,5 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         this.contractorJobValidator.validateContractorJobOnProjectExistence(project, contractorJobId);
         CooperatorJob cooperatorJob = this.projectQueryService.getCooperatorJobByIdForProject(contractorJobId);
         return CooperatorJobDtoMapper.INSTANCE.cooperatorJobToContractorJobDto(cooperatorJob);
-    }
-
-    /**
-     * Retrieve id of given CooperatorJob in Project. When CooperatorJob is added to the project it does not have
-     * any id yet. After it is saved by repository to the database the Id is generated.     *
-     *
-     * @param project
-     * @param cooperatorJob
-     * @return id of Cost
-     */
-    private Long getIdForCreatedContractorJob(Project project, CooperatorJob cooperatorJob) {
-        return project.getCooperatorJobs().stream()
-                .filter(projectCooperatorJob -> projectCooperatorJob.equals(cooperatorJob))
-                .findFirst()
-                .map(AbstractEntity::getId
-                ).orElseThrow();
     }
 }

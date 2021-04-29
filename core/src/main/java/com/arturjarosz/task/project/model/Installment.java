@@ -55,19 +55,19 @@ public class Installment extends AbstractEntity {
         return this.isPaid;
     }
 
-    Money getAmount() {
+    public Money getAmount() {
         return this.amount;
     }
 
-    Boolean getPaid() {
+    public Boolean getPaid() {
         return this.isPaid;
     }
 
-    LocalDate getPaymentDate() {
+    public LocalDate getPaymentDate() {
         return this.paymentDate;
     }
 
-    String getNote() {
+    public String getNote() {
         return this.note;
     }
 }

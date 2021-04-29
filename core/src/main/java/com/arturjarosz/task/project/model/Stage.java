@@ -105,11 +105,12 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
         this.tasks.removeIf(task -> task.getId().equals(taskId));
     }
 
-    public void updateTask(Long taskId, TaskInnerDto taskInnerDto) {
+    public Task updateTask(Long taskId, TaskInnerDto taskInnerDto) {
         Task taskToUpdate = this.tasks.stream()
                 .filter(task -> task.getId().equals(taskId))
                 .findFirst().orElse(null);
         taskToUpdate.update(taskInnerDto);
+        return taskToUpdate;
     }
 
     public String getName() {

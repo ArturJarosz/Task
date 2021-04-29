@@ -4,10 +4,10 @@ import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.StageValidator;
 import com.arturjarosz.task.project.application.dto.StageDto;
+import com.arturjarosz.task.project.application.mapper.StageDtoMapper;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
-import com.arturjarosz.task.project.model.StageDtoMapper;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.project.status.stage.StageStatus;
@@ -16,7 +16,6 @@ import com.arturjarosz.task.project.status.stage.StageWorkflowService;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +52,8 @@ public class StageApplicationServiceImpl implements StageApplicationService {
 
     @Transactional
     @Override
-    public CreatedEntityDto createStage(Long projectId,
-                                        StageDto stageDto) {
+    public StageDto createStage(Long projectId,
+                                StageDto stageDto) {
         LOG.debug("Creating Stage for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         StageValidator.validateCreateStageDto(stageDto);
@@ -64,7 +63,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.stageWorkflowService.changeStageStatusOnProject(project, stage.getId(), StageStatus.TO_DO);
         project = this.projectRepository.save(project);
         LOG.debug("Stage for Project with id {} created.", projectId);
-        return new CreatedEntityDto(this.getIdForCreatedStage(project, stage));
+        return StageDtoMapper.INSTANCE.stageDtoFromStage(stage);
     }
 
     @Transactional
@@ -80,16 +79,17 @@ public class StageApplicationServiceImpl implements StageApplicationService {
 
     @Transactional
     @Override
-    public void updateStage(Long projectId, Long stageId, StageDto stageDto) {
+    public StageDto updateStage(Long projectId, Long stageId, StageDto stageDto) {
         LOG.debug("Updating Stage with id {} for Project with id {}", stageId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
         StageValidator.validateUpdateStageDto(stageDto);
-        project.updateStage(stageId, stageDto.getName(), stageDto.getNote(), stageDto.getStageType(),
+        Stage stage = project.updateStage(stageId, stageDto.getName(), stageDto.getNote(), stageDto.getStageType(),
                 stageDto.getDeadline());
         this.projectRepository.save(project);
         LOG.debug("Stage updated.");
+        return StageDtoMapper.INSTANCE.stageDtoFromStage(stage);
     }
 
     @Override

@@ -15,12 +15,8 @@ public class CostDto implements Serializable {
     private LocalDate date;
     private String note;
 
-    public CostDto(String name, CostCategory category, Double value, LocalDate date, String note) {
-        this.name = name;
-        this.category = category;
-        this.value = value;
-        this.date = date;
-        this.note = note;
+    public CostDto() {
+
     }
 
     public Long getId() {

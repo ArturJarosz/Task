@@ -1,6 +1,7 @@
-package com.arturjarosz.task.project.model;
+package com.arturjarosz.task.project.application.mapper;
 
 import com.arturjarosz.task.project.application.dto.StageDto;
+import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.status.stage.StageWorkflow;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
