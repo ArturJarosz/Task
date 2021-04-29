@@ -173,11 +173,12 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         this.stages.removeIf(stage -> stageId.equals(stage.getId()));
     }
 
-    public void updateStage(Long stageId, String stageName, String note,
-                            StageType stageType, LocalDate deadline) {
+    public Stage updateStage(Long stageId, String stageName, String note,
+                             StageType stageType, LocalDate deadline) {
         Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
                 .orElseThrow(IllegalArgumentException::new);
         stageToUpdate.update(stageName, note, stageType, deadline);
+        return stageToUpdate;
     }
 
     public void addInstallmentToStage(Long stageId, Installment installment) {
@@ -187,11 +188,12 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
 
     }
 
-    public void updateCost(Long costId, String name, LocalDate date, Double value, CostCategory category,
+    public Cost updateCost(Long costId, String name, LocalDate date, Double value, CostCategory category,
                            String note) {
         Cost cost = this.getCosts().stream().filter(costOnProject -> costOnProject.getId().equals(costId)).findFirst()
                 .orElseThrow(IllegalArgumentException::new);
         cost.updateCost(name, value, date, note, category);
+        return cost;
     }
 
     public void addTaskToStage(Long stageId, Task task) {
@@ -206,11 +208,11 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         stageToUpdate.removeTask(taskId);
     }
 
-    public void updateTaskOnStage(Long stageId, Long taskId,
+    public Task updateTaskOnStage(Long stageId, Long taskId,
                                   TaskInnerDto taskInnerDto) {
         Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
                 .orElseThrow(IllegalArgumentException::new);
-        stageToUpdate.updateTask(taskId, taskInnerDto);
+        return stageToUpdate.updateTask(taskId, taskInnerDto);
     }
 
     public void addCooperatorJob(CooperatorJob cooperatorJob) {
@@ -228,13 +230,14 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         this.cooperatorJobs.removeIf(cooperatorJob -> cooperatorJob.getId().equals(contractorJobId));
     }
 
-    public void updateContractorJob(Long contractorJobId, String name, Double value, String note) {
+    public CooperatorJob updateContractorJob(Long contractorJobId, String name, Double value, String note) {
         CooperatorJob cooperatorJob = this.cooperatorJobs.stream()
                 .filter(cooperatorJobOnProject -> cooperatorJobOnProject.getId().equals(contractorJobId)).findFirst()
                 .orElseThrow(IllegalArgumentException::new);
         cooperatorJob.setName(name);
         cooperatorJob.setValue(value);
         cooperatorJob.setNote(note);
+        return cooperatorJob;
     }
 
     @Override

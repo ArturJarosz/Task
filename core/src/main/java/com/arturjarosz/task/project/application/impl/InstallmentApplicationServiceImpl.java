@@ -5,15 +5,14 @@ import com.arturjarosz.task.project.application.InstallmentValidator;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageValidator;
 import com.arturjarosz.task.project.application.dto.InstallmentDto;
+import com.arturjarosz.task.project.application.mapper.InstallmentDtoMapper;
 import com.arturjarosz.task.project.domain.InstallmentDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Installment;
-import com.arturjarosz.task.project.model.InstallmentDtoMapper;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +44,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
 
     @Transactional
     @Override
-    public CreatedEntityDto createInstallment(Long projectId, Long stageId, InstallmentDto installmentDto) {
+    public InstallmentDto createInstallment(Long projectId, Long stageId, InstallmentDto installmentDto) {
         LOG.debug("creating installment");
 
         this.projectValidator.validateProjectExistence(projectId);
@@ -58,7 +57,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         project = this.projectRepository.save(project);
 
         LOG.debug("installment for stage with id {} created", stageId);
-        return new CreatedEntityDto(this.getIdForInstallmentInStage(project, stageId));
+        return InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(installment);
     }
 
     @Transactional
@@ -127,12 +126,5 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.stageValidator.validateStageHavingInstallment(stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);
         return InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(stage.getInstallment());
-    }
-
-    private Long getIdForInstallmentInStage(Project project, Long stageId) {
-        return project.getStages()
-                .stream()
-                .filter(stageInProject -> stageInProject.getId().equals(stageId))
-                .map(stage -> stage.getInstallment().getId()).findFirst().orElseThrow();
     }
 }

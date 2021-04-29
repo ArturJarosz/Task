@@ -5,14 +5,12 @@ import java.io.Serializable;
 public class ArchitectDto implements Serializable {
 
     private static final long serialVersionUID = -2843189902148429731L;
+    private Long id;
     private String firstName;
     private String lastName;
     private Double projectsValue;
 
-    public ArchitectDto(String firstName, String lastName, Double projectsValue) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.projectsValue = projectsValue;
+    public ArchitectDto() {
     }
 
     public String getFirstName() {
@@ -37,5 +35,13 @@ public class ArchitectDto implements Serializable {
 
     public void setProjectsValue(Double projectsValue) {
         this.projectsValue = projectsValue;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -2,7 +2,8 @@ package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.project.application.InstallmentApplicationService;
 import com.arturjarosz.task.project.application.dto.InstallmentDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,18 +28,22 @@ public class InstallmentRestController {
     }
 
     @PostMapping("{projectId}/stages/{stageId}/installments")
-    public ResponseEntity<CreatedEntityDto> createInstallment(@PathVariable("projectId") Long projectId,
-                                                              @PathVariable("stageId") Long stageId,
-                                                              @RequestBody InstallmentDto installmentDto) {
-        return new ResponseEntity<>(
-                this.installmentApplicationService.createInstallment(projectId, stageId, installmentDto),
-                HttpStatus.CREATED);
+    public ResponseEntity<InstallmentDto> createInstallment(@PathVariable("projectId") Long projectId,
+                                                            @PathVariable("stageId") Long stageId,
+                                                            @RequestBody InstallmentDto installmentDto) {
+        InstallmentDto createdInstallmentDto = this.installmentApplicationService
+                .createInstallment(projectId, stageId, installmentDto);
+        HttpHeaders headers = new HttpHeadersBuilder()
+                .withLocation("project/{projectId}/stages/{stageId}/installments/{installmentId}", projectId, stageId,
+                        installmentDto.getId())
+                .build();
+        return new ResponseEntity<>(createdInstallmentDto, headers, HttpStatus.CREATED);
     }
 
     @PutMapping("{projectId}/stages/{stageId}/installments")
-    public ResponseEntity<Void> updateInstallment(@PathVariable("projectId") Long projectId,
-                                                  @PathVariable("stageId") Long stageId,
-                                                  @RequestBody InstallmentDto installmentDto) {
+    public ResponseEntity<InstallmentDto> updateInstallment(@PathVariable("projectId") Long projectId,
+                                                            @PathVariable("stageId") Long stageId,
+                                                            @RequestBody InstallmentDto installmentDto) {
         this.installmentApplicationService.updateInstallment(projectId, stageId, installmentDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }

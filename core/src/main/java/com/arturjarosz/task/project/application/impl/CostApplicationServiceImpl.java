@@ -4,14 +4,12 @@ import com.arturjarosz.task.project.application.CostApplicationService;
 import com.arturjarosz.task.project.application.CostValidator;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.dto.CostDto;
+import com.arturjarosz.task.project.application.mapper.CostDtoMapper;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Cost;
-import com.arturjarosz.task.project.model.CostDtoMapper;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
@@ -41,15 +39,15 @@ public class CostApplicationServiceImpl implements CostApplicationService {
 
     @Transactional
     @Override
-    public CreatedEntityDto createCost(Long projectId,
-                                       CostDto costDto) {
+    public CostDto createCost(Long projectId,
+                              CostDto costDto) {
         this.projectValidator.validateProjectExistence(projectId);
         CostValidator.validateCostDto(costDto);
         Project project = this.projectRepository.load(projectId);
         Cost cost = CostDtoMapper.INSTANCE.costCreateDtoToCost(costDto);
         project.addCost(cost);
         project = this.projectRepository.save(project);
-        return new CreatedEntityDto(this.getIdForCreatedCost(project, cost));
+        return CostDtoMapper.INSTANCE.costToCostDto(cost);
     }
 
     @Override
@@ -81,29 +79,15 @@ public class CostApplicationServiceImpl implements CostApplicationService {
     }
 
     @Override
-    public void updateCost(Long projectId, Long costId, CostDto costDto) {
+    public CostDto updateCost(Long projectId, Long costId, CostDto costDto) {
         this.projectValidator.validateProjectExistence(projectId);
         this.costValidator.validateCostExistence(costId);
         CostValidator.validateUpdateCostDto(costDto);
         Project project = this.projectRepository.load(projectId);
-        project.updateCost(costId, costDto.getName(), costDto.getDate(), costDto.getValue(), costDto.getCategory(),
-                costDto.getNote());
+        Cost cost = project
+                .updateCost(costId, costDto.getName(), costDto.getDate(), costDto.getValue(), costDto.getCategory(),
+                        costDto.getNote());
         this.projectRepository.save(project);
-    }
-
-    /**
-     * Retrieve id of given cost in Project. When Cost is added to the project it does not have any id yet.
-     * After it is saved by repository to the database the Id is generated.
-     *
-     * @param project
-     * @param cost
-     * @return id of Cost
-     */
-    private Long getIdForCreatedCost(Project project, Cost cost) {
-        return project.getCosts().stream()
-                .filter(projectCost -> projectCost.equals(cost))
-                .findFirst()
-                .map(AbstractEntity::getId
-                ).orElseThrow();
+        return CostDtoMapper.INSTANCE.costToCostDto(cost);
     }
 }

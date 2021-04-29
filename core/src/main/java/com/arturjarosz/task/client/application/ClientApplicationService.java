@@ -2,7 +2,6 @@ package com.arturjarosz.task.client.application;
 
 import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.client.application.dto.ClientDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public interface ClientApplicationService {
      * @param clientBasicDto
      * @return
      */
-    CreatedEntityDto createClient(ClientBasicDto clientBasicDto);
+    ClientDto createClient(ClientBasicDto clientBasicDto);
 
     /**
      * Loads basic data for {@link com.arturjarosz.task.client.model.Client} by given Id.
@@ -55,7 +54,7 @@ public interface ClientApplicationService {
      * @param clientId
      * @param clientDto
      */
-    void updateClient(Long clientId, ClientDto clientDto);
+    ClientDto updateClient(Long clientId, ClientDto clientDto);
 
     /**
      * Loads list of basic clients data or all existing clients.

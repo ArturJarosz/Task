@@ -16,14 +16,6 @@ public class ClientBasicDto implements Serializable {
     public ClientBasicDto() {
     }
 
-    public ClientBasicDto(Long id, ClientType clientType, String firstName, String lastName, String companyName) {
-        this.id = id;
-        this.clientType = clientType;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.companyName = companyName;
-    }
-
     public Long getId() {
         return this.id;
     }

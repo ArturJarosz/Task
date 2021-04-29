@@ -2,7 +2,6 @@ package com.arturjarosz.task.architect.application;
 
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
 import com.arturjarosz.task.architect.application.dto.ArchitectDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public interface ArchitectApplicationService {
      * @param architectBasicDto dto with necessary data to creat new architect.
      * @return CreatedEntityDto with newly created Architect id.
      */
-    CreatedEntityDto createArchitect(ArchitectBasicDto architectBasicDto);
+    ArchitectDto createArchitect(ArchitectBasicDto architectBasicDto);
 
     /**
      * Removes {@link com.arturjarosz.task.architect.model.Architect} of given Id.
@@ -45,7 +44,7 @@ public interface ArchitectApplicationService {
      * @param architectId
      * @param architectDto
      */
-    void updateArchitect(Long architectId, ArchitectDto architectDto);
+    ArchitectDto updateArchitect(Long architectId, ArchitectDto architectDto);
 
     /**
      * Loads list of basic architect data or all existing architects.

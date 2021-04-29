@@ -19,7 +19,6 @@ import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
 import com.arturjarosz.task.project.status.project.ProjectWorkflowService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +68,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
     @Transactional
     @Override
-    public CreatedEntityDto createProject(ProjectCreateDto projectCreateDto) {
+    public ProjectDto createProject(ProjectCreateDto projectCreateDto) {
         LOG.debug("Creating Project.");
         ProjectValidator.validateProjectBasicDto(projectCreateDto);
         this.architectValidator.validateArchitectExistence(projectCreateDto.getArchitectId());
@@ -79,7 +78,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectWorkflowService.changeProjectStatus(project, this.projectWorkflow.getInitialStatus());
         project = this.projectRepository.save(project);
         LOG.debug("Project created.");
-        return new CreatedEntityDto(project.getId());
+        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
     }
 
     @Override
@@ -96,15 +95,15 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
     @Transactional
     @Override
-    public void updateProject(Long projectId, ProjectDto projectDto) {
+    public ProjectDto updateProject(Long projectId, ProjectDto projectDto) {
         LOG.debug("Updating Project with id {}.", projectId);
-        //TODO: TA-62 update of the Project should be different to project in different statuses
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
         validateUpdateProjectDto(projectDto);
         this.projectDomainService.updateProject(project, projectDto);
-        this.projectRepository.save(project);
+        project = this.projectRepository.save(project);
         LOG.debug("Project with id {} updated", projectId);
+        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
     }
 
     @Transactional

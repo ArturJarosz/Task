@@ -1,7 +1,6 @@
 package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.project.application.dto.TaskDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
 import java.util.List;
 
@@ -17,7 +16,7 @@ public interface TaskApplicationService {
      * @param taskDto
      * @return
      */
-    CreatedEntityDto createTask(Long projectId, Long stageId, TaskDto taskDto);
+    TaskDto createTask(Long projectId, Long stageId, TaskDto taskDto);
 
     /**
      * Delete Task with given id on Stage with stageId, for Project with given projectId. If Task, Stage or Project
@@ -38,7 +37,7 @@ public interface TaskApplicationService {
      * @param taskId
      * @param taskDto
      */
-    void updateTask(Long projectId, Long stageId, Long taskId, TaskDto taskDto);
+    TaskDto updateTask(Long projectId, Long stageId, Long taskId, TaskDto taskDto);
 
     /**
      * Update Status of Task with given taskId, on Stage with stageId on Project with projectId. If Project, Stage or

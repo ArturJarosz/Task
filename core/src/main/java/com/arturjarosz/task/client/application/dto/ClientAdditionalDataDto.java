@@ -8,9 +8,7 @@ public class ClientAdditionalDataDto implements Serializable {
     private String note;
     private Double projectValue;
 
-    public ClientAdditionalDataDto(String note, Double projectValue) {
-        this.note = note;
-        this.projectValue = projectValue;
+    public ClientAdditionalDataDto() {
     }
 
     public String getNote() {

@@ -31,6 +31,7 @@ public interface ProjectDtoMapper {
     @Mapping(source = "project.startDate", target = "startDate")
     @Mapping(source = "project.deadline", target = "deadline")
     @Mapping(source = "project.note", target = "note")
+    @Mapping(source = "project.id", target = "id")
     @Mapping(source = "clientBasicDto.id", target = "client.id", ignore = true)
     @Mapping(source = "clientBasicDto.firstName", target = "client.firstName")
     @Mapping(source = "clientBasicDto.lastName", target = "client.lastName")
@@ -42,6 +43,16 @@ public interface ProjectDtoMapper {
 
     @Mapping(source = "project.projectType", target = "projectType")
     @Mapping(source = "project.name", target = "name")
+    @Mapping(source = "project.signingDate", target = "signingDate")
+    @Mapping(source = "project.startDate", target = "startDate")
+    @Mapping(source = "project.deadline", target = "deadline")
+    @Mapping(source = "project.note", target = "note")
+    @Mapping(source = "project.id", target = "id")
+    ProjectDto projectToProjectDto(Project project);
+
+    @Mapping(source = "project.projectType", target = "projectType")
+    @Mapping(source = "project.name", target = "name")
+    @Mapping(source = "project.id", target = "id", ignore = true)
     @Mapping(source = "project.signingDate", target = "signingDate", ignore = true)
     @Mapping(source = "project.startDate", target = "startDate", ignore = true)
     @Mapping(source = "project.deadline", target = "deadline", ignore = true)

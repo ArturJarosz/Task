@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.application.impl
 
-import com.arturjarosz.task.architect.application.ArchitectApplicationServiceImpl
 import com.arturjarosz.task.architect.application.ArchitectValidator
+import com.arturjarosz.task.architect.application.impl.ArchitectApplicationServiceImpl
 import com.arturjarosz.task.architect.infrastructure.repository.impl.ArchitectRepositoryImpl
 import com.arturjarosz.task.architect.model.Architect
 import com.arturjarosz.task.architect.utils.ArchitectBuilder
@@ -18,6 +18,9 @@ import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectReposit
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
+import com.arturjarosz.task.project.status.project.ProjectStatus
+import com.arturjarosz.task.project.status.project.ProjectWorkflow
+import com.arturjarosz.task.project.status.project.impl.ProjectWorkflowServiceImpl
 import com.arturjarosz.task.project.utils.ClientBuilder
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
@@ -80,6 +83,17 @@ class ProjectApplicationServiceTest extends Specification {
     }
     def clientValidator = new ClientValidator(clientRepository, projectQueryService);
     def projectValidator = new ProjectValidator(projectRepository);
+    def projectWorkflow = new ProjectWorkflow();
+    def projectWorkflowService = Mock(ProjectWorkflowServiceImpl) {
+        changeProjectStatus(_ as Project, this.projectWorkflow.getInitialStatus()) >> {
+            TestUtils.setFieldForObject(this.project, "status", ProjectStatus.OFFER);
+            return this.project;
+        };
+        changeProjectStatus(_ as Project, ProjectStatus.REJECTED) >> {
+            TestUtils.setFieldForObject(this.project, "status", ProjectStatus.REJECTED);
+            return this.project;
+        }
+    }
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectWorkflow,
             projectValidator, projectWorkflowService);
@@ -134,6 +148,34 @@ class ProjectApplicationServiceTest extends Specification {
         then:
             noExceptionThrown();
             createdEntityDto.getId() == EXISTING_PROJECT_ID;
+    }
+
+    def "when passing proper dto, changeProjectStatus should be called"() {
+        given:
+            ProjectCreateDto projectCreateDto = new ProjectCreateDto();
+            projectCreateDto.setArchitectId(EXISTING_ARCHITECT_ID);
+            projectCreateDto.setClientId(EXISTING_CLIENT_ID);
+            projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT);
+            projectCreateDto.setName(PROJECT_NAME);
+        when:
+            CreatedEntityDto createdEntityDto = this.projectApplicationService.createProject(projectCreateDto);
+        then:
+            noExceptionThrown();
+            1 * this.projectWorkflowService.changeProjectStatus(_, _);
+    }
+
+    def "when project is created is has status offer"() {
+        given:
+            ProjectCreateDto projectCreateDto = new ProjectCreateDto();
+            projectCreateDto.setArchitectId(EXISTING_ARCHITECT_ID);
+            projectCreateDto.setClientId(EXISTING_CLIENT_ID);
+            projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT);
+            projectCreateDto.setName(PROJECT_NAME);
+        when:
+            CreatedEntityDto createdEntityDto = this.projectApplicationService.createProject(projectCreateDto);
+        then:
+            noExceptionThrown();
+            1 * this.projectRepository.save(_);
     }
 
     def "when passing not existing projectId, getProject should throw an exception and project should not be loaded"() {
@@ -261,6 +303,7 @@ class ProjectApplicationServiceTest extends Specification {
         then:
             noExceptionThrown();
             1 * this.projectDomainService.signProjectContract(_ as Project, _ as ProjectContractDto);
+            1 * this.projectRepository.save(_);
     }
 
     def "when calling finishProject with not existing projectId, exception should be thrown no project should be finished"() {
@@ -283,6 +326,7 @@ class ProjectApplicationServiceTest extends Specification {
         then:
             noExceptionThrown()
             1 * this.projectDomainService.finishProject(_ as Long, _ as LocalDate);
+            1 * this.projectRepository.save(_);
     }
 
     def "when calling getProject list of all project should be returned"() {

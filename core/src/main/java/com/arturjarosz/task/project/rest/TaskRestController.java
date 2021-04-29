@@ -2,7 +2,8 @@ package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.project.application.TaskApplicationService;
 import com.arturjarosz.task.project.application.dto.TaskDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,11 +29,14 @@ public class TaskRestController {
     }
 
     @PostMapping("stages/{stageId}/tasks")
-    public ResponseEntity<CreatedEntityDto> createTask(@PathVariable("projectId") Long projectId,
-                                                       @PathVariable("stageId") Long stageId,
-                                                       @RequestBody TaskDto taskDto) {
-        return new ResponseEntity<>(this.taskApplicationService.createTask(projectId, stageId, taskDto),
-                HttpStatus.CREATED);
+    public ResponseEntity<TaskDto> createTask(@PathVariable("projectId") Long projectId,
+                                              @PathVariable("stageId") Long stageId,
+                                              @RequestBody TaskDto taskDto) {
+        TaskDto createdTaskDto = this.taskApplicationService.createTask(projectId, stageId, taskDto);
+        HttpHeaders headers = new HttpHeadersBuilder()
+                .withLocation("/stage/{stageId}/tasks/{tasksId}", stageId, createdTaskDto.getId())
+                .build();
+        return new ResponseEntity<>(createdTaskDto, headers, HttpStatus.CREATED);
     }
 
     @DeleteMapping("stages/{stageId}/tasks/{taskId}")
@@ -44,12 +48,12 @@ public class TaskRestController {
     }
 
     @PutMapping("stages/{stageId}/tasks/{taskId}")
-    public ResponseEntity<Void> updateTask(@PathVariable("projectId") Long projectId,
-                                           @PathVariable("stageId") Long stageId,
-                                           @PathVariable("taskId") Long taskId,
-                                           @RequestBody TaskDto taskDto) {
-        this.taskApplicationService.updateTask(projectId, stageId, taskId, taskDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<TaskDto> updateTask(@PathVariable("projectId") Long projectId,
+                                              @PathVariable("stageId") Long stageId,
+                                              @PathVariable("taskId") Long taskId,
+                                              @RequestBody TaskDto taskDto) {
+        return new ResponseEntity<>(this.taskApplicationService.updateTask(projectId, stageId, taskId, taskDto),
+                HttpStatus.OK);
     }
 
     @PutMapping("stages/{stageId}/tasks/{taskId}/updateStatus")

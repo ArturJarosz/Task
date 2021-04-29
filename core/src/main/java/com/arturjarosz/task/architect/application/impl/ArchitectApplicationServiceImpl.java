@@ -1,12 +1,13 @@
-package com.arturjarosz.task.architect.application;
+package com.arturjarosz.task.architect.application.impl;
 
+import com.arturjarosz.task.architect.application.ArchitectApplicationService;
+import com.arturjarosz.task.architect.application.ArchitectValidator;
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
 import com.arturjarosz.task.architect.application.dto.ArchitectDto;
 import com.arturjarosz.task.architect.application.mapper.ArchitectDtoMapper;
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository;
 import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,15 +35,14 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
 
     @Transactional
     @Override
-    public CreatedEntityDto createArchitect(ArchitectBasicDto architectBasicDto) {
+    public ArchitectDto createArchitect(ArchitectBasicDto architectBasicDto) {
         LOG.debug("creating architect");
 
         validateBasicArchitectDto(architectBasicDto);
         Architect architect = ArchitectDtoMapper.INSTANCE.architectBasicDtoToArchitect(architectBasicDto);
         architect = this.architectRepository.save(architect);
-
         LOG.debug("architect created");
-        return new CreatedEntityDto(architect.getId());
+        return ArchitectDtoMapper.INSTANCE.architectToArchitectDto(architect);
     }
 
     @Transactional
@@ -69,7 +69,7 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
 
     @Transactional
     @Override
-    public void updateArchitect(Long architectId, ArchitectDto architectDto) {
+    public ArchitectDto updateArchitect(Long architectId, ArchitectDto architectDto) {
         LOG.debug("updating architect with id {}", architectId);
 
         Architect architect = this.architectRepository.load(architectId);
@@ -79,6 +79,7 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
 
         architect = this.architectRepository.save(architect);
         LOG.debug("architect with id {} updated", architectId);
+        return ArchitectDtoMapper.INSTANCE.architectToArchitectDto(architect);
     }
 
     @Override

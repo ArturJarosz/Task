@@ -16,7 +16,7 @@ public interface ArchitectDtoMapper {
 
     @Mapping(source = "personName.firstName", target = "firstName")
     @Mapping(source = "personName.lastName", target = "lastName")
-    @Mapping(target = "projectsValue", source = "projectsValue", qualifiedByName = "moneyToValue")
+    @Mapping(target = "projectsValue", source = "projectsValue", qualifiedByName = "moneyToDouble")
     ArchitectDto architectToArchitectDto(Architect architect);
 
     @Mapping(source = "firstName", target = "firstName")
@@ -27,8 +27,8 @@ public interface ArchitectDtoMapper {
     @Mapping(source = "personName.lastName", target = "lastName")
     ArchitectBasicDto architectToArchitectBasicDto(Architect architect);
 
-    @Named("moneyToValue")
-    default double moneyToValue(Money money) {
+    @Named("moneyToDouble")
+    default double moneyToDouble(Money money) {
         return money.getValue().doubleValue();
     }
 }

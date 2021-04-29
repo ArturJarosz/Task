@@ -1,7 +1,6 @@
 package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.project.application.dto.CostDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ public interface CostApplicationService {
      * @param costDto   data of cost
      * @return CreatedEntityDto with id of created Cost
      */
-    CreatedEntityDto createCost(Long projectId, CostDto costDto);
+    CostDto createCost(Long projectId, CostDto costDto);
 
     /**
      * Return Cost by given costId.
@@ -50,5 +49,5 @@ public interface CostApplicationService {
      * @param costId
      * @param costDto
      */
-    void updateCost(Long projectId, Long costId, CostDto costDto);
+    CostDto updateCost(Long projectId, Long costId, CostDto costDto);
 }

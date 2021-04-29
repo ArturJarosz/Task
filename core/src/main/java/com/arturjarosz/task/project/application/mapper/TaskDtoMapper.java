@@ -31,4 +31,6 @@ public interface TaskDtoMapper {
     @Mapping(target = "startDate", ignore = true)
     @Mapping(target = "endDate", ignore = true)
     TaskDto taskToTaskBasicDto(Task task);
+
+    TaskDto taskToTaskDto(Task task);
 }

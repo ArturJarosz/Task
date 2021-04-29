@@ -3,7 +3,8 @@ package com.arturjarosz.task.client.rest;
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.client.application.dto.ClientDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,8 +30,12 @@ public class ClientRestController {
     }
 
     @PostMapping("")
-    public ResponseEntity<CreatedEntityDto> createClient(@RequestBody ClientBasicDto clientBasicDto) {
-        return new ResponseEntity(this.clientApplicationService.createClient(clientBasicDto), HttpStatus.CREATED);
+    public ResponseEntity<ClientDto> createClient(@RequestBody ClientBasicDto clientBasicDto) {
+        ClientDto clientDto = this.clientApplicationService.createClient(clientBasicDto);
+        HttpHeaders headers = new HttpHeadersBuilder()
+                .withLocation("/clients/{id}", clientDto.getId())
+                .build();
+        return new ResponseEntity(clientDto, headers, HttpStatus.CREATED);
     }
 
     @DeleteMapping("{clientId}")
@@ -45,10 +50,9 @@ public class ClientRestController {
     }
 
     @PutMapping("{clientId}")
-    public ResponseEntity<Void> updateClient(@PathVariable("clientId") Long clientId,
-                                             @RequestBody ClientDto clientDto) {
-        this.clientApplicationService.updateClient(clientId, clientDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ClientDto> updateClient(@PathVariable("clientId") Long clientId,
+                                                  @RequestBody ClientDto clientDto) {
+        return new ResponseEntity<>(this.clientApplicationService.updateClient(clientId, clientDto), HttpStatus.OK);
     }
 
     @GetMapping("")
