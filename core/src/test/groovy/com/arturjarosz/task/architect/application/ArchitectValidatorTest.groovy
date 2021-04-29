@@ -46,7 +46,8 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing architect without firstName field architectBasicDtoValidator should throw an exception with specific error message"() {
         given:
-            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(null, null, LAST_NAME);
+            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto();
+            architectBasicDto.setLastName(LAST_NAME);
         when:
             ArchitectValidator.validateBasicArchitectDto(architectBasicDto);
         then:
@@ -56,7 +57,8 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing architect without lastName field architectBasicDtoValidator should throw an exception with specific error message"() {
         given:
-            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(null, FIRST_NAME, null);
+            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto();
+            architectBasicDto.setFirstName(FIRST_NAME);
         when:
             ArchitectValidator.validateBasicArchitectDto(architectBasicDto);
         then:
@@ -66,7 +68,9 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing architect with empty firstName field architectBasicDtoValidator should throw an exception with specific error message"() {
         given:
-            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(null, "", LAST_NAME);
+            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto();
+            architectBasicDto.setFirstName("");
+            architectBasicDto.setLastName(LAST_NAME);
         when:
             ArchitectValidator.validateBasicArchitectDto(architectBasicDto);
         then:
@@ -76,7 +80,9 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing architect with empty lastName field architectBasicDtoValidator should throw an exception with specific error message"() {
         given:
-            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(null, FIRST_NAME, "");
+            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto();
+            architectBasicDto.setFirstName(FIRST_NAME);
+            architectBasicDto.setLastName("");
         when:
             ArchitectValidator.validateBasicArchitectDto(architectBasicDto);
         then:
@@ -86,7 +92,9 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing proper data architectBasicDtoValidator should not throw any exception"() {
         given:
-            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(null, FIRST_NAME, LAST_NAME);
+            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto();
+            architectBasicDto.setFirstName(FIRST_NAME);
+            architectBasicDto.setLastName(LAST_NAME);
         when:
             ArchitectValidator.validateBasicArchitectDto(architectBasicDto);
         then:
@@ -105,7 +113,8 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing architect without firstName field architectDtoValidator should throw an exception with specific error message"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto(null, LAST_NAME, null);
+            ArchitectDto architectDto = new ArchitectDto();
+            architectDto.setLastName(LAST_NAME);
         when:
             ArchitectValidator.validateArchitectDto(architectDto);
         then:
@@ -115,7 +124,8 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing architect without lastName field architectDtoValidator should throw an exception with specific error message"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto(FIRST_NAME, null, null);
+            ArchitectDto architectDto = new ArchitectDto();
+            architectDto.setFirstName(FIRST_NAME);
         when:
             ArchitectValidator.validateArchitectDto(architectDto);
         then:
@@ -125,7 +135,9 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing architect with empty firstName field architectDtoValidator should throw an exception with specific error message"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto("", LAST_NAME, null);
+            ArchitectDto architectDto = new ArchitectDto();
+            architectDto.setFirstName("");
+            architectDto.setLastName(LAST_NAME);
         when:
             ArchitectValidator.validateArchitectDto(architectDto);
         then:
@@ -135,7 +147,9 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing architect with empty lastName field architectDtoValidator should throw an exception with specific error message"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto(FIRST_NAME, "", null);
+            ArchitectDto architectDto = new ArchitectDto();
+            architectDto.setFirstName(FIRST_NAME);
+            architectDto.setLastName("");
         when:
             ArchitectValidator.validateArchitectDto(architectDto);
         then:
@@ -145,7 +159,9 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing proper data architectDtoValidator should not throw any exception"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto(FIRST_NAME, LAST_NAME, null);
+            ArchitectDto architectDto = new ArchitectDto();
+            architectDto.setFirstName(FIRST_NAME);
+            architectDto.setLastName(LAST_NAME);
         when:
             ArchitectValidator.validateArchitectDto(architectDto);
         then:

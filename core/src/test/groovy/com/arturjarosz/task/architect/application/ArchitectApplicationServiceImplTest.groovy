@@ -60,7 +60,9 @@ class ArchitectApplicationServiceImplTest extends Specification {
 
     def "when passing architect with missing data exception should be thrown and architect should be not saved"() {
         given:
-            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(null, FIRST_NAME, "");
+            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto();
+            architectBasicDto.setFirstName(FIRST_NAME);
+            architectBasicDto.setLastName("")
         when:
             architectApplicationService.createArchitect(architectBasicDto);
         then:
@@ -70,12 +72,14 @@ class ArchitectApplicationServiceImplTest extends Specification {
 
     def "when passing proper architect data no exception should be thrown and architect should be saved"() {
         given:
-            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(null, FIRST_NAME, LAST_NAME);
+            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto();
+            architectBasicDto.setFirstName(FIRST_NAME);
+            architectBasicDto.setLastName(LAST_NAME);
         when:
             ArchitectDto architectDto = architectApplicationService.createArchitect(architectBasicDto);
         then:
             noExceptionThrown();
-            architectDto.getId() == EXISTING_ID;
+            1 * architectRepository.save(_);
 
     }
 
@@ -124,7 +128,9 @@ class ArchitectApplicationServiceImplTest extends Specification {
 
     def "when updating non existing architect an exception should be thrown"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto(NEW_FIRST_NAME, NEW_LAST_NAME, null);
+            ArchitectDto architectDto = new ArchitectDto();
+            architectDto.setFirstName(NEW_FIRST_NAME);
+            architectDto.setLastName(NEW_LAST_NAME);
         when:
             architectApplicationService.updateArchitect(NOT_EXISTING_ID, architectDto);
         then:
@@ -133,7 +139,8 @@ class ArchitectApplicationServiceImplTest extends Specification {
 
     def "when updating architect with dto with missing data architect should not be updated"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto(NEW_FIRST_NAME, null, null);
+            ArchitectDto architectDto = new ArchitectDto();
+            architectDto.setFirstName(NEW_FIRST_NAME);
         when:
             architectApplicationService.updateArchitect(EXISTING_ID, architectDto);
         then:
@@ -142,7 +149,9 @@ class ArchitectApplicationServiceImplTest extends Specification {
 
     def "when updating architect with correct data no exception should be thrown and architect should be updated"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto(NEW_FIRST_NAME, NEW_LAST_NAME, null);
+            ArchitectDto architectDto = new ArchitectDto();
+            architectDto.setFirstName(NEW_FIRST_NAME);
+            architectDto.setLastName(NEW_LAST_NAME);
         when:
             architectApplicationService.updateArchitect(EXISTING_ID, architectDto);
         then:
