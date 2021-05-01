@@ -8,7 +8,6 @@ import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 public class ClientExceptionCodes {
 
     public static final String CLIENT = "client";
-    public static final String CLIENT_BASIC_DTO = "clientBasicDto";
 
     public static final String COMPANY_NAME = "companyName";
     public static final String FIRST_NAME = "firstName";

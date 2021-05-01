@@ -1,19 +1,17 @@
 package com.arturjarosz.task.client.application
 
-import com.arturjarosz.task.client.application.dto.*
+import com.arturjarosz.task.client.application.dto.AddressDto
+import com.arturjarosz.task.client.application.dto.ClientAdditionalDataDto
+import com.arturjarosz.task.client.application.dto.ClientDto
+import com.arturjarosz.task.client.application.dto.ContactDto
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
 import com.arturjarosz.task.client.infrastructure.repository.impl.ClientRepositoryImpl
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
-import com.arturjarosz.task.sharedkernel.model.Address
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto
 import com.arturjarosz.task.sharedkernel.model.PersonName
-import spock.lang.Shared
 import spock.lang.Specification
-
-import java.lang.reflect.Field
 
 class ClientApplicationServiceImplTest extends Specification {
 
@@ -22,325 +20,223 @@ class ClientApplicationServiceImplTest extends Specification {
     private static final String LAST_NAME = "lastName";
     private static final String NEW_LAST_NAME = "newLastName";
     private static final String COMPANY_NAME = "companyName";
-    private static final String NEW_COMPANY_NAME = "newCompanyName";
-    private static final String EMAIL = "email@test.pl";
     private static final String NEW_EMAIL = "newEmail@test.pl";
-    private static final String CITY = "city";
     private static final String NEW_CITY = "newCity";
-    private static final String STREET = "street";
     private static final String NEW_STREET = "newStreet";
-    private static final String POST_CODE = "00-000";
     private static final String NEW_POST_CODE = "11-111";
-    private static final String HOUSE = "1";
-    private static final String NEW_HOUSE = "2";
-    private static final String FLAT = "10";
-    private static final String NEW_FLAT = "20";
-    private static final String NOTE = "note";
+    private static final String NEW_HOUSE_NUMBER = "2";
+    private static final String NEW_FLAT_NUMBER = "20";
     private static final String NEW_NOTE = "note2";
-    private static final String TELEPHONE = "00112233"
     private static final String NEW_TELEPHONE = "22334455";
-    private static final Long NON_EXISTING_ID = 999L;
     private static final Long EXISTING_PRIVATE_ID = 1L;
-    private static final Long EXISTING_CORPORATE_ID = 2L;
 
-    @Shared
-    private static final Client CLIENT_PRIVATE = new Client(new PersonName(FIRST_NAME, LAST_NAME), COMPANY_NAME,
-            ClientType.PRIVATE)
-    @Shared
-    private static final Client CLIENT_CORPORATE = new Client(new PersonName(FIRST_NAME, LAST_NAME), COMPANY_NAME,
-            ClientType.CORPORATE)
-    private static final ClientBasicDto CLIENT_WITH_NO_TYPE = new ClientBasicDto(null, null, FIRST_NAME, LAST_NAME,
-            COMPANY_NAME);
-    private static final ClientBasicDto PRIVATE_CLIENT_DTO = new ClientBasicDto(null, ClientType.PRIVATE, FIRST_NAME,
-            LAST_NAME, null);
-    private static final ClientBasicDto CORPORATE_CLIENT_DTO = new ClientBasicDto(null, ClientType.CORPORATE, null,
-            null, COMPANY_NAME);
-
-    def setupSpec() {
-        def address = new Address(POST_CODE, CITY, STREET, HOUSE, FLAT);
-        CLIENT_PRIVATE.updateAddress(address)
-        CLIENT_PRIVATE.updateEmail(EMAIL)
-        CLIENT_PRIVATE.updateNote(NOTE)
-        CLIENT_PRIVATE.updateTelephone(TELEPHONE)
-    }
-
+    private Client privateClient = new Client(new PersonName(FIRST_NAME, LAST_NAME), COMPANY_NAME,
+            ClientType.PRIVATE);
 
     def clientRepository = Mock(ClientRepositoryImpl) {
-        load(NON_EXISTING_ID) >> { null }
-        load(EXISTING_PRIVATE_ID) >> { CLIENT_PRIVATE }
-        load(EXISTING_CORPORATE_ID) >> { CLIENT_CORPORATE }
-        save(_ as Client) >> {
-            Field field = Client.superclass.superclass.getDeclaredField("id");
-            field.setAccessible(true);
-            field.set(CLIENT_PRIVATE, EXISTING_PRIVATE_ID);
-            return CLIENT_PRIVATE
-        }
+        load(EXISTING_PRIVATE_ID) >> {
+            return privateClient;
+        };
+        loadAll() >> {
+            return Collections.singletonList(privateClient);
+        };
     }
 
-    def projectQueryService = Mock(ProjectQueryServiceImpl) {
+    def projectQueryService = Mock(ProjectQueryServiceImpl);
 
-    }
-
-    ClientValidator clientValidator = Stub {
+    ClientValidator clientValidator = Mock(ClientValidator) {
         validateClientBasicDto(null) >> { throw new IllegalArgumentException() }
     }
     def clientApplicationServiceImpl = new ClientApplicationServiceImpl(clientRepository, clientValidator,
             projectQueryService);
 
-
-    def "client should not be saved when ClientBasicDto is null"() {
+    def "createClientShouldValidateClientBasicDto"() {
         given:
-            ClientBasicDto clientBasicDto = null;
+            ClientDto clientDto = this.prepareProperPrivateClint();
         when:
-            clientApplicationServiceImpl.createClient(clientBasicDto);
+            clientApplicationServiceImpl.createClient(clientDto);
         then:
-            thrown(IllegalArgumentException);
-            0 * clientRepository.save(_);
+            1 * this.clientValidator.validateClientBasicDto(_);
     }
 
-    def "client should not be saved when ClientBasicDto has no type"() {
+    def "whenClientDtoWithPrivateClientTypePassedPrivateClientShouldBeCreated"() {
         given:
+            ClientDto clientDto = this.prepareProperPrivateClint();
         when:
-            clientApplicationServiceImpl.createClient(CLIENT_WITH_NO_TYPE);
+            clientApplicationServiceImpl.createClient(clientDto);
         then:
-            thrown(IllegalArgumentException);
-            0 * clientRepository.save(_);
-    }
-
-    def "client should be created when dto with proper private client data passed"() {
-        given:
-        when:
-            CreatedEntityDto createdEntityDto = clientApplicationServiceImpl.createClient(PRIVATE_CLIENT_DTO);
-        then:
-            noExceptionThrown();
-            createdEntityDto.getId() == EXISTING_PRIVATE_ID;
-    }
-
-
-    def "getClient should not return clientDto and exception should be thrown when passing non existing client id"() {
-        given:
-        when:
-            ClientDto clientDto = clientApplicationServiceImpl.getClient(NON_EXISTING_ID);
-        then:
-            thrown(IllegalArgumentException);
-            clientDto == null;
-    }
-
-    def "getClient should return clientDto and no exception should be thrown when passing existing client id"() {
-        given:
-        when:
-            ClientDto clientDto = clientApplicationServiceImpl.getClient(EXISTING_PRIVATE_ID);
-        then:
-            noExceptionThrown();
-            clientDto.getFirstName() == FIRST_NAME;
-            clientDto.getLastName() == LAST_NAME;
-    }
-
-    def "update should throw an exception when non existing client id is passes and client should not be updated"() {
-        given:
-            def clientDto = new ClientDto(null, null, null, null, null, null);
-        when:
-            clientApplicationServiceImpl.updateClient(NON_EXISTING_ID, clientDto)
-        then:
-            thrown(IllegalArgumentException)
-            0 * clientRepository.save(_)
-    }
-
-    def "update should throw an exception when passing null in dto and client should not be updated"() {
-        given:
-            def clientDto = null;
-        when:
-            clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
-        then:
-            thrown(IllegalArgumentException)
-            0 * clientRepository.save(_)
-    }
-
-    def "update should throw an exception when passing private client with missing first name last name and client should not be updated"() {
-        given:
-            def address = new AddressDto(CITY, POST_CODE, STREET, HOUSE, FLAT);
-            def contact = new ContactDto(address, EMAIL, TELEPHONE);
-            def clientDto = new ClientDto("", "", null, contact, null, ClientType.PRIVATE);
-        when:
-            clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
-        then:
-            Exception ex = thrown()
-            ex.message == "isEmpty.client.firstName"
-            0 * clientRepository.save(_)
-    }
-
-    def "update should change client first name and last name when proper private client dto is passed"() {
-        given:
-            def address = new AddressDto(CITY, POST_CODE, STREET, HOUSE, FLAT);
-            def contact = new ContactDto(address, EMAIL, TELEPHONE);
-            def clientDto = new ClientDto(NEW_FIRST_NAME, NEW_LAST_NAME, null, contact, null, ClientType.PRIVATE);
-        when:
-            clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
-        then:
-            noExceptionThrown();
-            1 * clientRepository.save({
-                Client clientResult ->
-                    clientResult.getPersonName().getFirstName() == NEW_FIRST_NAME;
-                    clientResult.getPersonName().getLastName() == NEW_LAST_NAME;
+            1 * this.clientRepository.save({
+                Client client ->
+                    client.isPrivate();
             })
     }
 
-    def "update should throw an exception when passing corporate client with missing corporate name and client should not be updated"() {
+    def "whenClientWithCorporateClientTypePassedCorporateClientShouldBeCreated"() {
         given:
-            def address = new AddressDto(CITY, POST_CODE, STREET, HOUSE, FLAT);
-            def contact = new ContactDto(address, EMAIL, TELEPHONE);
-            def clientDto = new ClientDto(null, null, "", contact, null, ClientType.CORPORATE);
+            ClientDto clientDto = this.prepareProperCorporateClient();
         when:
-            clientApplicationServiceImpl.updateClient(EXISTING_CORPORATE_ID, clientDto);
+            clientApplicationServiceImpl.createClient(clientDto);
         then:
-            Exception ex = thrown()
-            ex.message == "isEmpty.client.companyName"
-            0 * clientRepository.save(_)
-    }
-
-    def "update should change company name when proper corporate client dto is passed"() {
-        given:
-            def address = new AddressDto(CITY, POST_CODE, STREET, HOUSE, FLAT);
-            def contact = new ContactDto(address, EMAIL, TELEPHONE);
-            def clientDto = new ClientDto(null, null, NEW_COMPANY_NAME, contact, null, ClientType.CORPORATE);
-        when:
-            clientApplicationServiceImpl.updateClient(EXISTING_CORPORATE_ID, clientDto)
-        then:
-            noExceptionThrown();
-            1 * clientRepository.save({
-                Client clientResult ->
-                    clientResult.getCompanyName() == NEW_COMPANY_NAME;
+            1 * this.clientRepository.save({
+                Client client ->
+                    !client.isPrivate();
             })
     }
 
-    def "update should not change client contact data when contact in dto is null"() {
+    def "createClientShouldCallRepositorySaveOnProperClientDto"() {
         given:
-            def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, "", null, null, ClientType.PRIVATE);
+            ClientDto clientDto = this.prepareProperPrivateClint();
         when:
-            clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            clientApplicationServiceImpl.createClient(clientDto);
         then:
-            noExceptionThrown()
-            1 * clientRepository.save({
-                Client clientResult ->
-                    def resultAddress = clientResult.getAddress();
-                    resultAddress.getCity() == CITY;
-                    resultAddress.getPostCode() == POST_CODE;
-                    resultAddress.getStreet() == STREET;
-                    resultAddress.getHouseNumber() == HOUSE;
-                    resultAddress.getFlatNumber() == FLAT;
-            })
-    };
+            1 * this.clientRepository.save(_);
+    }
 
-    def "update should change client address when contact in dto is null"() {
+    def "removeClientShouldCallValidateClientExistence"() {
         given:
-            def address = new AddressDto(NEW_CITY, NEW_POST_CODE, NEW_STREET, NEW_HOUSE, NEW_FLAT);
-            def contact = new ContactDto(address, EMAIL, TELEPHONE);
-            def clientDto = new ClientDto(NEW_FIRST_NAME, NEW_LAST_NAME, null, contact, null, ClientType.PRIVATE);
         when:
-            clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
+            clientApplicationServiceImpl.removeClient(EXISTING_PRIVATE_ID);
         then:
-            noExceptionThrown();
-            1 * clientRepository.save({
-                Client clientResult ->
-                    def resultAddress = clientResult.getAddress();
-                    resultAddress.getCity() == NEW_CITY;
-                    resultAddress.getPostCode() == NEW_POST_CODE;
-                    resultAddress.getStreet() == NEW_STREET;
-                    resultAddress.getHouseNumber() == NEW_HOUSE;
-                    resultAddress.getFlatNumber() == NEW_FLAT;
-            })
-    };
+            1 * this.clientValidator.validateClientExistence(EXISTING_PRIVATE_ID);
+    }
 
-    def "update should not throw an exception when passing client with no email and email address should not be updated"() {
+    def "removeClientShouldCallValidateClientHasNoProjects"() {
         given:
-            def address = new AddressDto(CITY, POST_CODE, STREET, HOUSE, FLAT);
-            def contact = new ContactDto(address, null, TELEPHONE);
-            def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, null, ClientType.PRIVATE);
         when:
-            clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            clientApplicationServiceImpl.removeClient(EXISTING_PRIVATE_ID);
         then:
-            noExceptionThrown();
-            1 * clientRepository.save({
-                Client clientResult ->
-                    clientResult.getEmail().getValue() == EMAIL;
-            })
-    };
+            1 * this.clientValidator.validateClientHasNoProjects(EXISTING_PRIVATE_ID);
+    }
 
-    def "update should update email value when proper client dto with email passed"() {
+    def "removeClientShouldCallRepositoryRemove"() {
         given:
-            def address = new AddressDto(CITY, POST_CODE, STREET, HOUSE, FLAT);
-            def contact = new ContactDto(address, NEW_EMAIL, TELEPHONE);
-            def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, null, ClientType.PRIVATE);
         when:
-            clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            clientApplicationServiceImpl.removeClient(EXISTING_PRIVATE_ID);
         then:
-            noExceptionThrown();
-            1 * clientRepository.save({
-                Client clientResult ->
-                    clientResult.getEmail().getValue() == NEW_EMAIL;
-            })
-    };
+            1 * this.clientRepository.remove(EXISTING_PRIVATE_ID);
+    }
 
-    def "update should update telephone value when proper client dto with telephone passed"() {
+    def "getClientShouldLoadClientFromRepository"() {
         given:
-            def address = new AddressDto(CITY, POST_CODE, STREET, HOUSE, FLAT);
-            def contact = new ContactDto(address, EMAIL, NEW_TELEPHONE);
-            def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, null, ClientType.PRIVATE);
         when:
-            clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            ClientDto clientDto = this.clientApplicationServiceImpl.getClient(EXISTING_PRIVATE_ID);
         then:
-            noExceptionThrown();
-            1 * clientRepository.save({
-                Client clientResult ->
-                    clientResult.getTelephone() == NEW_TELEPHONE;
-            })
-    };
+            1 * this.clientRepository.load(EXISTING_PRIVATE_ID);
+    }
 
-    def "update should update set null as a new telephone when proper client dto with null as a telephone passed"() {
+    def "updateClientShouldCallValidateClientExistence"() {
         given:
-            def address = new AddressDto(CITY, POST_CODE, STREET, HOUSE, FLAT);
-            def contact = new ContactDto(address, EMAIL, null);
-            def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, null, ClientType.PRIVATE);
+            ClientDto clientDto = this.prepareClientDtoForUpdate();
         when:
-            clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            ClientDto updatedClientDto = this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:
-            noExceptionThrown();
-            1 * clientRepository.save({
-                Client clientResult ->
-                    clientResult.getTelephone() == null;
-            })
-    };
+            1 * this.clientValidator.validateClientExistence(_);
+    }
 
-    def "update should change note value when proper client dto with note passed"() {
+    def "updateClientShouldCallValidateClientDtoPresence"() {
         given:
-            def address = new AddressDto(CITY, POST_CODE, STREET, HOUSE, FLAT);
-            def contact = new ContactDto(address, EMAIL, TELEPHONE);
-            def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact,
-                    new ClientAdditionalDataDto(NEW_NOTE, null), ClientType.PRIVATE);
+            ClientDto clientDto = this.prepareClientDtoForUpdate();
         when:
-            clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            ClientDto updatedClientDto = this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:
-            noExceptionThrown();
-            1 * clientRepository.save({
-                Client clientResult ->
-                    clientResult.getNote() == NEW_NOTE;
-            })
-    };
+            1 * this.clientValidator.validateClientDtoPresence(_);
+    }
 
-    def "update should change note to null when proper client dto with null as a note passed"() {
+    def "updateClientShouldCallSaveOnRepository"() {
         given:
-            def address = new AddressDto(CITY, POST_CODE, STREET, HOUSE, FLAT);
-            def contact = new ContactDto(address, EMAIL, TELEPHONE);
-            def clientDto = new ClientDto(FIRST_NAME, LAST_NAME, null, contact, new ClientAdditionalDataDto(null, null),
-                    ClientType.PRIVATE);
+            ClientDto clientDto = this.prepareClientDtoForUpdate();
         when:
-            clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+            ClientDto updatedClientDto = this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
         then:
-            noExceptionThrown();
-            1 * clientRepository.save({
-                Client clientResult ->
-                    clientResult.getNote() == null;
-            })
-    };
+            1 * this.clientRepository.save(_);
+    }
 
+    def "updateClientShouldReplaceClientsData"() {
+        given:
+            ClientDto clientDto = this.prepareClientDtoForUpdate();
+        when:
+            ClientDto updatedClientDto = this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto);
+        then:
+            1 * this.clientRepository.save({
+                Client client ->
+                    client.getPersonName().getFirstName() == NEW_FIRST_NAME;
+                    client.getPersonName().getLastName() == NEW_LAST_NAME;
+                    (client.getEmail().getValue() == NEW_EMAIL);
+                    client.getNote() == NEW_NOTE;
+                    client.getTelephone() == NEW_TELEPHONE;
+                    client.getAddress().getCity() == NEW_CITY;
+                    client.getAddress().getFlatNumber() == NEW_FLAT_NUMBER;
+                    client.getAddress().getHouseNumber() == NEW_HOUSE_NUMBER;
+                    client.getAddress().getPostCode() == NEW_POST_CODE;
+                    client.getAddress().getStreet() == NEW_STREET;
+            });
+    }
+
+    def "getBasicClientsShouldCallLoadAllONRepository"() {
+        given:
+        when:
+            List<ClientDto> clientDtoList = this.clientApplicationServiceImpl.getBasicClients();
+        then:
+            1 * this.clientRepository.loadAll() >> Collections.singletonList(privateClient);
+    }
+
+    def "getBasicClientsShouldReturnClientsList"() {
+        given:
+        when:
+            List<ClientDto> clientDtoList = this.clientApplicationServiceImpl.getBasicClients();
+        then:
+            clientDtoList.size() == 1;
+    }
+
+    private ClientDto prepareProperPrivateClint() {
+        ClientDto clientDto = new ClientDto();
+        clientDto.setLastName(FIRST_NAME);
+        clientDto.setFirstName(LAST_NAME);
+        clientDto.setClientType(ClientType.PRIVATE);
+        return clientDto;
+    }
+
+    private ClientDto prepareProperCorporateClient() {
+        ClientDto clientDto = new ClientDto();
+        clientDto.setCompanyName(COMPANY_NAME);
+        clientDto.setClientType(ClientType.CORPORATE);
+        return clientDto;
+    }
+
+    private ClientDto prepareClientDtoForUpdate() {
+        ClientDto clientDto = new ClientDto();
+        clientDto.setClientType(ClientType.PRIVATE);
+        clientDto.setFirstName(NEW_FIRST_NAME);
+        clientDto.setLastName(NEW_LAST_NAME);
+        AddressDto addressDto = prepareAddressDto()
+        ContactDto contactDto = prepareContactDto(addressDto)
+        clientDto.setContact(contactDto);
+        ClientAdditionalDataDto additionalDataDto = prepareClientAddictionalDataDto()
+        clientDto.setAdditionalData(additionalDataDto);
+        return clientDto;
+    }
+
+    private ClientAdditionalDataDto prepareClientAddictionalDataDto() {
+        ClientAdditionalDataDto additionalDataDto = new ClientAdditionalDataDto();
+        additionalDataDto.setNote(NEW_NOTE);
+        return additionalDataDto;
+    }
+
+    private ContactDto prepareContactDto(AddressDto addressDto) {
+        ContactDto contactDto = new ContactDto();
+        contactDto.setAddress(addressDto);
+        contactDto.setEmail(NEW_EMAIL);
+        contactDto.setTelephone(NEW_TELEPHONE);
+        return contactDto;
+    }
+
+    private AddressDto prepareAddressDto() {
+        AddressDto addressDto = new AddressDto();
+        addressDto.setCity(NEW_CITY);
+        addressDto.setHouseNumber(NEW_HOUSE_NUMBER);
+        addressDto.setFlatNumber(NEW_FLAT_NUMBER);
+        addressDto.setPostCode(NEW_POST_CODE);
+        addressDto.setStreet(NEW_STREET);
+        return addressDto;
+    }
 }

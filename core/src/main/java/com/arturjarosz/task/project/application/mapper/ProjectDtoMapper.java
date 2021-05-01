@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.application.mapper;
 
 import com.arturjarosz.task.architect.application.dto.ArchitectDto;
-import com.arturjarosz.task.client.application.dto.ClientBasicDto;
+import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.model.Project;
@@ -32,14 +32,13 @@ public interface ProjectDtoMapper {
     @Mapping(source = "project.deadline", target = "deadline")
     @Mapping(source = "project.note", target = "note")
     @Mapping(source = "project.id", target = "id")
-    @Mapping(source = "clientBasicDto.id", target = "client.id", ignore = true)
-    @Mapping(source = "clientBasicDto.firstName", target = "client.firstName")
-    @Mapping(source = "clientBasicDto.lastName", target = "client.lastName")
-    @Mapping(source = "clientBasicDto.companyName", target = "client.companyName")
-    @Mapping(source = "clientBasicDto.clientType", target = "client.clientType")
+    @Mapping(source = "clientDto.id", target = "client.id", ignore = true)
+    @Mapping(source = "clientDto.firstName", target = "client.firstName")
+    @Mapping(source = "clientDto.lastName", target = "client.lastName")
+    @Mapping(source = "clientDto.companyName", target = "client.companyName")
+    @Mapping(source = "clientDto.clientType", target = "client.clientType")
     @Mapping(source = "architectDto", target = "architect")
-    ProjectDto projectToProjectDto(ClientBasicDto clientBasicDto, ArchitectDto architectDto,
-                                   Project project);
+    ProjectDto projectToProjectDto(ClientDto clientDto, ArchitectDto architectDto, Project project);
 
     @Mapping(source = "project.projectType", target = "projectType")
     @Mapping(source = "project.name", target = "name")
@@ -56,13 +55,12 @@ public interface ProjectDtoMapper {
     @Mapping(source = "project.signingDate", target = "signingDate", ignore = true)
     @Mapping(source = "project.startDate", target = "startDate", ignore = true)
     @Mapping(source = "project.deadline", target = "deadline", ignore = true)
-    @Mapping(source = "clientBasicDto.id", target = "client.id", ignore = true)
-    @Mapping(source = "clientBasicDto.firstName", target = "client.firstName")
-    @Mapping(source = "clientBasicDto.lastName", target = "client.lastName")
-    @Mapping(source = "clientBasicDto.companyName", target = "client.companyName")
-    @Mapping(source = "clientBasicDto.clientType", target = "client.clientType")
+    @Mapping(source = "clientDto.id", target = "client.id", ignore = true)
+    @Mapping(source = "clientDto.firstName", target = "client.firstName")
+    @Mapping(source = "clientDto.lastName", target = "client.lastName")
+    @Mapping(source = "clientDto.companyName", target = "client.companyName")
+    @Mapping(source = "clientDto.clientType", target = "client.clientType")
     @Mapping(source = "architectDto", target = "architect")
-    ProjectDto projectToBasicProjectDto(ClientBasicDto clientBasicDto, ArchitectDto architectDto,
-                                        Project project);
+    ProjectDto projectToBasicProjectDto(ClientDto clientDto, ArchitectDto architectDto, Project project);
 
 }

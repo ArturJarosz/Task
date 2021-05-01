@@ -2,7 +2,6 @@ package com.arturjarosz.task.client.application.impl;
 
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.ClientValidator;
-import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.client.application.mapper.ClientDtoMapper;
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository;
@@ -16,12 +15,6 @@ import org.slf4j.LoggerFactory;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.arturjarosz.task.client.application.ClientValidator.validateClientBasicDto;
-import static com.arturjarosz.task.client.application.ClientValidator.validateClientDtoPresence;
-import static com.arturjarosz.task.client.application.ClientValidator.validateClientExistence;
-import static com.arturjarosz.task.client.application.ClientValidator.validateCorporateClient;
-import static com.arturjarosz.task.client.application.ClientValidator.validatePrivateClient;
 
 @ApplicationService
 public class ClientApplicationServiceImpl implements ClientApplicationService {
@@ -40,17 +33,17 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
     @Transactional
     @Override
-    public ClientDto createClient(ClientBasicDto clientBasicDto) {
+    public ClientDto createClient(ClientDto clientDto) {
         LOG.debug("Creating client");
 
-        validateClientBasicDto(clientBasicDto);
-        ClientType clientType = clientBasicDto.getClientType();
+        this.clientValidator.validateClientBasicDto(clientDto);
+        ClientType clientType = clientDto.getClientType();
         Client client;
         if (clientType.equals(ClientType.CORPORATE)) {
-            client = Client.createCorporateClient(clientBasicDto.getCompanyName());
+            client = Client.createCorporateClient(clientDto.getCompanyName());
         } else {
-            client = Client.createPrivateClient(clientBasicDto.getFirstName(),
-                    clientBasicDto.getLastName());
+            client = Client.createPrivateClient(clientDto.getFirstName(),
+                    clientDto.getLastName());
         }
         client = this.clientRepository.save(client);
 
@@ -73,8 +66,9 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     @Override
     public ClientDto getClient(Long clientId) {
         LOG.debug("Loading Client with id {}", clientId);
+
         Client client = this.clientRepository.load(clientId);
-        validateClientExistence(client, clientId);
+        this.clientValidator.validateClientExistence(client, clientId);
 
         LOG.debug("Client with id {} loaded.", clientId);
         return ClientDtoMapper.INSTANCE.clientToClientDto(client);
@@ -85,14 +79,14 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     public ClientDto updateClient(Long clientId, ClientDto clientDto) {
         LOG.debug("Updating Client with id {}.", clientId);
 
+        this.clientValidator.validateClientExistence(clientId);
         Client client = this.clientRepository.load(clientId);
-        validateClientExistence(client, clientId);
-        validateClientDtoPresence(clientDto);
+        this.clientValidator.validateClientDtoPresence(clientDto);
         if (client.isPrivate()) {
-            validatePrivateClient(clientDto);
+            this.clientValidator.validatePrivateClient(clientDto);
             client.updatePersonName(clientDto.getFirstName(), clientDto.getLastName());
         } else {
-            validateCorporateClient(clientDto);
+            this.clientValidator.validateCorporateClient(clientDto);
             client.updateCompanyName(clientDto.getCompanyName());
         }
         if (clientDto.getContact() != null) {
@@ -115,7 +109,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     }
 
     @Override
-    public List<ClientBasicDto> getBasicClients() {
+    public List<ClientDto> getBasicClients() {
         return this.clientRepository.loadAll()
                 .stream()
                 .map(ClientDtoMapper.INSTANCE::clientToClientBasicDto)
@@ -123,9 +117,9 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     }
 
     @Override
-    public ClientBasicDto getClientBasicData(Long clientId) {
+    public ClientDto getClientBasicData(Long clientId) {
         Client client = this.clientRepository.load(clientId);
-        validateClientExistence(client, clientId);
+        this.clientValidator.validateClientExistence(client, clientId);
         return ClientDtoMapper.INSTANCE.clientToClientBasicDto(client);
     }
 }

@@ -1,7 +1,6 @@
 package com.arturjarosz.task.client.application.mapper;
 
 import com.arturjarosz.task.client.application.dto.AddressDto;
-import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.client.model.Client;
 import com.arturjarosz.task.client.model.ClientType;
@@ -31,7 +30,7 @@ public interface ClientDtoMapper {
     @Mapping(source = "personName.firstName", target = "firstName")
     @Mapping(source = "personName.lastName", target = "lastName")
     @Mapping(source = "id", target = "id")
-    ClientBasicDto clientToClientBasicDto(Client client);
+    ClientDto clientToClientBasicDto(Client client);
 
     @Named("deductClientType")
     default ClientType deductClientType(Client client) {

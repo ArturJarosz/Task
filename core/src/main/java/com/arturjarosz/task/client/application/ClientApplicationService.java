@@ -1,6 +1,5 @@
 package com.arturjarosz.task.client.application;
 
-import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.client.application.dto.ClientDto;
 
 import java.util.List;
@@ -8,14 +7,14 @@ import java.util.List;
 public interface ClientApplicationService {
 
     /**
-     * Creates {@link com.arturjarosz.task.client.model.Client} from given {@link ClientBasicDto}.
+     * Creates {@link com.arturjarosz.task.client.model.Client} from given {@link ClientDto}.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
      *
-     * @param clientBasicDto
+     * @param clientDto
      * @return
      */
-    ClientDto createClient(ClientBasicDto clientBasicDto);
+    ClientDto createClient(ClientDto clientDto);
 
     /**
      * Loads basic data for {@link com.arturjarosz.task.client.model.Client} by given Id.
@@ -25,7 +24,7 @@ public interface ClientApplicationService {
      * @param clientId
      * @return
      */
-    ClientBasicDto getClientBasicData(Long clientId);
+    ClientDto getClientBasicData(Long clientId);
 
     /**
      * Removes {@link com.arturjarosz.task.client.model.Client} by given Id.
@@ -61,5 +60,5 @@ public interface ClientApplicationService {
      *
      * @return
      */
-    List<ClientBasicDto> getBasicClients();
+    List<ClientDto> getBasicClients();
 }

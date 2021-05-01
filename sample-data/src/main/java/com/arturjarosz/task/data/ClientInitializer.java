@@ -1,7 +1,7 @@
 package com.arturjarosz.task.data;
 
 import com.arturjarosz.task.client.application.ClientApplicationService;
-import com.arturjarosz.task.client.application.dto.ClientBasicDto;
+import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,15 +34,15 @@ public class ClientInitializer {
     }
 
     private void importClientsFromFile() {
-        List<ClientBasicDto> clientBasicDtos = this.prepareClients("clientsSample.json");
-        clientBasicDtos.forEach(this.clientApplicationService::createClient);
+        List<ClientDto> clientDtos = this.prepareClients("clientsSample.json");
+        clientDtos.forEach(this.clientApplicationService::createClient);
     }
 
-    private List<ClientBasicDto> prepareClients(String filename) {
+    private List<ClientDto> prepareClients(String filename) {
         ObjectMapper mapper = new ObjectMapper();
         BaseValidator.assertNotEmpty(filename, "File name cannot be empty.");
         try (InputStream inputStream = ClientInitializer.class.getClassLoader().getResourceAsStream(filename)) {
-            return mapper.readValue(inputStream, new TypeReference<List<ClientBasicDto>>() {
+            return mapper.readValue(inputStream, new TypeReference<List<ClientDto>>() {
             });
         } catch (IOException e) {
             throw new UncheckedIOException(
