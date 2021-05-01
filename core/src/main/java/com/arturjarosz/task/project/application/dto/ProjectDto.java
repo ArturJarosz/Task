@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.application.dto;
 
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
-import com.arturjarosz.task.client.application.dto.ClientBasicDto;
+import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.project.model.ProjectType;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 
@@ -12,7 +12,7 @@ public class ProjectDto implements Serializable {
     private static final long serialVersionUID = 8501354213746117568L;
 
     private Long id;
-    private ClientBasicDto client;
+    private ClientDto client;
     private ArchitectBasicDto architect;
     private String name;
     private ProjectType projectType;
@@ -42,11 +42,11 @@ public class ProjectDto implements Serializable {
         this.projectType = projectType;
     }
 
-    public ClientBasicDto getClient() {
+    public ClientDto getClient() {
         return this.client;
     }
 
-    public void setClient(ClientBasicDto client) {
+    public void setClient(ClientDto client) {
         this.client = client;
     }
 

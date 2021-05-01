@@ -1,7 +1,6 @@
 package com.arturjarosz.task.client.rest;
 
 import com.arturjarosz.task.client.application.ClientApplicationService;
-import com.arturjarosz.task.client.application.dto.ClientBasicDto;
 import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
 import org.springframework.http.HttpHeaders;
@@ -30,12 +29,12 @@ public class ClientRestController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ClientDto> createClient(@RequestBody ClientBasicDto clientBasicDto) {
-        ClientDto clientDto = this.clientApplicationService.createClient(clientBasicDto);
+    public ResponseEntity<ClientDto> createClient(@RequestBody ClientDto clientDto) {
+        ClientDto createdClientDto = this.clientApplicationService.createClient(clientDto);
         HttpHeaders headers = new HttpHeadersBuilder()
-                .withLocation("/clients/{id}", clientDto.getId())
+                .withLocation("/clients/{id}", createdClientDto.getId())
                 .build();
-        return new ResponseEntity(clientDto, headers, HttpStatus.CREATED);
+        return new ResponseEntity(createdClientDto, headers, HttpStatus.CREATED);
     }
 
     @DeleteMapping("{clientId}")
@@ -56,7 +55,7 @@ public class ClientRestController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<ClientBasicDto>> getBasicClients() {
+    public ResponseEntity<List<ClientDto>> getBasicClients() {
         return new ResponseEntity<>(this.clientApplicationService.getBasicClients(), HttpStatus.OK);
     }
 

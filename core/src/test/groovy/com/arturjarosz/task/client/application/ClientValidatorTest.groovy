@@ -1,6 +1,6 @@
 package com.arturjarosz.task.client.application
 
-import com.arturjarosz.task.client.application.dto.ClientBasicDto
+import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.client.infrastructure.repository.impl.ClientRepositoryImpl
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
@@ -13,23 +13,22 @@ import spock.lang.Specification
 
 class ClientValidatorTest extends Specification {
 
-    private static final Long EXISTING_ID = 1L;
+    private static final Long PRIVATE_CLIENT_ID = 1L;
+    private static final Long CORPORATE_CLIENT_ID = 2L;
     private static final Long NON_EXISTING_ID = 999L;
     private static final Long CLIENT_ID_WITHOUT_PROJECTS = 899L;
     private static final Long CLIENT_ID_WITH_PROJECTS = 10L;
-    private static final ClientType PRIVATE_CLIENT_TYPE = ClientType.PRIVATE;
-    private static final ClientType CORPORATE_CLIENT_TYPE = ClientType.CORPORATE;
     private static final String FIRST_NAME = "first";
     private static final String LAST_NAME = "last";
     private static final String COMPANY_NAME = "company";
 
     private static Project emptyProject = new ProjectBuilder().build();
 
-    private static Client client = new Client(new PersonName(FIRST_NAME, LAST_NAME), null, PRIVATE_CLIENT_TYPE);
+    private static Client client = new Client(new PersonName(FIRST_NAME, LAST_NAME), null, ClientType.PRIVATE);
 
     def clientRepository = Mock(ClientRepositoryImpl) {
         load(NON_EXISTING_ID) >> { null };
-        load(EXISTING_ID) >> { client };
+        load(PRIVATE_CLIENT_ID) >> { client };
     }
 
     def projectQueryService = Mock(ProjectQueryServiceImpl) {
@@ -42,29 +41,34 @@ class ClientValidatorTest extends Specification {
 
     def "Should not throw any exception when private client data provided"() {
         given:
-            ClientBasicDto clientBasicDto = new ClientBasicDto(EXISTING_ID, PRIVATE_CLIENT_TYPE,
-                    FIRST_NAME, LAST_NAME, null);
+            ClientDto clientDto = new ClientDto();
+            clientDto.setFirstName(FIRST_NAME);
+            clientDto.setId(PRIVATE_CLIENT_ID);
+            clientDto.setLastName(LAST_NAME);
+            clientDto.setClientType(ClientType.PRIVATE);
         when:
-            ClientValidator.validateClientBasicDto(clientBasicDto);
+            this.clientValidator.validateClientBasicDto(clientDto);
         then:
             noExceptionThrown();
     }
 
     def "Should not throw any exception when corporate client data provided"() {
         given:
-            ClientBasicDto clientBasicDto = new ClientBasicDto(EXISTING_ID, CORPORATE_CLIENT_TYPE,
-                    null, null, COMPANY_NAME);
+            ClientDto clientDto = new ClientDto();
+            clientDto.setClientType(ClientType.CORPORATE);
+            clientDto.setCompanyName(COMPANY_NAME);
+            clientDto.setId(CORPORATE_CLIENT_ID);
         when:
-            ClientValidator.validateClientBasicDto(clientBasicDto);
+            clientValidator.validateClientBasicDto(clientDto);
         then:
             noExceptionThrown();
     }
 
     def "Not providing client dto should throw an error with specific message"() {
         given:
-            ClientBasicDto clientBasicDto = null;
+            ClientDto clientDto = null;
         when:
-            ClientValidator.validateClientBasicDto(clientBasicDto);
+            clientValidator.validateClientBasicDto(clientDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.client";
@@ -72,10 +76,11 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when client type not provided"() {
         given:
-            ClientBasicDto clientBasicDto = new ClientBasicDto(EXISTING_ID, null,
-                    null, null, COMPANY_NAME);
+            ClientDto clientDto = new ClientDto();
+            clientDto.setId(CORPORATE_CLIENT_ID);
+            clientDto.setCompanyName(COMPANY_NAME);
         when:
-            ClientValidator.validateClientBasicDto(clientBasicDto);
+            clientValidator.validateClientBasicDto(clientDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.client.clientType";
@@ -83,10 +88,12 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when first name is not provided for private client"() {
         given:
-            ClientBasicDto clientBasicDto = new ClientBasicDto(EXISTING_ID, PRIVATE_CLIENT_TYPE,
-                    null, LAST_NAME, COMPANY_NAME);
+            ClientDto clientDto = new ClientDto();
+            clientDto.setClientType(ClientType.PRIVATE);
+            clientDto.setId(PRIVATE_CLIENT_ID);
+            clientDto.setLastName(LAST_NAME);
         when:
-            ClientValidator.validateClientBasicDto(clientBasicDto);
+            clientValidator.validateClientBasicDto(clientDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.client.firstName";
@@ -94,10 +101,12 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when last name is not provided for private client"() {
         given:
-            ClientBasicDto clientBasicDto = new ClientBasicDto(EXISTING_ID, PRIVATE_CLIENT_TYPE,
-                    FIRST_NAME, null, null);
+            ClientDto clientDto = new ClientDto();
+            clientDto.setClientType(ClientType.PRIVATE);
+            clientDto.setFirstName(FIRST_NAME);
+            clientDto.setId(PRIVATE_CLIENT_ID);
         when:
-            ClientValidator.validateClientBasicDto(clientBasicDto);
+            clientValidator.validateClientBasicDto(clientDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.client.lastName";
@@ -105,10 +114,11 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when company name is not provided for corporate client"() {
         given:
-            ClientBasicDto clientBasicDto = new ClientBasicDto(EXISTING_ID, CORPORATE_CLIENT_TYPE,
-                    null, null, null);
+            ClientDto clientDto = new ClientDto();
+            clientDto.setClientType(ClientType.CORPORATE);
+            clientDto.setId(CORPORATE_CLIENT_ID);
         when:
-            ClientValidator.validateClientBasicDto(clientBasicDto);
+            clientValidator.validateClientBasicDto(clientDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.client.companyName";
@@ -116,10 +126,12 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when company name is empty for corporate client"() {
         given:
-            ClientBasicDto clientBasicDto = new ClientBasicDto(EXISTING_ID, CORPORATE_CLIENT_TYPE,
-                    null, null, "");
+            ClientDto clientDto = new ClientDto();
+            clientDto.setClientType(ClientType.CORPORATE);
+            clientDto.setCompanyName("");
+            clientDto.setId(CORPORATE_CLIENT_ID);
         when:
-            ClientValidator.validateClientBasicDto(clientBasicDto);
+            clientValidator.validateClientBasicDto(clientDto);
         then:
             Exception ex = thrown();
             ex.message == "isEmpty.client.companyName";
@@ -127,10 +139,14 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when first name is empty for private client"() {
         given:
-            ClientBasicDto clientBasicDto = new ClientBasicDto(EXISTING_ID, PRIVATE_CLIENT_TYPE,
-                    "", LAST_NAME, null);
+            ClientDto clientDto = new ClientDto();
+            clientDto.setClientType(ClientType.PRIVATE);
+            clientDto.setId(PRIVATE_CLIENT_ID);
+            clientDto.setFirstName("");
+            clientDto.setLastName(LAST_NAME);
+
         when:
-            ClientValidator.validateClientBasicDto(clientBasicDto);
+            clientValidator.validateClientBasicDto(clientDto);
         then:
             Exception ex = thrown();
             ex.message == "isEmpty.client.firstName";
@@ -138,10 +154,14 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when last name is empty for private client"() {
         given:
-            ClientBasicDto clientBasicDto = new ClientBasicDto(EXISTING_ID, PRIVATE_CLIENT_TYPE,
-                    FIRST_NAME, "", null);
+            ClientDto clientDto = new ClientDto();
+            clientDto.setClientType(ClientType.PRIVATE);
+            clientDto.setId(PRIVATE_CLIENT_ID);
+            clientDto.setFirstName(FIRST_NAME);
+            clientDto.setLastName("");
+
         when:
-            ClientValidator.validateClientBasicDto(clientBasicDto);
+            clientValidator.validateClientBasicDto(clientDto);
         then:
             Exception ex = thrown();
             ex.message == "isEmpty.client.lastName";
@@ -151,16 +171,16 @@ class ClientValidatorTest extends Specification {
         given:
             def client = null;
         when:
-            ClientValidator.validateClientExistence(client, EXISTING_ID);
+            clientValidator.validateClientExistence(client, PRIVATE_CLIENT_ID);
         then:
             thrown(IllegalArgumentException);
     }
 
     def "Should not throw an exception when client in not null"() {
         given:
-            def client = new Client(new PersonName(FIRST_NAME, LAST_NAME), COMPANY_NAME, PRIVATE_CLIENT_TYPE);
+            def client = new Client(new PersonName(FIRST_NAME, LAST_NAME), "", ClientType.PRIVATE);
         when:
-            ClientValidator.validateClientExistence(client, EXISTING_ID);
+            clientValidator.validateClientExistence(client, PRIVATE_CLIENT_ID);
         then:
             noExceptionThrown();
     }
@@ -177,7 +197,7 @@ class ClientValidatorTest extends Specification {
     def "when passing existing client id validateArchitectExistence should not throw any exception"() {
         given:
         when:
-            this.clientValidator.validateClientExistence(EXISTING_ID);
+            this.clientValidator.validateClientExistence(PRIVATE_CLIENT_ID);
         then:
             noExceptionThrown();
     }

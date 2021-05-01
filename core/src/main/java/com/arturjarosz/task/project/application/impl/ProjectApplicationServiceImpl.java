@@ -5,7 +5,7 @@ import com.arturjarosz.task.architect.application.ArchitectValidator;
 import com.arturjarosz.task.architect.application.dto.ArchitectDto;
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.ClientValidator;
-import com.arturjarosz.task.client.application.dto.ClientBasicDto;
+import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
@@ -86,11 +86,11 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         LOG.debug("Loading Project with id {}.", projectId);
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        ClientBasicDto clientBasicData = this.clientApplicationService.getClientBasicData(project.getClientId());
+        ClientDto clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
         ArchitectDto architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
         LOG.debug("Project with id {} loaded.", projectId);
         return ProjectDtoMapper.INSTANCE
-                .projectToProjectDto(clientBasicData, architectDto, project);
+                .projectToProjectDto(clientDto, architectDto, project);
     }
 
     @Transactional
@@ -143,10 +143,10 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     public List<ProjectDto> getProjects() {
         LOG.debug("Loading list of projects.");
         return this.projectRepository.loadAll().stream().map(project -> {
-            ClientBasicDto clientBasicData = this.clientApplicationService.getClientBasicData(project.getClientId());
+            ClientDto clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
             ArchitectDto architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
             return ProjectDtoMapper.INSTANCE
-                    .projectToBasicProjectDto(clientBasicData, architectDto, project);
+                    .projectToBasicProjectDto(clientDto, architectDto, project);
         }).collect(Collectors.toList());
     }
 
