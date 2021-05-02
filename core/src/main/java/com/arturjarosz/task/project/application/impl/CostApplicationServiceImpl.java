@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @ApplicationService
 public class CostApplicationServiceImpl implements CostApplicationService {
 
-    private CostValidator costValidator;
+    private final CostValidator costValidator;
     private final ProjectValidator projectValidator;
     private final ProjectRepository projectRepository;
     private final ProjectQueryService projectQueryService;
@@ -39,21 +39,22 @@ public class CostApplicationServiceImpl implements CostApplicationService {
 
     @Transactional
     @Override
-    public CostDto createCost(Long projectId,
-                              CostDto costDto) {
+    public CostDto createCost(Long projectId, CostDto costDto) {
         this.projectValidator.validateProjectExistence(projectId);
-        CostValidator.validateCostDto(costDto);
+        this.costValidator.validateCostDto(costDto);
         Project project = this.projectRepository.load(projectId);
         Cost cost = CostDtoMapper.INSTANCE.costCreateDtoToCost(costDto);
         project.addCost(cost);
         project = this.projectRepository.save(project);
-        return CostDtoMapper.INSTANCE.costToCostDto(cost);
+        CostDto createdCostDto = CostDtoMapper.INSTANCE.costToCostDto(cost);
+        createdCostDto.setId(this.getIdForCreatedCost(project, cost));
+        return createdCostDto;
     }
 
     @Override
     public CostDto getCost(Long costId) {
         Cost cost = this.projectQueryService.getCostById(costId);
-        CostValidator.validateCostExistence(cost, costId);
+        this.costValidator.validateCostExistence(cost, costId);
         return CostDtoMapper.INSTANCE.costToCostDto(cost);
     }
 
@@ -68,26 +69,34 @@ public class CostApplicationServiceImpl implements CostApplicationService {
         );
     }
 
+    @Transactional
     @Override
     public void deleteCost(Long projectId, Long costId) {
         this.projectValidator.validateProjectExistence(projectId);
         this.costValidator.validateCostExistence(costId);
         Project project = this.projectRepository.load(projectId);
-        Cost cost = this.projectQueryService.getCostById(costId);
-        project.getCosts().remove(cost);
+        project.removeCost(costId);
         this.projectRepository.save(project);
     }
 
+    @Transactional
     @Override
     public CostDto updateCost(Long projectId, Long costId, CostDto costDto) {
         this.projectValidator.validateProjectExistence(projectId);
         this.costValidator.validateCostExistence(costId);
-        CostValidator.validateUpdateCostDto(costDto);
+        this.costValidator.validateUpdateCostDto(costDto);
         Project project = this.projectRepository.load(projectId);
         Cost cost = project
                 .updateCost(costId, costDto.getName(), costDto.getDate(), costDto.getValue(), costDto.getCategory(),
                         costDto.getNote());
         this.projectRepository.save(project);
         return CostDtoMapper.INSTANCE.costToCostDto(cost);
+    }
+
+    private Long getIdForCreatedCost(Project project, Cost cost) {
+        return project.getCosts().stream()
+                .filter(costOnProject -> costOnProject.equals(cost))
+                .map(costOnProject -> costOnProject.getId())
+                .findFirst().orElse(null);
     }
 }
