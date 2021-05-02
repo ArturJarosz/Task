@@ -10,131 +10,281 @@ import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto
 import com.arturjarosz.task.sharedkernel.model.Money
-import spock.lang.Shared
+import com.arturjarosz.task.sharedkernel.utils.TestUtils
 import spock.lang.Specification
 
-import java.lang.reflect.Field
 import java.time.LocalDate
 
 class CostApplicationServiceImplTest extends Specification {
 
     private final static Double VALUE = 100.0;
+    private final static Double NEW_VALUE = 120.0;
     private final static Long ARCHITECT_ID = 33L;
     private final static Long CLIENT_ID = 44L;
     private final static Long COST_ID = 100L;
     private final static Long EXISTING_PROJECT_ID = 1L;
     private final static Long NOT_EXISTING_PROJECT_ID = 900L;
+    private final static Long PROJECT_WITH_COST_ID = 2L;
     private final static String NAME = "name";
+    private final static String NEW_NAME = "newName";
     private final static String NOTE = "note";
+    private final static String NEW_NOTE = "newNote";
     private final static String PROJECT_NAME = "project";
 
     private final static LocalDate DATE = LocalDate.now();
-    private final static CostCategory CATEGORY_FUEL = CostCategory.FUEL;
-    private final static ProjectType PROJECT_TYPE_CONCEPT = ProjectType.CONCEPT;
+    private final static LocalDate NEW_DATE = LocalDate.now().minusDays(20);
+
     private final static ProjectWorkflow PROJECT_WORKFLOW = new ProjectWorkflow();
 
-    static final CostDto COST_DTO = new CostDto(NAME, CATEGORY_FUEL, VALUE, DATE, NOTE);
-    static final Cost COST = new Cost(NAME, new Money(VALUE), CATEGORY_FUEL, DATE, NOTE);
+    def projectRepository = Mock(ProjectRepositoryImpl);
 
-    @Shared
-    Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, PROJECT_TYPE_CONCEPT, PROJECT_WORKFLOW);
+    def projectValidator = Mock(ProjectValidator);
 
-    def projectRepository = Mock(ProjectRepositoryImpl) {
-        load(NOT_EXISTING_PROJECT_ID) >> { null };
-        load(EXISTING_PROJECT_ID) >> {
-            return project;
-        };
-        save(_ as Project) >> {
-            Field field = Cost.superclass.getDeclaredField("id");
-            field.setAccessible(true);
-            Cost cost = project.getCosts().iterator().next();
-            field.set(cost, COST_ID);
-            return project;
-        }
-    }
+    def projectQueryService = Mock(ProjectQueryServiceImpl);
 
-    def projectValidator = new ProjectValidator(projectRepository);
-
-    def projectQueryService = Mock(ProjectQueryServiceImpl) {
-        getCostById(COST_ID) >> {
-            Field field = Cost.superclass.getDeclaredField("id");
-            field.setAccessible(true);
-            field.set(COST, COST_ID);
-            return COST;
-        }
-    }
-
-    def costValidator = new CostValidator(projectQueryService);
+    def costValidator = Mock(CostValidator);
 
     def projectCostApplicationService = new CostApplicationServiceImpl(costValidator, projectValidator,
             projectRepository, projectQueryService);
 
-    def cleanup() {
-        //cleaning up project costs
-        Field field = Project.getDeclaredField("costs");
-        field.setAccessible(true);
-        field.set(project, null)
-    }
-
-    def "when not existing projectId passed, createCost should throw an exception and cost should not be saved"() {
+    def "createCostShouldRunValidateProjectExistence"() {
         given:
-        when:
-            this.projectCostApplicationService.createCost(NOT_EXISTING_PROJECT_ID, this.COST_DTO);
-        then:
-            Exception ex = thrown();
-            ex.message == "notExists.project";
-            0 * this.projectRepository.save(_);
-    }
-
-    def "when passing null as costDto, createCost should throw an exception and cost should not be saved"() {
-        given:
-            CostDto costDto = null;
+            this.mockProjectQueryService();
+            this.mockProjectRepository();
+            CostDto costDto = this.prepareCostDto();
         when:
             this.projectCostApplicationService.createCost(EXISTING_PROJECT_ID, costDto);
         then:
-            Exception ex = thrown();
-            ex.message == "isNull.cost";
-            0 * this.projectRepository.save(_);
+            1 * this.projectValidator.validateProjectExistence(_);
     }
 
-    def "when passing existing project id and proper costDto, no exception thrown, cost is created and project is saved()"() {
+    def "createCostShouldRunValidateCostDto"() {
         given:
+            this.mockProjectQueryService();
+            this.mockProjectRepository();
+            CostDto costDto = this.prepareCostDto();
         when:
-            CreatedEntityDto createdEntityDto =
-                    this.projectCostApplicationService.createCost(EXISTING_PROJECT_ID, COST_DTO);
+            this.projectCostApplicationService.createCost(EXISTING_PROJECT_ID, costDto);
         then:
-            noExceptionThrown();
-            createdEntityDto.getId() == COST_ID;
+            1 * this.costValidator.validateCostDto(_);
     }
 
-    def "when passing not existing costId exception should be thrown"() {
+    def "createCostShouldCallSaveOnProjectRepository"() {
         given:
+            this.mockProjectQueryService();
+            this.mockProjectRepository();
+            CostDto costDto = this.prepareCostDto();
         when:
-            this.projectCostApplicationService.getCost(NOT_EXISTING_PROJECT_ID);
+            this.projectCostApplicationService.createCost(EXISTING_PROJECT_ID, costDto);
         then:
-            Exception ex = thrown();
-            ex.message == "notExists.cost"
+            1 * this.projectRepository.save(_) >> this.prepareProjectWithCost();
     }
 
-    def "when passing existing costId no exception should be thrown and CostDto should be returned"() {
+    def "createCostShouldAddCostToProject"() {
         given:
+            this.mockProjectQueryService();
+            this.mockProjectRepository();
+            CostDto costDto = this.prepareCostDto();
         when:
-            CostDto costDto = this.projectCostApplicationService.getCost(COST_ID);
+            this.projectCostApplicationService.createCost(EXISTING_PROJECT_ID, costDto);
         then:
-            noExceptionThrown();
-            costDto.getId() == COST_ID;
+            1 * this.projectRepository.save({
+                Project project ->
+                    project.getCosts().size() == 1;
+            }) >> this.prepareProjectWithCost();
     }
 
-    def "getCosts should return list of all costs"() {
+    def "getCostShouldCallValidateCostExistence"() {
         given:
-            project.addCost(COST);
+            this.mockProjectQueryService();
         when:
-            List<CostDto> costs = this.projectCostApplicationService.getCosts(EXISTING_PROJECT_ID);
+            this.projectCostApplicationService.getCost(COST_ID);
         then:
-            noExceptionThrown();
-            costs.size() == 1;
+            1 * this.costValidator.validateCostExistence(_, _);
     }
 
+    def "getCostsShouldCallValidateProjectExistence"() {
+        given:
+            this.mockProjectRepositoryForProjectWithCost()
+        when:
+            this.projectCostApplicationService.getCosts(PROJECT_WITH_COST_ID);
+        then:
+            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_COST_ID);
+    }
+
+    def "getCostsShouldReturnListOfProjectCosts"() {
+        given:
+            this.mockProjectRepositoryForProjectWithCost()
+        when:
+            List<CostDto> costDtos = this.projectCostApplicationService.getCosts(PROJECT_WITH_COST_ID);
+        then:
+            costDtos.size() == 1;
+    }
+
+    def "deleteCostShouldCallValidateProjectExistence"() {
+        given:
+            this.mockProjectQueryService();
+            this.mockProjectRepositoryForProjectWithCost()
+        when:
+            this.projectCostApplicationService.deleteCost(PROJECT_WITH_COST_ID, COST_ID);
+        then:
+            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_COST_ID);
+    }
+
+    def "deleteCostShouldCallValidateCostExistence"() {
+        given:
+            this.mockProjectQueryService();
+            this.mockProjectRepositoryForProjectWithCost()
+        when:
+            this.projectCostApplicationService.deleteCost(PROJECT_WITH_COST_ID, COST_ID);
+        then:
+            1 * this.costValidator.validateCostExistence(COST_ID);
+    }
+
+    def "deleteCostShouldCallSaveOnProjectRepository"() {
+        given:
+            this.mockProjectQueryService();
+            this.mockProjectRepositoryForProjectWithCost()
+        when:
+            this.projectCostApplicationService.deleteCost(PROJECT_WITH_COST_ID, COST_ID);
+        then:
+            1 * this.projectRepository.save(_);
+    }
+
+    def "deleteCostShouldRemoveCostFromProject"() {
+        given:
+            this.mockProjectQueryService();
+            this.mockProjectRepositoryForProjectWithCost()
+        when:
+            this.projectCostApplicationService.deleteCost(PROJECT_WITH_COST_ID, COST_ID);
+        then:
+            1 * this.projectRepository.save({
+                Project project ->
+                    project.getCosts().size() == 0;
+            });
+    }
+
+    def "updateCostShouldCallValidateProjectExistence"() {
+        given:
+            this.mockProjectQueryService();
+            this.mockProjectRepositoryForProjectWithCost();
+            CostDto costDto = this.prepareUpdateCostDto()
+        when:
+            this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto);
+        then:
+            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_COST_ID);
+    }
+
+    def "updateCostShouldCallValidateCostExistence"() {
+        given:
+            this.mockProjectQueryService();
+            this.mockProjectRepositoryForProjectWithCost();
+            CostDto costDto = this.prepareUpdateCostDto()
+        when:
+            this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto);
+        then:
+            1 * this.costValidator.validateCostExistence(COST_ID);
+    }
+
+    def "updateCostShouldCallValidateUpdateCostDto"() {
+        given:
+            this.mockProjectQueryService();
+            this.mockProjectRepositoryForProjectWithCost();
+            CostDto costDto = this.prepareUpdateCostDto()
+        when:
+            this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto);
+        then:
+            1 * this.costValidator.validateUpdateCostDto(_);
+    }
+
+    def "updateCostShouldCallSaveOnProjectRepository"() {
+        given:
+            this.mockProjectQueryService();
+            this.mockProjectRepositoryForProjectWithCost();
+            CostDto costDto = this.prepareUpdateCostDto()
+        when:
+            this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto);
+        then:
+            1 * this.projectRepository.save(_);
+    }
+
+    def "updateCostShouldUpdateCostData"() {
+        given:
+            this.mockProjectQueryService();
+            this.mockProjectRepositoryForProjectWithCost();
+            CostDto costDto = this.prepareUpdateCostDto()
+        when:
+            this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto);
+        then:
+            1 * this.projectRepository.save({
+                Project project ->
+                    Cost cost = project.getCosts().iterator().next();
+                    cost.getValue().value.doubleValue() == NEW_VALUE;
+                    cost.getName() == NEW_NAME;
+                    cost.getNote() == NEW_NOTE;
+                    cost.getDate() == NEW_DATE;
+            });
+    }
+
+    private CostDto prepareUpdateCostDto() {
+        CostDto updateCostDto = new CostDto();
+        updateCostDto.setNote(NEW_NOTE);
+        updateCostDto.setValue(NEW_VALUE);
+        updateCostDto.setDate(NEW_DATE);
+        updateCostDto.setName(NEW_NAME);
+        return updateCostDto;
+    }
+
+    private CostDto prepareCostDto() {
+        CostDto costDto = new CostDto();
+        costDto.setName(NAME);
+        costDto.setDate(DATE);
+        costDto.setCategory(CostCategory.FUEL);
+        costDto.setValue(VALUE);
+        costDto.setNote(NOTE);
+        return costDto;
+    }
+
+    private Project prepareProjectWithNoCosts() {
+        Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
+                PROJECT_WORKFLOW); ;
+        return project;
+    }
+
+    private Project prepareProjectWithCost() {
+        Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
+                PROJECT_WORKFLOW); ;
+        def cost = new Cost(NAME, new Money(VALUE), CostCategory.FUEL, DATE, NOTE);
+        TestUtils.setFieldForObject(cost, "id", COST_ID);
+        project.addCost(cost);
+        return project;
+
+    }
+
+    private void mockProjectRepository() {
+        Project project = this.prepareProjectWithNoCosts();
+        this.projectRepository.load(NOT_EXISTING_PROJECT_ID) >> { null };
+        this.projectRepository.load(EXISTING_PROJECT_ID) >> {
+            return project;
+        };
+        this.projectRepository.save(_ as Project) >> {
+            Cost cost = project.getCosts().iterator().next();
+            TestUtils.setFieldForObject(cost, "id", COST_ID);
+            return project;
+        }
+    }
+
+    private void mockProjectRepositoryForProjectWithCost() {
+        Project project = this.prepareProjectWithCost();
+        this.projectRepository.load(PROJECT_WITH_COST_ID) >> project;
+    }
+
+    private void mockProjectQueryService() {
+        def cost = new Cost(NAME, new Money(VALUE), CostCategory.FUEL, DATE, NOTE);
+        this.projectQueryService.getCostById(COST_ID) >> {
+            TestUtils.setFieldForObject(cost, "id", COST_ID);
+            return cost;
+        }
+    }
 }

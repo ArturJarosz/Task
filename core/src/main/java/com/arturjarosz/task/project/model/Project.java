@@ -158,6 +158,11 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         return new HashSet<>(this.costs);
     }
 
+    public void removeCost(Long costId) {
+        this.costs.removeIf(cost -> cost.getId().equals(costId));
+        this.costs.size();
+    }
+
     public void addStage(Stage stage) {
         if (this.stages == null) {
             this.stages = new HashSet<>();

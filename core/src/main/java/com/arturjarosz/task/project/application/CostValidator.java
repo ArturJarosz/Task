@@ -21,7 +21,7 @@ public class CostValidator {
         this.projectQueryService = projectQueryService;
     }
 
-    public static void validateCostDto(CostDto costDto) {
+    public void validateCostDto(CostDto costDto) {
         assertNotNull(costDto,
                 BaseValidator.createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST));
         assertNotNull(costDto.getCategory(), BaseValidator
@@ -30,27 +30,27 @@ public class CostValidator {
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.COST_DATE));
         assertIsTrue(costDto.getValue() >= 0, createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.COST,
                 ProjectExceptionCodes.NEGATIVE));
-        validateCostName(costDto.getName());
+        this.validateCostName(costDto.getName());
     }
 
-    public static void validateCostExistence(Cost cost, Long costId) {
+    public void validateCostExistence(Cost cost, Long costId) {
         assertNotNull(cost,
                 BaseValidator.createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.COST), costId);
     }
 
-    private static void validateCostName(String costName) {
+    private void validateCostName(String costName) {
         assertNotNull(costName,
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.NAME));
         assertNotEmpty(costName,
                 createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.COST, ProjectExceptionCodes.NAME));
     }
 
-    public static void validateUpdateCostDto(CostDto costDto) {
+    public void validateUpdateCostDto(CostDto costDto) {
         //TODO: what data should be updatable on Cost?
     }
 
     public void validateCostExistence(Long costId) {
         Cost cost = this.projectQueryService.getCostById(costId);
-        validateCostExistence(cost, costId);
+        this.validateCostExistence(cost, costId);
     }
 }
