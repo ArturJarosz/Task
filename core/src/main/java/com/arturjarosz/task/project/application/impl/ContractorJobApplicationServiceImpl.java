@@ -34,8 +34,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
     }
 
     @Override
-    public ContractorJobDto createContractorJob(Long projectId,
-                                                ContractorJobDto contractorJobDto) {
+    public ContractorJobDto createContractorJob(Long projectId, ContractorJobDto contractorJobDto) {
         LOG.debug("Creating ContractorJob for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.contractorJobValidator.validateCreateContractorJobDto(contractorJobDto);

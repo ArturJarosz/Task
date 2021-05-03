@@ -228,7 +228,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     }
 
     public Set<CooperatorJob> getCooperatorJobs() {
-        return this.cooperatorJobs;
+        return new HashSet<>(this.cooperatorJobs);
     }
 
     public void removeContractorJob(Long contractorJobId) {
