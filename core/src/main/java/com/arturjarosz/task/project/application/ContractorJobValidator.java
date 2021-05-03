@@ -27,24 +27,11 @@ public class ContractorJobValidator {
     public void validateCreateContractorJobDto(ContractorJobDto contractorJobDto) {
         assertNotNull(contractorJobDto,
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACTOR_JOB));
-        assertNotNull(contractorJobDto.getName(),
-                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACTOR_JOB,
-                        ProjectExceptionCodes.NAME));
-        assertNotEmpty(contractorJobDto.getName(),
-                createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.CONTRACTOR_JOB,
-                        ProjectExceptionCodes.NAME));
+        this.validateContractorName(contractorJobDto);
         assertNotNull(contractorJobDto.getContractorId(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACTOR_JOB,
                         ProjectExceptionCodes.CONTRACTOR));
-        assertNotNull(contractorJobDto.getContractorId(),
-                createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.CONTRACTOR_JOB,
-                        ProjectExceptionCodes.CONTRACTOR));
-        assertNotNull(contractorJobDto.getValue(),
-                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACTOR_JOB,
-                        ProjectExceptionCodes.VALUE));
-        assertIsTrue(contractorJobDto.getValue() >= 0,
-                createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.CONTRACTOR_JOB,
-                        ProjectExceptionCodes.VALUE));
+        this.validateContractorJobValue(contractorJobDto);
     }
 
     public void validateContractorExistence(Long contractorId) {
@@ -54,8 +41,8 @@ public class ContractorJobValidator {
                 createMessageCode(ExceptionCodes.NOT_EXISTS, CooperatorExceptionCodes.CONTRACTOR));
     }
 
-    public void validateContractorJobOnProjectExistence(Project projectId, Long contractorJobId) {
-        CooperatorJob cooperatorJob = projectId.getCooperatorJobs().stream()
+    public void validateContractorJobOnProjectExistence(Project project, Long contractorJobId) {
+        CooperatorJob cooperatorJob = project.getCooperatorJobs().stream()
                 .filter(cooperatorJobOnProject -> cooperatorJobOnProject.getId().equals(contractorJobId)).findFirst()
                 .orElse(null);
         assertNotNull(cooperatorJob,
@@ -67,12 +54,11 @@ public class ContractorJobValidator {
     public void validateUpdateContractorJobDto(ContractorJobDto contractorJobDto) {
         assertNotNull(contractorJobDto,
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACTOR_JOB));
-        assertNotNull(contractorJobDto.getName(),
-                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACTOR_JOB,
-                        ProjectExceptionCodes.NAME));
-        assertNotEmpty(contractorJobDto.getName(),
-                createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.CONTRACTOR_JOB,
-                        ProjectExceptionCodes.NAME));
+        this.validateContractorName(contractorJobDto);
+        this.validateContractorJobValue(contractorJobDto);
+    }
+
+    private void validateContractorJobValue(ContractorJobDto contractorJobDto) {
         assertNotNull(contractorJobDto.getValue(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACTOR_JOB,
                         ProjectExceptionCodes.VALUE));
@@ -80,4 +66,14 @@ public class ContractorJobValidator {
                 createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.CONTRACTOR_JOB,
                         ProjectExceptionCodes.VALUE));
     }
+
+    private void validateContractorName(ContractorJobDto contractorJobDto) {
+        assertNotNull(contractorJobDto.getName(),
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACTOR_JOB,
+                        ProjectExceptionCodes.NAME));
+        assertNotEmpty(contractorJobDto.getName(),
+                createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.CONTRACTOR_JOB,
+                        ProjectExceptionCodes.NAME));
+    }
+
 }

@@ -35,9 +35,10 @@ public class CooperatorJob extends AbstractEntity {
     @Column(name = "TYPE", nullable = false)
     private CooperatorJobType type;
 
-    public CooperatorJob(String name, Long cooperatorId) {
+    public CooperatorJob(String name, Long cooperatorId, CooperatorJobType cooperatorJobType) {
         this.name = name;
         this.cooperatorId = cooperatorId;
+        this.type = cooperatorJobType;
     }
 
     public String getName() {
