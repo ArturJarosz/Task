@@ -2,13 +2,9 @@ package com.arturjarosz.task.project.application.impl
 
 import com.arturjarosz.task.architect.application.ArchitectValidator
 import com.arturjarosz.task.architect.application.impl.ArchitectApplicationServiceImpl
-import com.arturjarosz.task.architect.infrastructure.repository.impl.ArchitectRepositoryImpl
-import com.arturjarosz.task.architect.model.Architect
-import com.arturjarosz.task.architect.utils.ArchitectBuilder
 import com.arturjarosz.task.client.application.ClientValidator
+import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
-import com.arturjarosz.task.client.infrastructure.repository.impl.ClientRepositoryImpl
-import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.ProjectContractDto
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
@@ -17,187 +13,203 @@ import com.arturjarosz.task.project.domain.impl.ProjectDomainServiceImpl
 import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
-import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.status.project.ProjectStatus
-import com.arturjarosz.task.project.status.project.ProjectWorkflow
-import com.arturjarosz.task.project.status.project.impl.ProjectWorkflowServiceImpl
-import com.arturjarosz.task.project.utils.ClientBuilder
 import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto
-import com.arturjarosz.task.sharedkernel.utils.TestUtils
 import spock.lang.Specification
 
 import java.time.LocalDate
 
 class ProjectApplicationServiceTest extends Specification {
+    private static final String CLIENT_FIRST_NAME = "name";
+    private static final String CLIENT_LAST_NAME = "last name";
+    private static final String NEW_PROJECT_NAME = "newProjectName";
+    private static final String PROJECT_NAME = "projectName";
+    private static final String NEW_PROJECT_NOTE = "newProjectNote";
+    private static final Long ARCHITECT_ID = 1L;
+    private static final Long CLIENT_ID = 10L;
+    private static final Long EXISTING_PROJECT_ID = 100L;
+    private static final Long NOT_EXISTING_PROJECT_ID = 101L;
+    private static final LocalDate PROJECT_DEADLINE = LocalDate.parse("2022-10-10");
+    private static final LocalDate PROJECT_END_DATE = LocalDate.parse("2022-05-02");
+    private static final LocalDate PROJECT_SIGNING_DATE = LocalDate.parse("2021-01-01");
+    private static final LocalDate PROJECT_START_DATE = LocalDate.parse("2022-01-01");
 
 
-    private static final Long NOT_EXISTING_ARCHITECT_ID = 88L;
-    private static final Long NOT_EXISTING_CLIENT_ID = 99L;
-    private static final Long NOT_EXISTING_PROJECT_ID = 77L;
-    private static final Long EXISTING_ARCHITECT_ID = 2L;
-    private static final Long EXISTING_CLIENT_ID = 1l;
-    private static final Long EXISTING_PROJECT_ID = 3L;
-    private static final String PROJECT_NAME = "project name";
-
-    private static final LocalDate SIGNING_DATE = LocalDate.now();
-    private static final LocalDate START_DATE = LocalDate.now().plusMonths(1);
-    private static final LocalDate DEADLINE = LocalDate.now().plusMonths(2);
-    private static final LocalDate END_DATE = LocalDate.now().plusMonths(1).plusDays(1);
-
-    private static final ProjectType PROJECT_TYPE_CONCEPT = ProjectType.CONCEPT;
-    private static final Architect ARCHITECT = new ArchitectBuilder().withId(EXISTING_ARCHITECT_ID).build();
-    private static final Client EXISTING_CLIENT = new ClientBuilder().withId(EXISTING_CLIENT_ID).build();
-    private Project project = new ProjectBuilder().withName(PROJECT_NAME).build();
-
-    def clientApplicationService = Mock(ClientApplicationServiceImpl) {
-
-    }
-    def architectApplicationService = Mock(ArchitectApplicationServiceImpl) {
-
-    }
-    def projectRepository = Mock(ProjectRepositoryImpl) {
-        load(EXISTING_PROJECT_ID) >> {
-            return project;
-        }
-        load(NOT_EXISTING_PROJECT_ID) >> { null }
-        loadAll() >> { Collections.singletonList(project) };
-        save(_ as Project) >> {
-            TestUtils.setFieldForObject(this.project, "id", EXISTING_PROJECT_ID);
-            return this.project;
-        }
-    }
+    def clientApplicationService = Mock(ClientApplicationServiceImpl);
+    def clientValidator = Mock(ClientValidator);
+    def architectApplicationService = Mock(ArchitectApplicationServiceImpl);
+    def architectValidator = Mock(ArchitectValidator);
+    def projectRepository = Mock(ProjectRepositoryImpl);
     def projectDomainService = Mock(ProjectDomainServiceImpl);
-    def architectRepository = Mock(ArchitectRepositoryImpl) {
-        load(NOT_EXISTING_ARCHITECT_ID) >> { null };
-        load(EXISTING_ARCHITECT_ID) >> { this.ARCHITECT };
-    }
-    def projectQueryService = Mock(ProjectQueryServiceImpl) {
+    def projectValidator = Mock(ProjectValidator);
 
-    }
-    def architectValidator = new ArchitectValidator(architectRepository, projectQueryService);
-    def clientRepository = Mock(ClientRepositoryImpl) {
-        load(NOT_EXISTING_CLIENT_ID) >> { null };
-        load(EXISTING_CLIENT_ID) >> { EXISTING_CLIENT }
-    }
-    def clientValidator = new ClientValidator(clientRepository, projectQueryService);
-    def projectValidator = new ProjectValidator(projectRepository);
-    def projectWorkflow = new ProjectWorkflow();
-    def projectWorkflowService = Mock(ProjectWorkflowServiceImpl) {
-        changeProjectStatus(_ as Project, this.projectWorkflow.getInitialStatus()) >> {
-            TestUtils.setFieldForObject(this.project, "status", ProjectStatus.OFFER);
-            return this.project;
-        };
-        changeProjectStatus(_ as Project, ProjectStatus.REJECTED) >> {
-            TestUtils.setFieldForObject(this.project, "status", ProjectStatus.REJECTED);
-            return this.project;
-        }
-    }
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
-            architectApplicationService, architectValidator, projectRepository, projectDomainService, projectWorkflow,
-            projectValidator, projectWorkflowService);
+            architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator);
 
-    def "when passing not correct projectCreateDto, IllegalArgumentException should be thrown and project should not be created"() {
+    def "createProject should call validateProjectBasicDto on projectValidator"() {
         given:
-            ProjectCreateDto projectCreateDto = null;
+            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
         when:
-            CreatedEntityDto createdEntityDto = this.projectApplicationService.createProject(projectCreateDto);
+            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
         then:
-            IllegalArgumentException ex = thrown();
-            createdEntityDto == null;
+            1 * this.projectValidator.validateProjectBasicDto(_);
     }
 
-    def "when passing not existing clientId in dto, createProject should throw an exception and project should not be created"() {
+    def "createProject should call validateArchitectExistence on architectValidator"() {
         given:
-            ProjectCreateDto projectCreateDto = new ProjectCreateDto();
-            projectCreateDto.setArchitectId(EXISTING_ARCHITECT_ID);
-            projectCreateDto.setClientId(NOT_EXISTING_CLIENT_ID);
-            projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT);
-            projectCreateDto.setName(PROJECT_NAME);
+            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
         when:
-            CreatedEntityDto createdEntityDto = this.projectApplicationService.createProject(projectCreateDto);
+            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
         then:
-            IllegalArgumentException ex = thrown();
-            createdEntityDto == null;
+            1 * this.architectValidator.validateArchitectExistence(_);
     }
 
-    def "when passing not existing architectId in dto, createProject should throw an exception and project should not be created"() {
+    def "createProject should call validateClientExistence on clientValidator"() {
         given:
-            ProjectCreateDto projectCreateDto = new ProjectCreateDto();
-            projectCreateDto.setArchitectId(NOT_EXISTING_ARCHITECT_ID);
-            projectCreateDto.setClientId(EXISTING_CLIENT_ID);
-            projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT);
-            projectCreateDto.setName(PROJECT_NAME);
+            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
         when:
-            CreatedEntityDto createdEntityDto = this.projectApplicationService.createProject(projectCreateDto);
+            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
         then:
-            IllegalArgumentException ex = thrown();
-            createdEntityDto == null;
+            1 * this.clientValidator.validateClientExistence(_);
     }
 
-    def "when passing proper dto, createProject should not throw any exception and project should be created"() {
+    def "createProject should call createProject on projectDomainService"() {
         given:
-            ProjectCreateDto projectCreateDto = new ProjectCreateDto();
-            projectCreateDto.setArchitectId(EXISTING_ARCHITECT_ID);
-            projectCreateDto.setClientId(EXISTING_CLIENT_ID);
-            projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT);
-            projectCreateDto.setName(PROJECT_NAME);
+            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
         when:
-            CreatedEntityDto createdEntityDto = this.projectApplicationService.createProject(projectCreateDto);
+            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
         then:
-            noExceptionThrown();
-            createdEntityDto.getId() == EXISTING_PROJECT_ID;
+            1 * this.projectDomainService.createProject(_);
     }
 
-    def "when passing proper dto, changeProjectStatus should be called"() {
+    def "createProject should call save on projectRepository"() {
         given:
-            ProjectCreateDto projectCreateDto = new ProjectCreateDto();
-            projectCreateDto.setArchitectId(EXISTING_ARCHITECT_ID);
-            projectCreateDto.setClientId(EXISTING_CLIENT_ID);
-            projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT);
-            projectCreateDto.setName(PROJECT_NAME);
+            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
         when:
-            CreatedEntityDto createdEntityDto = this.projectApplicationService.createProject(projectCreateDto);
+            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
         then:
-            noExceptionThrown();
-            1 * this.projectWorkflowService.changeProjectStatus(_, _);
-    }
-
-    def "when project is created is has status offer"() {
-        given:
-            ProjectCreateDto projectCreateDto = new ProjectCreateDto();
-            projectCreateDto.setArchitectId(EXISTING_ARCHITECT_ID);
-            projectCreateDto.setClientId(EXISTING_CLIENT_ID);
-            projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT);
-            projectCreateDto.setName(PROJECT_NAME);
-        when:
-            CreatedEntityDto createdEntityDto = this.projectApplicationService.createProject(projectCreateDto);
-        then:
-            noExceptionThrown();
             1 * this.projectRepository.save(_);
     }
 
-    def "when passing not existing projectId, getProject should throw an exception and project should not be loaded"() {
+    def "createProject should return newly created project"() {
         given:
+            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
         when:
-            ProjectDto projectDto = this.projectApplicationService.getProject(NOT_EXISTING_PROJECT_ID);
+            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
         then:
-            IllegalArgumentException ex = thrown();
-
-            projectDto == null;
+            1 * this.projectRepository.save(_) >> this.prepareNewProject();
+            createdProjectDto.getName() == PROJECT_NAME;
     }
 
-    def "when passing existing projectId, getProject should not throw any exception and project should be loaded"() {
+    def "getProject should call validateProjectExistence on projectValidator"() {
         given:
+            this.mockProjectRepositoryLoad();
         when:
             ProjectDto projectDto = this.projectApplicationService.getProject(EXISTING_PROJECT_ID);
         then:
-            noExceptionThrown();
-            projectDto.getName() == PROJECT_NAME;
+            1 * this.projectValidator.validateProjectExistence(_);
     }
 
-    def "when calling removeProject remove from projectRepository should be called"() {
+    def "getProject should return project of given id"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            ProjectDto projectDto = this.projectApplicationService.getProject(EXISTING_PROJECT_ID);
+        then:
+            projectDto.getId() == EXISTING_PROJECT_ID;
+    }
+
+    def "getProject should call getClientBasicData on clientApplicationService"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            ProjectDto projectDto = this.projectApplicationService.getProject(EXISTING_PROJECT_ID);
+        then:
+            1 * this.clientApplicationService.getClientBasicData(CLIENT_ID);
+    }
+
+    def "getProject should call getArchitect from architectApplicationService"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            ProjectDto projectDto = this.projectApplicationService.getProject(EXISTING_PROJECT_ID);
+        then:
+            1 * this.architectApplicationService.getArchitect(ARCHITECT_ID);
+    }
+
+    def "updateProject should call load on projectRepository"() {
+        given:
+            ProjectDto projectDto = this.prepareUpdateProjectDto();
+        when:
+            ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
+                    projectDto);
+        then:
+            1 * this.projectRepository.load(EXISTING_PROJECT_ID);
+    }
+
+    def "updateProject should call validateProjectExistence on projectValidator"() {
+        given:
+            ProjectDto projectDto = this.prepareUpdateProjectDto();
+        when:
+            ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
+                    projectDto);
+        then:
+            1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID);
+    }
+
+    def "updateProject should call validateUpdateProjectDto on project validator"() {
+        given:
+            ProjectDto projectDto = this.prepareUpdateProjectDto();
+        when:
+            ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
+                    projectDto);
+        then:
+            1 * this.projectValidator.validateUpdateProjectDto(projectDto);
+    }
+
+    def "updateProject should call update on projectDomainService"() {
+        given:
+            ProjectDto projectDto = this.prepareUpdateProjectDto();
+        when:
+            ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
+                    projectDto);
+        then:
+            1 * this.projectDomainService.updateProject(_, projectDto);
+    }
+
+    def "updateProject should call save on projectRepository"() {
+        given:
+            ProjectDto projectDto = this.prepareUpdateProjectDto();
+        when:
+            ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
+                    projectDto);
+        then:
+            1 * this.projectRepository.save(_);
+    }
+
+    def "updateProject should return project with updatedData"() {
+        given:
+            ProjectDto projectDto = this.prepareUpdateProjectDto();
+            this.mockProjectRepositoryLoad();
+            this.mockProjectDomainServiceUpdate();
+            this.mockProjectRepositorySaveUpdated();
+        when:
+            ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
+                    projectDto);
+        then:
+            updatedProjectDto.getId() == EXISTING_PROJECT_ID;
+            updatedProjectDto.getName() == NEW_PROJECT_NAME;
+    }
+
+    def "removeProject should call validateProjectExistence on projectValidator"() {
+        given:
+        when:
+            this.projectApplicationService.removeProject(EXISTING_PROJECT_ID);
+        then:
+            1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID);
+    }
+
+    def "removeProject should call remove on projectRepository"() {
         given:
         when:
             this.projectApplicationService.removeProject(EXISTING_PROJECT_ID);
@@ -205,144 +217,276 @@ class ProjectApplicationServiceTest extends Specification {
             1 * this.projectRepository.remove(EXISTING_PROJECT_ID);
     }
 
-    def "when calling updateProject with not existing projectId exception should be thrown and project should not be updated"() {
+    def "signProjectContract should load project from projectRepository"() {
         given:
-            ProjectDto projectDto = new ProjectDto();
-        when:
-            this.projectApplicationService.updateProject(NOT_EXISTING_PROJECT_ID, projectDto);
-        then:
-            Exception exception = thrown();
-            exception.message == "notExists.project";
-            0 * this.projectDomainService.updateProject(_, _);
-    }
-
-    def "when calling updateProject with null as a dto exception should be thrown and project should not be updated"() {
-        given:
-            ProjectDto projectDto = null;
-        when:
-            this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto);
-        then:
-            Exception exception = thrown();
-            exception.message == "isNull.project.update";
-            0 * this.projectDomainService.updateProject(_, _);
-    }
-
-    def "when calling updateProject with null as a project name exception should be thrown and project should not be updated"() {
-        given:
-            ProjectDto projectDto = new ProjectDto();
-        when:
-            this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto);
-        then:
-            Exception exception = thrown();
-            exception.message == "isNull.project.name";
-            0 * this.projectDomainService.updateProject(_, _);
-    }
-
-    def "when calling updateProject with empty project name exception should be thrown and project should not be updated"() {
-        given:
-            ProjectDto projectDto = new ProjectDto();
-            projectDto.setName("");
-        when:
-            this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto);
-        then:
-            Exception exception = thrown();
-            exception.message == "isEmpty.project.name";
-            0 * this.projectDomainService.updateProject(_, _);
-    }
-
-    def "when calling updateProject with proper data no exception should be thrown and project should be updated"() {
-        given:
-            ProjectDto projectDto = new ProjectDto();
-            projectDto.setName(PROJECT_NAME);
-        when:
-            this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto);
-        then:
-            noExceptionThrown();
-            1 * this.projectDomainService.updateProject(_ as Project, _ as ProjectDto);
-    }
-
-    def "when calling signProjectContract not existing projectId exception should be thrown and project should not signed"() {
-        given:
-            ProjectContractDto projectContractDto = this.createProperProjectContractDto();
-        when:
-            this.projectApplicationService.signProjectContract(NOT_EXISTING_PROJECT_ID, projectContractDto);
-        then:
-            Exception ex = thrown();
-            ex.message == "notExists.project";
-            0 * this.projectDomainService.signProjectContract(_ as Project, _ as ProjectContractDto);
-    }
-
-    def "when calling signProjectContract with null as a dto exception should be thrown and project should not signed"() {
-        given:
-            ProjectContractDto projectContractDto = null;
+            this.mockProjectRepositoryLoad();
+            this.mockProjectDomainServiceSignProjectContract()
+            ProjectContractDto projectContractDto = this.prepareProjectContractDtoForSigning();
         when:
             this.projectApplicationService.signProjectContract(EXISTING_PROJECT_ID, projectContractDto);
         then:
-            Exception ex = thrown();
-            ex.message == "isNull.contract";
-            0 * this.projectDomainService.signProjectContract(_ as Project, _ as ProjectContractDto);
+            1 * this.projectRepository.load(EXISTING_PROJECT_ID);
     }
 
-    def "when calling singProjectContract with not proper dto exception should be thrown and project should not be signed"() {
+    def "signProjectContract should call validateProjectExistence on projectValidator"() {
         given:
-            ProjectContractDto projectContractDto = new ProjectContractDto();
-            projectContractDto.setStartDate(START_DATE);
-            projectContractDto.setDeadline(DEADLINE);
+            this.mockProjectRepositoryLoad();
+            this.mockProjectDomainServiceSignProjectContract()
+            ProjectContractDto projectContractDto = this.prepareProjectContractDtoForSigning();
         when:
             this.projectApplicationService.signProjectContract(EXISTING_PROJECT_ID, projectContractDto);
         then:
-            IllegalArgumentException ex = thrown();
-            0 * this.projectDomainService.signProjectContract(_ as Project, _ as ProjectContractDto);
+            1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID);
     }
 
-    def "when calling signProjectContract with proper data and existing projectId no exception should be thrown and contract should be signed"() {
+    def "singProjectContract should call validateProjectContractDto on projectValidator"() {
         given:
-            ProjectContractDto projectContractDto = this.createProperProjectContractDto();
+            this.mockProjectRepositoryLoad();
+            this.mockProjectDomainServiceSignProjectContract()
+            ProjectContractDto projectContractDto = this.prepareProjectContractDtoForSigning();
         when:
             this.projectApplicationService.signProjectContract(EXISTING_PROJECT_ID, projectContractDto);
         then:
-            noExceptionThrown();
-            1 * this.projectDomainService.signProjectContract(_ as Project, _ as ProjectContractDto);
-            1 * this.projectRepository.save(_);
+            1 * this.projectValidator.validateProjectContractDto(_);
     }
 
-    def "when calling finishProject with not existing projectId, exception should be thrown no project should be finished"() {
+    def "signProjectContract should call signProjectContract on projectDomainService"() {
         given:
-            ProjectContractDto projectContractDto = this.createProperProjectContractDto();
+            this.mockProjectRepositoryLoad();
+            this.mockProjectDomainServiceSignProjectContract()
+            ProjectContractDto projectContractDto = this.prepareProjectContractDtoForSigning();
         when:
-            this.projectApplicationService.finishProject(NOT_EXISTING_PROJECT_ID, projectContractDto);
+            this.projectApplicationService.signProjectContract(EXISTING_PROJECT_ID, projectContractDto);
         then:
-            Exception ex = thrown();
-            ex.message == "notExists.project";
-            0 * this.projectDomainService.finishProject(_ as Long, _ as LocalDate);
+            1 * this.projectDomainService.signProjectContract(_, _);
     }
 
-    def "when calling finishProject with existing projectId and proper dto no exception should be thrown and project should be finished"() {
+    def "signProjectContract should save signed project with projectRepository"() {
         given:
-            ProjectContractDto projectContractDto = new ProjectContractDto();
-            projectContractDto.setEndDate(END_DATE);
+            this.mockProjectRepositoryLoad();
+            this.mockProjectDomainServiceSignProjectContract()
+            ProjectContractDto projectContractDto = this.prepareProjectContractDtoForSigning();
+        when:
+            this.projectApplicationService.signProjectContract(EXISTING_PROJECT_ID, projectContractDto);
+        then:
+            1 * projectRepository.save({
+                Project project ->
+                    project.getDeadline() == PROJECT_DEADLINE;
+                    project.getSigningDate() == PROJECT_SIGNING_DATE;
+                    project.getStartDate() == PROJECT_START_DATE;
+            });
+    }
+
+    def "finishProject should load project from projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoad();
+            this.mockProjectDomainServiceFinish();
+            ProjectContractDto projectContractDto = this.prepareProjectContractDtoForFinish();
         when:
             this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto);
         then:
-            noExceptionThrown()
-            1 * this.projectDomainService.finishProject(_ as Long, _ as LocalDate);
+            1 * this.projectRepository.load(EXISTING_PROJECT_ID);
+    }
+
+    def "finishProject should call validateProjectExistence on projectValidator"() {
+        given:
+            this.mockProjectRepositoryLoad();
+            this.mockProjectDomainServiceFinish();
+            ProjectContractDto projectContractDto = this.prepareProjectContractDtoForFinish();
+        when:
+            this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto);
+        then:
+            1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID);
+    }
+
+    def "finishProject should call finishProject on projectDomainService"() {
+        given:
+            this.mockProjectRepositoryLoad();
+            this.mockProjectDomainServiceFinish();
+            ProjectContractDto projectContractDto = this.prepareProjectContractDtoForFinish();
+        when:
+            this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto);
+        then:
+            1 * this.projectDomainService.finishProject(_, _);
+    }
+
+    def "finishProject should save finished project with projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoad();
+            this.mockProjectDomainServiceFinish();
+            ProjectContractDto projectContractDto = this.prepareProjectContractDtoForFinish();
+        when:
+            this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto);
+        then:
+            1 * this.projectRepository.save({
+                Project project ->
+                    project.getEndDate() == PROJECT_END_DATE;
+            });
+    }
+
+    def "getProjects should return list of projects"() {
+        given:
+            this.mockProjectRepositoryLoadAll();
+        when:
+            List<Project> projects = this.projectApplicationService.getProjects();
+        then:
+            projects.size() == 1;
+    }
+
+    def "rejectProject should call validateProjectExistence on projectValidate"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            this.projectApplicationService.rejectProject(EXISTING_PROJECT_ID);
+        then:
+            1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID);
+    }
+
+    def "rejectProject should load project from projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            this.projectApplicationService.rejectProject(EXISTING_PROJECT_ID);
+        then:
+            1 * projectRepository.load(EXISTING_PROJECT_ID);
+    }
+
+    def "rejectProject should call rejectProject on projectDomainService"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            this.projectApplicationService.rejectProject(EXISTING_PROJECT_ID);
+        then:
+            1 * this.projectDomainService.rejectProject(_);
+    }
+
+    def "rejectProject should save project on projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            this.projectApplicationService.rejectProject(EXISTING_PROJECT_ID);
+        then:
             1 * this.projectRepository.save(_);
     }
 
-    def "when calling getProject list of all project should be returned"() {
-        given:
-        when:
-            List<Project> projectList = this.projectApplicationService.getProjects();
-        then:
-            projectList.size() == 1;
+    private ProjectCreateDto prepareCreateProjectDto() {
+        ProjectCreateDto projectCreateDto = new ProjectCreateDto();
+        projectCreateDto.setName(PROJECT_NAME);
+        projectCreateDto.setArchitectId(ARCHITECT_ID);
+        projectCreateDto.setClientId(CLIENT_ID);
+        projectCreateDto.setProjectType(ProjectType.CONCEPT);
+        return projectCreateDto;
     }
 
-    private ProjectContractDto createProperProjectContractDto() {
+    private ProjectDto prepareUpdateProjectDto() {
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setId(EXISTING_PROJECT_ID);
+        projectDto.setName(NEW_PROJECT_NAME);
+        projectDto.setNote(NEW_PROJECT_NOTE);
+        return projectDto;
+    }
+
+
+    private Project prepareNewProject() {
+        return new ProjectBuilder()
+                .withName(PROJECT_NAME)
+                .withClientId(CLIENT_ID)
+                .withArchitectId(ARCHITECT_ID)
+                .withStatus(ProjectStatus.OFFER)
+                .build();
+    }
+
+    private Project prepareExistingProject() {
+        return new ProjectBuilder()
+                .withName(PROJECT_NAME)
+                .withId(EXISTING_PROJECT_ID)
+                .withClientId(CLIENT_ID)
+                .withArchitectId(ARCHITECT_ID)
+                .withStatus(ProjectStatus.OFFER)
+                .build();
+    }
+
+    private Project prepareUpdatedProject() {
+        return new ProjectBuilder()
+                .withName(NEW_PROJECT_NAME)
+                .withNote(NEW_PROJECT_NOTE)
+                .withId(EXISTING_PROJECT_ID)
+                .withClientId(CLIENT_ID)
+                .withArchitectId(ARCHITECT_ID)
+                .withStatus(ProjectStatus.OFFER)
+                .build();
+    }
+
+    private Project prepareSignedProject() {
+        return new ProjectBuilder()
+                .withName(PROJECT_NAME)
+                .withSigningDate(PROJECT_SIGNING_DATE)
+                .withDeadline(PROJECT_DEADLINE)
+                .withStartDate(PROJECT_START_DATE)
+                .withId(EXISTING_PROJECT_ID)
+                .withClientId(CLIENT_ID)
+                .withArchitectId(ARCHITECT_ID)
+                .withStatus(ProjectStatus.OFFER)
+                .build();
+    }
+
+    private Project prepareFinishedProject() {
+        return new ProjectBuilder()
+                .withName(PROJECT_NAME)
+                .withEndDate(PROJECT_END_DATE)
+                .withId(EXISTING_PROJECT_ID)
+                .withClientId(CLIENT_ID)
+                .withArchitectId(ARCHITECT_ID)
+                .withStatus(ProjectStatus.OFFER)
+                .build();
+    }
+
+    private ClientDto prepareClientDto() {
+        ClientDto clientDto = new ClientDto();
+        clientDto.setFirstName(CLIENT_FIRST_NAME);
+        clientDto.setLastName(CLIENT_LAST_NAME);
+        return clientDto;
+    }
+
+    private ProjectContractDto prepareProjectContractDtoForSigning() {
         ProjectContractDto projectContractDto = new ProjectContractDto();
-        projectContractDto.setSigningDate(SIGNING_DATE);
-        projectContractDto.setStartDate(START_DATE);
-        projectContractDto.setDeadline(DEADLINE);
+        projectContractDto.setDeadline(PROJECT_DEADLINE);
+        projectContractDto.setStartDate(PROJECT_START_DATE);
+        projectContractDto.setSigningDate(PROJECT_SIGNING_DATE);
         return projectContractDto;
     }
 
+    private ProjectContractDto prepareProjectContractDtoForFinish() {
+        ProjectContractDto projectContractDto = new ProjectContractDto();
+        projectContractDto.setEndDate(PROJECT_END_DATE);
+        return projectContractDto;
+    }
+
+    private void mockProjectRepositoryLoad() {
+        this.projectRepository.load(EXISTING_PROJECT_ID) >> this.prepareExistingProject();
+    }
+
+    private void mockProjectRepositoryLoadAll() {
+        1 * this.projectRepository.loadAll() >> Collections.singletonList(this.prepareExistingProject());
+    }
+
+    private void mockProjectRepositorySaveUpdated() {
+        Project project = this.prepareUpdatedProject();
+        this.projectRepository.save(_ as Project) >> project;
+    }
+
+    private void mockProjectDomainServiceUpdate() {
+        Project project = this.prepareUpdatedProject();
+        this.projectDomainService.updateProject(_ as Project, _ as ProjectDto) >> project;
+    }
+
+    private void mockProjectDomainServiceFinish() {
+        Project project = this.prepareFinishedProject();
+        this.projectDomainService.finishProject(_ as Project, _ as LocalDate) >> project;
+    }
+
+    private void mockProjectDomainServiceSignProjectContract() {
+        Project project = this.prepareSignedProject();
+        this.projectDomainService.signProjectContract(_ as Project, _ as ProjectContractDto) >> project;
+    }
 }

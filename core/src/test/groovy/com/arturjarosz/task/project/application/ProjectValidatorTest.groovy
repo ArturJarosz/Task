@@ -12,7 +12,6 @@ import spock.lang.Specification
 import java.time.LocalDate
 
 class ProjectValidatorTest extends Specification {
-
     private static final Long ARCHITECT_ID = 1L;
     private static final Long CLIENT_ID = 2L;
     private static final Long EXISTING_PROJECT_ID = 10L;
@@ -42,7 +41,7 @@ class ProjectValidatorTest extends Specification {
         given:
             ProjectCreateDto projectCreateDto = null;
         when:
-            ProjectValidator.validateProjectBasicDto(projectCreateDto);
+            this.projectValidator.validateProjectBasicDto(projectCreateDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.project";
@@ -53,7 +52,7 @@ class ProjectValidatorTest extends Specification {
             ProjectCreateDto projectCreateDto = new ProjectCreateDto();
             projectCreateDto.setName(null);
         when:
-            ProjectValidator.validateProjectBasicDto(projectCreateDto);
+            this.projectValidator.validateProjectBasicDto(projectCreateDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.project.name";
@@ -64,7 +63,7 @@ class ProjectValidatorTest extends Specification {
             ProjectCreateDto projectCreateDto = new ProjectCreateDto();
             projectCreateDto.setName(EMPTY_PROJECT_NAME);
         when:
-            ProjectValidator.validateProjectBasicDto(projectCreateDto);
+            this.projectValidator.validateProjectBasicDto(projectCreateDto);
         then:
             Exception ex = thrown();
             ex.message == "isEmpty.project.name";
@@ -78,7 +77,7 @@ class ProjectValidatorTest extends Specification {
             projectCreateDto.setClientId(null);
             projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT);
         when:
-            ProjectValidator.validateProjectBasicDto(projectCreateDto);
+            this.projectValidator.validateProjectBasicDto(projectCreateDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.project.client";
@@ -92,7 +91,7 @@ class ProjectValidatorTest extends Specification {
             projectCreateDto.setClientId(CLIENT_ID);
             projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT);
         when:
-            ProjectValidator.validateProjectBasicDto(projectCreateDto);
+            this.projectValidator.validateProjectBasicDto(projectCreateDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.project.architect";
@@ -106,7 +105,7 @@ class ProjectValidatorTest extends Specification {
             projectCreateDto.setClientId(CLIENT_ID);
             projectCreateDto.setProjectType(null);
         when:
-            ProjectValidator.validateProjectBasicDto(projectCreateDto);
+            this.projectValidator.validateProjectBasicDto(projectCreateDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.project.type";
@@ -120,7 +119,7 @@ class ProjectValidatorTest extends Specification {
             projectCreateDto.setClientId(CLIENT_ID);
             projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT);
         when:
-            ProjectValidator.validateProjectBasicDto(projectCreateDto);
+            this.projectValidator.validateProjectBasicDto(projectCreateDto);
         then:
             noExceptionThrown();
     }
@@ -146,7 +145,7 @@ class ProjectValidatorTest extends Specification {
         given:
             ProjectContractDto projectContractDto = null;
         when:
-            ProjectValidator.validateProjectContractDto(projectContractDto);
+            this.projectValidator.validateProjectContractDto(projectContractDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.contract";
@@ -158,7 +157,7 @@ class ProjectValidatorTest extends Specification {
             projectContractDto.setDeadline(DEADLINE);
             projectContractDto.setStartDate(START_DATE);
         when:
-            ProjectValidator.validateProjectContractDto(projectContractDto);
+            this.projectValidator.validateProjectContractDto(projectContractDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.project.signingDate";
@@ -171,7 +170,7 @@ class ProjectValidatorTest extends Specification {
             projectContractDto.setSigningDate(SIGNING_DATE);
             projectContractDto.setStartDate(null);
         when:
-            ProjectValidator.validateProjectContractDto(projectContractDto);
+            this.projectValidator.validateProjectContractDto(projectContractDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.project.startDate";
@@ -184,11 +183,9 @@ class ProjectValidatorTest extends Specification {
             projectContractDto.setSigningDate(SIGNING_DATE);
             projectContractDto.setStartDate(START_DATE);
         when:
-            ProjectValidator.validateProjectContractDto(projectContractDto);
+            this.projectValidator.validateProjectContractDto(projectContractDto);
         then:
             Exception ex = thrown();
             ex.message == "isNull.project.deadline";
     }
-
-
 }

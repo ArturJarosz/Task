@@ -26,7 +26,7 @@ public class ProjectValidator {
         this.projectRepository = projectRepository;
     }
 
-    public static void validateProjectBasicDto(ProjectCreateDto projectCreateDto) {
+    public void validateProjectBasicDto(ProjectCreateDto projectCreateDto) {
         assertNotNull(projectCreateDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT));
         validateProjectName(projectCreateDto.getName());
         assertNotNull(projectCreateDto.getClientId(), BaseValidator.createMessageCode(ExceptionCodes.NULL,
@@ -37,13 +37,13 @@ public class ProjectValidator {
                 ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.TYPE));
     }
 
-    public static void validateProjectExistence(Project project, Long projectId) {
+    public void validateProjectExistence(Project project, Long projectId) {
         assertNotNull(project, createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.PROJECT), projectId);
     }
 
     public void validateProjectExistence(Long projectId) {
         Project project = this.projectRepository.load(projectId);
-        validateProjectExistence(project, projectId);
+        this.validateProjectExistence(project, projectId);
     }
 
     private static void validateProjectName(String projectName) {
@@ -53,7 +53,7 @@ public class ProjectValidator {
                 ProjectExceptionCodes.NAME));
     }
 
-    public static void validateProjectContractDto(ProjectContractDto projectContractDto) {
+    public void validateProjectContractDto(ProjectContractDto projectContractDto) {
         assertNotNull(projectContractDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACT));
         assertNotNull(projectContractDto.getSigningDate(), createMessageCode(ExceptionCodes.NULL,
                 ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.SIGNING_DATE));
@@ -63,7 +63,7 @@ public class ProjectValidator {
                 ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.DEADLINE));
     }
 
-    public static void validateUpdateProjectDto(ProjectDto projectDto) {
+    public void validateUpdateProjectDto(ProjectDto projectDto) {
         assertNotNull(projectDto, createMessageCode(ExceptionCodes.NULL,
                 ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.UPDATE));
         validateProjectName(projectDto.getName());

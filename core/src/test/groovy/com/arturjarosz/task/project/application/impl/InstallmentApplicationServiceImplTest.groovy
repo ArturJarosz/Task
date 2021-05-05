@@ -12,7 +12,6 @@ import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.utils.InstallmentBuilder
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.project.utils.StageBuilder
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto
 import com.arturjarosz.task.sharedkernel.model.Money
 import com.arturjarosz.task.sharedkernel.utils.TestUtils
 import spock.lang.Specification
@@ -130,11 +129,11 @@ class InstallmentApplicationServiceImplTest extends Specification {
             InstallmentDto installmentDto = new InstallmentDto();
             installmentDto.setValue(OLD_VALUE);
         when:
-            CreatedEntityDto createdEntityDto = this.installmentApplicationService.
+            InstallmentDto createdInstallmentDto = this.installmentApplicationService.
                     createInstallment(EXISTING_PROJECT_ID, STAGE_WITHOUT_INSTALLMENT_ID, installmentDto);
         then:
             noExceptionThrown();
-            createdEntityDto.getId() == INSTALLMENT_ID;
+            createdInstallmentDto.getId() == INSTALLMENT_ID;
     }
 
     def "updateInstallment should throw an error when project with given id does not exist"() {
