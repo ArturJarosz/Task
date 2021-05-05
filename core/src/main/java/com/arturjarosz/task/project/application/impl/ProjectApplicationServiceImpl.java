@@ -15,9 +15,6 @@ import com.arturjarosz.task.project.application.mapper.ProjectDtoMapper;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.project.status.project.ProjectStatus;
-import com.arturjarosz.task.project.status.project.ProjectWorkflow;
-import com.arturjarosz.task.project.status.project.ProjectWorkflowService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.arturjarosz.task.project.application.ProjectValidator.validateProjectContractDto;
-import static com.arturjarosz.task.project.application.ProjectValidator.validateUpdateProjectDto;
 
 @ApplicationService
 public class ProjectApplicationServiceImpl implements ProjectApplicationService {
@@ -41,8 +35,6 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final ProjectRepository projectRepository;
     private final ProjectDomainService projectDomainService;
     private final ProjectValidator projectValidator;
-    private final ProjectWorkflow projectWorkflow;
-    private final ProjectWorkflowService projectWorkflowService;
 
     @Autowired
     public ProjectApplicationServiceImpl(ClientApplicationService clientApplicationService,
@@ -51,9 +43,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
                                          ArchitectValidator architectValidator,
                                          ProjectRepository projectRepository,
                                          ProjectDomainService projectDomainService,
-                                         ProjectWorkflow projectWorkflow,
-                                         ProjectValidator projectValidator,
-                                         ProjectWorkflowService projectWorkflowService) {
+                                         ProjectValidator projectValidator) {
 
         this.clientApplicationService = clientApplicationService;
         this.clientValidator = clientValidator;
@@ -62,20 +52,16 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectRepository = projectRepository;
         this.projectDomainService = projectDomainService;
         this.projectValidator = projectValidator;
-        this.projectWorkflow = projectWorkflow;
-        this.projectWorkflowService = projectWorkflowService;
     }
 
     @Transactional
     @Override
     public ProjectDto createProject(ProjectCreateDto projectCreateDto) {
         LOG.debug("Creating Project.");
-        ProjectValidator.validateProjectBasicDto(projectCreateDto);
+        this.projectValidator.validateProjectBasicDto(projectCreateDto);
         this.architectValidator.validateArchitectExistence(projectCreateDto.getArchitectId());
-        Long clientId = projectCreateDto.getClientId();
-        this.clientValidator.validateClientExistence(clientId);
-        Project project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto, this.projectWorkflow);
-        this.projectWorkflowService.changeProjectStatus(project, this.projectWorkflow.getInitialStatus());
+        this.clientValidator.validateClientExistence(projectCreateDto.getClientId());
+        Project project = this.projectDomainService.createProject(projectCreateDto);
         project = this.projectRepository.save(project);
         LOG.debug("Project created.");
         return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
@@ -84,13 +70,12 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Override
     public ProjectDto getProject(Long projectId) {
         LOG.debug("Loading Project with id {}.", projectId);
-        Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
+        Project project = this.projectRepository.load(projectId);
         ClientDto clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
         ArchitectDto architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
         LOG.debug("Project with id {} loaded.", projectId);
-        return ProjectDtoMapper.INSTANCE
-                .projectToProjectDto(clientDto, architectDto, project);
+        return ProjectDtoMapper.INSTANCE.projectToProjectDto(clientDto, architectDto, project);
     }
 
     @Transactional
@@ -99,8 +84,8 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         LOG.debug("Updating Project with id {}.", projectId);
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        validateUpdateProjectDto(projectDto);
-        this.projectDomainService.updateProject(project, projectDto);
+        this.projectValidator.validateUpdateProjectDto(projectDto);
+        project = this.projectDomainService.updateProject(project, projectDto);
         project = this.projectRepository.save(project);
         LOG.debug("Project with id {} updated", projectId);
         return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
@@ -121,9 +106,9 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         LOG.debug("Signing Project with id {}", projectId);
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        validateProjectContractDto(projectContractDto);
-        this.projectDomainService.signProjectContract(project, projectContractDto);
-        this.projectRepository.save(project);
+        this.projectValidator.validateProjectContractDto(projectContractDto);
+        project = this.projectDomainService.signProjectContract(project, projectContractDto);
+        project = this.projectRepository.save(project);
         LOG.debug("Project with id {} signed.", projectId);
     }
 
@@ -131,10 +116,10 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Override
     public void finishProject(Long projectId, ProjectContractDto projectContractDto) {
         LOG.debug("Finishing Project with id {}.", projectId);
-        //TODO: TA-62 update conditions on that project can be ended
+        //TODO: TA-62 update conditions on what project can be ended
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        this.projectDomainService.finishProject(projectId, projectContractDto.getEndDate());
+        project = this.projectDomainService.finishProject(project, projectContractDto.getEndDate());
         this.projectRepository.save(project);
         LOG.debug("Project with id {} is finished.", projectId);
     }
@@ -156,7 +141,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         LOG.debug("Rejecting Project with id {}.", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.REJECTED);
+        project = this.projectDomainService.rejectProject(project);
         this.projectRepository.save(project);
     }
 }

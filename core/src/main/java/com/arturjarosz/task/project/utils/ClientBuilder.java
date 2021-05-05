@@ -7,7 +7,9 @@ import static com.arturjarosz.task.sharedkernel.utils.TestUtils.setFieldForObjec
 
 public class ClientBuilder extends AbstractBuilder<Client, ClientBuilder> {
 
+    private static final String FIRST_NAME = "firstName";
     private static final String ID = "id";
+    private static final String LAST_NAME = "lastName";
 
     public ClientBuilder() {
         super(Client.class);
@@ -15,6 +17,16 @@ public class ClientBuilder extends AbstractBuilder<Client, ClientBuilder> {
 
     public ClientBuilder withId(Long id) {
         setFieldForObject(this.object, ID, id);
+        return this;
+    }
+
+    public ClientBuilder withFirstName(String firstName) {
+        setFieldForObject(this.object, FIRST_NAME, firstName);
+        return this;
+    }
+
+    public ClientBuilder withLastName(String lastName) {
+        setFieldForObject(this.object, LAST_NAME, lastName);
         return this;
     }
 }
