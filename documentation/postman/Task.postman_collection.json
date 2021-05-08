@@ -59,6 +59,8 @@
                   ]
                 }
               },
+              "status": "OK",
+              "code": 200,
               "_postman_previewlanguage": "Text",
               "header": [],
               "cookie": [],
@@ -1155,6 +1157,25 @@
                 "projects",
                 "{{projectId}}",
                 "reject"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "make new offer",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{taskAddress}}/projects/{{projectId}}/newOffer",
+              "host": [
+                "{{taskAddress}}"
+              ],
+              "path": [
+                "projects",
+                "{{projectId}}",
+                "newOffer"
               ]
             }
           },

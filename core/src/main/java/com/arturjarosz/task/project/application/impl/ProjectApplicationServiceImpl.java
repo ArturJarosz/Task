@@ -144,4 +144,15 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectDomainService.rejectProject(project);
         this.projectRepository.save(project);
     }
+
+    @Transactional
+    @Override
+    public void makeNewOffer(Long projectId) {
+        LOG.debug("Submitting a nwe offer for Project with id {}", projectId);
+        this.projectValidator.validateProjectExistence(projectId);
+        Project project = this.projectRepository.load(projectId);
+        project = this.projectDomainService.makeNewOffer(project);
+        this.projectRepository.save(project);
+        LOG.debug("Offer for project ");
+    }
 }

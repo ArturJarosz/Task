@@ -80,4 +80,10 @@ public class ProjectRestController {
         this.projectApplicationService.rejectProject(projectId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("{projectId}/newOffer")
+    public ResponseEntity<Void> makeNewOffer(@PathVariable("projectId") Long projectId) {
+        this.projectApplicationService.makeNewOffer(projectId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
