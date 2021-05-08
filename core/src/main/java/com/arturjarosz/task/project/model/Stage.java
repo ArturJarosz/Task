@@ -98,6 +98,9 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
     }
 
     public List<Task> getTasks() {
+        if (this.tasks == null) {
+            this.tasks = new ArrayList<>();
+        }
         return new ArrayList<>(this.tasks);
     }
 

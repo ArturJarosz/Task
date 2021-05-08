@@ -25,7 +25,7 @@ public class TaskValidator {
      *
      * @param taskDto
      */
-    public static void validateCreateTaskDto(TaskDto taskDto) {
+    public void validateCreateTaskDto(TaskDto taskDto) {
         assertNotNull(taskDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK));
         assertNotNull(taskDto.getName(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK, ProjectExceptionCodes.NAME));
@@ -37,6 +37,8 @@ public class TaskValidator {
 
     public void validateExistenceOfTaskInStage(Long stageId, Long taskId) {
         Stage stage = this.projectQueryService.getStageById(stageId);
+        assertNotNull(stage.getTasks(),
+                createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TASK));
         Task task = stage.getTasks().stream()
                 .filter(taskOnStage -> taskOnStage.getId().equals(taskId))
                 .findFirst()

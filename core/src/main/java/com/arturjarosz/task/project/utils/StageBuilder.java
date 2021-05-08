@@ -3,9 +3,12 @@ package com.arturjarosz.task.project.utils;
 import com.arturjarosz.task.project.model.Installment;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.StageType;
+import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.arturjarosz.task.sharedkernel.utils.TestUtils.setFieldForObject;
 
@@ -19,6 +22,7 @@ public class StageBuilder extends AbstractBuilder<Stage, StageBuilder> {
     private static final String NOTE = "note";
     private static final String START_DATE = "startDate";
     private static final String STAGE_TYPE = "stageType";
+    private static final String TASKS = "tasks";
 
     public StageBuilder() {
         super(Stage.class);
@@ -61,6 +65,13 @@ public class StageBuilder extends AbstractBuilder<Stage, StageBuilder> {
 
     public StageBuilder withInstallment(Installment installment) {
         setFieldForObject(this.object, INSTALLMENT, installment);
+        return this;
+    }
+
+    public StageBuilder withTask(Task task) {
+        List<Task> tasks = new ArrayList<>();
+        tasks.add(task);
+        setFieldForObject(this.object, TASKS, tasks);
         return this;
     }
 }

@@ -56,7 +56,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         LOG.debug("Creating Task for Project with id {} and Stage with id {}", projectId, stageId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        TaskValidator.validateCreateTaskDto(taskDto);
+        this.taskValidator.validateCreateTaskDto(taskDto);
         Project project = this.projectRepository.load(projectId);
         Task task = this.taskDomainService.createTask(project, stageId, taskDto);
         project.addTaskToStage(stageId, task);
