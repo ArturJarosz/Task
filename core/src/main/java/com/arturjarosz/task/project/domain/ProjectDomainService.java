@@ -17,4 +17,6 @@ public interface ProjectDomainService {
     Project finishProject(Project project, LocalDate endDate);
 
     Project rejectProject(Project project);
+
+    Project makeNewOffer(Project project);
 }

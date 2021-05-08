@@ -79,4 +79,11 @@ public interface ProjectApplicationService {
      * @param projectId
      */
     void rejectProject(Long projectId);
+
+    /**
+     * Make new offer to Project.
+     *
+     * @param projectId
+     */
+    void makeNewOffer(Long projectId);
 }

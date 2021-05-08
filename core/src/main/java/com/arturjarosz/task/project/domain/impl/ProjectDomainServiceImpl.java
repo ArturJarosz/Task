@@ -80,4 +80,10 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
         this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.REJECTED);
         return project;
     }
+
+    @Override
+    public Project makeNewOffer(Project project) {
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.OFFER);
+        return project;
+    }
 }
