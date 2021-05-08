@@ -59,15 +59,15 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
         BaseValidator.assertNotNull(stageStatusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
                 ProjectExceptionCodes.STAGE, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION,
                 oldStatus.getStatusName(), newStatus.getStatusName()));
-        this.beforeStatusChange(stage, stageStatusTransition);
+        this.beforeStatusChange(project, stage, stageStatusTransition);
         this.changeStatus(stage, newStatus);
         this.afterStatusChange(project, stageStatusTransition);
     }
 
     @Override
-    public void beforeStatusChange(Stage stage, StageStatusTransition statusTransition) {
+    public void beforeStatusChange(Project project, Stage stage, StageStatusTransition statusTransition) {
         List<StageStatusTransitionValidator> validators = this.getStatusTransitionValidators(statusTransition);
-        validators.forEach(validator -> validator.validate(stage, statusTransition));
+        validators.forEach(validator -> validator.validate(project, stage, statusTransition));
     }
 
     @Override
