@@ -4,102 +4,523 @@ import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.TaskValidator
 import com.arturjarosz.task.project.application.dto.TaskDto
-import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
+import com.arturjarosz.task.project.domain.TaskDomainService
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
+import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.model.TaskType
-import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
+import com.arturjarosz.task.project.query.ProjectQueryService
+import com.arturjarosz.task.project.status.project.ProjectStatus
+import com.arturjarosz.task.project.status.task.TaskStatus
+import com.arturjarosz.task.project.status.task.TaskWorkflowService
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.project.utils.StageBuilder
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto
-import com.arturjarosz.task.sharedkernel.utils.TestUtils
+import com.arturjarosz.task.project.utils.TaskBuilder
 import spock.lang.Specification
 
 class TaskApplicationServiceImplTest extends Specification {
+    private static final Long PROJECT_ID = 1L;
+    private static final Long STAGE_ID = 10L;
+    private static final Long TASK_ID = 20L;
+    private static final String PROJECT_NAME = "projectName";
+    private static final String STAGE_NAME = "stageName";
+    private static final String TASK_NAME = "taskName";
+    private static final String NEW_TASK_NAME = "newTaskName"
+    private static final String NOTE = "note";
+    private static final TaskStatus NEW_TASK_STATUS = TaskStatus.IN_PROGRESS;
 
-    private static final Long TASK_ID = 1L;
-    private static final Long NOT_EXISTING_PROJECT_ID = 99L;
-    private static final Long EXISTING_PROJECT_ID = 11L;
-    private static final Long NOT_EXISTING_STAGE_ID = 199L;
-    private static final Long EXISTING_STAGE_ID = 101L;
-    private static final String NAME = "name";
-    private static final TaskType TASK_TYPE = TaskType.RENDER;
+    private projectQueryService = Mock(ProjectQueryService);
+    private projectRepository = Mock(ProjectRepository);
+    private projectValidator = Mock(ProjectValidator);
+    private stageValidator = Mock(StageValidator);
+    private taskDomainService = Mock(TaskDomainService);
+    private taskWorkflowService = Mock(TaskWorkflowService);
+    private taskValidator = Mock(TaskValidator);
 
-    def stage = new StageBuilder().withId(EXISTING_STAGE_ID).build();
-    def project = new ProjectBuilder().withId(EXISTING_PROJECT_ID).withStage(stage).build();
+    def taskApplicationService = new TaskApplicationServiceImpl(projectQueryService, projectRepository,
+            projectValidator, stageValidator, taskDomainService, taskWorkflowService, taskValidator);
 
-    def projectRepositoryMock = Mock(ProjectRepositoryImpl) {
-        load(NOT_EXISTING_PROJECT_ID) >> null;
-        load(EXISTING_PROJECT_ID) >> project;
-        save(_ as Project) >> {
-            Task task = project.getStages().iterator().next().getTasks().get(0);
-            TestUtils.setFieldForObject(task, "id", TASK_ID);
-            return project;
-        }
-    }
-
-    def projectQueryServiceMock = Mock(ProjectQueryServiceImpl) {
-        getStageById(NOT_EXISTING_STAGE_ID) >> null;
-        getStageById(EXISTING_STAGE_ID) >> stage;
-    }
-
-    def projectValidator = new ProjectValidator(projectRepositoryMock);
-    def stageValidator = new StageValidator(projectRepositoryMock, projectQueryServiceMock);
-    def taskValidator = new TaskValidator(projectQueryServiceMock);
-
-    def taskApplicationServiceTest = new TaskApplicationServiceImpl(projectQueryService, projectRepositoryMock,
-            projectValidator,
-            stageValidator, taskDomainService, taskWorkflowService, taskValidator);
-
-    def "createTask should throw an exception on passing wrong project id"() {
-        given: "proper task dto data"
-            TaskDto taskDto = new TaskDto();
-            taskDto.setName(NAME);
-            taskDto.setType(TASK_TYPE);
-        when: "passing not existing project id"
-            this.taskApplicationServiceTest.createTask(NOT_EXISTING_PROJECT_ID, EXISTING_STAGE_ID, taskDto);
-        then: "exception should be thrown with specific message and repository should not save changes"
-            Exception exception = thrown();
-            exception.message == "notExists.project";
-            0 * this.projectRepositoryMock.save(_);
-    }
-
-    def "createTask should throw an exception on passing wrong stage id"() {
-        given: "proper task dto data"
-            TaskDto taskDto = new TaskDto();
-            taskDto.setName(NAME);
-            taskDto.setType(TASK_TYPE);
-        when: "passing not existing stage id"
-            CreatedEntityDto createdEntityDto =
-                    this.taskApplicationServiceTest.createTask(EXISTING_PROJECT_ID, NOT_EXISTING_STAGE_ID, taskDto);
-        then: "exception should be thrown with specific message and repository should not save changes"
-            Exception exception = thrown();
-            exception.message == "notExists.project.stage";
-            0 * this.projectRepositoryMock.save(_);
-    }
-
-    def "createTask should throw an exception on passing not proper taskDto"() {
-        given: "proper task dto data"
-            TaskDto taskDto = null;
-        when: "passing existing stage id and existing project id"
-            CreatedEntityDto createdEntityDto =
-                    this.taskApplicationServiceTest.createTask(EXISTING_PROJECT_ID, EXISTING_STAGE_ID, taskDto);
-        then: "exception should be thrown with specific message and repository should not save changes"
-            Exception exception = thrown();
-            exception.message == "isNull.task";
-            0 * this.projectRepositoryMock.save(_);
-    }
-
-    def "createTask should create and save task for given stage when proper data are passed"() {
-        given: "proper task dto data"
-            TaskDto taskDto = new TaskDto();
-            taskDto.setName(NAME);
-            taskDto.setType(TASK_TYPE);
-        when: "passing existing stage id and existing project id"
-            CreatedEntityDto createdEntityDto =
-                    this.taskApplicationServiceTest.createTask(EXISTING_PROJECT_ID, EXISTING_STAGE_ID, taskDto);
+    def "createTask should call validateProjectExistence on ProjectValidator"() {
+        given:
+            TaskDto taskDto = this.prepareNewTaskDto();
+            this.mockProjectRepositoryLoad();
+            this.mockTaskDomainServiceCreateTask();
+        when:
+            this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
         then:
-            noExceptionThrown();
-            createdEntityDto.getId() == TASK_ID;
+            1 * this.projectValidator.validateProjectExistence(PROJECT_ID);
+    }
+
+    def "createTask should call validateExistenceOfStageInProject on StageValidator"() {
+        given:
+            TaskDto taskDto = this.prepareNewTaskDto();
+            this.mockProjectRepositoryLoad();
+            this.mockTaskDomainServiceCreateTask();
+        when:
+            this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
+        then:
+            1 * this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, STAGE_ID);
+    }
+
+    def "createTask should call validateCreateTaskDto on TaskValidator"() {
+        given:
+            TaskDto taskDto = this.prepareNewTaskDto();
+            this.mockProjectRepositoryLoad();
+            this.mockTaskDomainServiceCreateTask();
+        when:
+            this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
+        then:
+            1 * this.taskValidator.validateCreateTaskDto(_ as TaskDto);
+    }
+
+    def "createTask should load project from ProjectRepository"() {
+        given:
+            TaskDto taskDto = this.prepareNewTaskDto();
+            this.mockProjectRepositoryLoad();
+            this.mockTaskDomainServiceCreateTask();
+        when:
+            this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
+        then:
+            1 * this.projectRepository.load(PROJECT_ID) >> Mock(Project);
+    }
+
+    def "createTask should call createTask from TaskDomainRepository"() {
+        given:
+            TaskDto taskDto = this.prepareNewTaskDto();
+            this.mockProjectRepositoryLoad();
+            this.mockTaskDomainServiceCreateTask();
+        when:
+            this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
+        then:
+            1 * this.taskDomainService.createTask(_ as Project, STAGE_ID, _ as TaskDto) >> this.prepareNewTask();
+    }
+
+    def "createTask should add task to project"() {
+        given:
+            TaskDto taskDto = this.prepareNewTaskDto();
+            this.mockProjectRepositoryLoad();
+            this.mockTaskDomainServiceCreateTask();
+        when:
+            this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
+        then:
+            1 * this.projectRepository.save({
+                Project project ->
+                    project.getStages().iterator().next().getTasks().size() == 1;
+            }) >> Mock(Project);
+    }
+
+    def "createTask should call changeProjectStatus from taskWorkflowService"() {
+        given:
+            TaskDto taskDto = this.prepareNewTaskDto();
+            this.mockProjectRepositoryLoad();
+            this.mockTaskDomainServiceCreateTask();
+        when:
+            this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
+        then:
+            1 * this.taskWorkflowService.changeTaskStatusOnProject(_ as Project, STAGE_ID, TASK_ID, TaskStatus.TO_DO);
+    }
+
+    def "createTask should save project with save on ProjectRepository"() {
+        given:
+            TaskDto taskDto = this.prepareNewTaskDto();
+            this.mockProjectRepositoryLoad();
+            this.mockTaskDomainServiceCreateTask();
+        when:
+            this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
+        then:
+            1 * this.projectRepository.save(_ as Project);
+    }
+
+    def "updateTask should call validateProjectExistence on projectValidator"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateTaskDto();
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
+        then:
+            1 * this.projectValidator.validateProjectExistence(PROJECT_ID);
+    }
+
+    def "updateTask should call validateExistenceOfStageInProject on stageValidator"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateTaskDto();
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
+        then:
+            1 * this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, STAGE_ID);
+    }
+
+    def "updateTask should call validateExistenceOfTaskInStage on taskValidator"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateTaskDto();
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
+        then:
+            1 * this.taskValidator.validateExistenceOfTaskInStage(STAGE_ID, TASK_ID);
+    }
+
+    def "updateTask should load project from ProjectRepository"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateTaskDto();
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
+        then:
+            1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask();
+    }
+
+    def "updateTask should update data on Task"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateTaskDto();
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
+        then:
+            1 * this.projectRepository.save({
+                Project project ->
+                    Stage stage = project.stages.iterator().next();
+                    Task task = stage.tasks.iterator().next();
+                    task.getName() == NEW_TASK_NAME;
+                    task.getNote() == NOTE;
+            });
+    }
+
+    def "updateTask should save project with updated task on ProjectRepository"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateTaskDto();
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
+        then:
+            1 * this.projectRepository.save(_);
+    }
+
+    def "updateTaskStatus should call validateProjectExistence on projectValidator"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateStatusTaskDto();
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
+        then:
+            1 * this.projectValidator.validateProjectExistence(PROJECT_ID);
+    }
+
+    def "updateTaskStatus should call validateExistenceOfStageInProject on stageValidator"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateStatusTaskDto();
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
+        then:
+            1 * this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, STAGE_ID);
+    }
+
+    def "updateTaskStatus should call validateExistenceTaskInStatus on taskValidator"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateStatusTaskDto();
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
+        then:
+            1 * this.taskValidator.validateExistenceOfTaskInStage(STAGE_ID, TASK_ID);
+    }
+
+    def "updateTaskStatus should load project from projectRepository"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateStatusTaskDto();
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
+        then:
+            1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask();
+    }
+
+    def "updateStatus should call changeTaskStatusOnProject on taskWorkflowService"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateStatusTaskDto();
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
+        then:
+            1 * this.taskWorkflowService.changeTaskStatusOnProject(_ as Project, STAGE_ID, TASK_ID, NEW_TASK_STATUS);
+    }
+
+    def "updateStatus should save project on projectRepository"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateStatusTaskDto();
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
+        then:
+            1 * this.projectRepository.save(_);
+    }
+
+    def "getTask should call validateProjectExistence on projectValidator"() {
+        given:
+            this.mockProjectQueryServiceGetTask();
+        when:
+            this.taskApplicationService.getTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.projectValidator.validateProjectExistence(PROJECT_ID);
+    }
+
+    def "getTask should call validateExistenceOFStageInProject on stageValidator"() {
+        given:
+            this.mockProjectQueryServiceGetTask();
+        when:
+            this.taskApplicationService.getTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, STAGE_ID);
+    }
+
+    def "getTask should call validateExistenceOfTaskInStage on taskValidator"() {
+        given:
+            this.mockProjectQueryServiceGetTask();
+        when:
+            this.taskApplicationService.getTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.taskValidator.validateExistenceOfTaskInStage(STAGE_ID, TASK_ID);
+    }
+
+    def "getTask should load task by getTaskByTaskId on projectQueryService"() {
+        given:
+            this.mockProjectQueryServiceGetTask();
+        when:
+            this.taskApplicationService.getTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.projectQueryService.getTaskByTaskId(TASK_ID);
+    }
+
+    def "getTaskList should call validateProjectExistence on projectValidator"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.getTaskList(PROJECT_ID, STAGE_ID);
+        then:
+            1 * this.projectValidator.validateProjectExistence(PROJECT_ID);
+    }
+
+    def "getTaskList should call validateExistenceOfStageInProject on stageValidator"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.getTaskList(PROJECT_ID, STAGE_ID);
+        then:
+            1 * this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, STAGE_ID);
+
+    }
+
+    def "getTaskList should load project from projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.getTaskList(PROJECT_ID, STAGE_ID);
+        then:
+            1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask();
+    }
+
+    def "getTaskList should return list of task from given stage"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            List<TaskDto> taskDtos = this.taskApplicationService.getTaskList(PROJECT_ID, STAGE_ID);
+        then:
+            taskDtos.size() == 1;
+    }
+
+    def "rejectTask should call validateProjectExistence on projectValidator"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.rejectTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.projectValidator.validateProjectExistence(PROJECT_ID);
+    }
+
+    def "rejectTask should call validateExistenceOFStageInProject on stageValidator"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.rejectTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, STAGE_ID);
+    }
+
+    def "rejectTask should call validateExistenceOfTaskInStage on taskValidator"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.rejectTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.taskValidator.validateExistenceOfTaskInStage(STAGE_ID, TASK_ID);
+    }
+
+    def "rejectTask should load project from projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.rejectTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask();
+    }
+
+    def "rejectTask should call changeTaskStatusOnProject on taskWorkflowService"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.rejectTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.taskWorkflowService.changeTaskStatusOnProject(_ as Project, STAGE_ID, TASK_ID, TaskStatus
+                    .REJECTED);
+    }
+
+    def "rejectTask should save project on projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.rejectTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.projectRepository.save(_ as Project);
+    }
+
+    def "reopenTask should call validateProjectExistence on projectValidator"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.reopenTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.projectValidator.validateProjectExistence(PROJECT_ID);
+    }
+
+    def "reopenTask should call validateExistenceOfStageInProject on stageValidator"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.reopenTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, STAGE_ID);
+    }
+
+    def "reopenTask should call validateExistenceOfTaskInStage on taskValidator"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.reopenTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.taskValidator.validateExistenceOfTaskInStage(STAGE_ID, TASK_ID);
+    }
+
+    def "reopenTask should load project from projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.reopenTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask();
+    }
+
+    def "reopenTask should call changeTaskStatusOnProject on taskWorkflowService"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.reopenTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.taskWorkflowService.changeTaskStatusOnProject(_ as Project, STAGE_ID, TASK_ID, TaskStatus.TO_DO);
+    }
+
+    def "reopenTask should save project on projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask();
+        when:
+            this.taskApplicationService.reopenTask(PROJECT_ID, STAGE_ID, TASK_ID);
+        then:
+            1 * this.projectRepository.save(_);
+    }
+
+    private TaskDto prepareNewTaskDto() {
+        TaskDto taskDto = new TaskDto();
+        taskDto.setName(TASK_NAME);
+        taskDto.setId(TASK_ID);
+        taskDto.setType(TaskType.CONCEPT);
+        taskDto;
+    }
+
+    private TaskDto prepareUpdateTaskDto() {
+        TaskDto taskDto = new TaskDto();
+        taskDto.setName(NEW_TASK_NAME);
+        taskDto.setId(TASK_ID);
+        taskDto.setNote(NOTE);
+        taskDto.setType(TaskType.CONCEPT);
+        taskDto;
+    }
+
+    private TaskDto prepareUpdateStatusTaskDto() {
+        TaskDto taskDto = new TaskDto();
+        taskDto.setId(TASK_ID);
+        taskDto.setStatus(NEW_TASK_STATUS);
+        taskDto;
+    }
+
+    private Project prepareProjectWithStage() {
+        return new ProjectBuilder()
+                .withName(PROJECT_NAME)
+                .withId(PROJECT_ID)
+                .withStage(this.prepareStage())
+                .withStatus(ProjectStatus.OFFER)
+                .build();
+    }
+
+    private Project prepareProjectWithStageWithTask() {
+        return new ProjectBuilder()
+                .withName(PROJECT_NAME)
+                .withId(PROJECT_ID)
+                .withStage(this.prepareStageWithTask())
+                .withStatus(ProjectStatus.OFFER)
+                .build();
+    }
+
+    private Stage prepareStage() {
+        return new StageBuilder()
+                .withName(STAGE_NAME)
+                .withId(STAGE_ID)
+                .build();
+    }
+
+    private Stage prepareStageWithTask() {
+        return new StageBuilder()
+                .withName(STAGE_NAME)
+                .withId(STAGE_ID)
+                .withTask(this.prepareNewTask())
+                .build();
+    }
+
+    private void mockProjectRepositoryLoad() {
+        Project project = this.prepareProjectWithStage();
+        this.projectRepository.load(PROJECT_ID) >> project;
+    }
+
+    private void mockProjectRepositoryLoadProjectWithStageAndTask() {
+        Project project = this.prepareProjectWithStageWithTask();
+        this.projectRepository.load(PROJECT_ID) >> project;
+    }
+
+    private void mockTaskDomainServiceCreateTask() {
+        Task task = this.prepareNewTask();
+        this.taskDomainService.createTask(_ as Project, _ as Long, _ as TaskDto) >> task;
+    }
+
+    private void mockProjectQueryServiceGetTask() {
+        TaskDto taskDto = this.prepareNewTaskDto();
+        this.projectQueryService.getTaskByTaskId(TASK_ID) >> taskDto;
+    }
+
+    private Task prepareNewTask() {
+        return new TaskBuilder()
+                .withId(TASK_ID)
+                .withName(TASK_NAME)
+                .build();
     }
 }

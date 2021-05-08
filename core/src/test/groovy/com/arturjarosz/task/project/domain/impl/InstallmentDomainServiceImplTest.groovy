@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.domain.impl
 import com.arturjarosz.task.project.model.Installment
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.StageType
+import com.arturjarosz.task.project.status.stage.StageWorkflow
 import com.arturjarosz.task.project.utils.InstallmentBuilder
 import com.arturjarosz.task.sharedkernel.model.Money
 import com.arturjarosz.task.sharedkernel.utils.TestUtils
@@ -26,7 +27,7 @@ class InstallmentDomainServiceImplTest extends Specification {
 
     def "updateInstallment should update value and note when updating not paid installment"() {
         given:
-            Stage stage = new Stage(STAGE_NAME, STAGE_TYPE);
+            Stage stage = new Stage(STAGE_NAME, STAGE_TYPE, new StageWorkflow());
             Installment installment = new InstallmentBuilder()
                     .withAmount(new Money(OLD_AMOUNT))
                     .withNote(OLD_NOTE)
@@ -47,7 +48,7 @@ class InstallmentDomainServiceImplTest extends Specification {
 
     def "updateInstallment should update value, note and date when updating paid installment"() {
         given:
-            Stage stage = new Stage(STAGE_NAME, STAGE_TYPE);
+            Stage stage = new Stage(STAGE_NAME, STAGE_TYPE, new StageWorkflow());
             Installment installment = new InstallmentBuilder()
                     .withAmount(new Money(OLD_AMOUNT))
                     .withNote(OLD_NOTE)
@@ -68,7 +69,7 @@ class InstallmentDomainServiceImplTest extends Specification {
 
     def "payForInstallment should not change installment isPaid to true and throw an exception if dto date is in future"() {
         given:
-            Stage stage = new Stage(STAGE_NAME, STAGE_TYPE);
+            Stage stage = new Stage(STAGE_NAME, STAGE_TYPE, new StageWorkflow());
             Installment installment = new InstallmentBuilder()
                     .withAmount(new Money(OLD_AMOUNT))
                     .withIsPaid(false)
@@ -85,7 +86,7 @@ class InstallmentDomainServiceImplTest extends Specification {
 
     def "payForInstallment should throw an exception if installment is already paid"() {
         given:
-            Stage stage = new Stage(STAGE_NAME, STAGE_TYPE);
+            Stage stage = new Stage(STAGE_NAME, STAGE_TYPE, new StageWorkflow());
             Installment installment = new InstallmentBuilder()
                     .withAmount(new Money(OLD_AMOUNT))
                     .withIsPaid(true)
@@ -100,7 +101,7 @@ class InstallmentDomainServiceImplTest extends Specification {
 
     def "payForInstallment should set payment day for today is date is not given and set isPaid to true"() {
         given:
-            Stage stage = new Stage(STAGE_NAME, STAGE_TYPE);
+            Stage stage = new Stage(STAGE_NAME, STAGE_TYPE, new StageWorkflow());
             Installment installment = new InstallmentBuilder()
                     .withAmount(new Money(OLD_AMOUNT))
                     .withIsPaid(false)
@@ -118,7 +119,7 @@ class InstallmentDomainServiceImplTest extends Specification {
 
     def "payForInstallment should set payment day for given date and set isPaid to true"() {
         given:
-            Stage stage = new Stage(STAGE_NAME, STAGE_TYPE);
+            Stage stage = new Stage(STAGE_NAME, STAGE_TYPE, new StageWorkflow());
             Installment installment = new InstallmentBuilder()
                     .withAmount(new Money(OLD_AMOUNT))
                     .withIsPaid(false)
@@ -131,6 +132,6 @@ class InstallmentDomainServiceImplTest extends Specification {
             LocalDate date = (LocalDate) TestUtils.getFieldValue(installment, "paymentDate");
             date.isEqual(NEW_DATE);
             Boolean isPaid = (boolean) TestUtils.getFieldValue(installment, "isPaid");
-            isPaid == true;
+            isPaid;
     }
 }

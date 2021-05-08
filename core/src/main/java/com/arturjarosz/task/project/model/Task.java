@@ -95,4 +95,8 @@ public class Task extends AbstractEntity implements WorkflowAware<TaskStatus> {
     public TaskType getType() {
         return this.type;
     }
+
+    public String getNote() {
+        return this.note;
+    }
 }
