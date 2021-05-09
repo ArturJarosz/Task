@@ -192,6 +192,15 @@ class ProjectDomainServiceImplTest extends Specification {
             rejectedProject.getStatus() == ProjectStatus.REJECTED;
     }
 
+    def "makeNewOffer should call changeProjectStatus on projectWorkflowService with status Offer"() {
+        given:
+            Project project = this.prepareProjectWithStatus(ProjectStatus.REJECTED);
+        when:
+            this.projectDomainService.makeNewOffer(project);
+        then:
+            1 * this.projectWorkflowService.changeProjectStatus(_ as Project, ProjectStatus.OFFER);
+    }
+
     // helper methods
 
     private void mockProjectWorkflow() {

@@ -369,6 +369,43 @@ class ProjectApplicationServiceTest extends Specification {
             1 * this.projectRepository.save(_);
     }
 
+    def "makeNewOffer should call validateProjectExistence on projectValidator"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID);
+        then:
+            1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID);
+    }
+
+    def "makeNewOffer should load project from projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID);
+        then:
+            1 * this.projectRepository.load(EXISTING_PROJECT_ID) >> this.prepareExistingProject();
+    }
+
+    def "makeNewOffer should call makeNewOffer from projectDomainService"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID);
+        then:
+            1 * this.projectDomainService.makeNewOffer(_ as Project);
+    }
+
+    def "makeNewOffer should save project with projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoad();
+            this.mockProjectDomainServiceMakeNewOffer();
+        when:
+            this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID);
+        then:
+            1 * this.projectRepository.save(_ as Project);
+    }
+
     private ProjectCreateDto prepareCreateProjectDto() {
         ProjectCreateDto projectCreateDto = new ProjectCreateDto();
         projectCreateDto.setName(PROJECT_NAME);
@@ -488,5 +525,10 @@ class ProjectApplicationServiceTest extends Specification {
     private void mockProjectDomainServiceSignProjectContract() {
         Project project = this.prepareSignedProject();
         this.projectDomainService.signProjectContract(_ as Project, _ as ProjectContractDto) >> project;
+    }
+
+    private void mockProjectDomainServiceMakeNewOffer() {
+        Project project = this.prepareSignedProject();
+        this.projectDomainService.makeNewOffer(_ as Project) >> project;
     }
 }
