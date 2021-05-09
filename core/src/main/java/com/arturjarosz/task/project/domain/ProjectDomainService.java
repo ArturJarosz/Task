@@ -18,5 +18,7 @@ public interface ProjectDomainService {
 
     Project rejectProject(Project project);
 
+    Project reopenProject(Project project);
+
     Project makeNewOffer(Project project);
 }

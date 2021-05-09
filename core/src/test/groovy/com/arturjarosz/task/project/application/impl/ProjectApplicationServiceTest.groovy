@@ -369,6 +369,42 @@ class ProjectApplicationServiceTest extends Specification {
             1 * this.projectRepository.save(_);
     }
 
+    def "reopenProject should call validateProjectExistence on projectValidate"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            this.projectApplicationService.reopenProject(EXISTING_PROJECT_ID);
+        then:
+            1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID);
+    }
+
+    def "reopenProject should load project from projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            this.projectApplicationService.reopenProject(EXISTING_PROJECT_ID);
+        then:
+            1 * projectRepository.load(EXISTING_PROJECT_ID);
+    }
+
+    def "reopenProject should call reopenProject on projectDomainService"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            this.projectApplicationService.reopenProject(EXISTING_PROJECT_ID);
+        then:
+            1 * this.projectDomainService.reopenProject(_);
+    }
+
+    def "reopenProject should save project on projectRepository"() {
+        given:
+            this.mockProjectRepositoryLoad();
+        when:
+            this.projectApplicationService.reopenProject(EXISTING_PROJECT_ID);
+        then:
+            1 * this.projectRepository.save(_);
+    }
+
     private ProjectCreateDto prepareCreateProjectDto() {
         ProjectCreateDto projectCreateDto = new ProjectCreateDto();
         projectCreateDto.setName(PROJECT_NAME);

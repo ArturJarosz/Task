@@ -8,12 +8,16 @@ import com.arturjarosz.task.project.domain.ProjectDataValidator;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
 import com.arturjarosz.task.project.status.project.ProjectWorkflowService;
+import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @DomainService
 public class ProjectDomainServiceImpl implements ProjectDomainService {
@@ -79,6 +83,24 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
     public Project rejectProject(Project project) {
         this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.REJECTED);
         return project;
+    }
+
+    @Override
+    public Project reopenProject(Project project) {
+        if (this.hasStagesOnlyInRejectedAndToDoStatus(project)) {
+            this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.TO_DO);
+        } else {
+            this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.IN_PROGRESS);
+        }
+        return project;
+    }
+
+    private boolean hasStagesOnlyInRejectedAndToDoStatus(Project project) {
+        List<Stage> allStages = new ArrayList<>(project.getStages());
+        //we are removing Stages in Rejected status, because they should not be taken into account
+        allStages.removeIf(stage -> stage.getStatus().equals(StageStatus.REJECTED));
+        allStages.removeIf(stage -> stage.getStatus().equals(StageStatus.TO_DO));
+        return allStages.isEmpty();
     }
 
     @Override
