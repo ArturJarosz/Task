@@ -145,6 +145,15 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectRepository.save(project);
     }
 
+    @Override
+    public void reopenProject(Long projectId) {
+        LOG.debug("Reopening Project with id {}.", projectId);
+        this.projectValidator.validateProjectExistence(projectId);
+        Project project = this.projectRepository.load(projectId);
+        project = this.projectDomainService.reopenProject(project);
+        this.projectRepository.save(project);
+    }
+
     @Transactional
     @Override
     public void makeNewOffer(Long projectId) {

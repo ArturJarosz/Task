@@ -81,6 +81,12 @@ public class ProjectRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("{projectId}/reopen")
+    public ResponseEntity<Void> reopenProject(@PathVariable("projectId") Long projectId) {
+        this.projectApplicationService.reopenProject(projectId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping("{projectId}/newOffer")
     public ResponseEntity<Void> makeNewOffer(@PathVariable("projectId") Long projectId) {
         this.projectApplicationService.makeNewOffer(projectId);

@@ -4,6 +4,7 @@ import com.arturjarosz.task.project.model.Installment;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.StageType;
 import com.arturjarosz.task.project.model.Task;
+import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
 
 import java.time.LocalDate;
@@ -22,10 +23,16 @@ public class StageBuilder extends AbstractBuilder<Stage, StageBuilder> {
     private static final String NOTE = "note";
     private static final String START_DATE = "startDate";
     private static final String STAGE_TYPE = "stageType";
+    private static final String STATUS = "status";
     private static final String TASKS = "tasks";
 
     public StageBuilder() {
         super(Stage.class);
+    }
+
+    public StageBuilder setStatusField(String fieldName, Object fieldValue) {
+        setFieldForObject(this.object, fieldName, fieldValue);
+        return this;
     }
 
     public StageBuilder withId(Long id) {
@@ -73,5 +80,9 @@ public class StageBuilder extends AbstractBuilder<Stage, StageBuilder> {
         tasks.add(task);
         setFieldForObject(this.object, TASKS, tasks);
         return this;
+    }
+
+    public StageBuilder withStatus(StageStatus status) {
+        return this.setStatusField(STATUS, status);
     }
 }

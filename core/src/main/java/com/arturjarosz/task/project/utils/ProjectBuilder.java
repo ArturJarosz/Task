@@ -65,6 +65,11 @@ public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
         return this;
     }
 
+    public ProjectBuilder withStages(Set<Stage> stages) {
+        TestUtils.setFieldForObject(this.object, STAGES, new HashSet<>(stages));
+        return this;
+    }
+
     public ProjectBuilder withClientId(Long clientId) {
         TestUtils.setFieldForObject(this.object, CLIENT_ID, clientId);
         return this;
