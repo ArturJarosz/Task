@@ -7,10 +7,13 @@ import com.arturjarosz.task.project.domain.ProjectDataValidator
 import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
+import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
 import com.arturjarosz.task.project.status.project.impl.ProjectWorkflowServiceImpl
+import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.project.utils.ProjectBuilder
+import com.arturjarosz.task.project.utils.StageBuilder
 import com.arturjarosz.task.sharedkernel.utils.TestUtils
 import spock.lang.Specification
 
@@ -20,6 +23,7 @@ class ProjectDomainServiceImplTest extends Specification {
     private static final String NAME = "projectName";
     private static final String NEW_NAME = "newProjectName";
     private static final String NEW_NOTE = "newNote";
+    private static final String STAGE_NAME = "stageName";
     private static final Long ARCHITECT_ID = 100L;
     private static final Long CLIENT_ID = 1000L;
     private static final Long PROJECT_ID = 10L;
@@ -199,6 +203,23 @@ class ProjectDomainServiceImplTest extends Specification {
             this.projectDomainService.makeNewOffer(project);
         then:
             1 * this.projectWorkflowService.changeProjectStatus(_ as Project, ProjectStatus.OFFER);
+
+    def "reopenProject should call changeProjectStatus on projectWorkflowService with TODO status"() {
+        given: "project with stages only in REJECTED or TODO statuses"
+            Project project = this.prepareProjectWithRejectedAndToDoStages();
+        when:
+            this.projectDomainService.reopenProject(project);
+        then:
+            1 * this.projectWorkflowService.changeProjectStatus(_ as Project, ProjectStatus.TO_DO);
+    }
+
+    def "reopenProject should call changeProjectStatus on projectWorkflowService with IN_PROGRESS status"() {
+        given: "project has stages in different than TODO or REJECTED statuses"
+            Project project = this.prepareProjectWithDifferentStageStatuses();
+        when:
+            this.projectDomainService.reopenProject(project);
+        then:
+            1 * this.projectWorkflowService.changeProjectStatus(_ as Project, ProjectStatus.IN_PROGRESS);
     }
 
     // helper methods
@@ -245,6 +266,30 @@ class ProjectDomainServiceImplTest extends Specification {
         projectContractDto.setStartDate(now.plusDays(10));
         projectContractDto.setDeadline(now.plusDays(50));
         return projectContractDto;
+    }
+
+    private Project prepareProjectWithRejectedAndToDoStages() {
+        Set<Stage> stages = new HashSet<>();
+        stages.add(prepareStageWithStatus(StageStatus.TO_DO));
+        stages.add(prepareStageWithStatus(StageStatus.REJECTED));
+        Project project = new ProjectBuilder().withStatus(ProjectStatus.REJECTED).withStages(stages).build();
+        return project;
+    }
+
+    private Project prepareProjectWithDifferentStageStatuses() {
+        Set<Stage> stages = new HashSet<>();
+        stages.add(prepareStageWithStatus(StageStatus.TO_DO));
+        stages.add(prepareStageWithStatus(StageStatus.REJECTED));
+        stages.add(prepareStageWithStatus(StageStatus.IN_PROGRESS));
+        Project project = new ProjectBuilder().withStatus(ProjectStatus.REJECTED).withStages(stages).build();
+        return project;
+    }
+
+    private Stage prepareStageWithStatus(StageStatus status) {
+        return new StageBuilder()
+                .withName(STAGE_NAME)
+                .withStatus(status)
+                .build();
     }
 
 }

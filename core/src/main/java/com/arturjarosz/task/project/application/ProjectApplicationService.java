@@ -81,6 +81,13 @@ public interface ProjectApplicationService {
     void rejectProject(Long projectId);
 
     /**
+     * Reopens once rejected project.
+     *
+     * @param projectId
+     */
+    void reopenProject(Long projectId);
+
+    /**
      * Make new offer to Project.
      *
      * @param projectId
