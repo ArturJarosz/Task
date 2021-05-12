@@ -33,7 +33,13 @@
                 <constraints nullable="true"/>
             </column>
             <column name="WORKFLOW_NAME" type="VARCHAR2(50 ${char.unit})">
-                <constraints nullable="true"/>
+                <constraints nullable="false"/>
+            </column>
+            <column name="OFFER_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_OFFER_ACCEPTED" type="BOOLEAN">
+                <constraints nullable="false"/>
             </column>
         </createTable>
         <addPrimaryKey tableName="PROJECT" columnNames="ID" constraintName="PK_PROJECT"/>

@@ -200,9 +200,10 @@ class ProjectDomainServiceImplTest extends Specification {
         given:
             Project project = this.prepareProjectWithStatus(ProjectStatus.REJECTED);
         when:
-            this.projectDomainService.makeNewOffer(project);
+            this.projectDomainService.makeNewOffer(project, offerDto);
         then:
             1 * this.projectWorkflowService.changeProjectStatus(_ as Project, ProjectStatus.OFFER);
+    }
 
     def "reopenProject should call changeProjectStatus on projectWorkflowService with TODO status"() {
         given: "project with stages only in REJECTED or TODO statuses"
@@ -291,5 +292,4 @@ class ProjectDomainServiceImplTest extends Specification {
                 .withStatus(status)
                 .build();
     }
-
 }

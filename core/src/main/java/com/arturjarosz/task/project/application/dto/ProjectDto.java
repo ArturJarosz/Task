@@ -22,6 +22,7 @@ public class ProjectDto implements Serializable {
     private LocalDate deadline;
     private String note;
     private ProjectStatus status;
+    private Double offerValue;
 
     public ProjectDto() {
     }
@@ -112,5 +113,13 @@ public class ProjectDto implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Double getOfferValue() {
+        return this.offerValue;
+    }
+
+    public void setOfferValue(Double offerValue) {
+        this.offerValue = offerValue;
     }
 }

@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.project.application.ProjectApplicationService;
+import com.arturjarosz.task.project.application.dto.OfferDto;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
@@ -88,8 +89,9 @@ public class ProjectRestController {
     }
 
     @PostMapping("{projectId}/newOffer")
-    public ResponseEntity<Void> makeNewOffer(@PathVariable("projectId") Long projectId) {
-        this.projectApplicationService.makeNewOffer(projectId);
+    public ResponseEntity<Void> makeNewOffer(@PathVariable("projectId") Long projectId,
+                                             @RequestBody OfferDto offerDto) {
+        this.projectApplicationService.makeNewOffer(projectId, offerDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.domain;
 
+import com.arturjarosz.task.project.application.dto.OfferDto;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
@@ -20,5 +21,5 @@ public interface ProjectDomainService {
 
     Project reopenProject(Project project);
 
-    Project makeNewOffer(Project project);
+    Project makeNewOffer(Project project, OfferDto offerDto);
 }
