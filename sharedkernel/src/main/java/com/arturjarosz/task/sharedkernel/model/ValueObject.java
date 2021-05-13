@@ -11,7 +11,7 @@ import java.io.Serializable;
 public interface ValueObject<T extends ValueObject<T>> extends Serializable {
 
     /**
-     * Computerisation between two ValueObjects comes to comparing values their are storing.
+     * Comparison between two ValueObjects comes to comparing values their are storing.
      *
      * @param other The other ValueObject to compare.
      * @return <code>true</code> if both ValueObjects attributes are the same.

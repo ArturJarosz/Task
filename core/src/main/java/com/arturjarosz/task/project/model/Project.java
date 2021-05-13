@@ -9,6 +9,7 @@ import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -74,21 +75,26 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @Column(name = "WORKFLOW_NAME", nullable = false)
     private String workflowName;
 
+    @Embedded
+    private Offer offer;
+
     protected Project() {
         //needed by Hibernate
     }
 
-    public Project(String name, Long architectId, Long clientId, ProjectType projectType,
+    public Project(double offerValue, String name, Long architectId, Long clientId, ProjectType projectType,
                    ProjectWorkflow projectWorkflow) {
         this.name = name;
         this.architectId = architectId;
         this.clientId = clientId;
         this.projectType = projectType;
         this.workflowName = projectWorkflow.getName();
+        this.offer = new Offer(offerValue);
     }
 
     public void signContract(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
         this.updateProjectDates(signingDate, startDate, deadline);
+        this.offer.accept();
     }
 
     public void updateProjectDates(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
@@ -258,5 +264,17 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @Override
     public void changeStatus(ProjectStatus status) {
         this.status = status;
+    }
+
+    public void makeNewOffer(double offerValue) {
+        this.offer = new Offer(offerValue);
+    }
+
+    public void acceptOffer() {
+        this.offer.accept();
+    }
+
+    public Offer getOffer() {
+        return this.offer;
     }
 }

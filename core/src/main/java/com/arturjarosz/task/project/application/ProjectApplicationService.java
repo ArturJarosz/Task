@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application;
 
+import com.arturjarosz.task.project.application.dto.OfferDto;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
@@ -88,9 +89,10 @@ public interface ProjectApplicationService {
     void reopenProject(Long projectId);
 
     /**
-     * Make new offer to Project.
+     * Make new offer to Project for value in offerDto.
      *
      * @param projectId
+     * @param offerDto
      */
-    void makeNewOffer(Long projectId);
+    void makeNewOffer(Long projectId, OfferDto offerDto);
 }

@@ -1,12 +1,12 @@
 package com.arturjarosz.task.project.domain.impl;
 
+import com.arturjarosz.task.project.application.dto.OfferDto;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.application.mapper.ProjectDtoMapper;
 import com.arturjarosz.task.project.domain.ProjectDataValidator;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
-import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
@@ -23,16 +23,13 @@ import java.util.List;
 public class ProjectDomainServiceImpl implements ProjectDomainService {
 
     private final ProjectDataValidator projectDataValidator;
-    private final ProjectRepository projectRepository;
     private final ProjectWorkflow projectWorkflow;
     private final ProjectWorkflowService projectWorkflowService;
 
     public ProjectDomainServiceImpl(ProjectDataValidator projectDataValidator,
-                                    ProjectRepository projectRepository,
                                     ProjectWorkflow projectWorkflow,
                                     ProjectWorkflowService projectWorkflowService) {
         this.projectDataValidator = projectDataValidator;
-        this.projectRepository = projectRepository;
         this.projectWorkflow = projectWorkflow;
         this.projectWorkflowService = projectWorkflowService;
     }
@@ -104,7 +101,8 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
     }
 
     @Override
-    public Project makeNewOffer(Project project) {
+    public Project makeNewOffer(Project project, OfferDto offerDto) {
+        project.makeNewOffer(offerDto.getOfferValue());
         this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.OFFER);
         return project;
     }

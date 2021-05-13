@@ -8,6 +8,7 @@ import com.arturjarosz.task.client.application.ClientValidator;
 import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.ProjectValidator;
+import com.arturjarosz.task.project.application.dto.OfferDto;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
@@ -156,11 +157,11 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
     @Transactional
     @Override
-    public void makeNewOffer(Long projectId) {
+    public void makeNewOffer(Long projectId, OfferDto offerDto) {
         LOG.debug("Submitting a nwe offer for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
-        project = this.projectDomainService.makeNewOffer(project);
+        project = this.projectDomainService.makeNewOffer(project, offerDto);
         this.projectRepository.save(project);
         LOG.debug("Offer for project ");
     }

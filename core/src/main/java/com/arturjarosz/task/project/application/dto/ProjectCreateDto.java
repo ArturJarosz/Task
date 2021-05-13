@@ -12,6 +12,7 @@ public class ProjectCreateDto implements Serializable {
     private Long architectId;
     private Long clientId;
     private ProjectType projectType;
+    private Double offerValue;
 
     public ProjectCreateDto() {
 
@@ -55,5 +56,13 @@ public class ProjectCreateDto implements Serializable {
 
     public void setProjectType(ProjectType projectType) {
         this.projectType = projectType;
+    }
+
+    public Double getOfferValue() {
+        return this.offerValue;
+    }
+
+    public void setOfferValue(Double offerValue) {
+        this.offerValue = offerValue;
     }
 }

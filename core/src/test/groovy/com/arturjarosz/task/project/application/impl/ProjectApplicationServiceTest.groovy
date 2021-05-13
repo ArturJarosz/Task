@@ -373,14 +373,16 @@ class ProjectApplicationServiceTest extends Specification {
         given:
             this.mockProjectRepositoryLoad();
         when:
-            this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID);
+            this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto);
+        then:
+            this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID);
     }
 
     def "makeNewOffer should load project from projectRepository"() {
         given:
             this.mockProjectRepositoryLoad();
         when:
-            this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID);
+            this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto);
         then:
             1 * this.projectRepository.load(EXISTING_PROJECT_ID) >> this.prepareExistingProject();
     }
@@ -389,9 +391,9 @@ class ProjectApplicationServiceTest extends Specification {
         given:
             this.mockProjectRepositoryLoad();
         when:
-            this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID);
+            this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto);
         then:
-            1 * this.projectDomainService.makeNewOffer(_ as Project);
+            1 * this.projectDomainService.makeNewOffer(_ as Project, offerDto);
     }
 
     def "makeNewOffer should save project with projectRepository"() {
@@ -399,11 +401,11 @@ class ProjectApplicationServiceTest extends Specification {
             this.mockProjectRepositoryLoad();
             this.mockProjectDomainServiceMakeNewOffer();
         when:
-            this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID);
+            this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto);
         then:
             1 * this.projectRepository.save(_ as Project);
     }
-  
+
     def "reopenProject should call validateProjectExistence on projectValidate"() {
         given:
             this.mockProjectRepositoryLoad();
@@ -411,8 +413,8 @@ class ProjectApplicationServiceTest extends Specification {
             this.projectApplicationService.reopenProject(EXISTING_PROJECT_ID);
         then:
             1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID);
-      }
-      
+    }
+
     def "reopenProject should load project from projectRepository"() {
         given:
             this.mockProjectRepositoryLoad();
@@ -563,6 +565,6 @@ class ProjectApplicationServiceTest extends Specification {
 
     private void mockProjectDomainServiceMakeNewOffer() {
         Project project = this.prepareSignedProject();
-        this.projectDomainService.makeNewOffer(_ as Project) >> project;
+        this.projectDomainService.makeNewOffer(_ as Project, offerDto) >> project;
     }
 }
