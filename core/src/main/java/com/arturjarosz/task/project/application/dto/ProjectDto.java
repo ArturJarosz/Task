@@ -23,6 +23,7 @@ public class ProjectDto implements Serializable {
     private String note;
     private ProjectStatus status;
     private Double offerValue;
+    private Boolean isOfferAccepted;
 
     public ProjectDto() {
     }
@@ -121,5 +122,13 @@ public class ProjectDto implements Serializable {
 
     public void setOfferValue(Double offerValue) {
         this.offerValue = offerValue;
+    }
+
+    public Boolean getOfferAccepted() {
+        return this.isOfferAccepted;
+    }
+
+    public void setOfferAccepted(Boolean offerAccepted) {
+        this.isOfferAccepted = offerAccepted;
     }
 }

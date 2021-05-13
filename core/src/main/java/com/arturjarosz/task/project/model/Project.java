@@ -94,6 +94,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
 
     public void signContract(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
         this.updateProjectDates(signingDate, startDate, deadline);
+        this.offer.accept();
     }
 
     public void updateProjectDates(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
@@ -271,5 +272,9 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
 
     public void acceptOffer() {
         this.offer.accept();
+    }
+
+    public Offer getOffer() {
+        return this.offer;
     }
 }
