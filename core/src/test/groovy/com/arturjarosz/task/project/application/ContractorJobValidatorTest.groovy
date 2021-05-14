@@ -20,6 +20,7 @@ class ContractorJobValidatorTest extends Specification {
     private static final String NOTE = "note";
     private static final String PROJECT_NAME = "projectName"
     private static final Double VALUE = 100.0;
+    private static final Double OFFER_VALUE = 5000.0;
     private static final Long ARCHITECT_ID = 99L
     private static final Long CLIENT_ID = 98L;
     private static final Long EXISTING_CONTRACTOR_ID = 1L;
@@ -254,7 +255,7 @@ class ContractorJobValidatorTest extends Specification {
     }
 
     private Project prepareProjectWithoutCooperatorJob() {
-        Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
+        Project project = new Project(OFFER_VALUE, PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
                 new ProjectWorkflow());
         return project;
     }

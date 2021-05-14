@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.domain.impl
 
+import com.arturjarosz.task.project.application.dto.OfferDto
 import com.arturjarosz.task.project.application.dto.ProjectContractDto
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
 import com.arturjarosz.task.project.application.dto.ProjectDto
@@ -24,6 +25,7 @@ class ProjectDomainServiceImplTest extends Specification {
     private static final String NEW_NAME = "newProjectName";
     private static final String NEW_NOTE = "newNote";
     private static final String STAGE_NAME = "stageName";
+    private static final Double OFFER_VALUE = 5000.0;
     private static final Long ARCHITECT_ID = 100L;
     private static final Long CLIENT_ID = 1000L;
     private static final Long PROJECT_ID = 10L;
@@ -33,7 +35,7 @@ class ProjectDomainServiceImplTest extends Specification {
     def projectWorkflow = Mock(ProjectWorkflow);
     def projectWorkflowService = Mock(ProjectWorkflowServiceImpl);
 
-    def projectDomainService = new ProjectDomainServiceImpl(projectDataValidator, projectRepository, projectWorkflow,
+    def projectDomainService = new ProjectDomainServiceImpl(projectDataValidator, projectWorkflow,
             projectWorkflowService);
 
     def "createProject should call changeProject on projectWorkflowService"() {
@@ -199,6 +201,8 @@ class ProjectDomainServiceImplTest extends Specification {
     def "makeNewOffer should call changeProjectStatus on projectWorkflowService with status Offer"() {
         given:
             Project project = this.prepareProjectWithStatus(ProjectStatus.REJECTED);
+            OfferDto offerDto = new OfferDto();
+            offerDto.setOfferValue(OFFER_VALUE);
         when:
             this.projectDomainService.makeNewOffer(project, offerDto);
         then:
@@ -233,6 +237,7 @@ class ProjectDomainServiceImplTest extends Specification {
         return new ProjectBuilder()
                 .withName(NAME)
                 .withStatus(status)
+                .withOfferValue(OFFER_VALUE)
                 .build();
     }
 

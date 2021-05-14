@@ -19,8 +19,9 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     private static final CONTRACTOR_ID = 20L;
     private static final PROJECT_ID = 30L;
     private static final PROJECT_WITH_COOPERATOR_JOB_ID = 31L;
-    private static final long ARCHITECT_ID = 40L;
-    private static final long CLIENT_ID = 41L;
+    private static final Double OFFER_VALUE = 5000.0;
+    private static final Long ARCHITECT_ID = 40L;
+    private static final Long CLIENT_ID = 41L;
     private static final Long VALUE = 100L;
     private static final Long NEW_VALUE = 200L;
     private static final String NAME = "name";
@@ -297,7 +298,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     }
 
     private Project prepareProjectWithoutCooperatorJobs() {
-        Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
+        Project project = new Project(OFFER_VALUE, PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
                 new ProjectWorkflow());
         return project;
     }
