@@ -6,6 +6,7 @@ import com.arturjarosz.task.client.application.ClientValidator
 import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
+import com.arturjarosz.task.project.application.dto.OfferDto
 import com.arturjarosz.task.project.application.dto.ProjectContractDto
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
 import com.arturjarosz.task.project.application.dto.ProjectDto
@@ -25,6 +26,7 @@ class ProjectApplicationServiceTest extends Specification {
     private static final String NEW_PROJECT_NAME = "newProjectName";
     private static final String PROJECT_NAME = "projectName";
     private static final String NEW_PROJECT_NOTE = "newProjectNote";
+    private static final Double OFFER_VALUE = 5000.0;
     private static final Long ARCHITECT_ID = 1L;
     private static final Long CLIENT_ID = 10L;
     private static final Long EXISTING_PROJECT_ID = 100L;
@@ -372,6 +374,7 @@ class ProjectApplicationServiceTest extends Specification {
     def "makeNewOffer should call validateProjectExistence on projectValidator"() {
         given:
             this.mockProjectRepositoryLoad();
+            OfferDto offerDto = new OfferDto();
         when:
             this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto);
         then:
@@ -381,6 +384,7 @@ class ProjectApplicationServiceTest extends Specification {
     def "makeNewOffer should load project from projectRepository"() {
         given:
             this.mockProjectRepositoryLoad();
+            OfferDto offerDto = new OfferDto();
         when:
             this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto);
         then:
@@ -390,6 +394,7 @@ class ProjectApplicationServiceTest extends Specification {
     def "makeNewOffer should call makeNewOffer from projectDomainService"() {
         given:
             this.mockProjectRepositoryLoad();
+            OfferDto offerDto = new OfferDto();
         when:
             this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto);
         then:
@@ -400,6 +405,7 @@ class ProjectApplicationServiceTest extends Specification {
         given:
             this.mockProjectRepositoryLoad();
             this.mockProjectDomainServiceMakeNewOffer();
+            OfferDto offerDto = new OfferDto();
         when:
             this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto);
         then:
@@ -466,6 +472,7 @@ class ProjectApplicationServiceTest extends Specification {
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
                 .withStatus(ProjectStatus.OFFER)
+                .withOfferValue(OFFER_VALUE)
                 .build();
     }
 
@@ -476,6 +483,7 @@ class ProjectApplicationServiceTest extends Specification {
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
                 .withStatus(ProjectStatus.OFFER)
+                .withOfferValue(OFFER_VALUE)
                 .build();
     }
 
@@ -487,6 +495,7 @@ class ProjectApplicationServiceTest extends Specification {
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
                 .withStatus(ProjectStatus.OFFER)
+                .withOfferValue(OFFER_VALUE)
                 .build();
     }
 
@@ -565,6 +574,6 @@ class ProjectApplicationServiceTest extends Specification {
 
     private void mockProjectDomainServiceMakeNewOffer() {
         Project project = this.prepareSignedProject();
-        this.projectDomainService.makeNewOffer(_ as Project, offerDto) >> project;
+        this.projectDomainService.makeNewOffer(_ as Project, _ as OfferDto) >> project;
     }
 }

@@ -20,6 +20,7 @@ class CostApplicationServiceImplTest extends Specification {
 
     private final static Double VALUE = 100.0;
     private final static Double NEW_VALUE = 120.0;
+    private final static Double OFFER_VALUE = 5000.0;
     private final static Long ARCHITECT_ID = 33L;
     private final static Long CLIENT_ID = 44L;
     private final static Long COST_ID = 100L;
@@ -247,13 +248,13 @@ class CostApplicationServiceImplTest extends Specification {
     }
 
     private Project prepareProjectWithNoCosts() {
-        Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
+        Project project = new Project(OFFER_VALUE, PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
                 PROJECT_WORKFLOW); ;
         return project;
     }
 
     private Project prepareProjectWithCost() {
-        Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
+        Project project = new Project(OFFER_VALUE, PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
                 PROJECT_WORKFLOW); ;
         def cost = new Cost(NAME, new Money(VALUE), CostCategory.FUEL, DATE, NOTE);
         TestUtils.setFieldForObject(cost, "id", COST_ID);

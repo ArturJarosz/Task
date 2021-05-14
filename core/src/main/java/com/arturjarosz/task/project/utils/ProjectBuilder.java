@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.utils;
 
+import com.arturjarosz.task.project.model.Offer;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
@@ -18,6 +19,7 @@ public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
     private static final String END_DATE = "endDate";
     private static final String NAME = "name";
     private static final String NOTE = "note";
+    private static final String OFFER = "offer";
     private static final String ID = "id";
     private static final String SIGNING_DATE = "signingDate";
     private static final String STAGES = "stages";
@@ -87,6 +89,12 @@ public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
 
     public ProjectBuilder withSigningDate(LocalDate signingDate) {
         TestUtils.setFieldForObject(this.object, SIGNING_DATE, signingDate);
+        return this;
+    }
+
+    public ProjectBuilder withOfferValue(Double offerValue) {
+        Offer offer = new Offer(offerValue);
+        TestUtils.setFieldForObject(this.object, OFFER, offer);
         return this;
     }
 }
