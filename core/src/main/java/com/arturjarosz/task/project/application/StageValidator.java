@@ -28,8 +28,8 @@ public class StageValidator {
      *
      * @param stageDto
      */
-    public static void validateCreateStageDto(StageDto stageDto) {
-        validateBasicDate(stageDto);
+    public void validateCreateStageDto(StageDto stageDto) {
+        this.validateBasicDate(stageDto);
     }
 
     /**
@@ -37,8 +37,8 @@ public class StageValidator {
      *
      * @param stageDto
      */
-    public static void validateUpdateStageDto(StageDto stageDto) {
-        validateBasicDate(stageDto);
+    public void validateUpdateStageDto(StageDto stageDto) {
+        this.validateBasicDate(stageDto);
     }
 
     /**
@@ -53,7 +53,6 @@ public class StageValidator {
                 .orElse(null);
         assertNotNull(stage, createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.PROJECT,
                 ProjectExceptionCodes.STAGE));
-
     }
 
     /**
@@ -61,7 +60,7 @@ public class StageValidator {
      *
      * @param stageDto
      */
-    private static void validateBasicDate(StageDto stageDto) {
+    private void validateBasicDate(StageDto stageDto) {
         assertNotNull(stageDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE));
         assertNotNull(stageDto.getName(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.NAME));

@@ -56,7 +56,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
                                 StageDto stageDto) {
         LOG.debug("Creating Stage for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        StageValidator.validateCreateStageDto(stageDto);
+        this.stageValidator.validateCreateStageDto(stageDto);
         Stage stage = StageDtoMapper.INSTANCE.stageCreateDtoToStage(stageDto, this.stageWorkflow);
         Project project = this.projectRepository.load(projectId);
         project.addStage(stage);
@@ -84,7 +84,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
-        StageValidator.validateUpdateStageDto(stageDto);
+        this.stageValidator.validateUpdateStageDto(stageDto);
         Stage stage = project.updateStage(stageId, stageDto.getName(), stageDto.getNote(), stageDto.getStageType(),
                 stageDto.getDeadline());
         this.projectRepository.save(project);
