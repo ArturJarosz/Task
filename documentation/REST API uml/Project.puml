@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+actor Client
+
+Client -> Task: Create Project
+note left
+{
+    "name": "Projekt",
+    "architectId": "10",
+    "clientId": "20",
+    "projectType": "INTERIOR_HOUSE"
+}
+
+end note
+...
+Client <- Task: 201: Created
+note right #green
+{
+    "id": 100,
+    "name": "Projekt",
+    "projectType": "INTERIOR_HOUSE",
+    "status": "OFFER"
+}
+
+end note
+...
+Client <- Task: 500:
+note right #red
+{
+    "errorMessage"
+}
+
+end note
+
+
+@enduml
