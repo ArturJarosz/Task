@@ -15,7 +15,7 @@ note left
 end note
 ...
 Client <- Task: 201: Created
-note right #green
+note right
 {
     "id": 100,
     "name": "Projekt",
