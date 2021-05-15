@@ -44,7 +44,7 @@ class ProjectDomainServiceImplTest extends Specification {
         when:
             Project project = this.projectDomainService.createProject(projectCreateDto);
         then:
-            2 * this.projectWorkflowService.changeProjectStatus(_, _);
+            1 * this.projectWorkflowService.changeProjectStatus(_, _);
     }
 
     def "createProject should return newly created project with"() {
