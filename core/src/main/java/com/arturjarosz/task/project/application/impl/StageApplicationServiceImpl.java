@@ -15,7 +15,6 @@ import com.arturjarosz.task.project.status.stage.StageWorkflow;
 import com.arturjarosz.task.project.status.stage.StageWorkflowService;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationService
 public class StageApplicationServiceImpl implements StageApplicationService {
@@ -52,8 +50,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
 
     @Transactional
     @Override
-    public StageDto createStage(Long projectId,
-                                StageDto stageDto) {
+    public StageDto createStage(Long projectId, StageDto stageDto) {
         LOG.debug("Creating Stage for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateCreateStageDto(stageDto);
@@ -74,6 +71,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
         project.removeStage(stageId);
+        this.projectRepository.save(project);
         LOG.debug("Stage with id {} for Project with id {} removed.", stageId, projectId);
     }
 
@@ -103,15 +101,10 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     }
 
     @Override
-    public List<StageDto> getStageBasicList(
-            Long projectId) {
+    public List<StageDto> getStageListForProject(Long projectId) {
         LOG.debug("Loading list of Stages for Project with id {}.", projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        Project project = this.projectRepository.load(projectId);
-        return project.getStages()
-                .stream()
-                .map(StageDtoMapper.INSTANCE::stageToStageBasicDto)
-                .collect(Collectors.toList());
+        return this.projectQueryService.getStagesForProjectById(projectId);
     }
 
     @Transactional
@@ -141,22 +134,8 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     private boolean stageHasOnlyTasksInToDoStatus(Long stageId) {
         Stage stage = this.projectQueryService.getStageById(stageId);
         List<Task> allTasks = new ArrayList<>(stage.getTasks());
+        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.REJECTED));
         allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.TO_DO));
-        return !allTasks.isEmpty();
-    }
-
-    /**
-     * Retrieve id of given stage in Project. When Stage is added to the project it does not have any id yet.
-     * After it is saved by repository to the database the Id is generated.
-     *
-     * @param project
-     * @param stage
-     * @return id of Stage
-     */
-    private Long getIdForCreatedStage(Project project, Stage stage) {
-        return project.getStages().stream()
-                .filter(projectStage -> projectStage.equals(stage))
-                .findFirst()
-                .map(AbstractEntity::getId).orElseThrow();
+        return allTasks.isEmpty();
     }
 }

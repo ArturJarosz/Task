@@ -9,6 +9,12 @@ import java.time.LocalDate;
 public class StageDto implements Serializable {
     private static final long serialVersionUID = -8148528445387228580L;
 
+    public static final String DEADLINE = "deadline";
+    public static final String ID = "id";
+    public static final String NAME = "name";
+    public static final String STAGE_TYPE = "stageType";
+    public static final String STATUS = "status";
+
     private Long id;
     private String name;
     private LocalDate startDate;

@@ -52,7 +52,7 @@ public interface StageApplicationService {
      * @param projectId
      * @return
      */
-    List<StageDto> getStageBasicList(Long projectId);
+    List<StageDto> getStageListForProject(Long projectId);
 
     /**
      * Set Stage with stageId as rejected for Project with projectId. If Project or Stage does not exist, new exception
