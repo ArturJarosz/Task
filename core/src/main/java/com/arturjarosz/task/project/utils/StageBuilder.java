@@ -82,7 +82,13 @@ public class StageBuilder extends AbstractBuilder<Stage, StageBuilder> {
         return this;
     }
 
+    public StageBuilder withTasks(List<Task> tasks) {
+        setFieldForObject(this.object, TASKS, new ArrayList<>(tasks));
+        return this;
+    }
+
     public StageBuilder withStatus(StageStatus status) {
-        return this.setStatusField(STATUS, status);
+        this.setStatusField(STATUS, status);
+        return this;
     }
 }

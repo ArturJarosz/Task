@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.query.impl;
 
+import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.Cost;
@@ -69,6 +70,18 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
                         TASK.type.as(TaskDto.TASK_TYPE)
                 ))
                 .fetchOne();
+    }
+
+    @Override
+    public List<StageDto> getStagesForProjectById(Long projectId) {
+        return this.query().from(PROJECT).where(PROJECT.id.eq(projectId))
+                .select(Projections.bean(StageDto.class,
+                        STAGE.id.as(StageDto.ID),
+                        STAGE.name.as(StageDto.NAME),
+                        STAGE.deadline.as(StageDto.DEADLINE),
+                        STAGE.stageType.as(StageDto.STAGE_TYPE),
+                        STAGE.status.as(StageDto.STATUS)))
+                .fetch();
     }
 
 }
