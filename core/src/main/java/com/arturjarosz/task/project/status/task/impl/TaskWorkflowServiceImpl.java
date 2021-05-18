@@ -58,8 +58,8 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
         TaskStatus oldStatus = task.getStatus() != null ? task.getStatus() : TaskStatus.TO_DO;
         TaskStatusTransition taskStatusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
         BaseValidator.assertNotNull(taskStatusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
-                ProjectExceptionCodes.TASK, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION,
-                oldStatus.getStatusName(), newStatus.getStatusName()));
+                ProjectExceptionCodes.TASK, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION),
+                oldStatus.getStatusName(), newStatus.getStatusName());
         this.beforeStatusChange(project, task, stageId, taskStatusTransition);
         this.changeStatus(task, newStatus);
         this.afterStatusChange(project, stageId, taskStatusTransition);

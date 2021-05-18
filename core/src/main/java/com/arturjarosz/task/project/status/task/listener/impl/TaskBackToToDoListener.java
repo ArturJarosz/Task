@@ -4,6 +4,7 @@ import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.status.stage.StageStatus;
+import com.arturjarosz.task.project.status.stage.StageStatusTransition;
 import com.arturjarosz.task.project.status.stage.StageWorkflowService;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.project.status.task.TaskStatusTransition;
@@ -31,7 +32,7 @@ public class TaskBackToToDoListener implements TaskStatusTransitionListener {
                 .findFirst().orElse(null);
         assert stage != null;
         if (stage.getStatus().equals(StageStatus.IN_PROGRESS) && this.hasOnlyTasksInToDo(stage)) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.TO_DO);
+            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatusTransition.BACK_TO_TO_DO);
         }
     }
 

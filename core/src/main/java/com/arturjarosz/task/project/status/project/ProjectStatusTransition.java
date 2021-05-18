@@ -4,10 +4,11 @@ import com.arturjarosz.task.sharedkernel.status.StatusTransition;
 
 public enum ProjectStatusTransition implements StatusTransition<ProjectStatus> {
     // creating Project
-    CREATE_PROJECT(ProjectStatus.OFFER, ProjectStatus.OFFER),
+    CREATE_PROJECT(null, ProjectStatus.OFFER),
     // from OFFER
     OFFER_REJECTED(ProjectStatus.OFFER, ProjectStatus.REJECTED),
     OFFER_ACCEPTED(ProjectStatus.OFFER, ProjectStatus.TO_DO),
+    CHANGE_OFFER(ProjectStatus.OFFER, ProjectStatus.OFFER),
     // from REJECTED
     NEW_OFFER(ProjectStatus.REJECTED, ProjectStatus.OFFER),
     REOPEN(ProjectStatus.REJECTED, ProjectStatus.TO_DO),

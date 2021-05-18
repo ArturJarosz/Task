@@ -5,13 +5,12 @@ import com.arturjarosz.task.project.application.dto.ProjectContractDto
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
 import com.arturjarosz.task.project.application.dto.ProjectDto
 import com.arturjarosz.task.project.domain.ProjectDataValidator
-import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
-import com.arturjarosz.task.project.status.project.impl.ProjectWorkflowServiceImpl
+import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionServiceImpl
 import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.project.utils.StageBuilder
@@ -28,36 +27,34 @@ class ProjectDomainServiceImplTest extends Specification {
     private static final Double OFFER_VALUE = 5000.0;
     private static final Long ARCHITECT_ID = 100L;
     private static final Long CLIENT_ID = 1000L;
-    private static final Long PROJECT_ID = 10L;
 
     def projectDataValidator = Mock(ProjectDataValidator);
-    def projectRepository = Mock(ProjectRepositoryImpl);
     def projectWorkflow = Mock(ProjectWorkflow);
-    def projectWorkflowService = Mock(ProjectWorkflowServiceImpl);
+    def projectStatusTransitionService = Mock(ProjectStatusTransitionServiceImpl);
 
     def projectDomainService = new ProjectDomainServiceImpl(projectDataValidator, projectWorkflow,
-            projectWorkflowService);
+            projectStatusTransitionService);
 
-    def "createProject should call changeProject on projectWorkflowService"() {
+    def "createProject should call create on projectStatusTransitionService"() {
         given:
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
         when:
             Project project = this.projectDomainService.createProject(projectCreateDto);
         then:
-            1 * this.projectWorkflowService.changeProjectStatus(_, _);
+            1 * this.projectStatusTransitionService.create(_ as Project);
     }
 
-    def "createProject should return newly created project with"() {
+    def "createProject should return newly created project with status OFFER"() {
         given:
             this.mockProjectWorkflow();
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
         when:
             Project project = this.projectDomainService.createProject(projectCreateDto);
         then:
-            1 * this.projectWorkflowService.changeProjectStatus({
+            1 * this.projectStatusTransitionService.create({
                 Project createdProject ->
                     TestUtils.setFieldForObject(createdProject, "status", ProjectStatus.OFFER);
-            }, _) >> {}
+            }) >> {}
             project.getName() == projectCreateDto.getName();
             project.getStatus() == ProjectStatus.OFFER;
     }
@@ -113,14 +110,14 @@ class ProjectDomainServiceImplTest extends Specification {
             1 * project.signContract(_, _, _);
     }
 
-    def "signProject should call changeProjectStatus on projectWorkflowService"() {
+    def "signProject should call acceptOffer on projectStatusTransitionService"() {
         given:
             Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
             ProjectContractDto projectContractDto = this.prepareProjectContractDto();
         when:
             Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto);
         then:
-            1 * this.projectWorkflowService.changeProjectStatus(_, ProjectStatus.TO_DO);
+            1 * projectStatusTransitionService.acceptOffer(_ as Project);
     }
 
     def "finishProject should set endDate to today, if endDate is not provided"() {
@@ -152,14 +149,14 @@ class ProjectDomainServiceImplTest extends Specification {
             1 * project.finishProject(_);
     }
 
-    def "finishProject should call changeProjectStatus on projectWorkflowService"() {
+    def "finishProject should call completeWork on projectStatusTransitionService"() {
         given:
             Project project = this.prepareProjectInProgressWithStatus();
             LocalDate today = LocalDate.now();
         when:
             Project finishedProject = this.projectDomainService.finishProject(project, null)
         then:
-            1 * this.projectWorkflowService.changeProjectStatus(_, _);
+            1 * projectStatusTransitionService.completeWork(_ as Project);
     }
 
     def "finishProject should changeProject status to Completed"() {
@@ -169,20 +166,20 @@ class ProjectDomainServiceImplTest extends Specification {
         when:
             Project finishedProject = this.projectDomainService.finishProject(project, null)
         then:
-            1 * this.projectWorkflowService.changeProjectStatus({
+            1 * projectStatusTransitionService.completeWork({
                 Project projectToChange ->
                     TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.COMPLETED);
-            }, _);
+            });
             finishedProject.getStatus() == ProjectStatus.COMPLETED;
     }
 
-    def "rejectProject should call changeProjectStatus on projectWorkflowService"() {
+    def "rejectProject should call reject on projectStatusTransitionService"() {
         given:
             Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
         when:
             Project rejectedProject = this.projectDomainService.rejectProject(project);
         then:
-            1 * this.projectWorkflowService.changeProjectStatus(_, _);
+            1 * this.projectStatusTransitionService.reject(_ as Project);
     }
 
     def "rejectProject should change project status to Rejected"() {
@@ -191,41 +188,55 @@ class ProjectDomainServiceImplTest extends Specification {
         when:
             Project rejectedProject = this.projectDomainService.rejectProject(project);
         then:
-            1 * this.projectWorkflowService.changeProjectStatus({
+            1 * this.projectStatusTransitionService.reject({
                 Project projectToChange ->
                     TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.REJECTED);
-            }, _);
+            });
             rejectedProject.getStatus() == ProjectStatus.REJECTED;
     }
 
-    def "makeNewOffer should call changeProjectStatus on projectWorkflowService with status Offer"() {
+    def "reopenProject should call reopen on projectStatusTransitionService"() {
         given:
-            Project project = this.prepareProjectWithStatus(ProjectStatus.REJECTED);
+            Project project = Mock(Project);
+        when:
+            this.projectDomainService.reopenProject(project);
+        then:
+            1 * this.projectStatusTransitionService.reopen(_ as Project);
+    }
+
+    def "makeNewOffer should not call makeNewOffer on projectStatusTransitionService for project with null status"() {
+        given:
+            Project project = this.prepareProjectWithStatus(null);
             OfferDto offerDto = new OfferDto();
             offerDto.setOfferValue(OFFER_VALUE);
         when:
             this.projectDomainService.makeNewOffer(project, offerDto);
         then:
-            1 * this.projectWorkflowService.changeProjectStatus(_ as Project, ProjectStatus.OFFER);
+            0 * this.projectStatusTransitionService.makeNewOffer(_ as Project);
     }
 
-    def "reopenProject should call changeProjectStatus on projectWorkflowService with TODO status"() {
-        given: "project with stages only in REJECTED or TODO statuses"
-            Project project = this.prepareProjectWithRejectedAndToDoStages();
+    def "makeNewOffer should call makeNewOffer on projectStatusTransitionService for project with not null status"() {
+        given:
+            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
+            OfferDto offerDto = new OfferDto();
+            offerDto.setOfferValue(OFFER_VALUE);
         when:
-            this.projectDomainService.reopenProject(project);
+            this.projectDomainService.makeNewOffer(project, offerDto);
         then:
-            1 * this.projectWorkflowService.changeProjectStatus(_ as Project, ProjectStatus.TO_DO);
+            1 * this.projectStatusTransitionService.makeNewOffer(_ as Project);
     }
 
-    def "reopenProject should call changeProjectStatus on projectWorkflowService with IN_PROGRESS status"() {
-        given: "project has stages in different than TODO or REJECTED statuses"
-            Project project = this.prepareProjectWithDifferentStageStatuses();
+    def "makeNewOffer should update project offer value"() {
+        given:
+            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
+            OfferDto offerDto = new OfferDto();
+            offerDto.setOfferValue(OFFER_VALUE);
         when:
-            this.projectDomainService.reopenProject(project);
+            Project updatedProject = this.projectDomainService.makeNewOffer(project, offerDto);
         then:
-            1 * this.projectWorkflowService.changeProjectStatus(_ as Project, ProjectStatus.IN_PROGRESS);
+            updatedProject.getOffer().getOfferValue().value.doubleValue() == OFFER_VALUE;
     }
+
 
     // helper methods
 
@@ -272,23 +283,6 @@ class ProjectDomainServiceImplTest extends Specification {
         projectContractDto.setStartDate(now.plusDays(10));
         projectContractDto.setDeadline(now.plusDays(50));
         return projectContractDto;
-    }
-
-    private Project prepareProjectWithRejectedAndToDoStages() {
-        Set<Stage> stages = new HashSet<>();
-        stages.add(prepareStageWithStatus(StageStatus.TO_DO));
-        stages.add(prepareStageWithStatus(StageStatus.REJECTED));
-        Project project = new ProjectBuilder().withStatus(ProjectStatus.REJECTED).withStages(stages).build();
-        return project;
-    }
-
-    private Project prepareProjectWithDifferentStageStatuses() {
-        Set<Stage> stages = new HashSet<>();
-        stages.add(prepareStageWithStatus(StageStatus.TO_DO));
-        stages.add(prepareStageWithStatus(StageStatus.REJECTED));
-        stages.add(prepareStageWithStatus(StageStatus.IN_PROGRESS));
-        Project project = new ProjectBuilder().withStatus(ProjectStatus.REJECTED).withStages(stages).build();
-        return project;
     }
 
     private Stage prepareStageWithStatus(StageStatus status) {

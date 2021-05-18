@@ -6,12 +6,12 @@ import com.arturjarosz.task.sharedkernel.status.WorkflowService;
 public interface ProjectWorkflowService extends WorkflowService<ProjectStatus, Project> {
 
     /**
-     * Changes status of Project with projectId to newStatus of type ProjectStatus.
+     * Executing status transition of Project with projectId.
      *
      * @param project
-     * @param newStatus
+     * @param statusTransition
      */
-    void changeProjectStatus(Project project, ProjectStatus newStatus);
+    void changeProjectStatus(Project project, ProjectStatusTransition statusTransition);
 
     void beforeStatusChange(Project project, ProjectStatusTransition statusTransition);
 

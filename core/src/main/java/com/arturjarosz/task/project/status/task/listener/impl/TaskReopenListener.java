@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.status.task.listener.impl;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.status.stage.StageStatus;
+import com.arturjarosz.task.project.status.stage.StageStatusTransition;
 import com.arturjarosz.task.project.status.stage.StageWorkflowService;
 import com.arturjarosz.task.project.status.task.TaskStatusTransition;
 import com.arturjarosz.task.project.status.task.listener.TaskStatusTransitionListener;
@@ -26,7 +27,8 @@ public class TaskReopenListener implements TaskStatusTransitionListener {
                 .findFirst().orElse(null);
         assert stage != null;
         if (stage.getStatus().equals(StageStatus.COMPLETED)) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.IN_PROGRESS);
+            this.stageWorkflowService
+                    .changeStageStatusOnProject(project, stageId, StageStatusTransition.BACK_TO_IN_PROGRESS);
         }
     }
 

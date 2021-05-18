@@ -1,17 +1,13 @@
 package com.arturjarosz.task.project.status.project.impl;
 
-import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectStatusTransition;
 import com.arturjarosz.task.project.status.project.ProjectWorkflowService;
 import com.arturjarosz.task.project.status.project.validator.ProjectStatusTransitionValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
-import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,24 +29,16 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
     }
 
     @Override
-    public void changeProjectStatus(Project project, ProjectStatus newStatus) {
+    public void changeProjectStatus(Project project, ProjectStatusTransition statusTransition) {
+        ProjectStatus newStatus = statusTransition.getNextStatus();
+        this.beforeStatusChange(project, statusTransition);
         this.changeStatus(project, newStatus);
+        this.afterStatusChange(project, statusTransition);
     }
 
     @Override
-    public void changeStatus(Project project, ProjectStatus newStatus) {
-        /*
-        In case of newly created Project, there is no status transition. For avoiding nullPointerException
-        old status is set to OFFER as well, as there is no status before.
-         */
-        ProjectStatus oldStatus = project.getStatus() != null ? project.getStatus() : ProjectStatus.OFFER;
-        ProjectStatusTransition projectStatusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
-        BaseValidator.assertNotNull(projectStatusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
-                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION,
-                oldStatus.getStatusName(), newStatus.getStatusName()));
-        this.beforeStatusChange(project, projectStatusTransition);
-        project.changeStatus(newStatus);
-        this.afterStatusChange(project, projectStatusTransition);
+    public void changeStatus(Project project, ProjectStatus projectStatus) {
+        project.changeStatus(projectStatus);
     }
 
     @Override
@@ -62,12 +50,6 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
     @Override
     public void afterStatusChange(Project project, ProjectStatusTransition statusTransition) {
         //TODO: run Project listeners
-    }
-
-    private ProjectStatusTransition getTransitionForStatuses(ProjectStatus status, ProjectStatus newStatus) {
-        return Arrays.stream(ProjectStatusTransition.values())
-                .filter(transition -> transition.getCurrentStatus().equals(status) && transition.getNextStatus()
-                        .equals(newStatus)).findFirst().orElse(null);
     }
 
     private List<ProjectStatusTransitionValidator> getStatusTransitionValidators(
