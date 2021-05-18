@@ -9,7 +9,7 @@ import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.StageType
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
-import com.arturjarosz.task.project.status.stage.StageStatus
+import com.arturjarosz.task.project.status.stage.StageStatusTransition
 import com.arturjarosz.task.project.status.stage.StageWorkflow
 import com.arturjarosz.task.project.status.stage.impl.StageWorkflowServiceImpl
 import com.arturjarosz.task.project.status.task.TaskStatus
@@ -280,13 +280,14 @@ class StageApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.load(PROJECT_WITH_STAGE_ID) >> this.prepareProjectWithStage();
     }
 
-    def "rejectStage should call changeStageStatusOnProject on stageWorkflowService with REJECT status"() {
+    def "rejectStage should call changeStageStatusOnProject on stageWorkflowService with REJECT_FROM_IN_PROGRESS"() {
         given:
             this.mockProjectRepositoryLoadProjectWithStage();
         when:
             this.stageApplicationService.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID);
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(_ as Project, STAGE_ID, StageStatus.REJECTED);
+            1 * this.stageWorkflowService.
+                    changeStageStatusOnProject(_ as Project, STAGE_ID, StageStatusTransition.REJECT_FROM_IN_PROGRESS);
     }
 
     def "rejectStage should save project with save method on projectRepository"() {
@@ -328,17 +329,19 @@ class StageApplicationServiceImplTest extends Specification {
 
     def "reopenStage should call changeStageStatusOnProject with TO_DO when stage has tasks only in TO_DO"() {
         given:
+            //TODO: fix test
             this.mockProjectQueryServiceGetStageByIdWithTasks();
             this.mockProjectRepositoryLoadProjectWithStage();
         when:
             this.stageApplicationService.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID);
         then:
             1 * this.stageWorkflowService.
-                    changeStageStatusOnProject(_ as Project, STAGE_WITH_TASKS_IN_TODO_ID, StageStatus.TO_DO)
+                    changeStageStatusOnProject(_ as Project, STAGE_WITH_TASKS_IN_TODO_ID, StageStatusTransition.REOPEN)
     }
 
     def "reopenStage should call changeStageStatusOnProject with IN_PROGRESS on stage has tasks in different statuses"() {
         given:
+            //TODO: fix test
             this.mockProjectQueryServiceGetStageByIdWithTasks();
             this.mockProjectRepositoryLoadProjectWithStage();
         when:
@@ -346,7 +349,7 @@ class StageApplicationServiceImplTest extends Specification {
         then:
             1 * this.stageWorkflowService.
                     changeStageStatusOnProject(_ as Project, STAGE_WITH_TASKS_IN_DIFFERENT_STATUSES,
-                            StageStatus.IN_PROGRESS);
+                            StageStatusTransition.REOPEN);
     }
 
     def "reopenStage should save project with projectRepository"() {

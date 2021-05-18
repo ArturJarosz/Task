@@ -1,5 +1,8 @@
 package com.arturjarosz.task.project.application;
 
+import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import com.arturjarosz.task.sharedkernel.exceptions.IllegalStateException;
+
 public class ProjectExceptionCodes {
     //Entities
     public static final String ARCHITECT = "architect";
@@ -31,6 +34,12 @@ public class ProjectExceptionCodes {
     public static final String TRANSITION = "transition";
 
     public static final String CREATE = "create";
+    public static final String REOPEN = "reopen";
+    public static final String SIGN = "sign";
     public static final String START_PROGRESS = "startProgress";
     public static final String UPDATE = "update";
+
+    private ProjectExceptionCodes() {
+        throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
+    }
 }

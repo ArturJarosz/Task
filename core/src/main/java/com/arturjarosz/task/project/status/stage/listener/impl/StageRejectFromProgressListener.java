@@ -2,8 +2,7 @@ package com.arturjarosz.task.project.status.stage.listener.impl;
 
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
-import com.arturjarosz.task.project.status.project.ProjectStatus;
-import com.arturjarosz.task.project.status.project.ProjectWorkflowService;
+import com.arturjarosz.task.project.status.project.ProjectStatusTransitionService;
 import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.project.status.stage.StageStatusTransition;
 import com.arturjarosz.task.project.status.stage.listener.StageStatusTransitionListener;
@@ -16,19 +15,19 @@ import java.util.List;
 @Component
 public class StageRejectFromProgressListener implements StageStatusTransitionListener {
     private final StageStatusTransition transition = StageStatusTransition.REJECT_FROM_IN_PROGRESS;
-    private final ProjectWorkflowService projectWorkflowService;
+    private final ProjectStatusTransitionService projectStatusTransitionService;
 
     @Autowired
-    public StageRejectFromProgressListener(ProjectWorkflowService projectWorkflowService) {
-        this.projectWorkflowService = projectWorkflowService;
+    public StageRejectFromProgressListener(ProjectStatusTransitionService projectStatusTransitionService) {
+        this.projectStatusTransitionService = projectStatusTransitionService;
     }
 
     @Override
     public void onStageStatusChange(Project project) {
         if (this.hasStagesOnlyInRejectedAndToDoStatus(project)) {
-            this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.TO_DO);
+            this.projectStatusTransitionService.backToToDo(project);
         } else if (this.hasStagesOnlyInRejectedAndCompletedStatus(project)) {
-            this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.COMPLETED);
+            this.projectStatusTransitionService.completeWork(project);
         }
     }
 

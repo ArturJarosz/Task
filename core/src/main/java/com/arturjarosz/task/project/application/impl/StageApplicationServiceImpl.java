@@ -11,6 +11,7 @@ import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.project.status.stage.StageStatus;
+import com.arturjarosz.task.project.status.stage.StageStatusTransition;
 import com.arturjarosz.task.project.status.stage.StageWorkflow;
 import com.arturjarosz.task.project.status.stage.StageWorkflowService;
 import com.arturjarosz.task.project.status.task.TaskStatus;
@@ -57,7 +58,8 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         Stage stage = StageDtoMapper.INSTANCE.stageCreateDtoToStage(stageDto, this.stageWorkflow);
         Project project = this.projectRepository.load(projectId);
         project.addStage(stage);
-        this.stageWorkflowService.changeStageStatusOnProject(project, stage.getId(), StageStatus.TO_DO);
+        this.stageWorkflowService
+                .changeStageStatusOnProject(project, stage.getId(), StageStatusTransition.CREATE_STAGE);
         project = this.projectRepository.save(project);
         LOG.debug("Stage for Project with id {} created.", projectId);
         return StageDtoMapper.INSTANCE.stageDtoFromStage(stage);
@@ -114,7 +116,8 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
-        this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.REJECTED);
+        this.stageWorkflowService
+                .changeStageStatusOnProject(project, stageId, StageStatusTransition.REJECT_FROM_IN_PROGRESS);
         this.projectRepository.save(project);
     }
 
@@ -125,9 +128,10 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
+        // TODO: change to call proper status transition on interface
         StageStatus newStatus = this
                 .stageHasOnlyTasksInToDoStatus(stageId) ? StageStatus.TO_DO : StageStatus.IN_PROGRESS;
-        this.stageWorkflowService.changeStageStatusOnProject(project, stageId, newStatus);
+        this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatusTransition.REOPEN);
         this.projectRepository.save(project);
     }
 
