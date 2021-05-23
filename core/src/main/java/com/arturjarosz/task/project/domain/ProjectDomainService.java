@@ -45,7 +45,8 @@ public interface ProjectDomainService {
     Project finishProject(Project project, LocalDate endDate);
 
     /**
-     * Reject offer for Project.
+     * Reject offer for Project. Work on rejected Project cannot be continued. It it not possible to add Stage or
+     * Task on rejected Project as well as changing their statuses.
      *
      * @param project
      * @return
@@ -53,7 +54,7 @@ public interface ProjectDomainService {
     Project rejectProject(Project project);
 
     /**
-     * Reopen once completed Project.
+     * Reopen rejected Project to continue or plan work on it.
      *
      * @param project
      * @return
