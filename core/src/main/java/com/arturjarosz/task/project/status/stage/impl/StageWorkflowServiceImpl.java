@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.status.stage.impl;
 
+import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.status.stage.StageStatus;
@@ -8,8 +9,11 @@ import com.arturjarosz.task.project.status.stage.StageWorkflowService;
 import com.arturjarosz.task.project.status.stage.listener.StageStatusTransitionListener;
 import com.arturjarosz.task.project.status.stage.validator.StageStatusTransitionValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
+import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -44,18 +48,13 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
     }
 
     @Override
-    public void changeStageStatusOnProject(Project project, Long stageId, StageStatusTransition statusTransition) {
+    public void changeStageStatusOnProject(Project project, Long stageId, StageStatus newStatus) {
         Stage stage = this.getStage(project, stageId);
-        /*
-        In case of newly created Stage, there is no status transition. For avoiding nullPointerException
-        old status is set to TO_DO as well, as there is no status before.
-         */
-        StageStatus newStatus = statusTransition.getNextStatus();
-/*        StageStatus oldStatus = stage.getStatus() != null ? stage.getStatus() : StageStatus.TO_DO;
-        StageStatusTransition stageStatusTransition = this.getTransitionForStatuses(oldStatus, newStatus);*/
-/*        BaseValidator.assertNotNull(stageStatusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
-                ProjectExceptionCodes.STAGE, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION),
-                oldStatus.getStatusName(), newStatus.getStatusName());*/
+        StageStatus oldStatus = stage.getStatus();
+        StageStatusTransition statusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
+        BaseValidator.assertNotNull(statusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
+                ProjectExceptionCodes.STAGE, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION,
+                oldStatus != null ? oldStatus.getStatusName() : "null", newStatus.getStatusName()));
         this.beforeStatusChange(project, stage, statusTransition);
         this.changeStatus(stage, newStatus);
         this.afterStatusChange(project, statusTransition);
@@ -73,11 +72,11 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
         listeners.forEach(listener -> listener.onStageStatusChange(project));
     }
 
-/*    private StageStatusTransition getTransitionForStatuses(StageStatus oldStatus, StageStatus newStatus) {
+    private StageStatusTransition getTransitionForStatuses(StageStatus oldStatus, StageStatus newStatus) {
         return Arrays.stream(StageStatusTransition.values())
-                .filter(transition -> transition.getCurrentStatus().equals(oldStatus) && transition.getNextStatus()
-                        .equals(newStatus)).findFirst().orElse(null);
-    }*/
+                .filter(transition -> transition.getCurrentStatus() == oldStatus
+                        && transition.getNextStatus() == newStatus).findFirst().orElse(null);
+    }
 
     private List<StageStatusTransitionListener> getStatusTransitionListeners(StageStatusTransition statusTransition) {
         List<StageStatusTransitionListener> listeners = this.mapNameToStatusTransitionListeners

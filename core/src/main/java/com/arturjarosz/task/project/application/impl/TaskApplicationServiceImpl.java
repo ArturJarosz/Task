@@ -12,8 +12,6 @@ import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.query.ProjectQueryService;
-import com.arturjarosz.task.project.status.task.TaskStatus;
-import com.arturjarosz.task.project.status.task.TaskWorkflowService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,28 +23,25 @@ import java.util.stream.Collectors;
 @ApplicationService
 public class TaskApplicationServiceImpl implements TaskApplicationService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TaskApplicationService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TaskApplicationServiceImpl.class);
 
     private final ProjectQueryService projectQueryService;
     private final ProjectRepository projectRepository;
     private final ProjectValidator projectValidator;
     private final StageValidator stageValidator;
     private final TaskDomainService taskDomainService;
-    private final TaskWorkflowService taskWorkflowService;
     private final TaskValidator taskValidator;
 
     public TaskApplicationServiceImpl(ProjectQueryService projectQueryService,
                                       ProjectRepository projectRepository, ProjectValidator projectValidator,
                                       StageValidator stageValidator,
                                       TaskDomainService taskDomainService,
-                                      TaskWorkflowService taskWorkflowService,
                                       TaskValidator taskValidator) {
         this.projectQueryService = projectQueryService;
         this.projectRepository = projectRepository;
         this.projectValidator = projectValidator;
         this.stageValidator = stageValidator;
         this.taskDomainService = taskDomainService;
-        this.taskWorkflowService = taskWorkflowService;
         this.taskValidator = taskValidator;
     }
 
@@ -59,8 +54,6 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.taskValidator.validateCreateTaskDto(taskDto);
         Project project = this.projectRepository.load(projectId);
         Task task = this.taskDomainService.createTask(project, stageId, taskDto);
-        project.addTaskToStage(stageId, task);
-        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, task.getId(), TaskStatus.TO_DO);
         project = this.projectRepository.save(project);
         LOG.debug("Task created.");
         return TaskDtoMapper.INSTANCE.taskToTaskDto(task);
@@ -88,7 +81,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         Project project = this.projectRepository.load(projectId);
         TaskInnerDto taskInnerDto = TaskDtoMapper.INSTANCE.updateDtoToInnerDto(taskDto);
-        Task task = project.updateTaskOnStage(stageId, taskId, taskInnerDto);
+        Task task = this.taskDomainService.updateTask(project, stageId, taskId, taskInnerDto);
         this.projectRepository.save(project);
         LOG.debug("Task updated.");
         return TaskDtoMapper.INSTANCE.taskToTaskDto(task);
@@ -103,7 +96,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         Project project = this.projectRepository.load(projectId);
-        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, taskDto.getStatus());
+        this.taskDomainService.updateTaskStatus(project, stageId, taskId, taskDto.getStatus());
         this.projectRepository.save(project);
         LOG.debug("Task status updated.");
     }
@@ -139,7 +132,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         Project project = this.projectRepository.load(projectId);
-        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.REJECTED);
+        this.taskDomainService.rejectTask(project, stageId, taskId);
         this.projectRepository.save(project);
     }
 
@@ -150,7 +143,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         Project project = this.projectRepository.load(projectId);
-        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.TO_DO);
+        this.taskDomainService.reopenTask(project, stageId, taskId);
         this.projectRepository.save(project);
     }
 }

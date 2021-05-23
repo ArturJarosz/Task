@@ -27,13 +27,7 @@ public class AbstractBuilder<T extends AbstractEntity, B extends AbstractBuilder
             declaredConstructor.setAccessible(true);
             this.object = declaredConstructor.newInstance();
             this.builder = (B) this;
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
     }

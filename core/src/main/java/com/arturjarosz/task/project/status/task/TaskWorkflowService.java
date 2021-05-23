@@ -7,7 +7,7 @@ import com.arturjarosz.task.sharedkernel.status.WorkflowService;
 public interface TaskWorkflowService extends WorkflowService<TaskStatus, Task> {
 
     /**
-     * Changes status for Task with given taskId, on Stage with stageId on Project to newStatus of type TaskStatus.
+     * Changes status for Task with given taskId, on Stage with stageId on Project to newStatus.
      *
      * @param project
      * @param stageId

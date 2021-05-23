@@ -5,23 +5,17 @@ import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.StageValidator;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.mapper.StageDtoMapper;
+import com.arturjarosz.task.project.domain.StageDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
-import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.query.ProjectQueryService;
-import com.arturjarosz.task.project.status.stage.StageStatus;
-import com.arturjarosz.task.project.status.stage.StageStatusTransition;
-import com.arturjarosz.task.project.status.stage.StageWorkflow;
-import com.arturjarosz.task.project.status.stage.StageWorkflowService;
-import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationService
@@ -31,22 +25,19 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     private final ProjectQueryService projectQueryService;
     private final ProjectValidator projectValidator;
     private final ProjectRepository projectRepository;
+    private final StageDomainService stageDomainService;
     private final StageValidator stageValidator;
-    private final StageWorkflow stageWorkflow;
-    private final StageWorkflowService stageWorkflowService;
 
     @Autowired
     public StageApplicationServiceImpl(ProjectQueryService projectQueryService,
                                        ProjectValidator projectValidator, ProjectRepository projectRepository,
-                                       StageValidator stageValidator,
-                                       StageWorkflow stageWorkflow,
-                                       StageWorkflowService stageWorkflowService) {
+                                       StageDomainService stageDomainService,
+                                       StageValidator stageValidator) {
         this.projectQueryService = projectQueryService;
         this.projectValidator = projectValidator;
         this.projectRepository = projectRepository;
+        this.stageDomainService = stageDomainService;
         this.stageValidator = stageValidator;
-        this.stageWorkflow = stageWorkflow;
-        this.stageWorkflowService = stageWorkflowService;
     }
 
     @Transactional
@@ -55,11 +46,8 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         LOG.debug("Creating Stage for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateCreateStageDto(stageDto);
-        Stage stage = StageDtoMapper.INSTANCE.stageCreateDtoToStage(stageDto, this.stageWorkflow);
         Project project = this.projectRepository.load(projectId);
-        project.addStage(stage);
-        this.stageWorkflowService
-                .changeStageStatusOnProject(project, stage.getId(), StageStatusTransition.CREATE_STAGE);
+        Stage stage = this.stageDomainService.createStage(project, stageDto);
         project = this.projectRepository.save(project);
         LOG.debug("Stage for Project with id {} created.", projectId);
         return StageDtoMapper.INSTANCE.stageDtoFromStage(stage);
@@ -85,8 +73,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
         this.stageValidator.validateUpdateStageDto(stageDto);
-        Stage stage = project.updateStage(stageId, stageDto.getName(), stageDto.getNote(), stageDto.getStageType(),
-                stageDto.getDeadline());
+        Stage stage = this.stageDomainService.updateStage(project, stageId, stageDto);
         this.projectRepository.save(project);
         LOG.debug("Stage updated.");
         return StageDtoMapper.INSTANCE.stageDtoFromStage(stage);
@@ -116,8 +103,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
-        this.stageWorkflowService
-                .changeStageStatusOnProject(project, stageId, StageStatusTransition.REJECT_FROM_IN_PROGRESS);
+        this.stageDomainService.rejectStage(project, stageId);
         this.projectRepository.save(project);
     }
 
@@ -128,18 +114,8 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
-        // TODO: change to call proper status transition on interface
-        StageStatus newStatus = this
-                .stageHasOnlyTasksInToDoStatus(stageId) ? StageStatus.TO_DO : StageStatus.IN_PROGRESS;
-        this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatusTransition.REOPEN);
+        this.stageDomainService.reopenStage(project, stageId);
         this.projectRepository.save(project);
     }
 
-    private boolean stageHasOnlyTasksInToDoStatus(Long stageId) {
-        Stage stage = this.projectQueryService.getStageById(stageId);
-        List<Task> allTasks = new ArrayList<>(stage.getTasks());
-        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.REJECTED));
-        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.TO_DO));
-        return allTasks.isEmpty();
-    }
 }

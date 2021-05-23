@@ -51,15 +51,11 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
     @Override
     public void changeTaskStatusOnProject(Project project, Long stageId, Long taskId, TaskStatus newStatus) {
         Task task = this.getTask(project, stageId, taskId);
-        /*
-        In case of newly created Task, there is no status transition. For avoiding nullPointerException
-        old status is set to TO_DO as well, as there is no status before.
-         */
-        TaskStatus oldStatus = task.getStatus() != null ? task.getStatus() : TaskStatus.TO_DO;
+        TaskStatus oldStatus = task.getStatus();
         TaskStatusTransition taskStatusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
         BaseValidator.assertNotNull(taskStatusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
                 ProjectExceptionCodes.TASK, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION),
-                oldStatus.getStatusName(), newStatus.getStatusName());
+                oldStatus != null ? oldStatus.getStatusName() : "null", newStatus.getStatusName());
         this.beforeStatusChange(project, task, stageId, taskStatusTransition);
         this.changeStatus(task, newStatus);
         this.afterStatusChange(project, stageId, taskStatusTransition);
@@ -98,8 +94,8 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
 
     private TaskStatusTransition getTransitionForStatuses(TaskStatus oldStatus, TaskStatus newStatus) {
         return Arrays.stream(TaskStatusTransition.values())
-                .filter(transition -> transition.getCurrentStatus().equals(oldStatus) && transition.getNextStatus()
-                        .equals(newStatus)).findFirst().orElse(null);
+                .filter(transition -> transition.getCurrentStatus() == oldStatus
+                        && transition.getNextStatus() == newStatus).findFirst().orElse(null);
     }
 
     private Task getTask(Project project, Long stageId, Long taskId) {

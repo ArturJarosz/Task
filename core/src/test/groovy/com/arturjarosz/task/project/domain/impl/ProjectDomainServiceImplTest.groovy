@@ -15,6 +15,7 @@ import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.project.utils.StageBuilder
 import com.arturjarosz.task.sharedkernel.utils.TestUtils
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -149,6 +150,7 @@ class ProjectDomainServiceImplTest extends Specification {
             1 * project.finishProject(_);
     }
 
+    @Ignore
     def "finishProject should call completeWork on projectStatusTransitionService"() {
         given:
             Project project = this.prepareProjectInProgressWithStatus();
@@ -159,6 +161,7 @@ class ProjectDomainServiceImplTest extends Specification {
             1 * projectStatusTransitionService.completeWork(_ as Project);
     }
 
+    @Ignore
     def "finishProject should changeProject status to Completed"() {
         given:
             Project project = this.prepareProjectInProgressWithStatus();
