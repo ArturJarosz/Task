@@ -3,14 +3,13 @@ package com.arturjarosz.task.project.application.impl
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.dto.StageDto
+import com.arturjarosz.task.project.domain.StageDomainService
 import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.StageType
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
-import com.arturjarosz.task.project.status.stage.StageStatusTransition
-import com.arturjarosz.task.project.status.stage.StageWorkflow
 import com.arturjarosz.task.project.status.stage.impl.StageWorkflowServiceImpl
 import com.arturjarosz.task.project.status.task.TaskStatus
 import com.arturjarosz.task.project.utils.ProjectBuilder
@@ -35,11 +34,11 @@ class StageApplicationServiceImplTest extends Specification {
     def projectValidator = Mock(ProjectValidator);
     def projectRepository = Mock(ProjectRepositoryImpl);
     def stageValidator = Mock(StageValidator);
-    def stageWorkflow = Mock(StageWorkflow);
+    def stageDomainService = Mock(StageDomainService);
     def stageWorkflowService = Mock(StageWorkflowServiceImpl);
 
     def stageApplicationService = new StageApplicationServiceImpl(projectQueryService, projectValidator,
-            projectRepository, stageValidator, stageWorkflow, stageWorkflowService);
+            projectRepository, stageDomainService, stageValidator);
 
     def "createStage should call validateProjectExistence on projectValidator"() {
         given:
@@ -70,16 +69,14 @@ class StageApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProject();
     }
 
-    def "createStage should add stage to project"() {
+    def "createStage should call createStage on stageDomainService"() {
         given:
             this.mockProjectRepositoryLoad();
             StageDto stageDto = new StageDto();
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto);
         then:
-            1 * this.projectRepository.save({
-                Project project -> project.getStages().size() == 1;
-            })
+            1 * this.stageDomainService.createStage(_ as Project, _ as StageDto);
     }
 
     def "createStage should save project with repository"() {
@@ -190,21 +187,14 @@ class StageApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.save(_ as Project);
     }
 
-    def "updateStage should update data on stage"() {
+    def "updateStage should call updateStage on stageDomainService"() {
         given:
             this.mockProjectRepositoryLoadProjectWithStage();
             StageDto stageDto = this.prepareStageDtoForUpdate();
         when:
             this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto);
         then:
-            1 * this.projectRepository.save({
-                Project project ->
-                    Stage stage = project.getStages().iterator().next();
-                    stage.getName() == NEW_STAGE_NAME;
-                    stage.getNote() == NEW_STAGE_NOTE;
-                    stage.getStageType() == NEW_STAGE_TYPE;
-                    stage.getDeadline() == NEW_DEADLINE_DATE;
-            });
+            1 * this.stageDomainService.updateStage(_ as Project, STAGE_ID, _ as StageDto);
     }
 
     def "getStage should call validateProjectExistence on projectValidator"() {
@@ -280,14 +270,13 @@ class StageApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.load(PROJECT_WITH_STAGE_ID) >> this.prepareProjectWithStage();
     }
 
-    def "rejectStage should call changeStageStatusOnProject on stageWorkflowService with REJECT_FROM_IN_PROGRESS"() {
+    def "rejectStage should call rejectStage on stageDomainService"() {
         given:
             this.mockProjectRepositoryLoadProjectWithStage();
         when:
             this.stageApplicationService.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID);
         then:
-            1 * this.stageWorkflowService.
-                    changeStageStatusOnProject(_ as Project, STAGE_ID, StageStatusTransition.REJECT_FROM_IN_PROGRESS);
+            1 * this.stageDomainService.rejectStage(_ as Project, STAGE_ID);
     }
 
     def "rejectStage should save project with save method on projectRepository"() {
@@ -327,29 +316,14 @@ class StageApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.load(PROJECT_WITH_STAGE_ID) >> this.prepareProjectWithStage();
     }
 
-    def "reopenStage should call changeStageStatusOnProject with TO_DO when stage has tasks only in TO_DO"() {
+    def "reopenStage should call reopenStage on stageDomainService"() {
         given:
-            //TODO: fix test
             this.mockProjectQueryServiceGetStageByIdWithTasks();
             this.mockProjectRepositoryLoadProjectWithStage();
         when:
             this.stageApplicationService.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID);
         then:
-            1 * this.stageWorkflowService.
-                    changeStageStatusOnProject(_ as Project, STAGE_WITH_TASKS_IN_TODO_ID, StageStatusTransition.REOPEN)
-    }
-
-    def "reopenStage should call changeStageStatusOnProject with IN_PROGRESS on stage has tasks in different statuses"() {
-        given:
-            //TODO: fix test
-            this.mockProjectQueryServiceGetStageByIdWithTasks();
-            this.mockProjectRepositoryLoadProjectWithStage();
-        when:
-            this.stageApplicationService.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_DIFFERENT_STATUSES);
-        then:
-            1 * this.stageWorkflowService.
-                    changeStageStatusOnProject(_ as Project, STAGE_WITH_TASKS_IN_DIFFERENT_STATUSES,
-                            StageStatusTransition.REOPEN);
+            1 * this.stageDomainService.reopenStage(_ as Project, STAGE_WITH_TASKS_IN_TODO_ID)
     }
 
     def "reopenStage should save project with projectRepository"() {

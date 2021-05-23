@@ -56,16 +56,17 @@ public interface ProjectApplicationService {
      * @param projectId
      * @param projectContractDto
      */
-    void signProjectContract(Long projectId, ProjectContractDto projectContractDto);
+    ProjectDto signProjectContract(Long projectId, ProjectContractDto projectContractDto);
 
     /**
      * Finishes {@link com.arturjarosz.task.project.model.Project}.
      *
      * @param projectId
      * @param projectContractDto
+     * @return
      */
-    void finishProject(Long projectId,
-                       ProjectContractDto projectContractDto);
+    ProjectDto finishProject(Long projectId,
+                             ProjectContractDto projectContractDto);
 
     /**
      * Loads list of all Projects Data.
@@ -78,21 +79,24 @@ public interface ProjectApplicationService {
      * Set Project with projectId as rejected. If Project does not exist, new exception will be thrown.
      *
      * @param projectId
+     * @return
      */
-    void rejectProject(Long projectId);
+    ProjectDto rejectProject(Long projectId);
 
     /**
      * Reopens once rejected project.
      *
      * @param projectId
+     * @return
      */
-    void reopenProject(Long projectId);
+    ProjectDto reopenProject(Long projectId);
 
     /**
      * Make new offer to Project for value in offerDto.
      *
      * @param projectId
      * @param offerDto
+     * @return
      */
-    void makeNewOffer(Long projectId, OfferDto offerDto);
+    ProjectDto makeNewOffer(Long projectId, OfferDto offerDto);
 }

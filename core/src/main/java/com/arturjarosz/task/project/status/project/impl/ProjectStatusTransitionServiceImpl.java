@@ -4,7 +4,6 @@ import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
-import com.arturjarosz.task.project.status.project.ProjectStatusTransition;
 import com.arturjarosz.task.project.status.project.ProjectStatusTransitionService;
 import com.arturjarosz.task.project.status.project.ProjectWorkflowService;
 import com.arturjarosz.task.project.status.stage.StageStatus;
@@ -30,73 +29,73 @@ public class ProjectStatusTransitionServiceImpl implements ProjectStatusTransiti
 
     @Override
     public void create(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.CREATE_PROJECT);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.OFFER);
     }
 
     @Override
     public void rejectOffer(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.OFFER_REJECTED);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.REJECTED);
     }
 
     @Override
     public void acceptOffer(Project project) {
-
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.OFFER_ACCEPTED);
+        this.assertProjectInOfferBeforeSigning(project);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.TO_DO);
     }
 
     @Override
     public void makeNewOffer(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.NEW_OFFER);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.OFFER);
     }
 
     @Override
     public void reopenRejected(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.RESUME_WORK);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.TO_DO);
     }
 
     @Override
     public void resumeRejected(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.RESUME_WORK);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.IN_PROGRESS);
     }
 
     @Override
     public void rejectFromSigned(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.REJECTED_FROM_SIGNED);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.REJECTED);
     }
 
     @Override
     public void startProgress(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.START_PROGRESS);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.IN_PROGRESS);
     }
 
     @Override
     public void backToToDo(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.BACK_TO_TO_DO);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.TO_DO);
     }
 
     @Override
     public void rejectFromProgress(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.REJECT_FROM_PROGRESS);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.REJECTED);
     }
 
     @Override
     public void completeWork(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.COMPLETE_WORK);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.COMPLETED);
     }
 
     @Override
     public void backToProgress(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.BACK_TO_PROGRESS);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.IN_PROGRESS);
     }
 
     @Override
     public void projectPaid(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.PROJECT_PAID);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.DONE);
     }
 
     @Override
     public void reopenCompleted(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatusTransition.REOPEN_TO_PROGRESS);
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.IN_PROGRESS);
     }
 
     @Override
@@ -141,7 +140,7 @@ public class ProjectStatusTransitionServiceImpl implements ProjectStatusTransiti
                         ProjectExceptionCodes.REOPEN), project.getStatus());
     }
 
-    private void assertProjectInOffer(Project project) {
+    private void assertProjectInOfferBeforeSigning(Project project) {
         BaseValidator.assertIsTrue(project.getStatus().equals(ProjectStatus.OFFER),
                 createMessageCode(ExceptionCodes.NOT_VALID,
                         ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS,

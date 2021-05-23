@@ -50,6 +50,7 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
         LocalDate signingDate = projectContractDto.getSigningDate();
         LocalDate startDate = projectContractDto.getStartDate();
         LocalDate deadline = projectContractDto.getDeadline();
+        this.projectDataValidator.allDatesPresent(signingDate, startDate, deadline);
         //signing date can't be future date
         this.projectDataValidator.signingDateNotInFuture(signingDate);
         //start date can't be before signing date
@@ -67,10 +68,12 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
         if (endDate == null) {
             endDate = LocalDate.now();
         }
+        this.projectDataValidator.startDatePresent(project.getStartDate());
         //end date can't be before start date
         this.projectDataValidator.endDateNotBeforeStartDate(project.getStartDate(), endDate);
         project.finishProject(endDate);
-        this.projectStatusTransitionService.completeWork(project);
+        // TODO: what does it mean to finish project ? is there a need to have action for that ?
+        //this.projectStatusTransitionService.completeWork(project);
         return project;
     }
 

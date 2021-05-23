@@ -3,7 +3,7 @@ package com.arturjarosz.task.project.status.task.listener.impl;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
-import com.arturjarosz.task.project.status.stage.StageStatusTransition;
+import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.project.status.stage.StageWorkflowService;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.project.status.task.TaskStatusTransition;
@@ -35,9 +35,9 @@ public class TaskRejectFromProgressListener implements TaskStatusTransitionListe
         go back to To Do.
          */
         if (this.hasStatusesOnlyInRejectedAndToDo(stage)) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatusTransition.BACK_TO_TO_DO);
+            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.TO_DO);
         } else if (this.hasStatusesOnlyInRejectedAndCompleted(stage)) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatusTransition.COMPLETE_WORK);
+            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.COMPLETED);
         }
     }
 

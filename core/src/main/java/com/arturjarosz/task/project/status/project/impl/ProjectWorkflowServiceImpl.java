@@ -1,13 +1,17 @@
 package com.arturjarosz.task.project.status.project.impl;
 
+import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectStatusTransition;
 import com.arturjarosz.task.project.status.project.ProjectWorkflowService;
 import com.arturjarosz.task.project.status.project.validator.ProjectStatusTransitionValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
+import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +33,12 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
     }
 
     @Override
-    public void changeProjectStatus(Project project, ProjectStatusTransition statusTransition) {
-        ProjectStatus newStatus = statusTransition.getNextStatus();
+    public void changeProjectStatus(Project project, ProjectStatus newStatus) {
+        ProjectStatus oldStatus = project.getStatus();
+        ProjectStatusTransition statusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
+        BaseValidator.assertNotNull(statusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION),
+                oldStatus != null ? oldStatus.getStatusName() : "null", newStatus.getStatusName());
         this.beforeStatusChange(project, statusTransition);
         this.changeStatus(project, newStatus);
         this.afterStatusChange(project, statusTransition);
@@ -50,6 +58,13 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
     @Override
     public void afterStatusChange(Project project, ProjectStatusTransition statusTransition) {
         //TODO: run Project listeners
+    }
+
+    private ProjectStatusTransition getTransitionForStatuses(ProjectStatus oldStatus, ProjectStatus newStatus) {
+        return Arrays.stream(ProjectStatusTransition.values())
+                .filter(transition -> transition.getCurrentStatus() == oldStatus &&
+                        transition.getNextStatus() == newStatus)
+                .findFirst().orElse(null);
     }
 
     private List<ProjectStatusTransitionValidator> getStatusTransitionValidators(

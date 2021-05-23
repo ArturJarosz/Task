@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @Component
@@ -14,6 +15,20 @@ public class ProjectDataValidator {
     public static final String VALIDATED_OBJECT = "project";
 
     public ProjectDataValidator() {
+    }
+
+    public void allDatesPresent(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
+        assertNotNull(signingDate,
+                createMessageCode(ExceptionCodes.NULL, VALIDATED_OBJECT, ProjectExceptionCodes.SIGNING_DATE));
+        assertNotNull(startDate,
+                createMessageCode(ExceptionCodes.NULL, VALIDATED_OBJECT, ProjectExceptionCodes.START_DATE));
+        assertNotNull(deadline,
+                createMessageCode(ExceptionCodes.NULL, VALIDATED_OBJECT, ProjectExceptionCodes.DEADLINE));
+    }
+
+    public void startDatePresent(LocalDate startDate) {
+        assertNotNull(startDate,
+                createMessageCode(ExceptionCodes.NULL, VALIDATED_OBJECT, ProjectExceptionCodes.START_DATE));
     }
 
     public void signingDateNotInFuture(LocalDate signingDate) {

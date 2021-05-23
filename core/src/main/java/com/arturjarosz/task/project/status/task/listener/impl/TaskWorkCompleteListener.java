@@ -4,7 +4,6 @@ import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.status.stage.StageStatus;
-import com.arturjarosz.task.project.status.stage.StageStatusTransition;
 import com.arturjarosz.task.project.status.stage.StageWorkflowService;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.project.status.task.TaskStatusTransition;
@@ -33,7 +32,7 @@ public class TaskWorkCompleteListener implements TaskStatusTransitionListener {
         assert stage != null;
         if (stage.getStatus().equals(StageStatus.IN_PROGRESS) && this
                 .hasTasksOnlyInRejectedAndCompletedStatuses(stage)) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatusTransition.COMPLETE_WORK);
+            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.COMPLETED);
         }
     }
 

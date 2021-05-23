@@ -47,8 +47,7 @@ public class ProjectRestController {
     @PutMapping("{projectId}")
     public ResponseEntity<ProjectDto> updateProject(@PathVariable("projectId") Long projectId,
                                                     @RequestBody ProjectDto projectDto) {
-        this.projectApplicationService.updateProject(projectId, projectDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(this.projectApplicationService.updateProject(projectId, projectDto), HttpStatus.OK);
     }
 
     @DeleteMapping("{projectId}")
@@ -58,17 +57,17 @@ public class ProjectRestController {
     }
 
     @PostMapping("{projectId}/sign")
-    public ResponseEntity<Void> signProjectContract(@PathVariable("projectId") Long projectId, @RequestBody
+    public ResponseEntity<ProjectDto> signProjectContract(@PathVariable("projectId") Long projectId, @RequestBody
             ProjectContractDto projectContractDto) {
-        this.projectApplicationService.signProjectContract(projectId, projectContractDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(this.projectApplicationService.signProjectContract(projectId, projectContractDto),
+                HttpStatus.OK);
     }
 
     @PostMapping("{projectId}/finish")
-    public ResponseEntity<Void> finishProject(@PathVariable("projectId") Long projectId, @RequestBody
+    public ResponseEntity<ProjectDto> finishProject(@PathVariable("projectId") Long projectId, @RequestBody
             ProjectContractDto projectContractDto) {
-        this.projectApplicationService.finishProject(projectId, projectContractDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(this.projectApplicationService.finishProject(projectId, projectContractDto),
+                HttpStatus.OK);
     }
 
     @GetMapping("")
@@ -77,21 +76,18 @@ public class ProjectRestController {
     }
 
     @PostMapping("{projectId}/reject")
-    public ResponseEntity<Void> rejectProject(@PathVariable("projectId") Long projectId) {
-        this.projectApplicationService.rejectProject(projectId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ProjectDto> rejectProject(@PathVariable("projectId") Long projectId) {
+        return new ResponseEntity<>(this.projectApplicationService.rejectProject(projectId), HttpStatus.OK);
     }
 
     @PostMapping("{projectId}/reopen")
-    public ResponseEntity<Void> reopenProject(@PathVariable("projectId") Long projectId) {
-        this.projectApplicationService.reopenProject(projectId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ProjectDto> reopenProject(@PathVariable("projectId") Long projectId) {
+        return new ResponseEntity<>(this.projectApplicationService.reopenProject(projectId), HttpStatus.OK);
     }
 
     @PostMapping("{projectId}/newOffer")
-    public ResponseEntity<Void> makeNewOffer(@PathVariable("projectId") Long projectId,
-                                             @RequestBody OfferDto offerDto) {
-        this.projectApplicationService.makeNewOffer(projectId, offerDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ProjectDto> makeNewOffer(@PathVariable("projectId") Long projectId,
+                                                   @RequestBody OfferDto offerDto) {
+        return new ResponseEntity<>(this.projectApplicationService.makeNewOffer(projectId, offerDto), HttpStatus.OK);
     }
 }

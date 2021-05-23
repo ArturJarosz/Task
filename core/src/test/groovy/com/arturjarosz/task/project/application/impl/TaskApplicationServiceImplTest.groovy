@@ -10,6 +10,7 @@ import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.model.TaskType
+import com.arturjarosz.task.project.model.dto.TaskInnerDto
 import com.arturjarosz.task.project.query.ProjectQueryService
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.task.TaskStatus
@@ -39,7 +40,7 @@ class TaskApplicationServiceImplTest extends Specification {
     private taskValidator = Mock(TaskValidator);
 
     def taskApplicationService = new TaskApplicationServiceImpl(projectQueryService, projectRepository,
-            projectValidator, stageValidator, taskDomainService, taskWorkflowService, taskValidator);
+            projectValidator, stageValidator, taskDomainService, taskValidator);
 
     def "createTask should call validateProjectExistence on ProjectValidator"() {
         given:
@@ -96,7 +97,7 @@ class TaskApplicationServiceImplTest extends Specification {
             1 * this.taskDomainService.createTask(_ as Project, STAGE_ID, _ as TaskDto) >> this.prepareNewTask();
     }
 
-    def "createTask should add task to project"() {
+    def "createTask should call createTask on taskDomainService"() {
         given:
             TaskDto taskDto = this.prepareNewTaskDto();
             this.mockProjectRepositoryLoad();
@@ -104,21 +105,7 @@ class TaskApplicationServiceImplTest extends Specification {
         when:
             this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
         then:
-            1 * this.projectRepository.save({
-                Project project ->
-                    project.getStages().iterator().next().getTasks().size() == 1;
-            }) >> Mock(Project);
-    }
-
-    def "createTask should call changeProjectStatus from taskWorkflowService"() {
-        given:
-            TaskDto taskDto = this.prepareNewTaskDto();
-            this.mockProjectRepositoryLoad();
-            this.mockTaskDomainServiceCreateTask();
-        when:
-            this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
-        then:
-            1 * this.taskWorkflowService.changeTaskStatusOnProject(_ as Project, STAGE_ID, TASK_ID, TaskStatus.TO_DO);
+            1 * this.taskDomainService.createTask(_ as Project, STAGE_ID, _ as TaskDto);
     }
 
     def "createTask should save project with save on ProjectRepository"() {
@@ -172,20 +159,14 @@ class TaskApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask();
     }
 
-    def "updateTask should update data on Task"() {
+    def "updateTask should call updateTask on taskDomainService"() {
         given:
             TaskDto taskDto = this.prepareUpdateTaskDto();
             this.mockProjectRepositoryLoadProjectWithStageAndTask();
         when:
             this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
         then:
-            1 * this.projectRepository.save({
-                Project project ->
-                    Stage stage = project.stages.iterator().next();
-                    Task task = stage.tasks.iterator().next();
-                    task.getName() == NEW_TASK_NAME;
-                    task.getNote() == NOTE;
-            });
+            1 * this.taskDomainService.updateTask(_ as Project, STAGE_ID, TASK_ID, _ as TaskInnerDto);
     }
 
     def "updateTask should save project with updated task on ProjectRepository"() {
@@ -238,14 +219,14 @@ class TaskApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask();
     }
 
-    def "updateStatus should call changeTaskStatusOnProject on taskWorkflowService"() {
+    def "updateStatus should call updateTaskStatus on taskDomainService"() {
         given:
             TaskDto taskDto = this.prepareUpdateStatusTaskDto();
             this.mockProjectRepositoryLoadProjectWithStageAndTask();
         when:
             this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto);
         then:
-            1 * this.taskWorkflowService.changeTaskStatusOnProject(_ as Project, STAGE_ID, TASK_ID, NEW_TASK_STATUS);
+            1 * this.taskDomainService.updateTaskStatus(_ as Project, STAGE_ID, TASK_ID, _ as TaskStatus);
     }
 
     def "updateStatus should save project on projectRepository"() {
@@ -367,14 +348,13 @@ class TaskApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask();
     }
 
-    def "rejectTask should call changeTaskStatusOnProject on taskWorkflowService"() {
+    def "rejectTask should call rejectTask on taskDomainService"() {
         given:
             this.mockProjectRepositoryLoadProjectWithStageAndTask();
         when:
             this.taskApplicationService.rejectTask(PROJECT_ID, STAGE_ID, TASK_ID);
         then:
-            1 * this.taskWorkflowService.changeTaskStatusOnProject(_ as Project, STAGE_ID, TASK_ID, TaskStatus
-                    .REJECTED);
+            1 * this.taskDomainService.rejectTask(_ as Project, STAGE_ID, TASK_ID);
     }
 
     def "rejectTask should save project on projectRepository"() {
@@ -422,13 +402,13 @@ class TaskApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask();
     }
 
-    def "reopenTask should call changeTaskStatusOnProject on taskWorkflowService"() {
+    def "reopenTask should call reopenTask on taskDomainService"() {
         given:
             this.mockProjectRepositoryLoadProjectWithStageAndTask();
         when:
             this.taskApplicationService.reopenTask(PROJECT_ID, STAGE_ID, TASK_ID);
         then:
-            1 * this.taskWorkflowService.changeTaskStatusOnProject(_ as Project, STAGE_ID, TASK_ID, TaskStatus.TO_DO);
+            1 * this.taskDomainService.reopenTask(_ as Project, STAGE_ID, TASK_ID);
     }
 
     def "reopenTask should save project on projectRepository"() {

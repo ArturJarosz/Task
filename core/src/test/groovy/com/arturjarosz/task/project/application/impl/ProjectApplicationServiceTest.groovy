@@ -508,6 +508,7 @@ class ProjectApplicationServiceTest extends Specification {
                 .withId(EXISTING_PROJECT_ID)
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
+                .withOfferValue(OFFER_VALUE)
                 .withStatus(ProjectStatus.OFFER)
                 .build();
     }
@@ -520,6 +521,7 @@ class ProjectApplicationServiceTest extends Specification {
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
                 .withStatus(ProjectStatus.OFFER)
+                .withOfferValue(OFFER_VALUE)
                 .build();
     }
 

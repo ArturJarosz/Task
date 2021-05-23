@@ -4,7 +4,7 @@ import com.arturjarosz.task.sharedkernel.status.StatusTransition;
 
 public enum TaskStatusTransition implements StatusTransition<TaskStatus> {
     // creating Task has no transition of Status
-    CREATE_TASK(TaskStatus.TO_DO, TaskStatus.TO_DO),
+    CREATE_TASK(null, TaskStatus.TO_DO),
     // from TO_DO
     START_PROGRESS(TaskStatus.TO_DO, TaskStatus.IN_PROGRESS),
     REJECT_FROM_TO_DO(TaskStatus.TO_DO, TaskStatus.REJECTED),

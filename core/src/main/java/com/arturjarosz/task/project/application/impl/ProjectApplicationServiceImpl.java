@@ -103,7 +103,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
     @Transactional
     @Override
-    public void signProjectContract(Long projectId, ProjectContractDto projectContractDto) {
+    public ProjectDto signProjectContract(Long projectId, ProjectContractDto projectContractDto) {
         LOG.debug("Signing Project with id {}", projectId);
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
@@ -111,11 +111,12 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectDomainService.signProjectContract(project, projectContractDto);
         project = this.projectRepository.save(project);
         LOG.debug("Project with id {} signed.", projectId);
+        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
     }
 
     @Transactional
     @Override
-    public void finishProject(Long projectId, ProjectContractDto projectContractDto) {
+    public ProjectDto finishProject(Long projectId, ProjectContractDto projectContractDto) {
         LOG.debug("Finishing Project with id {}.", projectId);
         //TODO: TA-62 update conditions on what project can be ended
         Project project = this.projectRepository.load(projectId);
@@ -123,6 +124,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectDomainService.finishProject(project, projectContractDto.getEndDate());
         this.projectRepository.save(project);
         LOG.debug("Project with id {} is finished.", projectId);
+        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
     }
 
     @Override
@@ -138,32 +140,35 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
     @Transactional
     @Override
-    public void rejectProject(Long projectId) {
+    public ProjectDto rejectProject(Long projectId) {
         LOG.debug("Rejecting Project with id {}.", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
         project = this.projectDomainService.rejectProject(project);
         this.projectRepository.save(project);
+        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
     }
 
     @Transactional
     @Override
-    public void reopenProject(Long projectId) {
+    public ProjectDto reopenProject(Long projectId) {
         LOG.debug("Reopening Project with id {}.", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
         project = this.projectDomainService.reopenProject(project);
         this.projectRepository.save(project);
+        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
     }
 
     @Transactional
     @Override
-    public void makeNewOffer(Long projectId, OfferDto offerDto) {
+    public ProjectDto makeNewOffer(Long projectId, OfferDto offerDto) {
         LOG.debug("Submitting a nwe offer for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
         project = this.projectDomainService.makeNewOffer(project, offerDto);
         this.projectRepository.save(project);
         LOG.debug("Offer for project ");
+        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
     }
 }

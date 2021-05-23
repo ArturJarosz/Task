@@ -11,7 +11,7 @@ public interface ProjectWorkflowService extends WorkflowService<ProjectStatus, P
      * @param project
      * @param statusTransition
      */
-    void changeProjectStatus(Project project, ProjectStatusTransition statusTransition);
+    void changeProjectStatus(Project project, ProjectStatus newStatus);
 
     void beforeStatusChange(Project project, ProjectStatusTransition statusTransition);
 
