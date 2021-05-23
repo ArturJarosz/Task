@@ -4,6 +4,8 @@ import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
+import com.arturjarosz.task.project.status.project.ProjectStatus;
+import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.project.status.task.TaskStatusTransition;
 import com.arturjarosz.task.project.status.task.TaskWorkflowService;
@@ -21,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @DomainService
 public class TaskWorkflowServiceImpl implements TaskWorkflowService {
@@ -50,6 +55,9 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
 
     @Override
     public void changeTaskStatusOnProject(Project project, Long stageId, Long taskId, TaskStatus newStatus) {
+        this.assertProjectNotInRejected(project);
+        this.assertProjectNotInDone(project);
+        this.assertStageNotInRejected(project, stageId);
         Task task = this.getTask(project, stageId, taskId);
         TaskStatus oldStatus = task.getStatus();
         TaskStatusTransition taskStatusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
@@ -108,5 +116,32 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
                 .flatMap(stage -> stage.getTasks().stream())
                 .filter(taskPredicate)
                 .findFirst().orElse(null);
+    }
+
+    private void assertProjectNotInRejected(Project project) {
+        Predicate<Project> projectPredicate = projectToCheck ->
+                projectToCheck.getStatus() != (ProjectStatus.REJECTED);
+        assertIsTrue(projectPredicate.test(project), BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.REJECTED,
+                ProjectExceptionCodes.TASK, ProjectExceptionCodes.CHANGE, ProjectExceptionCodes.STATUS));
+    }
+
+    private void assertProjectNotInDone(Project project) {
+        Predicate<Project> projectPredicate = projectToCheck ->
+                projectToCheck.getStatus() != (ProjectStatus.DONE);
+        assertIsTrue(projectPredicate.test(project), createMessageCode(ExceptionCodes.NOT_VALID,
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.DONE,
+                ProjectExceptionCodes.TASK, ProjectExceptionCodes.CHANGE, ProjectExceptionCodes.STATUS));
+    }
+
+    private void assertStageNotInRejected(Project project, Long stageId) {
+        Predicate<Stage> stagePredicate = stageToCheck -> stageToCheck.getStatus() != StageStatus.REJECTED;
+        Stage stage = project.getStages().stream().filter(stageOnProject -> stageOnProject.getId().equals(stageId))
+                .findFirst()
+                .orElse(null);
+        assertIsTrue(stagePredicate.test(stage),
+                createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.STATUS,
+                        ProjectExceptionCodes.REJECTED, ProjectExceptionCodes.TASK, ProjectExceptionCodes.CHANGE,
+                        ProjectExceptionCodes.STATUS));
     }
 }

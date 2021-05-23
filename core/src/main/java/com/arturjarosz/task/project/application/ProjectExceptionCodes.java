@@ -34,10 +34,14 @@ public class ProjectExceptionCodes {
     public static final String TRANSITION = "transition";
 
     public static final String CREATE = "create";
+    public static final String CHANGE = "change";
     public static final String REOPEN = "reopen";
     public static final String SIGN = "sign";
     public static final String START_PROGRESS = "startProgress";
     public static final String UPDATE = "update";
+
+    public static final String DONE = "done";
+    public static final String REJECTED = "rejected";
 
     private ProjectExceptionCodes() {
         throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
