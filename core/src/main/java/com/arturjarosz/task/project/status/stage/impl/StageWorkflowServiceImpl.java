@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.status.stage.impl;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.project.status.stage.StageStatusTransition;
 import com.arturjarosz.task.project.status.stage.StageWorkflowService;
@@ -20,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 
 @ApplicationService
 public class StageWorkflowServiceImpl implements StageWorkflowService {
@@ -49,6 +52,7 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
 
     @Override
     public void changeStageStatusOnProject(Project project, Long stageId, StageStatus newStatus) {
+        this.assertProjectNotInRejected(project);
         Stage stage = this.getStage(project, stageId);
         StageStatus oldStatus = stage.getStatus();
         StageStatusTransition statusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
@@ -102,5 +106,14 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
         return project.getStages().stream()
                 .filter(stagePredicate)
                 .findFirst().orElse(null);
+    }
+
+    private void assertProjectNotInRejected(Project project) {
+        Predicate<Project> projectPredicate = projectToCheck ->
+                !projectToCheck.getStatus().equals(ProjectStatus.REJECTED)
+                        && !projectToCheck.getStatus().equals(ProjectStatus.DONE);
+        assertIsTrue(projectPredicate.test(project), BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TASK,
+                ProjectExceptionCodes.CREATE), project.getStatus());
     }
 }
