@@ -16,7 +16,23 @@ public interface TaskWorkflowService extends WorkflowService<TaskStatus, Task> {
      */
     void changeTaskStatusOnProject(Project project, Long stageId, Long taskId, TaskStatus newStatus);
 
+    /**
+     * Method contains logic that should be executed before status transition is executed, such as validators.
+     *
+     * @param project
+     * @param task
+     * @param stageId
+     * @param statusTransition
+     */
     void beforeStatusChange(Project project, Task task, Long stageId, TaskStatusTransition statusTransition);
 
+    /**
+     * Contains logic that should be executed after successful execution of status transition, like listeners
+     * or loggers.
+     *
+     * @param project
+     * @param stageId
+     * @param statusTransition
+     */
     void afterStatusChange(Project project, Long stageId, TaskStatusTransition statusTransition);
 }
