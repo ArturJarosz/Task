@@ -68,4 +68,12 @@ public interface ProjectDomainService {
      * @return
      */
     Project makeNewOffer(Project project, OfferDto offerDto);
+
+    /**
+     * Accept offer for project. This allows to start work on Project.
+     *
+     * @param project
+     * @return
+     */
+    Project acceptOffer(Project project);
 }

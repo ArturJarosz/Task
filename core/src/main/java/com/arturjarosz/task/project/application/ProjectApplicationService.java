@@ -56,7 +56,7 @@ public interface ProjectApplicationService {
      * @param projectId
      * @param projectContractDto
      */
-    void signProjectContract(Long projectId, ProjectContractDto projectContractDto);
+    ProjectDto signProjectContract(Long projectId, ProjectContractDto projectContractDto);
 
     /**
      * Finishes {@link com.arturjarosz.task.project.model.Project}.
@@ -94,5 +94,12 @@ public interface ProjectApplicationService {
      * @param projectId
      * @param offerDto
      */
-    void makeNewOffer(Long projectId, OfferDto offerDto);
+    ProjectDto makeNewOffer(Long projectId, OfferDto offerDto);
+
+    /**
+     * Mark offer of Project with projectId as accepted and
+     *
+     * @param projectId
+     */
+    ProjectDto acceptOffer(Long projectId);
 }

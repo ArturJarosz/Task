@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="liquibase" id="create-arrangement-table">
+        <createTable tableName="ARRANGEMENT">
+            <column name="ID" type="${long.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_OFFER_ACCEPTED" type="BOOLEAN"/>
+            <column name="SIGNING_DATE" type="${date.type}"/>
+            <column name="ARRANGEMENT_TYPE" type="VARCHAR2(35 ${char.unit})">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UUID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <sql splitStatements="false">
+            alter table ARRANGEMENT add constraint OFFER_OR_CONTRACT_DATA_NOT_NULL
+            check(
+            ((ARRANGEMENT_TYPE = 'OFFER') AND (IS_OFFER_ACCEPTED is NOT NULL)) or
+            ((ARRANGEMENT_TYPE = 'CONTRACT') AND (SIGNING_DATE is NOT NULL) AND (DEADLINE is NOT NULL))
+            )
+        </sql>
+        <addPrimaryKey tableName="ARRANGEMENT" columnNames="ID" constraintName="PK_ARRANGEMENT"/>
+    </changeSet>
+</databaseChangeLog>

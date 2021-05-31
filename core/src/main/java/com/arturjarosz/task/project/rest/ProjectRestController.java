@@ -58,10 +58,10 @@ public class ProjectRestController {
     }
 
     @PostMapping("{projectId}/sign")
-    public ResponseEntity<Void> signProjectContract(@PathVariable("projectId") Long projectId, @RequestBody
+    public ResponseEntity<ProjectDto> signProjectContract(@PathVariable("projectId") Long projectId, @RequestBody
             ProjectContractDto projectContractDto) {
-        this.projectApplicationService.signProjectContract(projectId, projectContractDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(this.projectApplicationService.signProjectContract(projectId, projectContractDto),
+                HttpStatus.OK);
     }
 
     @PostMapping("{projectId}/finish")
@@ -69,6 +69,11 @@ public class ProjectRestController {
             ProjectContractDto projectContractDto) {
         this.projectApplicationService.finishProject(projectId, projectContractDto);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("{projectId}/acceptOffer")
+    public ResponseEntity<ProjectDto> acceptOffer(@PathVariable("projectId") Long projectId) {
+        return new ResponseEntity<>(this.projectApplicationService.acceptOffer(projectId), HttpStatus.OK);
     }
 
     @GetMapping("")
@@ -89,9 +94,8 @@ public class ProjectRestController {
     }
 
     @PostMapping("{projectId}/newOffer")
-    public ResponseEntity<Void> makeNewOffer(@PathVariable("projectId") Long projectId,
-                                             @RequestBody OfferDto offerDto) {
-        this.projectApplicationService.makeNewOffer(projectId, offerDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ProjectDto> makeNewOffer(@PathVariable("projectId") Long projectId,
+                                                   @RequestBody OfferDto offerDto) {
+        return new ResponseEntity<>(this.projectApplicationService.makeNewOffer(projectId, offerDto), HttpStatus.OK);
     }
 }

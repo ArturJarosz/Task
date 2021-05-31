@@ -1,5 +1,7 @@
 package com.arturjarosz.task.project.utils;
 
+import com.arturjarosz.task.project.model.Contract;
+import com.arturjarosz.task.project.model.Offer;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
@@ -13,6 +15,7 @@ import java.util.Set;
 public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
 
     private static final String ARCHITECT_ID = "architectId";
+    private static final String ARRANGEMENT = "arrangement";
     private static final String CLIENT_ID = "clientId";
     private static final String DEADLINE = "deadline";
     private static final String END_DATE = "endDate";
@@ -80,13 +83,13 @@ public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
         return this;
     }
 
-    public ProjectBuilder withDeadline(LocalDate deadline) {
-        TestUtils.setFieldForObject(this.object, DEADLINE, deadline);
+    public ProjectBuilder withOffer(Offer offer) {
+        TestUtils.setFieldForObject(this.object, ARRANGEMENT, offer);
         return this;
     }
 
-    public ProjectBuilder withSigningDate(LocalDate signingDate) {
-        TestUtils.setFieldForObject(this.object, SIGNING_DATE, signingDate);
+    public ProjectBuilder withContract(Contract contract) {
+        TestUtils.setFieldForObject(this.object, ARRANGEMENT, contract);
         return this;
     }
 }

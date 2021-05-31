@@ -59,8 +59,10 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
         this.projectDataValidator.startDateNotBeforeSigningDate(startDate, signingDate);
         //deadline can't be before start date
         this.projectDataValidator.deadlineNotBeforeStartDate(startDate, deadline);
+        if (!project.isOfferAccepted()) {
+            project = this.acceptOffer(project);
+        }
         project.signContract(signingDate, startDate, deadline);
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.TO_DO);
         return project;
     }
 
@@ -104,6 +106,13 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
     public Project makeNewOffer(Project project, OfferDto offerDto) {
         project.makeNewOffer(offerDto.getOfferValue());
         this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.OFFER);
+        return project;
+    }
+
+    @Override
+    public Project acceptOffer(Project project) {
+        project.acceptOffer();
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.TO_DO);
         return project;
     }
 }
