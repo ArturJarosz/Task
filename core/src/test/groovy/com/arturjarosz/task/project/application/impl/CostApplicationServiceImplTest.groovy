@@ -248,13 +248,13 @@ class CostApplicationServiceImplTest extends Specification {
     }
 
     private Project prepareProjectWithNoCosts() {
-        Project project = new Project(OFFER_VALUE, PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
+        Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
                 PROJECT_WORKFLOW); ;
         return project;
     }
 
     private Project prepareProjectWithCost() {
-        Project project = new Project(OFFER_VALUE, PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
+        Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
                 PROJECT_WORKFLOW); ;
         def cost = new Cost(NAME, new Money(VALUE), CostCategory.FUEL, DATE, NOTE);
         TestUtils.setFieldForObject(cost, "id", COST_ID);

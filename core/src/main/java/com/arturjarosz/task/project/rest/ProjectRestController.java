@@ -70,6 +70,11 @@ public class ProjectRestController {
                 HttpStatus.OK);
     }
 
+    @PostMapping("{projectId}/acceptOffer")
+    public ResponseEntity<ProjectDto> acceptOffer(@PathVariable("projectId") Long projectId) {
+        return new ResponseEntity<>(this.projectApplicationService.acceptOffer(projectId), HttpStatus.OK);
+    }
+
     @GetMapping("")
     public ResponseEntity<List<ProjectDto>> getProjects() {
         return new ResponseEntity<>(this.projectApplicationService.getProjects(), HttpStatus.OK);

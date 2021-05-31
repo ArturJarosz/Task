@@ -5,6 +5,7 @@ import com.arturjarosz.task.project.application.dto.ProjectContractDto
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
 import com.arturjarosz.task.project.application.dto.ProjectDto
 import com.arturjarosz.task.project.domain.ProjectDataValidator
+import com.arturjarosz.task.project.model.Offer
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.model.Stage
@@ -25,9 +26,9 @@ class ProjectDomainServiceImplTest extends Specification {
     private static final String NEW_NAME = "newProjectName";
     private static final String NEW_NOTE = "newNote";
     private static final String STAGE_NAME = "stageName";
-    private static final Double OFFER_VALUE = 5000.0;
     private static final Long ARCHITECT_ID = 100L;
     private static final Long CLIENT_ID = 1000L;
+    private static final double OFFER_VALUE = 5000.0;
 
     def projectDataValidator = Mock(ProjectDataValidator);
     def projectWorkflow = Mock(ProjectWorkflow);
@@ -73,7 +74,7 @@ class ProjectDomainServiceImplTest extends Specification {
 
     def "signProject should call signingDateNotInFuture from projectDataValidator"() {
         given:
-            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
+            Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER);
             ProjectContractDto projectContractDto = this.prepareProjectContractDto();
         when:
             Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto);
@@ -83,7 +84,7 @@ class ProjectDomainServiceImplTest extends Specification {
 
     def "signProject should call startDateNotBeforeSigningDate from projectDataValidator"() {
         given:
-            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
+            Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER);
             ProjectContractDto projectContractDto = this.prepareProjectContractDto();
         when:
             Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto);
@@ -93,12 +94,24 @@ class ProjectDomainServiceImplTest extends Specification {
 
     def "signProject should call deadlineNotBeforeStartDate from projectDataValidator"() {
         given:
-            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
+            Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER);
             ProjectContractDto projectContractDto = this.prepareProjectContractDto();
         when:
             Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto);
         then:
             1 * this.projectDataValidator.deadlineNotBeforeStartDate(_, _);
+    }
+
+    def "signProject should call acceptOffer for not accepted offer on projectStatusTransitionService"() {
+        given:
+            Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER);
+            ProjectContractDto projectContractDto = this.prepareProjectContractDto();
+            TestUtils.setFieldForObject(project.getOffer(), "isAccepted", false);
+        when:
+            Project signedProject = this.projectDomainService.signProjectContract(project,
+                    projectContractDto);
+        then:
+            1 * this.projectStatusTransitionService.acceptOffer(_ as Project);
     }
 
     def "signProject should call signContract on project"() {
@@ -109,16 +122,6 @@ class ProjectDomainServiceImplTest extends Specification {
             Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto);
         then:
             1 * project.signContract(_, _, _);
-    }
-
-    def "signProject should call acceptOffer on projectStatusTransitionService"() {
-        given:
-            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
-            ProjectContractDto projectContractDto = this.prepareProjectContractDto();
-        when:
-            Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto);
-        then:
-            1 * projectStatusTransitionService.acceptOffer(_ as Project);
     }
 
     def "finishProject should set endDate to today, if endDate is not provided"() {
@@ -211,7 +214,7 @@ class ProjectDomainServiceImplTest extends Specification {
         given:
             Project project = this.prepareProjectWithStatus(null);
             OfferDto offerDto = new OfferDto();
-            offerDto.setOfferValue(OFFER_VALUE);
+            offerDto.setOfferValue(5000);
         when:
             this.projectDomainService.makeNewOffer(project, offerDto);
         then:
@@ -222,7 +225,7 @@ class ProjectDomainServiceImplTest extends Specification {
         given:
             Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
             OfferDto offerDto = new OfferDto();
-            offerDto.setOfferValue(OFFER_VALUE);
+            offerDto.setOfferValue(5000);
         when:
             this.projectDomainService.makeNewOffer(project, offerDto);
         then:
@@ -251,7 +254,14 @@ class ProjectDomainServiceImplTest extends Specification {
         return new ProjectBuilder()
                 .withName(NAME)
                 .withStatus(status)
-                .withOfferValue(OFFER_VALUE)
+                .build();
+    }
+
+    private Project prepareProjectWithStatusAndOffer(ProjectStatus status) {
+        return new ProjectBuilder()
+                .withName(NAME)
+                .withStatus(status)
+                .withOffer(new Offer(5000))
                 .build();
     }
 

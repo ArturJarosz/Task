@@ -22,7 +22,7 @@ public class ProjectDto implements Serializable {
     private LocalDate deadline;
     private String note;
     private ProjectStatus status;
-    private Double offerValue;
+    private Double projectValue;
     private Boolean isOfferAccepted;
 
     public ProjectDto() {
@@ -116,12 +116,12 @@ public class ProjectDto implements Serializable {
         this.id = id;
     }
 
-    public Double getOfferValue() {
-        return this.offerValue;
+    public Double getProjectValue() {
+        return this.projectValue;
     }
 
-    public void setOfferValue(Double offerValue) {
-        this.offerValue = offerValue;
+    public void setProjectValue(Double projectValue) {
+        this.projectValue = projectValue;
     }
 
     public Boolean getOfferAccepted() {

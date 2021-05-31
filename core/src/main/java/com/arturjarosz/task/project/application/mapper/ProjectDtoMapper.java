@@ -4,6 +4,7 @@ import com.arturjarosz.task.architect.application.dto.ArchitectDto;
 import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
+import com.arturjarosz.task.project.model.Arrangement;
 import com.arturjarosz.task.project.model.Offer;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
@@ -40,8 +41,8 @@ public interface ProjectDtoMapper {
     @Mapping(source = "clientDto.companyName", target = "client.companyName")
     @Mapping(source = "clientDto.clientType", target = "client.clientType")
     @Mapping(source = "architectDto", target = "architect")
-    @Mapping(source = "project.offer", target = "offerValue", qualifiedByName = "getOfferValue")
-    @Mapping(source = "project.offer", target = "offerAccepted", qualifiedByName = "isOfferAccepted")
+    @Mapping(source = "project.arrangement", target = "projectValue", qualifiedByName = "getOfferValue")
+    @Mapping(source = "project.arrangement", target = "offerAccepted", qualifiedByName = "isOfferAccepted")
     ProjectDto projectToProjectDto(ClientDto clientDto, ArchitectDto architectDto, Project project);
 
     @Mapping(source = "project.projectType", target = "projectType")
@@ -51,8 +52,8 @@ public interface ProjectDtoMapper {
     @Mapping(source = "project.deadline", target = "deadline")
     @Mapping(source = "project.note", target = "note")
     @Mapping(source = "project.id", target = "id")
-    @Mapping(source = "project.offer", target = "offerValue", qualifiedByName = "getOfferValue")
-    @Mapping(source = "project.offer", target = "offerAccepted", qualifiedByName = "isOfferAccepted")
+    @Mapping(source = "project.arrangement", target = "projectValue", qualifiedByName = "getOfferValue")
+    @Mapping(source = "project.arrangement", target = "offerAccepted", qualifiedByName = "isOfferAccepted")
     ProjectDto projectToProjectDto(Project project);
 
     @Mapping(source = "project.projectType", target = "projectType")
@@ -70,12 +71,12 @@ public interface ProjectDtoMapper {
     ProjectDto projectToBasicProjectDto(ClientDto clientDto, ArchitectDto architectDto, Project project);
 
     @Named("getOfferValue")
-    default double getOfferValue(Offer offer) {
-        return offer.getOfferValue().getValue().doubleValue();
+    default double getOfferValue(Arrangement arrangement) {
+        return ((Offer) arrangement).getOfferValue().getValue().doubleValue();
     }
 
     @Named("isOfferAccepted")
-    default boolean isOfferAccepted(Offer offer) {
-        return offer.isAccepted();
+    default boolean isOfferAccepted(Arrangement arrangement) {
+        return ((Offer) arrangement).isAccepted();
     }
 }

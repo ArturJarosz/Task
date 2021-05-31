@@ -9,11 +9,17 @@ import com.arturjarosz.task.project.domain.ProjectDataValidator;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.status.project.ProjectStatusTransitionService;
+import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
+import com.arturjarosz.task.project.status.project.ProjectWorkflowService;
+import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @DomainService
 public class ProjectDomainServiceImpl implements ProjectDomainService {
@@ -57,9 +63,10 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
         this.projectDataValidator.startDateNotBeforeSigningDate(startDate, signingDate);
         //deadline can't be before start date
         this.projectDataValidator.deadlineNotBeforeStartDate(startDate, deadline);
-
+        if (!project.isOfferAccepted()) {
+            project = this.acceptOffer(project);
+        }
         project.signContract(signingDate, startDate, deadline);
-        this.projectStatusTransitionService.acceptOffer(project);
         return project;
     }
 
@@ -95,6 +102,13 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
             this.projectStatusTransitionService.makeNewOffer(project);
         }
         project.makeNewOffer(offerDto.getOfferValue());
+        return project;
+    }
+
+    @Override
+    public Project acceptOffer(Project project) {
+        project.acceptOffer();
+        this.projectStatusTransitionService.acceptOffer(project);
         return project;
     }
 }

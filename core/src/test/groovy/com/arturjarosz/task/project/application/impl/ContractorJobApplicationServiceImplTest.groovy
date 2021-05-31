@@ -298,7 +298,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     }
 
     private Project prepareProjectWithoutCooperatorJobs() {
-        Project project = new Project(OFFER_VALUE, PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
+        Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
                 new ProjectWorkflow());
         return project;
     }

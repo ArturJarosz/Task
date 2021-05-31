@@ -12,6 +12,8 @@ import com.arturjarosz.task.project.application.dto.ProjectCreateDto
 import com.arturjarosz.task.project.application.dto.ProjectDto
 import com.arturjarosz.task.project.domain.impl.ProjectDomainServiceImpl
 import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
+import com.arturjarosz.task.project.model.Contract
+import com.arturjarosz.task.project.model.Offer
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.status.project.ProjectStatus
@@ -20,21 +22,20 @@ import spock.lang.Specification
 
 import java.time.LocalDate
 
-class ProjectApplicationServiceTest extends Specification {
+class ProjectApplicationServiceImplTest extends Specification {
     private static final String CLIENT_FIRST_NAME = "name";
     private static final String CLIENT_LAST_NAME = "last name";
     private static final String NEW_PROJECT_NAME = "newProjectName";
     private static final String PROJECT_NAME = "projectName";
     private static final String NEW_PROJECT_NOTE = "newProjectNote";
-    private static final Double OFFER_VALUE = 5000.0;
     private static final Long ARCHITECT_ID = 1L;
     private static final Long CLIENT_ID = 10L;
     private static final Long EXISTING_PROJECT_ID = 100L;
-    private static final Long NOT_EXISTING_PROJECT_ID = 101L;
     private static final LocalDate PROJECT_DEADLINE = LocalDate.parse("2022-10-10");
     private static final LocalDate PROJECT_END_DATE = LocalDate.parse("2022-05-02");
     private static final LocalDate PROJECT_SIGNING_DATE = LocalDate.parse("2021-01-01");
     private static final LocalDate PROJECT_START_DATE = LocalDate.parse("2022-01-01");
+    private static final Double PROJECT_VALUE = 5000.0;
 
 
     def clientApplicationService = Mock(ClientApplicationServiceImpl);
@@ -375,6 +376,7 @@ class ProjectApplicationServiceTest extends Specification {
         given:
             this.mockProjectRepositoryLoad();
             OfferDto offerDto = new OfferDto();
+            offerDto.setOfferValue(PROJECT_VALUE);
         when:
             this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto);
         then:
@@ -385,6 +387,7 @@ class ProjectApplicationServiceTest extends Specification {
         given:
             this.mockProjectRepositoryLoad();
             OfferDto offerDto = new OfferDto();
+            offerDto.setOfferValue(PROJECT_VALUE);
         when:
             this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto);
         then:
@@ -395,6 +398,7 @@ class ProjectApplicationServiceTest extends Specification {
         given:
             this.mockProjectRepositoryLoad();
             OfferDto offerDto = new OfferDto();
+            offerDto.setOfferValue(PROJECT_VALUE);
         when:
             this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto);
         then:
@@ -406,6 +410,7 @@ class ProjectApplicationServiceTest extends Specification {
             this.mockProjectRepositoryLoad();
             this.mockProjectDomainServiceMakeNewOffer();
             OfferDto offerDto = new OfferDto();
+            offerDto.setOfferValue(PROJECT_VALUE);
         when:
             this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto);
         then:
@@ -472,7 +477,7 @@ class ProjectApplicationServiceTest extends Specification {
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
                 .withStatus(ProjectStatus.OFFER)
-                .withOfferValue(OFFER_VALUE)
+                .withOffer(new Offer(PROJECT_VALUE))
                 .build();
     }
 
@@ -483,7 +488,7 @@ class ProjectApplicationServiceTest extends Specification {
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
                 .withStatus(ProjectStatus.OFFER)
-                .withOfferValue(OFFER_VALUE)
+                .withOffer(new Offer(PROJECT_VALUE))
                 .build();
     }
 
@@ -495,21 +500,21 @@ class ProjectApplicationServiceTest extends Specification {
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
                 .withStatus(ProjectStatus.OFFER)
-                .withOfferValue(OFFER_VALUE)
+                .withOffer(new Offer(PROJECT_VALUE))
                 .build();
     }
 
     private Project prepareSignedProject() {
+        Contract contract = new Contract(PROJECT_VALUE, PROJECT_SIGNING_DATE, PROJECT_DEADLINE);
         return new ProjectBuilder()
                 .withName(PROJECT_NAME)
-                .withSigningDate(PROJECT_SIGNING_DATE)
-                .withDeadline(PROJECT_DEADLINE)
+                .withContract(contract)
                 .withStartDate(PROJECT_START_DATE)
                 .withId(EXISTING_PROJECT_ID)
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
-                .withOfferValue(OFFER_VALUE)
                 .withStatus(ProjectStatus.OFFER)
+                .withContract(contract)
                 .build();
     }
 
@@ -521,7 +526,7 @@ class ProjectApplicationServiceTest extends Specification {
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
                 .withStatus(ProjectStatus.OFFER)
-                .withOfferValue(OFFER_VALUE)
+                .withOffer(new Offer(PROJECT_VALUE))
                 .build();
     }
 
@@ -575,7 +580,7 @@ class ProjectApplicationServiceTest extends Specification {
     }
 
     private void mockProjectDomainServiceMakeNewOffer() {
-        Project project = this.prepareSignedProject();
+        Project project = this.prepareExistingProject();
         this.projectDomainService.makeNewOffer(_ as Project, _ as OfferDto) >> project;
     }
 }
