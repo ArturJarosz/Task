@@ -163,12 +163,24 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Transactional
     @Override
     public ProjectDto makeNewOffer(Long projectId, OfferDto offerDto) {
-        LOG.debug("Submitting a nwe offer for Project with id {}", projectId);
+        LOG.debug("Submitting a new offer for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
         project = this.projectDomainService.makeNewOffer(project, offerDto);
         this.projectRepository.save(project);
         LOG.debug("Offer for project ");
+        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
+    }
+
+    @Transactional
+    @Override
+    public ProjectDto acceptOffer(Long projectId) {
+        LOG.debug("Accepting an offer for Project with id {}", projectId);
+        this.projectValidator.validateProjectExistence(projectId);
+        Project project = this.projectRepository.load(projectId);
+        project = this.projectDomainService.acceptOffer(project);
+        this.projectRepository.save(project);
+        LOG.debug("Offer accepted. ");
         return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
     }
 }

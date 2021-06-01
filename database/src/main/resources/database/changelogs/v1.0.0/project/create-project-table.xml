@@ -24,10 +24,8 @@
             <column name="PROJECT_TYPE" type="VARCHAR2(30 ${char.unit})">
                 <constraints nullable="false"/>
             </column>
-            <column name="SIGNING_DATE" type="DATE"/>
             <column name="START_DATE" type="DATE"/>
             <column name="END_DATE" type="DATE"/>
-            <column name="DEADLINE" type="DATE"/>
             <column name="NOTE" type="VARCHAR2(1000 ${char.unit})"/>
             <column name="STATUS" type="VARCHAR2(50 ${char.unit})">
                 <constraints nullable="true"/>
@@ -35,13 +33,13 @@
             <column name="WORKFLOW_NAME" type="VARCHAR2(50 ${char.unit})">
                 <constraints nullable="false"/>
             </column>
-            <column name="OFFER_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="IS_OFFER_ACCEPTED" type="BOOLEAN">
-                <constraints nullable="false"/>
-            </column>
+            <column name="ARRANGEMENT_ID" type="${long.type}"/>
         </createTable>
         <addPrimaryKey tableName="PROJECT" columnNames="ID" constraintName="PK_PROJECT"/>
+        <addForeignKeyConstraint baseTableName="PROJECT"
+                                 baseColumnNames="ARRANGEMENT_ID"
+                                 constraintName="FK_PROJECT_ARRANGEMENT"
+                                 referencedTableName="ARRANGEMENT"
+                                 referencedColumnNames="ID"/>
     </changeSet>
 </databaseChangeLog>

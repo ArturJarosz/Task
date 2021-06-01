@@ -99,4 +99,11 @@ public interface ProjectApplicationService {
      * @return
      */
     ProjectDto makeNewOffer(Long projectId, OfferDto offerDto);
+
+    /**
+     * Mark offer of Project with projectId as accepted and
+     *
+     * @param projectId
+     */
+    ProjectDto acceptOffer(Long projectId);
 }

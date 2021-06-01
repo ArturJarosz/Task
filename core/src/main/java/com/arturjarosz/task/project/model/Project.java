@@ -9,13 +9,13 @@ import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDate;
@@ -37,17 +37,11 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @Column(name = "CLIENT_ID", nullable = false)
     private Long clientId;
 
-    @Column(name = "SIGNING_DATE")
-    private LocalDate signingDate;
-
     @Column(name = "START_DATE")
     private LocalDate startDate;
 
     @Column(name = "END_DATE")
     private LocalDate endDate;
-
-    @Column(name = "DEADLINE")
-    private LocalDate deadline;
 
     @Column(name = "NOTE")
     private String note;
@@ -68,6 +62,10 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @JoinColumn(name = "PROJECT_ID")
     private Set<CooperatorJob> cooperatorJobs;
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "ARRANGEMENT_ID")
+    private Arrangement arrangement;
+
     @Column(name = "STATUS", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private ProjectStatus status;
@@ -75,32 +73,28 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @Column(name = "WORKFLOW_NAME", nullable = false)
     private String workflowName;
 
-    @Embedded
-    private Offer offer;
-
     protected Project() {
         //needed by Hibernate
     }
 
-    public Project(double offerValue, String name, Long architectId, Long clientId, ProjectType projectType,
+    public Project(String name, Long architectId, Long clientId, ProjectType projectType,
                    ProjectWorkflow projectWorkflow) {
         this.name = name;
         this.architectId = architectId;
         this.clientId = clientId;
         this.projectType = projectType;
         this.workflowName = projectWorkflow.getName();
-        this.offer = new Offer(offerValue);
     }
 
     public void signContract(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
-        this.updateProjectDates(signingDate, startDate, deadline);
-        this.offer.accept();
+        this.updateProjectDates(startDate);
+        this.arrangement = new Contract(this.arrangement.getOfferValue().getValue().doubleValue(), signingDate,
+                deadline);
+        ((Contract) this.arrangement).setSigningDate(signingDate);
     }
 
-    public void updateProjectDates(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
-        this.signingDate = signingDate;
+    public void updateProjectDates(LocalDate startDate) {
         this.startDate = startDate;
-        this.deadline = deadline;
     }
 
     public void finishProject(LocalDate endDate) {
@@ -108,7 +102,6 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     }
 
     public void updateProjectData(String name, String note) {
-        //cannot
         this.name = name;
         this.note = note;
     }
@@ -134,7 +127,10 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     }
 
     public LocalDate getSigningDate() {
-        return this.signingDate;
+        if (this.arrangement instanceof Contract) {
+            return ((Contract) this.arrangement).getSigningDate();
+        }
+        return null;
     }
 
     public LocalDate getStartDate() {
@@ -146,7 +142,10 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     }
 
     public LocalDate getDeadline() {
-        return this.deadline;
+        if (this.arrangement instanceof Contract) {
+            return ((Contract) this.arrangement).getDeadline();
+        }
+        return null;
     }
 
     public String getNote() {
@@ -267,14 +266,32 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     }
 
     public void makeNewOffer(double offerValue) {
-        this.offer = new Offer(offerValue);
+        this.arrangement = new Offer(offerValue);
     }
 
     public void acceptOffer() {
-        this.offer.accept();
+        ((Offer) this.arrangement).acceptOffer();
     }
 
     public Offer getOffer() {
-        return this.offer;
+        return ((Offer) this.arrangement);
+    }
+
+    public boolean isContractSigned() {
+        return (this.arrangement instanceof Contract);
+    }
+
+    public boolean isOfferAccepted() {
+        if (this.arrangement == null) {
+            return false;
+        }
+        if (this.arrangement instanceof Offer) {
+            return ((Offer) this.arrangement).isAccepted();
+        }
+        return true;
+    }
+
+    public Arrangement getArrangement() {
+        return this.arrangement;
     }
 }
