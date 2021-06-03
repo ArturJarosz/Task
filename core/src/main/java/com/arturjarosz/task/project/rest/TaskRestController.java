@@ -56,7 +56,7 @@ public class TaskRestController {
                 HttpStatus.OK);
     }
 
-    @PutMapping("stages/{stageId}/tasks/{taskId}/updateStatus")
+    @PostMapping("stages/{stageId}/tasks/{taskId}/updateStatus")
     public ResponseEntity<TaskDto> updateStatus(@PathVariable("projectId") Long projectId,
                                                 @PathVariable("stageId") Long stageId,
                                                 @PathVariable("taskId") Long taskId,
