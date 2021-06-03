@@ -10,6 +10,7 @@ public class ArchitectBasicDto implements Serializable {
     private String lastName;
 
     public ArchitectBasicDto() {
+        //needed by Hibernate
     }
 
     public Long getId() {

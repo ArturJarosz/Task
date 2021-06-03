@@ -84,6 +84,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         this.clientId = clientId;
         this.projectType = projectType;
         this.workflowName = projectWorkflow.getName();
+        this.arrangement = new Offer(0);
     }
 
     public void signContract(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
@@ -165,7 +166,6 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
 
     public void removeCost(Long costId) {
         this.costs.removeIf(cost -> cost.getId().equals(costId));
-        this.costs.size();
     }
 
     public void addStage(Stage stage) {

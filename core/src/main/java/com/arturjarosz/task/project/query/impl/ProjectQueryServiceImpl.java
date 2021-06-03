@@ -62,6 +62,7 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     public TaskDto getTaskByTaskId(Long taskId) {
         return this.query().from(TASK).where(TASK.id.eq(taskId))
                 .select(Projections.bean(TaskDto.class,
+                        TASK.id.as(TaskDto.ID),
                         TASK.status.as(TaskDto.STATUS),
                         TASK.name.as(TaskDto.NAME),
                         TASK.startDate.as(TaskDto.START_DATE),
@@ -74,7 +75,7 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
 
     @Override
     public List<StageDto> getStagesForProjectById(Long projectId) {
-        return this.query().from(PROJECT).where(PROJECT.id.eq(projectId))
+        return this.query().from(PROJECT).leftJoin(PROJECT.stages, STAGE).where(PROJECT.id.eq(projectId))
                 .select(Projections.bean(StageDto.class,
                         STAGE.id.as(StageDto.ID),
                         STAGE.name.as(StageDto.NAME),

@@ -14,7 +14,7 @@ public class ProjectContractDto implements Serializable {
     //TODO: TA-34 add project value when signing contract
 
     public ProjectContractDto() {
-
+        //needed by Hibernate
     }
 
     public Long getId() {

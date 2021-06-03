@@ -50,7 +50,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         Stage stage = this.stageDomainService.createStage(project, stageDto);
         project = this.projectRepository.save(project);
         LOG.debug("Stage for Project with id {} created.", projectId);
-        return StageDtoMapper.INSTANCE.stageDtoFromStage(stage);
+        return StageDtoMapper.INSTANCE.stageDtoFromStage(this.getCreatedStageWithId(project, stage));
     }
 
     @Transactional
@@ -98,24 +98,36 @@ public class StageApplicationServiceImpl implements StageApplicationService {
 
     @Transactional
     @Override
-    public void rejectStage(Long projectId, Long stageId) {
+    public StageDto rejectStage(Long projectId, Long stageId) {
         LOG.debug("Rejecting Stage with id {}", stageId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
         this.stageDomainService.rejectStage(project, stageId);
         this.projectRepository.save(project);
+        return StageDtoMapper.INSTANCE.stageDtoFromStage(this.getStageById(project, stageId));
     }
 
     @Transactional
     @Override
-    public void reopenStage(Long projectId, Long stageId) {
+    public StageDto reopenStage(Long projectId, Long stageId) {
         LOG.debug("Reopening Stage with id {}", stageId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
         this.stageDomainService.reopenStage(project, stageId);
         this.projectRepository.save(project);
+        return StageDtoMapper.INSTANCE.stageDtoFromStage(this.getStageById(project, stageId));
+    }
+
+    private Stage getCreatedStageWithId(Project project, Stage stage) {
+        return project.getStages().stream().filter(stageOnProject -> stageOnProject.equals(stage)).findFirst()
+                .orElse(null);
+    }
+
+    private Stage getStageById(Project project, Long stageId) {
+        return project.getStages().stream().filter(stageOnProject -> stageOnProject.getId().equals(stageId)).findFirst()
+                .orElse(null);
     }
 
 }

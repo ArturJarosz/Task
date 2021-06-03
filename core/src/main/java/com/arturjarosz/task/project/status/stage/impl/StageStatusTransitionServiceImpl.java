@@ -74,7 +74,8 @@ public class StageStatusTransitionServiceImpl implements StageStatusTransitionSe
 
     @Override
     public void reject(Project project, Long stageId) {
-
+        this.stageWorkflowService
+                .changeStageStatusOnProject(project, stageId, StageStatus.REJECTED);
     }
 
     @Override

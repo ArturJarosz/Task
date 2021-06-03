@@ -15,7 +15,7 @@ public class ProjectCreateDto implements Serializable {
     private Double offerValue;
 
     public ProjectCreateDto() {
-
+        //needed by Hibernate
     }
 
     public Long getId() {

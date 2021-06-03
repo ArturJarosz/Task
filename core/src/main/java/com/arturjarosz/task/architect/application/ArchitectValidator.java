@@ -68,7 +68,7 @@ public class ArchitectValidator {
 
     public void validateArchitectHasNoProjects(Long architectId) {
         List<Project> projectList = this.projectQueryService.getProjectsForArchitect(architectId);
-        assertIsTrue(projectList.size() == 0,
+        assertIsTrue(projectList.isEmpty(),
                 createMessageCode(ExceptionCodes.NOT_VALID, ArchitectExceptionCodes.ARCHITECT,
                         ArchitectExceptionCodes.PROJECTS));
     }

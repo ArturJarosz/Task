@@ -61,7 +61,7 @@ public interface StageApplicationService {
      * @param projectId
      * @param stageId
      */
-    void rejectStage(Long projectId, Long stageId);
+    StageDto rejectStage(Long projectId, Long stageId);
 
     /**
      * Reopen rejected Stage with stageId on Project with projectId. If Stage or Project does not exist, then new
@@ -70,5 +70,5 @@ public interface StageApplicationService {
      * @param projectId
      * @param stageId
      */
-    void reopenStage(Long projectId, Long stageId);
+    StageDto reopenStage(Long projectId, Long stageId);
 }

@@ -14,6 +14,7 @@ public class InstallmentDto implements Serializable {
     private LocalDate payDate;
 
     public InstallmentDto() {
+        //needed by Hibernate
     }
 
     public Double getValue() {

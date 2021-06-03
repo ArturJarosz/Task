@@ -15,6 +15,7 @@ public class ProjectDataValidator {
     public static final String VALIDATED_OBJECT = "project";
 
     public ProjectDataValidator() {
+        //needed by Hibernate
     }
 
     public void allDatesPresent(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {

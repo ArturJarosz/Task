@@ -17,12 +17,10 @@ public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
     private static final String ARCHITECT_ID = "architectId";
     private static final String ARRANGEMENT = "arrangement";
     private static final String CLIENT_ID = "clientId";
-    private static final String DEADLINE = "deadline";
     private static final String END_DATE = "endDate";
     private static final String NAME = "name";
     private static final String NOTE = "note";
     private static final String ID = "id";
-    private static final String SIGNING_DATE = "signingDate";
     private static final String STAGES = "stages";
     private static final String START_DATE = "startDate";
     private static final String STATUS = "status";

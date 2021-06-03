@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("projects/{projectId}")
 public class TaskRestController {
 
-    private TaskApplicationService taskApplicationService;
+    private final TaskApplicationService taskApplicationService;
 
     TaskRestController(TaskApplicationService taskApplicationService) {
 
@@ -57,12 +57,12 @@ public class TaskRestController {
     }
 
     @PutMapping("stages/{stageId}/tasks/{taskId}/updateStatus")
-    public ResponseEntity<Void> updateStatus(@PathVariable("projectId") Long projectId,
-                                             @PathVariable("stageId") Long stageId,
-                                             @PathVariable("taskId") Long taskId,
-                                             @RequestBody TaskDto taskDto) {
-        this.taskApplicationService.updateTaskStatus(projectId, stageId, taskId, taskDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<TaskDto> updateStatus(@PathVariable("projectId") Long projectId,
+                                                @PathVariable("stageId") Long stageId,
+                                                @PathVariable("taskId") Long taskId,
+                                                @RequestBody TaskDto taskDto) {
+        return new ResponseEntity<>(this.taskApplicationService.updateTaskStatus(projectId, stageId, taskId, taskDto),
+                HttpStatus.OK);
     }
 
     @GetMapping("stages/{stageId}/tasks/{taskId}")
@@ -79,18 +79,16 @@ public class TaskRestController {
     }
 
     @PostMapping("stages/{stageId}/tasks/{taskId}/reject")
-    public ResponseEntity<Void> rejectTask(@PathVariable("projectId") Long projectId,
-                                           @PathVariable("stageId") Long stageId,
-                                           @PathVariable("taskId") Long taskId) {
-        this.taskApplicationService.rejectTask(projectId, stageId, taskId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<TaskDto> rejectTask(@PathVariable("projectId") Long projectId,
+                                              @PathVariable("stageId") Long stageId,
+                                              @PathVariable("taskId") Long taskId) {
+        return new ResponseEntity<>(this.taskApplicationService.rejectTask(projectId, stageId, taskId), HttpStatus.OK);
     }
 
     @PostMapping("stages/{stageId}/tasks/{taskId}/reopen")
-    public ResponseEntity<Void> reopenTask(@PathVariable("projectId") Long projectId,
-                                           @PathVariable("stageId") Long stageId,
-                                           @PathVariable("taskId") Long taskId) {
-        this.taskApplicationService.reopenTask(projectId, stageId, taskId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<TaskDto> reopenTask(@PathVariable("projectId") Long projectId,
+                                              @PathVariable("stageId") Long stageId,
+                                              @PathVariable("taskId") Long taskId) {
+        return new ResponseEntity<>(this.taskApplicationService.reopenTask(projectId, stageId, taskId), HttpStatus.OK);
     }
 }

@@ -64,16 +64,14 @@ public class StageRestController {
     }
 
     @PostMapping("stages/{stageId}/reject")
-    public ResponseEntity<Void> rejectStage(@PathVariable("projectId") Long projectId,
-                                            @PathVariable("stageId") Long stageId) {
-        this.stageApplicationService.rejectStage(projectId, stageId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<StageDto> rejectStage(@PathVariable("projectId") Long projectId,
+                                                @PathVariable("stageId") Long stageId) {
+        return new ResponseEntity<>(this.stageApplicationService.rejectStage(projectId, stageId), HttpStatus.OK);
     }
 
     @PostMapping("stages/{stageId}/reopen")
-    public ResponseEntity<Void> reopenStage(@PathVariable("projectId") Long projectId,
-                                            @PathVariable("stageId") Long stageId) {
-        this.stageApplicationService.reopenStage(projectId, stageId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<StageDto> reopenStage(@PathVariable("projectId") Long projectId,
+                                                @PathVariable("stageId") Long stageId) {
+        return new ResponseEntity<>(this.stageApplicationService.reopenStage(projectId, stageId), HttpStatus.OK);
     }
 }

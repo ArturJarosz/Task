@@ -9,17 +9,11 @@ import com.arturjarosz.task.project.domain.ProjectDataValidator;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.status.project.ProjectStatusTransitionService;
-import com.arturjarosz.task.project.model.Stage;
-import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
-import com.arturjarosz.task.project.status.project.ProjectWorkflowService;
-import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @DomainService
 public class ProjectDomainServiceImpl implements ProjectDomainService {

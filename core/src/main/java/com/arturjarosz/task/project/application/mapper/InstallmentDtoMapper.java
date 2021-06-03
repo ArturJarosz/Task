@@ -17,6 +17,10 @@ public interface InstallmentDtoMapper {
     }
 
     @Mapping(source = "amount", target = "value", qualifiedByName = "moneyToDouble")
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "paid", target = "paid")
+    @Mapping(source = "note", target = "note")
+    @Mapping(source = "paymentDate", target = "payDate")
     InstallmentDto installmentToInstallmentDto(Installment installment);
 
     @Named("moneyToDouble")

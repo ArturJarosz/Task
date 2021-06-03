@@ -16,10 +16,11 @@ import java.time.LocalDate;
 public class InstallmentDomainServiceImpl implements InstallmentDomainService {
 
     public InstallmentDomainServiceImpl() {
+        //needed by Hibernate
     }
 
     @Override
-    public void updateInstallment(Stage stage, Double value, LocalDate payDate, String note) {
+    public Installment updateInstallment(Stage stage, Double value, LocalDate payDate, String note) {
         Installment installment = stage.getInstallment();
         if (!installment.isPaid()) {
             installment.update(value, note, null);
@@ -27,10 +28,11 @@ public class InstallmentDomainServiceImpl implements InstallmentDomainService {
             InstallmentValidator.validatePayDateNotFuture(payDate);
             installment.update(value, note, payDate);
         }
+        return installment;
     }
 
     @Override
-    public void payForInstallment(Stage stage, LocalDate payDate) {
+    public Installment payForInstallment(Stage stage, LocalDate payDate) {
         if (payDate != null) {
             InstallmentValidator.validatePayDateNotFuture(payDate);
         } else {
@@ -42,5 +44,6 @@ public class InstallmentDomainServiceImpl implements InstallmentDomainService {
                     ProjectExceptionCodes.INSTALLMENT, ProjectExceptionCodes.IS_PAID));
         }
         installment.payInstallment(payDate);
+        return installment;
     }
 }

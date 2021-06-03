@@ -16,6 +16,7 @@ public class ContractorDto implements Serializable {
     private CooperatorCategory.ContractorCategory category;
 
     public ContractorDto() {
+        //needed by Hibernate
     }
 
     public String getName() {

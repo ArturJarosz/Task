@@ -47,8 +47,8 @@ class ClientApplicationServiceImplTest extends Specification {
     ClientValidator clientValidator = Mock(ClientValidator) {
         validateClientBasicDto(null) >> { throw new IllegalArgumentException() }
     }
-    def clientApplicationServiceImpl = new ClientApplicationServiceImpl(clientRepository, clientValidator,
-            projectQueryService);
+    def clientApplicationServiceImpl = new ClientApplicationServiceImpl(clientRepository, clientValidator
+    );
 
     def "createClientShouldValidateClientBasicDto"() {
         given:

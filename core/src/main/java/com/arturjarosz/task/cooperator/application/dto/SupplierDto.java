@@ -16,6 +16,7 @@ public class SupplierDto implements Serializable {
     private CooperatorCategory.SupplierCategory category;
 
     public SupplierDto() {
+        //needed by Hibernate
     }
 
     public String getName() {

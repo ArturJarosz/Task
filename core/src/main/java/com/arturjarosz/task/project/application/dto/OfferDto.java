@@ -9,6 +9,7 @@ public class OfferDto implements Serializable {
     private Boolean isAccepted;
 
     public OfferDto() {
+        //needed by Hibernate
     }
 
     public Double getOfferValue() {

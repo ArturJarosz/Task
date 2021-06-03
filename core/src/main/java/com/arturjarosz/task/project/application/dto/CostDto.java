@@ -16,7 +16,7 @@ public class CostDto implements Serializable {
     private String note;
 
     public CostDto() {
-
+        //needed by Hibernate
     }
 
     public Long getId() {

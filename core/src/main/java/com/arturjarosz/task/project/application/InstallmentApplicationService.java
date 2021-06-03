@@ -24,8 +24,9 @@ public interface InstallmentApplicationService {
      * @param projectId
      * @param stageId
      * @param installmentDto
+     * @return
      */
-    void updateInstallment(Long projectId, Long stageId, InstallmentDto installmentDto);
+    InstallmentDto updateInstallment(Long projectId, Long stageId, InstallmentDto installmentDto);
 
     /**
      * Remove installment from stage on project of given Id.
@@ -39,8 +40,9 @@ public interface InstallmentApplicationService {
      * @param projectId
      * @param stageId
      * @param installmentDto
+     * @return
      */
-    void payInstallment(Long projectId, Long stageId, InstallmentDto installmentDto);
+    InstallmentDto payInstallment(Long projectId, Long stageId, InstallmentDto installmentDto);
 
     List<InstallmentDto> getInstallmentList(Long projectId);
 

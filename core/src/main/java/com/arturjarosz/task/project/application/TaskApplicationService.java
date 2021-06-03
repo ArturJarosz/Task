@@ -47,8 +47,9 @@ public interface TaskApplicationService {
      * @param stageId
      * @param taskId
      * @param taskDto
+     * @return
      */
-    void updateTaskStatus(Long projectId, Long stageId, Long taskId, TaskDto taskDto);
+    TaskDto updateTaskStatus(Long projectId, Long stageId, Long taskId, TaskDto taskDto);
 
     /**
      * Return Task as TaskDto for Task on Stage on Project with given taskId, stageId and projectId. If Project,
@@ -78,8 +79,9 @@ public interface TaskApplicationService {
      * @param projectId
      * @param stageId
      * @param taskId
+     * @return
      */
-    void rejectTask(Long projectId, Long stageId, Long taskId);
+    TaskDto rejectTask(Long projectId, Long stageId, Long taskId);
 
     /**
      * Allows to continue work on Task, changing its status to To Do. If Project, Stage or Task do not exist,
@@ -88,6 +90,7 @@ public interface TaskApplicationService {
      * @param projectId
      * @param stageId
      * @param taskId
+     * @return
      */
-    void reopenTask(Long projectId, Long stageId, Long taskId);
+    TaskDto reopenTask(Long projectId, Long stageId, Long taskId);
 }
