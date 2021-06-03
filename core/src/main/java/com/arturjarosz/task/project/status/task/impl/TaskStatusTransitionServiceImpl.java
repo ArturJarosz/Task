@@ -38,32 +38,32 @@ public class TaskStatusTransitionServiceImpl implements TaskStatusTransitionServ
 
     @Override
     public void rejectFromInProgress(Project project, Long stageId, Long taskId) {
-
+        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.REJECTED);
     }
 
     @Override
     public void backToToDo(Project project, Long stageId, Long taskId) {
-
+        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.TO_DO);
     }
 
     @Override
     public void reopenTask(Project project, Long stageId, Long taskId) {
-
+        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.TO_DO);
     }
 
     @Override
     public void backToInProgress(Project project, Long stageId, Long taskId) {
-
+        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.IN_PROGRESS);
     }
 
     @Override
     public void reopen(Project project, Long stageId, Long taskId) {
-
+        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.TO_DO);
     }
 
     @Override
     public void reject(Project project, Long stageId, Long taskId) {
-
+        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.REJECTED);
     }
 
     @Override
