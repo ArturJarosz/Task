@@ -11,7 +11,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     database: postgresql
     openInView: false
-    show_sql: true
+    show_sql: false
     generate-ddl: false
     hibernate:
       ddl-auto: none
@@ -24,7 +24,6 @@ spring:
   main:
     log-startup-info: false
     banner-mode: off
-
   jackson:
     default-property-inclusion: non_null
 server:
