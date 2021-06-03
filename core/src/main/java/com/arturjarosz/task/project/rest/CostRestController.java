@@ -40,7 +40,7 @@ public class CostRestController {
 
     @GetMapping("costs/{costId}")
     public ResponseEntity<CostDto> getCost(@PathVariable("costId") Long costId) {
-        return new ResponseEntity<CostDto>(this.costApplicationService.getCost(costId), HttpStatus.OK);
+        return new ResponseEntity<>(this.costApplicationService.getCost(costId), HttpStatus.OK);
     }
 
     @GetMapping("{projectId}/costs")
@@ -51,8 +51,7 @@ public class CostRestController {
     @PutMapping("{projectId}/costs/{costId}")
     public ResponseEntity<CostDto> updateCost(@PathVariable("projectId") Long projectId,
                                               @PathVariable("costId") Long costId, @RequestBody CostDto costDto) {
-        this.costApplicationService.updateCost(projectId, costId, costDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(this.costApplicationService.updateCost(projectId, costId, costDto), HttpStatus.OK);
     }
 
     @DeleteMapping("{projectId}/costs/{costId}")

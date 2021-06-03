@@ -26,6 +26,7 @@ public class ProjectDto implements Serializable {
     private Boolean isOfferAccepted;
 
     public ProjectDto() {
+        //needed by Hibernate
     }
 
     public String getName() {

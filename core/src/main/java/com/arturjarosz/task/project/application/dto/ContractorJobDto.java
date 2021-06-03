@@ -12,6 +12,7 @@ public class ContractorJobDto implements Serializable {
     private String note;
 
     public ContractorJobDto() {
+        //needed by Hibernate
     }
 
     public String getName() {

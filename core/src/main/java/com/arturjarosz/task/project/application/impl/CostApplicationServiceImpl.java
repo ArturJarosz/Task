@@ -10,6 +10,7 @@ import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
@@ -96,7 +97,7 @@ public class CostApplicationServiceImpl implements CostApplicationService {
     private Long getIdForCreatedCost(Project project, Cost cost) {
         return project.getCosts().stream()
                 .filter(costOnProject -> costOnProject.equals(cost))
-                .map(costOnProject -> costOnProject.getId())
+                .map(AbstractEntity::getId)
                 .findFirst().orElse(null);
     }
 }

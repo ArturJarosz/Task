@@ -9,6 +9,7 @@ import com.arturjarosz.task.project.application.mapper.TaskDtoMapper;
 import com.arturjarosz.task.project.domain.TaskDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.query.ProjectQueryService;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @ApplicationService
@@ -56,7 +58,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         Task task = this.taskDomainService.createTask(project, stageId, taskDto);
         project = this.projectRepository.save(project);
         LOG.debug("Task created.");
-        return TaskDtoMapper.INSTANCE.taskToTaskDto(task);
+        return TaskDtoMapper.INSTANCE.taskToTaskDto(this.getNewTaskWithId(project, stageId, task));
     }
 
     @Transactional
@@ -89,7 +91,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
 
     @Transactional
     @Override
-    public void updateTaskStatus(Long projectId, Long stageId, Long taskId, TaskDto taskDto) {
+    public TaskDto updateTaskStatus(Long projectId, Long stageId, Long taskId, TaskDto taskDto) {
         LOG.debug("Updating status on Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId,
                 projectId);
         this.projectValidator.validateProjectExistence(projectId);
@@ -99,6 +101,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.taskDomainService.updateTaskStatus(project, stageId, taskId, taskDto.getStatus());
         this.projectRepository.save(project);
         LOG.debug("Task status updated.");
+        return TaskDtoMapper.INSTANCE.taskToTaskDto(this.getTaskById(project, stageId, taskId));
     }
 
     @Override
@@ -126,7 +129,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
 
     @Transactional
     @Override
-    public void rejectTask(Long projectId, Long stageId, Long taskId) {
+    public TaskDto rejectTask(Long projectId, Long stageId, Long taskId) {
         LOG.debug("Rejecting Task with id {}", taskId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
@@ -134,10 +137,12 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         Project project = this.projectRepository.load(projectId);
         this.taskDomainService.rejectTask(project, stageId, taskId);
         this.projectRepository.save(project);
+        return TaskDtoMapper.INSTANCE.taskToTaskDto(this.getTaskById(project, stageId, taskId));
     }
 
+    @Transactional
     @Override
-    public void reopenTask(Long projectId, Long stageId, Long taskId) {
+    public TaskDto reopenTask(Long projectId, Long stageId, Long taskId) {
         LOG.debug("Reopening Task with id {}", taskId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
@@ -145,5 +150,26 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         Project project = this.projectRepository.load(projectId);
         this.taskDomainService.reopenTask(project, stageId, taskId);
         this.projectRepository.save(project);
+        return TaskDtoMapper.INSTANCE.taskToTaskDto(this.getTaskById(project, stageId, taskId));
+    }
+
+    private Task getNewTaskWithId(Project project, Long stageId, Task task) {
+        Predicate<Stage> stagePredicate = stage -> stage.getId().equals(stageId);
+        Predicate<Task> taskPredicate = taskOnStage -> taskOnStage.equals(task);
+        return project.getStages().stream()
+                .filter(stagePredicate)
+                .flatMap(stage -> stage.getTasks().stream())
+                .filter(taskPredicate)
+                .findFirst().orElse(null);
+    }
+
+    private Task getTaskById(Project project, Long stageId, Long taskId) {
+        Predicate<Stage> stagePredicate = stage -> stage.getId().equals(stageId);
+        Predicate<Task> taskPredicate = taskOnStage -> taskOnStage.getId().equals(taskId);
+        return project.getStages().stream()
+                .filter(stagePredicate)
+                .flatMap(stage -> stage.getTasks().stream())
+                .filter(taskPredicate)
+                .findFirst().orElse(null);
     }
 }

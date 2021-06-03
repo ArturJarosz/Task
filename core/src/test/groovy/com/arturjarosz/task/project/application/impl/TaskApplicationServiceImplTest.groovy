@@ -47,6 +47,7 @@ class TaskApplicationServiceImplTest extends Specification {
             TaskDto taskDto = this.prepareNewTaskDto();
             this.mockProjectRepositoryLoad();
             this.mockTaskDomainServiceCreateTask();
+            this.mockProjectRepositorySaveProjectWithStageAndTask();
         when:
             this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
         then:
@@ -58,6 +59,7 @@ class TaskApplicationServiceImplTest extends Specification {
             TaskDto taskDto = this.prepareNewTaskDto();
             this.mockProjectRepositoryLoad();
             this.mockTaskDomainServiceCreateTask();
+            this.mockProjectRepositorySaveProjectWithStageAndTask();
         when:
             this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
         then:
@@ -69,6 +71,7 @@ class TaskApplicationServiceImplTest extends Specification {
             TaskDto taskDto = this.prepareNewTaskDto();
             this.mockProjectRepositoryLoad();
             this.mockTaskDomainServiceCreateTask();
+            this.mockProjectRepositorySaveProjectWithStageAndTask();
         when:
             this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
         then:
@@ -80,6 +83,7 @@ class TaskApplicationServiceImplTest extends Specification {
             TaskDto taskDto = this.prepareNewTaskDto();
             this.mockProjectRepositoryLoad();
             this.mockTaskDomainServiceCreateTask();
+            this.mockProjectRepositorySaveProjectWithStageAndTask();
         when:
             this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
         then:
@@ -91,6 +95,7 @@ class TaskApplicationServiceImplTest extends Specification {
             TaskDto taskDto = this.prepareNewTaskDto();
             this.mockProjectRepositoryLoad();
             this.mockTaskDomainServiceCreateTask();
+            this.mockProjectRepositorySaveProjectWithStageAndTask();
         when:
             this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
         then:
@@ -102,6 +107,7 @@ class TaskApplicationServiceImplTest extends Specification {
             TaskDto taskDto = this.prepareNewTaskDto();
             this.mockProjectRepositoryLoad();
             this.mockTaskDomainServiceCreateTask();
+            this.mockProjectRepositorySaveProjectWithStageAndTask();
         when:
             this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
         then:
@@ -116,7 +122,7 @@ class TaskApplicationServiceImplTest extends Specification {
         when:
             this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto);
         then:
-            1 * this.projectRepository.save(_ as Project);
+            1 * this.projectRepository.save(_ as Project) >> this.prepareProjectWithStageWithTask();
     }
 
     def "updateTask should call validateProjectExistence on projectValidator"() {
@@ -502,5 +508,9 @@ class TaskApplicationServiceImplTest extends Specification {
                 .withId(TASK_ID)
                 .withName(TASK_NAME)
                 .build();
+    }
+
+    private void mockProjectRepositorySaveProjectWithStageAndTask() {
+        1 * this.projectRepository.save(_ as Project) >> this.prepareProjectWithStageWithTask();
     }
 }

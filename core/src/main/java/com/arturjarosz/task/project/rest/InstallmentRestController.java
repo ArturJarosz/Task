@@ -44,8 +44,9 @@ public class InstallmentRestController {
     public ResponseEntity<InstallmentDto> updateInstallment(@PathVariable("projectId") Long projectId,
                                                             @PathVariable("stageId") Long stageId,
                                                             @RequestBody InstallmentDto installmentDto) {
-        this.installmentApplicationService.updateInstallment(projectId, stageId, installmentDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(
+                this.installmentApplicationService.updateInstallment(projectId, stageId, installmentDto),
+                HttpStatus.OK);
     }
 
     @DeleteMapping("{projectId}/stages/{stageId}/installments")
@@ -56,11 +57,11 @@ public class InstallmentRestController {
     }
 
     @PostMapping("{projectId}/stages/{stageId}/installments/pay")
-    public ResponseEntity<Void> payInstallment(@PathVariable("projectId") Long projectId,
-                                               @PathVariable("stageId") Long stageId,
-                                               @RequestBody InstallmentDto installmentDto) {
-        this.installmentApplicationService.payInstallment(projectId, stageId, installmentDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<InstallmentDto> payInstallment(@PathVariable("projectId") Long projectId,
+                                                         @PathVariable("stageId") Long stageId,
+                                                         @RequestBody InstallmentDto installmentDto) {
+        return new ResponseEntity<>(
+                this.installmentApplicationService.payInstallment(projectId, stageId, installmentDto), HttpStatus.OK);
     }
 
     @GetMapping("{projectId}/stages/{stageId}/installments")

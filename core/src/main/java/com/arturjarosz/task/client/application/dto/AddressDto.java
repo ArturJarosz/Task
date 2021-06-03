@@ -12,6 +12,7 @@ public class AddressDto implements Serializable {
     private String flatNumber;
 
     public AddressDto() {
+        //needed by Hibernate
     }
 
     public String getCity() {

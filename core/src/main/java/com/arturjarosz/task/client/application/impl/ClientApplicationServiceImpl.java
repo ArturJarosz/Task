@@ -7,7 +7,6 @@ import com.arturjarosz.task.client.application.mapper.ClientDtoMapper;
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository;
 import com.arturjarosz.task.client.model.Client;
 import com.arturjarosz.task.client.model.ClientType;
-import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +21,10 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
     private final ClientRepository clientRepository;
     private final ClientValidator clientValidator;
-    private final ProjectQueryService projectQueryService;
 
-    public ClientApplicationServiceImpl(ClientRepository clientRepository, ClientValidator clientValidator,
-                                        ProjectQueryService projectQueryService) {
+    public ClientApplicationServiceImpl(ClientRepository clientRepository, ClientValidator clientValidator) {
         this.clientRepository = clientRepository;
         this.clientValidator = clientValidator;
-        this.projectQueryService = projectQueryService;
     }
 
     @Transactional

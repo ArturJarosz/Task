@@ -10,7 +10,6 @@ import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.StageType
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
-import com.arturjarosz.task.project.status.stage.impl.StageWorkflowServiceImpl
 import com.arturjarosz.task.project.status.task.TaskStatus
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.project.utils.StageBuilder
@@ -35,7 +34,6 @@ class StageApplicationServiceImplTest extends Specification {
     def projectRepository = Mock(ProjectRepositoryImpl);
     def stageValidator = Mock(StageValidator);
     def stageDomainService = Mock(StageDomainService);
-    def stageWorkflowService = Mock(StageWorkflowServiceImpl);
 
     def stageApplicationService = new StageApplicationServiceImpl(projectQueryService, projectValidator,
             projectRepository, stageDomainService, stageValidator);
@@ -44,6 +42,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoad();
             StageDto stageDto = new StageDto();
+            this.mockProjectRepositorySaveProjectWithStage();
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto);
         then:
@@ -54,6 +53,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoad();
             StageDto stageDto = new StageDto();
+            this.mockProjectRepositorySaveProjectWithStage();
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto);
         then:
@@ -63,6 +63,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "createStage should load project from projectRepository"() {
         given:
             StageDto stageDto = new StageDto();
+            this.mockProjectRepositorySaveProjectWithStage();
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto);
         then:
@@ -73,6 +74,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoad();
             StageDto stageDto = new StageDto();
+            this.mockProjectRepositorySaveProjectWithStage();
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto);
         then:
@@ -86,7 +88,7 @@ class StageApplicationServiceImplTest extends Specification {
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto);
         then:
-            1 * this.projectRepository.save(_ as Project);
+            1 * this.projectRepository.save(_ as Project) >> this.prepareProjectWithStage();
     }
 
     def "removeStage should call validateProjectExistence on projectValidator"() {
@@ -291,6 +293,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "reopenStage should call validateProjectExistence on projectValidator"() {
         given:
             this.mockProjectQueryServiceGetStageByIdWithTasks();
+            this.mockProjectRepositoryLoadProjectWithStage();
         when:
             this.stageApplicationService.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID);
         then:
@@ -300,6 +303,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "reopenStage should call validateExistenceOfStageInProject on stageValidator"() {
         given:
             this.mockProjectQueryServiceGetStageByIdWithTasks();
+            this.mockProjectRepositoryLoadProjectWithStage();
         when:
             this.stageApplicationService.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID);
         then:
@@ -360,6 +364,10 @@ class StageApplicationServiceImplTest extends Specification {
                 .prepareStageWithTaskOnlyInToDoStatuses();
         this.projectQueryService.getStageById(STAGE_WITH_TASKS_IN_DIFFERENT_STATUSES) >> this
                 .prepareSageWithTasksInDifferentStatuses();
+    }
+
+    private void mockProjectRepositorySaveProjectWithStage() {
+        1 * this.projectRepository.save(_ as Project) >> this.prepareProjectWithStage();
     }
 
     // preparing parameters

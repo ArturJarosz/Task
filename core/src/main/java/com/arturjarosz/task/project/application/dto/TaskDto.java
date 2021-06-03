@@ -11,6 +11,7 @@ public class TaskDto implements Serializable {
     private static final long serialVersionUID = 6275436633825075027L;
 
     public static final String END_DATE = "endDate";
+    public static final String ID = "id";
     public static final String NAME = "name";
     public static final String NOTE = "note";
     public static final String START_DATE = "startDate";
@@ -26,6 +27,7 @@ public class TaskDto implements Serializable {
     private TaskStatus status;
 
     public TaskDto() {
+        //needed by Hibernate
     }
 
     public String getName() {

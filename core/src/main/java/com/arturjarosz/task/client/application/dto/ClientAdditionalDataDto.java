@@ -9,6 +9,7 @@ public class ClientAdditionalDataDto implements Serializable {
     private Double projectValue;
 
     public ClientAdditionalDataDto() {
+        //needed by Hibernate
     }
 
     public String getNote() {

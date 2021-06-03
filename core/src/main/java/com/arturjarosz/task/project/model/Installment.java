@@ -70,4 +70,5 @@ public class Installment extends AbstractEntity {
     public String getNote() {
         return this.note;
     }
+
 }

@@ -76,7 +76,7 @@ public class ClientValidator {
 
     public void validateClientHasNoProjects(Long clientId) {
         List<Project> projects = this.projectQueryService.getProjectsForClientId(clientId);
-        assertIsTrue(projects.size() == 0,
+        assertIsTrue(projects.isEmpty(),
                 createMessageCode(ExceptionCodes.NOT_VALID, ClientExceptionCodes.CLIENT,
                         ClientExceptionCodes.PROJECTS));
     }

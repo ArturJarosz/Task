@@ -29,7 +29,7 @@ public class TaskDomainServiceImpl implements TaskDomainService {
         Task task = TaskDtoMapper.INSTANCE.createDtoToTask(taskDto, this.taskWorkflow);
         project.addTaskToStage(stageId, task);
         this.taskStatusTransitionService.createTask(project, stageId, task.getId());
-        return TaskDtoMapper.INSTANCE.createDtoToTask(taskDto, this.taskWorkflow);
+        return task;
     }
 
     @Override

@@ -1163,10 +1163,38 @@
           "response": []
         },
         {
+          "name": "reopen Project",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{taskAddress}}/projects/{{projectId}}/reopen",
+              "host": [
+                "{{taskAddress}}"
+              ],
+              "path": [
+                "projects",
+                "{{projectId}}",
+                "reopen"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "make new offer",
           "request": {
             "method": "POST",
             "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"offerValue\": 5000.00\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
               "raw": "{{taskAddress}}/projects/{{projectId}}/newOffer",
               "host": [
@@ -1176,6 +1204,25 @@
                 "projects",
                 "{{projectId}}",
                 "newOffer"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "accept offer",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{taskAddress}}/projects/{{projectId}}/acceptOffer",
+              "host": [
+                "{{taskAddress}}"
+              ],
+              "path": [
+                "projects",
+                "{{projectId}}",
+                "acceptOffer"
               ]
             }
           },

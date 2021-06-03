@@ -57,22 +57,25 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         project = this.projectRepository.save(project);
 
         LOG.debug("installment for stage with id {} created", stageId);
-        return InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(installment);
+        return InstallmentDtoMapper.INSTANCE
+                .installmentToInstallmentDto(this.getNewInstallmentWithId(project, stageId));
     }
 
     @Transactional
     @Override
-    public void updateInstallment(Long projectId, Long stageId, InstallmentDto installmentDto) {
+    public InstallmentDto updateInstallment(Long projectId, Long stageId, InstallmentDto installmentDto) {
         LOG.debug("updating installment");
 
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);
         Project project = this.projectRepository.load(projectId);
-        this.installmentDomainService.updateInstallment(stage, installmentDto.getValue(), installmentDto.getPayDate(),
-                installmentDto.getNote());
+        Installment installment = this.installmentDomainService
+                .updateInstallment(stage, installmentDto.getValue(), installmentDto.getPayDate(),
+                        installmentDto.getNote());
         LOG.debug("installment for stage with id {} updated", stageId);
         this.projectRepository.save(project);
+        return InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(installment);
     }
 
     @Transactional
@@ -90,18 +93,20 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.projectRepository.save(project);
     }
 
+    @Transactional
     @Override
-    public void payInstallment(Long projectId, Long stageId, InstallmentDto installmentDto) {
+    public InstallmentDto payInstallment(Long projectId, Long stageId, InstallmentDto installmentDto) {
         LOG.debug("paying for installment");
 
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);
         Project project = this.projectRepository.load(projectId);
-        this.installmentDomainService.payForInstallment(stage, installmentDto.getPayDate());
+        Installment installment = this.installmentDomainService.payForInstallment(stage, installmentDto.getPayDate());
 
         LOG.debug("payment for installment on stage with id {} made", stageId);
         this.projectRepository.save(project);
+        return InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(installment);
     }
 
     @Override
@@ -126,5 +131,11 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.stageValidator.validateStageHavingInstallment(stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);
         return InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(stage.getInstallment());
+    }
+
+    private Installment getNewInstallmentWithId(Project project, Long stageId) {
+        return project.getStages().stream()
+                .filter(stageOnProject -> stageOnProject.getId().equals(stageId)).map(Stage::getInstallment)
+                .findFirst().orElse(null);
     }
 }
