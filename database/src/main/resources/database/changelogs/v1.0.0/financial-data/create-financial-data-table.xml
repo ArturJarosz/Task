@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="liquibase" id="create-financial-data-table">
+        <createTable tableName="FINANCIAL_DATA">
+            <column name="ID" type="${long.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UUID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PROJECT_ID" type="${long.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NET_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GROSS_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VAT_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="INCOME_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COMMISSIONS_NET_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COMMISSIONS_GROSS_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COMMISSIONS_VAT_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COMMISSIONS_INCOME_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COSTS_NET_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COSTS_GROSS_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COSTS_VAT_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COSTS_INCOME_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TOTAL_NET_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TOTAL_GROSS_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TOTAL_VAT_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TOTAL_INCOME_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="FINANCIAL_DATA" columnNames="ID" constraintName="PK_FINANCIAL_DATA"/>
+        <addForeignKeyConstraint baseTableName="FINANCIAL_DATA"
+                                 baseColumnNames="PROJECT_ID"
+                                 constraintName="FK_FINANCIAL_DATA_PROJECT"
+                                 referencedTableName="PROJECT"
+                                 referencedColumnNames="ID"
+        />
+        <createIndex indexName="IDX_FINANCIAL_DATA_PROJECT" tableName="FINANCIAL_DATA" unique="true">
+            <column name="PROJECT_ID"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
