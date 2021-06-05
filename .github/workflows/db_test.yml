@@ -3,8 +3,11 @@ name: Database check
 on: [ push ]
 
 jobs:
-  build:
+  LBJobMaven:
     runs-on: ubuntu-latest
     steps:
       - name: Run Liquibase
-
+        uses: actions/checkout@v2
+      - run: |
+          cd database
+          mvn clean package
