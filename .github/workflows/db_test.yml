@@ -11,3 +11,7 @@ jobs:
       - run: |
           cd database
           mvn clean package
+          mvn liquibase:status -Dliquibase.verbose
+          mvn liquibase:updateTestingRollback
+        env:
+          username: "userName"
