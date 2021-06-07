@@ -12,9 +12,8 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Run Liquibase
-        uses: actions/cache@v2
-      - run: |
+      - name: Run liquibase changelog
+        run: |
           cd database
           mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring.profiles.active=test
       - run: echo " This job's status is ${{ job.status }}."
