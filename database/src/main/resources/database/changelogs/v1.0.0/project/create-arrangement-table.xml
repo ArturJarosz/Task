@@ -22,13 +22,13 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <!--        <sql splitStatements="false">
-                    alter table ARRANGEMENT add constraint OFFER_OR_CONTRACT_DATA_NOT_NULL
-                    check(
-                    ((ARRANGEMENT_TYPE = 'OFFER') AND (IS_OFFER_ACCEPTED is NOT NULL)) or
-                    ((ARRANGEMENT_TYPE = 'CONTRACT') AND (SIGNING_DATE is NOT NULL) AND (DEADLINE is NOT NULL))
-                    )
-                </sql>-->
+        <sql splitStatements="false">
+            alter table ARRANGEMENT add constraint OFFER_OR_CONTRACT_DATA_NOT_NULL
+            check(
+            ((ARRANGEMENT_TYPE = 'OFFER') AND (IS_OFFER_ACCEPTED is NOT NULL)) or
+            ((ARRANGEMENT_TYPE = 'CONTRACT') AND (SIGNING_DATE is NOT NULL) AND (DEADLINE is NOT NULL))
+            )
+        </sql>
         <addPrimaryKey tableName="ARRANGEMENT" columnNames="ID" constraintName="PK_ARRANGEMENT"/>
     </changeSet>
 </databaseChangeLog>

@@ -14,9 +14,7 @@ spring:
     #   database: postgresql
     openInView: false
     show_sql: true
-    generate-ddl: false
     hibernate:
-      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:

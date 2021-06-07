@@ -1,4 +1,0 @@
-changeLogFile: classpath:/database/changelogs/changelog-master.xml
-url: jdbc:h2:file:./database/src/main/java/com/arturjarosz/dbTest
-username: liquibase
-password: liquibase
