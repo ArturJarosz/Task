@@ -13,11 +13,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Run liquibase changelog
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+        uses: actions/checkout@v2
       - run: |
           cd database
           mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring.profiles.active=test
