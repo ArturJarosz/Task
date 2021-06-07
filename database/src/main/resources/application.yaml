@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: postgres
+    active: test
   #  datasource:
   #    url: jdbc:postgresql://localhost:5432/taskdb
   #    username: postgres

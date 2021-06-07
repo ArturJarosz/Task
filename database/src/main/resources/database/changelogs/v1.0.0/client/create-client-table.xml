@@ -36,15 +36,6 @@
             <column name="HOUSE_NUMBER" type="VARCHAR2(5 ${char.unit})"/>
             <column name="FLAT_NUMBER" type="VARCHAR2(5 ${char.unit})"/>
         </createTable>
-        <sql>
-            alter table CLIENT add constraint NAME_NOT_NULL
-            check
-            (
-            ((CLIENT_TYPE = 'PRIVATE') and ((FIRST_NAME is NOT NULL) AND (LAST_NAME is NOT NULL))) or
-            ((CLIENT_TYPE = 'CORPORATE') and (COMPANY_NAME is NOT NULL))
-            );
-        </sql>
-
         <addPrimaryKey tableName="CLIENT" columnNames="ID" constraintName="PK_CLIENT"/>
     </changeSet>
 

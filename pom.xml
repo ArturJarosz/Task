@@ -26,6 +26,7 @@
         <!--DEPENDENCIES-->
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-lang3.version>3.10</commons-lang3.version>
+        <h2.version>1.4.200</h2.version>
         <liquibase-core.version>3.10.1</liquibase-core.version>
         <logback-classic.version>1.2.3</logback-classic.version>
         <mapstruct.version>1.4.1.Final</mapstruct.version>

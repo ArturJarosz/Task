@@ -10,8 +10,7 @@ jobs:
         uses: actions/checkout@v2
       - run: |
           cd database
-          mvn clean package
-          mvn liquibase:status -Dliquibase.verbose
-          mvn liquibase:updateTestingRollback
+          mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring.profiles.active=test
+
         env:
           username: "userName"
