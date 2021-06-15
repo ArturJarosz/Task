@@ -22,8 +22,15 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <sql splitStatements="false">
+        <sql splitStatements="false" dbms="postgresql">
             alter table ARRANGEMENT add constraint OFFER_OR_CONTRACT_DATA_NOT_NULL
+            check(
+            ((ARRANGEMENT_TYPE = 'OFFER') AND (IS_OFFER_ACCEPTED is NOT NULL)) or
+            ((ARRANGEMENT_TYPE = 'CONTRACT') AND (SIGNING_DATE is NOT NULL) AND (DEADLINE is NOT NULL))
+            )
+        </sql>
+        <sql splitStatements="false" dbms="h2">
+            alter table TASK_SCHEMA.ARRANGEMENT add constraint OFFER_OR_CONTRACT_DATA_NOT_NULL
             check(
             ((ARRANGEMENT_TYPE = 'OFFER') AND (IS_OFFER_ACCEPTED is NOT NULL)) or
             ((ARRANGEMENT_TYPE = 'CONTRACT') AND (SIGNING_DATE is NOT NULL) AND (DEADLINE is NOT NULL))

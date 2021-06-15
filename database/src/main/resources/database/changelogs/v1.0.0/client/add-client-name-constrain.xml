@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="liquibase" id="add-client-name-constraint">
-        <sql>
+        <sql dbms="postgresql">
             alter table CLIENT add constraint NAME_NOT_NULL
             check
             (
@@ -13,6 +13,15 @@
             ((CLIENT_TYPE = 'CORPORATE') and (COMPANY_NAME is NOT NULL))
             );
         </sql>
+        <sql dbms="h2">
+            alter table TASK_SCHEMA.CLIENT add constraint NAME_NOT_NULL
+            check
+            (
+            ((CLIENT_TYPE = 'PRIVATE') and ((FIRST_NAME is NOT NULL) AND (LAST_NAME is NOT NULL))) or
+            ((CLIENT_TYPE = 'CORPORATE') and (COMPANY_NAME is NOT NULL))
+            );
+        </sql>
+
     </changeSet>
 
 </databaseChangeLog>
