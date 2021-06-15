@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: postgres
+    active: test
   #  datasource:
   #    url: jdbc:postgresql://localhost:5432/taskdb
   #    username: postgres
@@ -10,13 +10,11 @@ spring:
     change-log: classpath:/database/changelogs/changelog-master.xml
     default-schema: task_schema
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    database: postgresql
+    #   database-platform: org.hibernate.dialect.PostgreSQLDialect
+    #   database: postgresql
     openInView: false
     show_sql: true
-    generate-ddl: false
     hibernate:
-      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:

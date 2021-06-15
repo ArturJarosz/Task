@@ -1,0 +1,20 @@
+name: Database check
+
+on: [ push ]
+
+jobs:
+  Liquibase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Run liquibase changelog
+        uses: actions/checkout@v2
+      - run: |
+          cd database
+          mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring.profiles.active=test
+      - run: echo " This job's status is ${{ job.status }}."

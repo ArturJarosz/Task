@@ -6,5 +6,6 @@
 
     <include file="create-client-sequence.xml" relativeToChangelogFile="true"/>
     <include file="create-client-table.xml" relativeToChangelogFile="true"/>
+    <include file="add-client-name-constrain.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
