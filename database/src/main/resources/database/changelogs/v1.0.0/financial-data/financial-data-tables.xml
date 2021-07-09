@@ -6,5 +6,7 @@
 
     <include file="create-financial-data-sequence.xml" relativeToChangelogFile="true"/>
     <include file="create-financial-data-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-project-financial-data-sequence.xml" relativeToChangelogFile="true"/>
+    <include file="create-project-financial-data-table.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
