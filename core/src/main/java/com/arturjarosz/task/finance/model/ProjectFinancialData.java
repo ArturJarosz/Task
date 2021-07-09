@@ -14,52 +14,52 @@ import javax.persistence.Table;
 public class ProjectFinancialData extends AbstractAggregateRoot {
 
     private static final long serialVersionUID = 4803569322363900378L;
-    @Column(name = "NET_VALUE")
+    @Column(name = "NET_VALUE", nullable = false)
     private Money netValue;
 
-    @Column(name = "GROSS_VALUE")
+    @Column(name = "GROSS_VALUE", nullable = false)
     private Money grossValue;
 
-    @Column(name = "VAT_TAX")
+    @Column(name = "VAT_TAX", nullable = false)
     private Money vatTax;
 
-    @Column(name = "INCOME_TAX")
+    @Column(name = "INCOME_TAX", nullable = false)
     private Money incomeTax;
 
-    @Column(name = "COMMISSIONS_NET_VALUE")
+    @Column(name = "COMMISSIONS_NET_VALUE", nullable = false)
     private Money commissionsNetValue;
 
-    @Column(name = "COMMISSIONS_GROSS_VALUE")
+    @Column(name = "COMMISSIONS_GROSS_VALUE", nullable = false)
     private Money commissionsGrossValue;
 
-    @Column(name = "COMMISSIONS_VAT_TAX")
+    @Column(name = "COMMISSIONS_VAT_TAX", nullable = false)
     private Money commissionsVatTax;
 
-    @Column(name = "COMMISSIONS_INCOME_TAX")
+    @Column(name = "COMMISSIONS_INCOME_TAX", nullable = false)
     private Money commissionsIncomeTax;
 
-    @Column(name = "COSTS_NET_VALUE")
+    @Column(name = "COSTS_NET_VALUE", nullable = false)
     private Money costsNetValue;
 
-    @Column(name = "COSTS_GROSS_VALUE")
+    @Column(name = "COSTS_GROSS_VALUE", nullable = false)
     private Money costsGrossValue;
 
-    @Column(name = "COSTS_VAT_TAX")
+    @Column(name = "COSTS_VAT_TAX", nullable = false)
     private Money costsVatTax;
 
-    @Column(name = "COSTS_INCOME_TAX")
+    @Column(name = "COSTS_INCOME_TAX", nullable = false)
     private Money costsIncomeTax;
 
-    @Column(name = "TOTAL_NET_VALUE")
+    @Column(name = "TOTAL_NET_VALUE", nullable = false)
     private Money totalNetValue;
 
-    @Column(name = "TOTAL_GROSS_VALUE")
+    @Column(name = "TOTAL_GROSS_VALUE", nullable = false)
     private Money totalGrossValue;
 
-    @Column(name = "TOTAL_VAT_TAX")
+    @Column(name = "TOTAL_VAT_TAX", nullable = false)
     private Money totalVatTax;
 
-    @Column(name = "TOTAL_INCOME_TAX")
+    @Column(name = "TOTAL_INCOME_TAX", nullable = false)
     private Money totalIncomeTax;
 
     @Column(name = "PROJECT_ID", nullable = false)
