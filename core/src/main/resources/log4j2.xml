@@ -20,7 +20,7 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="liquibase" level="info" additivity="${additive-logging}">
+        <Logger name="liquibase" level="debug" additivity="${additive-logging}">
             <AppenderRef ref="LiquibaseFileAppender"/>
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>

@@ -3,7 +3,9 @@ package com.arturjarosz.task.finance.model;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
+import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -12,54 +14,70 @@ import javax.persistence.Table;
 @SequenceGenerator(name = "sequence_generator", sequenceName = "project_financial_data_sequence", allocationSize = 1)
 @Table(name = "PROJECT_FINANCIAL_DATA")
 public class ProjectFinancialData extends AbstractAggregateRoot {
-
     private static final long serialVersionUID = 4803569322363900378L;
-    @Column(name = "NET_VALUE", nullable = false)
-    private Money netValue;
 
-    @Column(name = "GROSS_VALUE", nullable = false)
-    private Money grossValue;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "BASE_NET_VALUE", nullable = false))
+    private Money baseNetValue;
 
-    @Column(name = "VAT_TAX", nullable = false)
-    private Money vatTax;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "BASE_GROSS_VALUE", nullable = false))
+    private Money baseGrossValue;
 
-    @Column(name = "INCOME_TAX", nullable = false)
-    private Money incomeTax;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "BASE_VAT_TAX", nullable = false))
+    private Money baseVatTax;
 
-    @Column(name = "COMMISSIONS_NET_VALUE", nullable = false)
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "BASE_INCOME_TAX", nullable = false))
+    private Money baseIncomeTax;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "COMMISSIONS_NET_VALUE", nullable = false))
     private Money commissionsNetValue;
 
-    @Column(name = "COMMISSIONS_GROSS_VALUE", nullable = false)
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "COMMISSIONS_GROSS_VALUE", nullable = false))
     private Money commissionsGrossValue;
 
-    @Column(name = "COMMISSIONS_VAT_TAX", nullable = false)
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "COMMISSIONS_VAT_TAX", nullable = false))
     private Money commissionsVatTax;
 
-    @Column(name = "COMMISSIONS_INCOME_TAX", nullable = false)
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "COMMISSIONS_INCOME_TAX", nullable = false))
     private Money commissionsIncomeTax;
 
-    @Column(name = "COSTS_NET_VALUE", nullable = false)
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "COSTS_NET_VALUE", nullable = false))
     private Money costsNetValue;
 
-    @Column(name = "COSTS_GROSS_VALUE", nullable = false)
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "COSTS_GROSS_VALUE", nullable = false))
     private Money costsGrossValue;
 
-    @Column(name = "COSTS_VAT_TAX", nullable = false)
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "COSTS_VAT_TAX", nullable = false))
     private Money costsVatTax;
 
-    @Column(name = "COSTS_INCOME_TAX", nullable = false)
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "COSTS_INCOME_TAX", nullable = false))
     private Money costsIncomeTax;
 
-    @Column(name = "TOTAL_NET_VALUE", nullable = false)
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "TOTAL_NET_VALUE", nullable = false))
     private Money totalNetValue;
 
-    @Column(name = "TOTAL_GROSS_VALUE", nullable = false)
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "TOTAL_GROSS_VALUE", nullable = false))
     private Money totalGrossValue;
 
-    @Column(name = "TOTAL_VAT_TAX", nullable = false)
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "TOTAL_VAT_TAX", nullable = false))
     private Money totalVatTax;
 
-    @Column(name = "TOTAL_INCOME_TAX", nullable = false)
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "TOTAL_INCOME_TAX", nullable = false))
     private Money totalIncomeTax;
 
     @Column(name = "PROJECT_ID", nullable = false)
@@ -73,36 +91,57 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
         this.projectId = projectId;
     }
 
-    public Money getNetValue() {
-        return this.netValue;
+    public void initiateProjectFinancialData() {
+        Money zeroValue = new Money(0);
+        this.baseGrossValue = zeroValue;
+        this.baseNetValue = zeroValue;
+        this.baseIncomeTax = zeroValue;
+        this.baseVatTax = zeroValue;
+        this.commissionsGrossValue = zeroValue;
+        this.commissionsNetValue = zeroValue;
+        this.commissionsIncomeTax = zeroValue;
+        this.commissionsVatTax = zeroValue;
+        this.costsGrossValue = zeroValue;
+        this.costsNetValue = zeroValue;
+        this.costsIncomeTax = zeroValue;
+        this.costsVatTax = zeroValue;
+        this.totalGrossValue = zeroValue;
+        this.totalNetValue = zeroValue;
+        this.totalIncomeTax = zeroValue;
+        this.totalVatTax = zeroValue;
+
     }
 
-    public void setNetValue(Money netValue) {
-        this.netValue = netValue;
+    public Money getBaseNetValue() {
+        return this.baseNetValue;
     }
 
-    public Money getGrossValue() {
-        return this.grossValue;
+    public void setBaseNetValue(Money netValue) {
+        this.baseNetValue = netValue;
     }
 
-    public void setGrossValue(Money grossValue) {
-        this.grossValue = grossValue;
+    public Money getBaseGrossValue() {
+        return this.baseGrossValue;
     }
 
-    public Money getVatTax() {
-        return this.vatTax;
+    public void setBaseGrossValue(Money grossValue) {
+        this.baseGrossValue = grossValue;
     }
 
-    public void setVatTax(Money vatTax) {
-        this.vatTax = vatTax;
+    public Money getBaseVatTax() {
+        return this.baseVatTax;
     }
 
-    public Money getIncomeTax() {
-        return this.incomeTax;
+    public void setBaseVatTax(Money vatTax) {
+        this.baseVatTax = vatTax;
     }
 
-    public void setIncomeTax(Money incomeTax) {
-        this.incomeTax = incomeTax;
+    public Money getBaseIncomeTax() {
+        return this.baseIncomeTax;
+    }
+
+    public void setBaseIncomeTax(Money incomeTax) {
+        this.baseIncomeTax = incomeTax;
     }
 
     public Money getCommissionsNetValue() {

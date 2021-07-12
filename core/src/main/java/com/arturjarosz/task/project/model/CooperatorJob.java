@@ -13,7 +13,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@SequenceGenerator(name = "sequence_generator", sequenceName = "cooperator_job", allocationSize = 1)
+@SequenceGenerator(name = "cooperator_job_sequence_generator", sequenceName = "cooperator_job", allocationSize = 1)
 @Table(name = "COOPERATOR_JOB")
 public class CooperatorJob extends AbstractEntity {
     private static final long serialVersionUID = -2817735161319438104L;

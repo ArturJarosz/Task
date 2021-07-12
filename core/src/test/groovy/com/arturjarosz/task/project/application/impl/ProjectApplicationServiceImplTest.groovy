@@ -5,6 +5,7 @@ import com.arturjarosz.task.architect.application.impl.ArchitectApplicationServi
 import com.arturjarosz.task.client.application.ClientValidator
 import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
+import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataApplicationServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.OfferDto
 import com.arturjarosz.task.project.application.dto.ProjectContractDto
@@ -31,6 +32,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     private static final Long ARCHITECT_ID = 1L;
     private static final Long CLIENT_ID = 10L;
     private static final Long EXISTING_PROJECT_ID = 100L;
+    private static final Long NEW_PROJECT_ID = 101L;
     private static final LocalDate PROJECT_DEADLINE = LocalDate.parse("2022-10-10");
     private static final LocalDate PROJECT_END_DATE = LocalDate.parse("2022-05-02");
     private static final LocalDate PROJECT_SIGNING_DATE = LocalDate.parse("2021-01-01");
@@ -45,21 +47,27 @@ class ProjectApplicationServiceImplTest extends Specification {
     def projectRepository = Mock(ProjectRepositoryImpl);
     def projectDomainService = Mock(ProjectDomainServiceImpl);
     def projectValidator = Mock(ProjectValidator);
+    def projectFinancialDataApplicationService = Mock(ProjectFinancialDataApplicationServiceImpl);
 
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
-            architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator);
+            architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator,
+            projectFinancialDataApplicationService);
 
     def "createProject should call validateProjectBasicDto on projectValidator"() {
         given:
+            this.mockProjectRepositorySaveNewProject();
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
         when:
             ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
+
         then:
+
             1 * this.projectValidator.validateProjectBasicDto(_);
     }
 
     def "createProject should call validateArchitectExistence on architectValidator"() {
         given:
+            this.mockProjectRepositorySaveNewProject();
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
         when:
             ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
@@ -69,6 +77,7 @@ class ProjectApplicationServiceImplTest extends Specification {
 
     def "createProject should call validateClientExistence on clientValidator"() {
         given:
+            this.mockProjectRepositorySaveNewProject();
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
         when:
             ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
@@ -78,6 +87,7 @@ class ProjectApplicationServiceImplTest extends Specification {
 
     def "createProject should call createProject on projectDomainService"() {
         given:
+            this.mockProjectRepositorySaveNewProject();
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
         when:
             ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
@@ -91,7 +101,17 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
         then:
-            1 * this.projectRepository.save(_);
+            1 * this.projectRepository.save(_) >> this.prepareNewlyCreatedProject();
+    }
+
+    def "createProject should call createProjectFinancialDataOnProjectFinancialDataApplicationService"() {
+        given:
+            this.mockProjectRepositorySaveNewProject();
+            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
+        when:
+            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
+        then:
+            1 * this.projectFinancialDataApplicationService.createProjectFinancialData(NEW_PROJECT_ID);
     }
 
     def "createProject should return newly created project"() {
@@ -582,5 +602,14 @@ class ProjectApplicationServiceImplTest extends Specification {
     private void mockProjectDomainServiceMakeNewOffer() {
         Project project = this.prepareExistingProject();
         this.projectDomainService.makeNewOffer(_ as Project, _ as OfferDto) >> project;
+    }
+
+    private void mockProjectRepositorySaveNewProject() {
+        1 * this.projectRepository.save(_) >> this.prepareNewlyCreatedProject();
+    }
+
+    private Project prepareNewlyCreatedProject() {
+        print("mocking project repository save 1");
+        return new ProjectBuilder().withId(NEW_PROJECT_ID).withOffer(new Offer(0)).build();
     }
 }

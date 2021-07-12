@@ -13,7 +13,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@SequenceGenerator(name = "sequence_generator", sequenceName = "arrangement_sequence", allocationSize = 1)
+@SequenceGenerator(name = "arrangement_sequence_generator", sequenceName = "arrangement_sequence", allocationSize = 1)
 @DiscriminatorColumn(name = "ARRANGEMENT_TYPE", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "ARRANGEMENT")
 public class Arrangement extends AbstractEntity {
