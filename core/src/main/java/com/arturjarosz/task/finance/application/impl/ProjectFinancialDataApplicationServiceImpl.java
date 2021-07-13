@@ -23,7 +23,7 @@ public class ProjectFinancialDataApplicationServiceImpl implements ProjectFinanc
         this.projectValidator.validateProjectExistence(projectId);
         ProjectFinancialData projectFinancialData = new ProjectFinancialData(projectId);
         projectFinancialData.initiateProjectFinancialData();
-        this.projectFinancialDataRepository.save(projectFinancialData);
+        projectFinancialData = this.projectFinancialDataRepository.save(projectFinancialData);
         return projectFinancialData;
     }
 }
