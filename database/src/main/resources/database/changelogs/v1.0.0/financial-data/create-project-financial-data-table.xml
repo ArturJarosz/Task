@@ -15,16 +15,16 @@
             <column name="PROJECT_ID" type="${long.type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="NET_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+            <column name="BASE_NET_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="GROSS_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+            <column name="BASE_GROSS_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="VAT_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+            <column name="BASE_VAT_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="INCOME_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+            <column name="BASE_INCOME_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
             <column name="COMMISSIONS_NET_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">

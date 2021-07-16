@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@SequenceGenerator(name = "sequence_generator", sequenceName = "project_sequence", allocationSize = 1)
+@SequenceGenerator(name = "project_sequence_generator", sequenceName = "project_sequence", allocationSize = 1)
 @Table(name = "PROJECT")
 public class Project extends AbstractAggregateRoot implements WorkflowAware<ProjectStatus> {
     private static final long serialVersionUID = 5437961881026141924L;

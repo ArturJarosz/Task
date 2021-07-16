@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Entity
-@SequenceGenerator(name = "sequence_generator", sequenceName = "cost_sequence", allocationSize = 1)
+@SequenceGenerator(name = "cost_sequence_generator", sequenceName = "cost_sequence", allocationSize = 1)
 @Table(name = "COST")
 public class Cost extends AbstractEntity {
 
