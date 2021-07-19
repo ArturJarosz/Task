@@ -15,13 +15,13 @@
             <column name="VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="HAS_INVOICE" type="BOOLEAN">
+            <column name="HAS_INVOICE" type="${boolean.type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="PAYABLE" type="BOOLEAN">
+            <column name="PAYABLE" type="${boolean.type}">
                 <constraints nullable="false"/>
             </column>
-            <column name="IS_PAID" type="BOOLEAN"/>
+            <column name="IS_PAID" type="${boolean.type}"/>
         </createTable>
         <sql dbms="postgresql">
             alter table FINANCIAL_DATA add constraint IS_PAID_NOT_NULL

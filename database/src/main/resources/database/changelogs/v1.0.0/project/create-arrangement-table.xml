@@ -12,7 +12,7 @@
             <column name="VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="IS_OFFER_ACCEPTED" type="BOOLEAN"/>
+            <column name="IS_OFFER_ACCEPTED" type="${boolean.type}"/>
             <column name="SIGNING_DATE" type="${date.type}"/>
             <column name="DEADLINE" type="${date.type}"/>
             <column name="ARRANGEMENT_TYPE" type="VARCHAR2(35 ${char.unit})">
