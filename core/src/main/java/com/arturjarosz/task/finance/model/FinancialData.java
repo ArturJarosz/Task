@@ -16,7 +16,7 @@ import javax.persistence.Table;
 
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "financial_data_sequence", allocationSize = 1)
-@Table(name = "FINACIAL_DATA")
+@Table(name = "FINANCIAL_DATA")
 public class FinancialData extends AbstractAggregateRoot {
     private static final long serialVersionUID = -7882045222253776404L;
 

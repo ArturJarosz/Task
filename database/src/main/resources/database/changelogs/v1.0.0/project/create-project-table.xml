@@ -34,6 +34,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="ARRANGEMENT_ID" type="${long.type}"/>
+            <column name="SUPERVISION_ID" type="${long.type}"/>
         </createTable>
         <addPrimaryKey tableName="PROJECT" columnNames="ID" constraintName="PK_PROJECT"/>
         <addForeignKeyConstraint baseTableName="PROJECT"

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="liquibase" id="create-supervision-table">
+        <createTable tableName="SUPERVISION">
+            <column name="ID" type="${long.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FINANCIAL_DATA_ID" type="${long.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BASE_NET_RATE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BASE_GROSS_RATE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="HOURLY_NET_RATE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="HOURS_COUNT" type="${integer.type}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VISIT_NET_RATE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="HAS_INVOICE" type="${boolean.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NOTE" type="VARCHAR2(1000 ${char.unit})"/>
+            <column name="UUID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="SUPERVISION" columnNames="ID" constraintName="PK_SUPERVISION"/>
+    </changeSet>
+</databaseChangeLog>

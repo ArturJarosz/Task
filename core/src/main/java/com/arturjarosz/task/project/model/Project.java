@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -72,6 +73,10 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
 
     @Column(name = "WORKFLOW_NAME", nullable = false)
     private String workflowName;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "SUPERVISION_ID")
+    private Supervision supervision;
 
     protected Project() {
         //needed by Hibernate
@@ -293,5 +298,14 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
 
     public Arrangement getArrangement() {
         return this.arrangement;
+    }
+
+    public void addSupervision(boolean hasInvoice, BigDecimal baseNetRate, BigDecimal hourlyRate,
+                               BigDecimal visitRate) {
+        this.supervision = new Supervision(hasInvoice, baseNetRate, hourlyRate, visitRate);
+    }
+
+    public Supervision getSupervision() {
+        return this.supervision;
     }
 }
