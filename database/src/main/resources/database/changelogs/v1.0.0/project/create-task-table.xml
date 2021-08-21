@@ -34,8 +34,10 @@
             </column>
         </createTable>
         <addPrimaryKey tableName="TASK" columnNames="ID" constraintName="PK_TASK"/>
-        <addForeignKeyConstraint baseTableName="TASK" baseColumnNames="STAGE_ID"
+        <addForeignKeyConstraint baseTableName="TASK"
+                                 baseColumnNames="STAGE_ID"
                                  constraintName="FK_TASK_STAGE"
-                                 referencedTableName="STAGE" referencedColumnNames="ID"/>
+                                 referencedTableName="STAGE"
+                                 referencedColumnNames="ID"/>
     </changeSet>
 </databaseChangeLog>

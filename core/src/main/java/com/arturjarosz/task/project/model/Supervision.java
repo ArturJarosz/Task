@@ -11,10 +11,13 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @SequenceGenerator(name = "supervision_sequence_generator", sequenceName = "supervision_sequence", allocationSize = 1)
@@ -50,7 +53,9 @@ public class Supervision extends AbstractEntity {
 
     private String note;
 
-    // TODO: TA-185 create and connect SUPERVISION_VISIT
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "SUPERVISION_ID")
+    private Set<SupervisionVisit> supervisionVisits;
 
     protected Supervision() {
         // Needed by Hibernate
@@ -63,6 +68,7 @@ public class Supervision extends AbstractEntity {
         this.baseGrossNet = this.baseNetRate;
         this.hourlyNetRate = new Money(hourlyNetRate);
         this.visitNetRate = new Money(visitNetRate);
+        this.supervisionVisits = new HashSet<>();
     }
 
     public BigDecimal getBaseNetRate() {
@@ -91,5 +97,17 @@ public class Supervision extends AbstractEntity {
 
     public FinancialData getFinancialData() {
         return this.financialData;
+    }
+
+    public void addSupervisionVisit(SupervisionVisit supervisionVisit) {
+        this.supervisionVisits.add(supervisionVisit);
+    }
+
+    public void removeSupervisionVisit(Long supervisionVisitId) {
+        this.supervisionVisits.removeIf(supervisionVisit -> supervisionVisit.getId().equals(supervisionVisitId));
+    }
+
+    public Set<SupervisionVisit> getSupervisionVisits() {
+        return this.supervisionVisits;
     }
 }

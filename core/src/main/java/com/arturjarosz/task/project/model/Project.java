@@ -308,4 +308,8 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     public Supervision getSupervision() {
         return this.supervision;
     }
+
+    public void addSupervisionVisit(SupervisionVisit supervisionVisit) {
+        this.supervision.addSupervisionVisit(supervisionVisit);
+    }
 }

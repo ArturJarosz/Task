@@ -9,8 +9,10 @@ import com.arturjarosz.task.project.model.QCooperatorJob;
 import com.arturjarosz.task.project.model.QCost;
 import com.arturjarosz.task.project.model.QProject;
 import com.arturjarosz.task.project.model.QStage;
+import com.arturjarosz.task.project.model.QSupervision;
 import com.arturjarosz.task.project.model.QTask;
 import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.project.model.Supervision;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
 import com.querydsl.core.types.Projections;
@@ -27,6 +29,7 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     private static final QCost COST = QCost.cost;
     private static final QStage STAGE = QStage.stage;
     private static final QTask TASK = QTask.task;
+    private static final QSupervision SUPERVISION = QSupervision.supervision;
 
     public ProjectQueryServiceImpl() {
         super(PROJECT);
@@ -85,4 +88,16 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
                 .fetch();
     }
 
+    @Override
+    public Supervision getSupervision(Long projectId) {
+        return this.query().from(SUPERVISION).leftJoin(PROJECT.supervision, SUPERVISION)
+                .select(SUPERVISION).where(PROJECT.id.eq(projectId))
+                .fetchOne();
+    }
+
+    @Override
+    public boolean projectHasSupervision(Long projectId) {
+        return this.query().from(PROJECT).where(PROJECT.id.eq(projectId)).select(PROJECT.supervision)
+                .fetchOne() != null;
+    }
 }

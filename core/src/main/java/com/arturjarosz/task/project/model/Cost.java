@@ -36,9 +36,6 @@ public class Cost extends AbstractEntity {
     @Column(name = "NOTE")
     private String note;
 
-    @Column(name = "PROJECT_ID")
-    private Long projectId;
-
     protected Cost() {
         //needed by Hibernate
     }

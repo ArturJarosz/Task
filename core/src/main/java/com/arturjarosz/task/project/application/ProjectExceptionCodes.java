@@ -13,6 +13,7 @@ public class ProjectExceptionCodes {
     public static final String INSTALLMENT = "installment";
     public static final String PROJECT = "project";
     public static final String STAGE = "stage";
+    public static final String SUPERVISION = "supervision";
     public static final String TASK = "task";
 
     //Fields

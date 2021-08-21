@@ -2,6 +2,7 @@ package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.project.application.SupervisionApplicationService;
 import com.arturjarosz.task.project.application.dto.SupervisionDto;
+import com.arturjarosz.task.project.application.dto.SupervisionVisitDto;
 import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class SupervisionRestController {
         return new ResponseEntity<>(createdSupervisionDto, httpHeaders, HttpStatus.OK);
     }
 
-    @PutMapping("{project}/supervisions/{supervisionId}")
+    @PutMapping("{project}/supervisions")
     public ResponseEntity<SupervisionDto> updateSupervision() {
         return null;
     }
@@ -46,5 +47,14 @@ public class SupervisionRestController {
 
     public ResponseEntity<SupervisionDto> getSupervision() {
         return null;
+    }
+
+    @PostMapping("{projectId}/supervisions/supervisionVisits")
+    public ResponseEntity<SupervisionVisitDto> addSupervisionVisit(@PathVariable("projectId") Long projectId,
+                                                                   @RequestBody
+                                                                           SupervisionVisitDto supervisionVisitDto) {
+        SupervisionVisitDto createdSupervisionVisitDto = this.supervisionApplicationService
+                .createSupervisionVisit(projectId, supervisionVisitDto);
+        return new ResponseEntity<>(createdSupervisionVisitDto, HttpStatus.OK);
     }
 }
