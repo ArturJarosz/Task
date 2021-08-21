@@ -6,6 +6,7 @@ import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.project.model.Supervision;
 
 import java.util.List;
 
@@ -65,4 +66,19 @@ public interface ProjectQueryService {
      * @return
      */
     List<StageDto> getStagesForProjectById(Long projectId);
+
+    /**
+     * Returns Supervision for Project of given projectId.
+     *
+     * @return
+     */
+    Supervision getSupervision(Long projectId);
+
+    /**
+     * Checks if Project of given projectId has Supervision.
+     *
+     * @param projectId
+     * @return
+     */
+    boolean projectHasSupervision(Long projectId);
 }

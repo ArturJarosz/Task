@@ -2,4 +2,4 @@ spring:
   jpa:
     generate-ddl: false
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop

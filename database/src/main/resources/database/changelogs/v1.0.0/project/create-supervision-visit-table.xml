@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="liquibase" id="create-supervision-visit-table">
+        <createTable tableName="SUPERVISION_VISIT">
+            <column name="ID" type="${long.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_OF_VISIT" type="${date.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="HOURS_COUNT" type="${integer.type}" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_PAYABLE" type="${boolean.type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UUID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SUPERVISION_ID" type="${long.type}"/>
+        </createTable>
+        <addPrimaryKey tableName="SUPERVISION_VISIT" columnNames="ID" constraintName="PK_SUPERVISION_VISIT"/>
+        <addForeignKeyConstraint baseTableName="SUPERVISION_VISIT"
+                                 baseColumnNames="SUPERVISION_ID"
+                                 constraintName="FK_VISIT_SUPERVISION"
+                                 referencedTableName="SUPERVISION"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+</databaseChangeLog>
