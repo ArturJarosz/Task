@@ -69,7 +69,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     }
 
-    def projectValidator = new ProjectValidator(projectRepository);
+    def projectValidator = new ProjectValidator(projectRepository, projectQueryService);
 
     def stageValidator = new StageValidator(projectRepository, projectQueryService);
 

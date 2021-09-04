@@ -5,8 +5,10 @@ import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
@@ -21,9 +23,12 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 public class ProjectValidator {
 
     private final ProjectRepository projectRepository;
+    private final ProjectQueryService projectQueryService;
 
-    public ProjectValidator(ProjectRepository projectRepository) {
+    @Autowired
+    public ProjectValidator(ProjectRepository projectRepository, ProjectQueryService projectQueryService) {
         this.projectRepository = projectRepository;
+        this.projectQueryService = projectQueryService;
     }
 
     public void validateProjectBasicDto(ProjectCreateDto projectCreateDto) {
@@ -67,6 +72,12 @@ public class ProjectValidator {
         assertNotNull(projectDto, createMessageCode(ExceptionCodes.NULL,
                 ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.UPDATE));
         validateProjectName(projectDto.getName());
+    }
+
+    public void validateProjectHasSupervision(Long projectId) {
+        assertNotNull(this.projectQueryService.getProjectSupervision(projectId),
+                createMessageCode(ExceptionCodes.NOT_PRESENT, ProjectExceptionCodes.PROJECT,
+                        ProjectExceptionCodes.SUPERVISION));
     }
 
 }

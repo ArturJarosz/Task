@@ -5,6 +5,7 @@ import com.arturjarosz.task.project.application.dto.ProjectCreateDto
 import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
+import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import spock.lang.Shared
 import spock.lang.Specification
@@ -35,7 +36,9 @@ class ProjectValidatorTest extends Specification {
         };
     }
 
-    ProjectValidator projectValidator = new ProjectValidator(projectRepository);
+    def projectQueryService = Mock(ProjectQueryServiceImpl);
+
+    ProjectValidator projectValidator = new ProjectValidator(projectRepository, projectQueryService);
 
     def "passing null to validateProjectBasicDto should thrown an exception"() {
         given:

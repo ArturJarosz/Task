@@ -1,6 +1,8 @@
 package com.arturjarosz.task.project.query;
 
 import com.arturjarosz.task.project.application.dto.StageDto;
+import com.arturjarosz.task.project.application.dto.SupervisionDto;
+import com.arturjarosz.task.project.application.dto.SupervisionVisitDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.Cost;
@@ -81,4 +83,20 @@ public interface ProjectQueryService {
      * @return
      */
     boolean projectHasSupervision(Long projectId);
+
+    /**
+     * Retrieves Supervision of Project.
+     *
+     * @param projectId
+     * @return
+     */
+    SupervisionDto getProjectSupervision(Long projectId);
+
+    /**
+     * Retrieves SupervisionVisit for Project.
+     *
+     * @param supervisionVisitId
+     * @return
+     */
+    SupervisionVisitDto getProjectSupervisionVisit(Long projectId, Long supervisionVisitId);
 }

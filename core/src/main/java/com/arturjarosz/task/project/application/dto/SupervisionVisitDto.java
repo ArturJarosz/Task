@@ -5,6 +5,11 @@ import java.time.LocalDate;
 
 public class SupervisionVisitDto implements Serializable {
     private static final long serialVersionUID = 3217650597832433311L;
+    public static final String ID = "id";
+    public static final String DATE_OF_VISIT = "dateOfVisit";
+    public static final String IS_PAYABLE = "isPayable";
+    public static final String HOURS_COUNT = "hoursCount";
+
     private long projectId;
     private long id;
     private LocalDate dateOfVisit;

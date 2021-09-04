@@ -7,6 +7,7 @@ import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -56,5 +57,16 @@ public class SupervisionRestController {
         SupervisionVisitDto createdSupervisionVisitDto = this.supervisionApplicationService
                 .createSupervisionVisit(projectId, supervisionVisitDto);
         return new ResponseEntity<>(createdSupervisionVisitDto, HttpStatus.OK);
+    }
+
+    @GetMapping("{projectId}/supervisions/supervisionVisits/{supervisionVisitId}")
+    public ResponseEntity<SupervisionVisitDto> getSupervisionVisit(@PathVariable("projectId") Long projectId,
+                                                                   @PathVariable("supervisionVisitId") Long supervisionVisitId) {
+        SupervisionVisitDto supervisionVisit = this.supervisionApplicationService.getSupervisionVisit(projectId,
+                supervisionVisitId);
+        HttpHeaders httpHeaders = new HttpHeadersBuilder()
+                .withLocation("/projects/{projectId}/supervisions/{supervisionId}", projectId,
+                        supervisionVisit.getId()).build();
+        return new ResponseEntity<>(supervisionVisit, httpHeaders, HttpStatus.OK);
     }
 }

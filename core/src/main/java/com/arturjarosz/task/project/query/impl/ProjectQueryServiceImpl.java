@@ -1,6 +1,8 @@
 package com.arturjarosz.task.project.query.impl;
 
 import com.arturjarosz.task.project.application.dto.StageDto;
+import com.arturjarosz.task.project.application.dto.SupervisionDto;
+import com.arturjarosz.task.project.application.dto.SupervisionVisitDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.Cost;
@@ -10,6 +12,7 @@ import com.arturjarosz.task.project.model.QCost;
 import com.arturjarosz.task.project.model.QProject;
 import com.arturjarosz.task.project.model.QStage;
 import com.arturjarosz.task.project.model.QSupervision;
+import com.arturjarosz.task.project.model.QSupervisionVisit;
 import com.arturjarosz.task.project.model.QTask;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Supervision;
@@ -30,6 +33,7 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     private static final QStage STAGE = QStage.stage;
     private static final QTask TASK = QTask.task;
     private static final QSupervision SUPERVISION = QSupervision.supervision;
+    private static final QSupervisionVisit SUPERVISION_VISIT = QSupervisionVisit.supervisionVisit;
 
     public ProjectQueryServiceImpl() {
         super(PROJECT);
@@ -99,5 +103,23 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     public boolean projectHasSupervision(Long projectId) {
         return this.query().from(PROJECT).where(PROJECT.id.eq(projectId)).select(PROJECT.supervision)
                 .fetchOne() != null;
+    }
+
+    @Override
+    public SupervisionDto getProjectSupervision(Long projectId) {
+        return this.query()
+                .from(PROJECT).leftJoin(PROJECT.supervision, SUPERVISION)
+                .where(PROJECT.id.eq(projectId))
+                .select(Projections.bean(SupervisionDto.class))
+                .fetchOne();
+    }
+
+    @Override
+    public SupervisionVisitDto getProjectSupervisionVisit(Long projectId, Long supervisionVisitId) {
+        return this.query()
+                .from(SUPERVISION_VISIT)
+                .where(SUPERVISION_VISIT.id.eq(supervisionVisitId))
+                .select(Projections.bean(SupervisionVisitDto.class))
+                .fetchOne();
     }
 }
