@@ -27,4 +27,13 @@ public interface SupervisionApplicationService {
      * @return
      */
     SupervisionVisitDto createSupervisionVisit(Long projectId, SupervisionVisitDto supervisionVisitDto);
+
+    /**
+     * Get
+     *
+     * @param projectId
+     * @param supervisionVisitId
+     * @return
+     */
+    SupervisionVisitDto getSupervisionVisit(Long projectId, Long supervisionVisitId);
 }

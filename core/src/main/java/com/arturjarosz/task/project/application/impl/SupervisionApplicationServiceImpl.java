@@ -45,8 +45,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
                 supervisionDto.getHourlyNetRate(), supervisionDto.getVisitNetRate());
         project = this.projectRepository.save(project);
         Supervision supervision = project.getSupervision();
-        SupervisionDto createdSupervisionDto = SupervisionDtoMapper.INSTANCE.supervisionToSupervisionDto(supervision);
-        return createdSupervisionDto;
+        return SupervisionDtoMapper.INSTANCE.supervisionToSupervisionDto(supervision);
     }
 
     @Override
@@ -76,7 +75,15 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         return createdSupervisionVisitDto;
     }
 
-    private long getIdForCreatedSupervisionVisit(Project project, SupervisionVisit supervisionVisit) {
+    @Override
+    public SupervisionVisitDto getSupervisionVisit(Long projectId, Long supervisionVisitId) {
+        this.projectValidator.validateProjectExistence(projectId);
+        this.projectValidator.validateProjectHasSupervision(projectId);
+        return this.projectQueryService.getProjectSupervisionVisit(
+                projectId, supervisionVisitId);
+    }
+
+    private Long getIdForCreatedSupervisionVisit(Project project, SupervisionVisit supervisionVisit) {
         return project.getSupervision().getSupervisionVisits().stream()
                 .filter(visit -> visit.equals(supervisionVisit))
                 .map(AbstractEntity::getId)
