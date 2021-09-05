@@ -20,6 +20,7 @@ spring:
     properties:
       hibernate.cache.use_query_cache: false
       hibernate.generate_statistics: true
+      hibernate.default-schema: task_schema
   main:
     log-startup-info: false
     banner-mode: off
