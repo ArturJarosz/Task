@@ -49,13 +49,30 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     }
 
     @Override
-    public SupervisionDto updateSupervision() {
+    public SupervisionDto getSupervision(Long projectId) {
+        this.projectValidator.validateProjectExistence(projectId);
+        return this.projectQueryService.getProjectSupervision(projectId);
+    }
+
+    @Transactional
+    @Override
+    public SupervisionDto updateSupervision(Long projectId, SupervisionDto supervisionDto) {
+        this.projectValidator.validateProjectExistence(projectId);
+        this.validateProjectHavingSupervision(projectId);
+        Project project = this.projectRepository.load(projectId);
+        Supervision updatedSupervision = project.updateSupervision(supervisionDto);
+        this.projectRepository.save(project);
         return null;
     }
 
+    @Transactional
     @Override
-    public void deleteSupervision() {
-
+    public void deleteSupervision(Long projectId) {
+        this.projectValidator.validateProjectExistence(projectId);
+        this.validateProjectHavingSupervision(projectId);
+        Project project = this.projectRepository.load(projectId);
+        project.removeSupervision();
+        this.projectRepository.save(project);
     }
 
     @Transactional

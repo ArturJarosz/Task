@@ -1,15 +1,22 @@
 package com.arturjarosz.task.project.application.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class SupervisionDto implements Serializable {
     private static final long serialVersionUID = 6120237413436097370L;
 
+    @JsonIgnore
     public String ID = "id";
+    @JsonIgnore
     public String HAS_INVOICE = "hasInvoice";
+    @JsonIgnore
     public String BASE_NET_RATE = "baseNetRate";
+    @JsonIgnore
     public String HOURLY_NET_RATE = "hourlyNetRate";
+    @JsonIgnore
     public String VISIT_NET_RATE = "visitNetRate";
 
     private Long id;
@@ -19,6 +26,7 @@ public class SupervisionDto implements Serializable {
     private BigDecimal hourlyNetRate;
     private BigDecimal visitNetRate;
     private int hoursCount;
+    private String note;
 
     public SupervisionDto() {
         //needed by Hibernate
@@ -78,5 +86,13 @@ public class SupervisionDto implements Serializable {
 
     public void setHoursCount(int hoursCount) {
         this.hoursCount = hoursCount;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

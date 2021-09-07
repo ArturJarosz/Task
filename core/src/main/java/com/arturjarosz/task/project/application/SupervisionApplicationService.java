@@ -14,9 +14,11 @@ public interface SupervisionApplicationService {
      */
     SupervisionDto createSupervision(Long projectId, SupervisionDto supervisionDto);
 
-    SupervisionDto updateSupervision();
+    SupervisionDto getSupervision(Long projectId);
 
-    void deleteSupervision();
+    SupervisionDto updateSupervision(Long projectId, SupervisionDto supervisionDto);
+
+    void deleteSupervision(Long projectId);
 
     /**
      * Creates SupervisionVisit on Supervision for Project with given projectId. If Project does not exist or id does not
@@ -36,4 +38,5 @@ public interface SupervisionApplicationService {
      * @return
      */
     SupervisionVisitDto getSupervisionVisit(Long projectId, Long supervisionVisitId);
+
 }
