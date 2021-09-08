@@ -34,39 +34,6 @@
           },
           "response": [
             {
-              "name": "create corporate client",
-              "originalRequest": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"companyName\": \"SomeCompany\",\n    \"clientType\": \"CORPORATE\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "localhost:8099/clients/",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8099",
-                  "path": [
-                    "clients",
-                    ""
-                  ]
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": "Text",
-              "header": [],
-              "cookie": [],
-              "body": ""
-            },
-            {
               "name": "create private client",
               "originalRequest": {
                 "method": "POST",
@@ -94,6 +61,37 @@
               },
               "status": "OK",
               "code": 200,
+              "_postman_previewlanguage": "Text",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "create corporate client",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"companyName\": \"SomeCompany\",\n    \"clientType\": \"CORPORATE\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "localhost:8099/clients/",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8099",
+                  "path": [
+                    "clients",
+                    ""
+                  ]
+                }
+              },
               "_postman_previewlanguage": "Text",
               "header": [],
               "cookie": [],
@@ -334,10 +332,19 @@
           "name": "Cost",
           "item": [
             {
-              "name": "get costs for project",
+              "name": "create cost  for project",
               "request": {
-                "method": "GET",
+                "method": "POST",
                 "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Paliwo za dojazd\",\n    \"category\": \"FUEL\",\n    \"value\": 200.00,\n    \"date\": \"2021-01-15\",\n    \"note\": \"dojazd na posesję klienta\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
                 "url": {
                   "raw": "{{taskAddress}}/projects/{{projectId}}/costs",
                   "host": [
@@ -353,19 +360,10 @@
               "response": []
             },
             {
-              "name": "create cost  for project",
+              "name": "get costs for project",
               "request": {
-                "method": "POST",
+                "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"name\": \"Paliwo za dojazd\",\n    \"category\": \"FUEL\",\n    \"value\": 200.00,\n    \"date\": \"2021-01-15\",\n    \"note\": \"dojazd na posesję klienta\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
                   "raw": "{{taskAddress}}/projects/{{projectId}}/costs",
                   "host": [
@@ -1009,6 +1007,210 @@
                     "stages",
                     "{{stageId}}",
                     "tasks"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "supervision",
+          "item": [
+            {
+              "name": "supervision visit",
+              "item": [
+                {
+                  "name": "create supervision visit Copy",
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"hasInvoice\": true,\n    \"baseNetRate\": 500, \n    \"hourlyNetRate\": 150.50,\n    \"visitNetRate\": 200\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions",
+                      "host": [
+                        "{{taskAddress}}"
+                      ],
+                      "path": [
+                        "projects",
+                        "{{projectId}}",
+                        "supervisions"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "update supervision visit",
+                  "request": {
+                    "method": "PUT",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"dateOfVisit\": \"2021-09-01\",\n    \"hoursCount\": 5,\n    \"isPayable\": true\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions/supervisionVisits/{{supervisionVisitId}}",
+                      "host": [
+                        "{{taskAddress}}"
+                      ],
+                      "path": [
+                        "projects",
+                        "{{projectId}}",
+                        "supervisions",
+                        "supervisionVisits",
+                        "{{supervisionVisitId}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "get supervision visit",
+                  "request": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions/supervisionVisits/{{supervisionVisitId}}",
+                      "host": [
+                        "{{taskAddress}}"
+                      ],
+                      "path": [
+                        "projects",
+                        "{{projectId}}",
+                        "supervisions",
+                        "supervisionVisits",
+                        "{{supervisionVisitId}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "delete supervision visit",
+                  "request": {
+                    "method": "PUT",
+                    "header": [],
+                    "url": {
+                      "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions/supervisionVisits/{{supervisionVisitId}}",
+                      "host": [
+                        "{{taskAddress}}"
+                      ],
+                      "path": [
+                        "projects",
+                        "{{projectId}}",
+                        "supervisions",
+                        "supervisionVisits",
+                        "{{supervisionVisitId}}"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "create supervision",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"hasInvoice\": true,\n    \"baseNetRate\": 500, \n    \"hourlyNetRate\": 150.50,\n    \"visitNetRate\": 200\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "supervisions"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update supervision",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"hasInvoice\": true,\n    \"baseNetRate\": 500, \n    \"hourlyNetRate\": 150.50,\n    \"visitNetRate\": 200\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "supervisions"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "get supervision",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "supervisions"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "remove supervision from project",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions",
+                  "host": [
+                    "{{taskAddress}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "{{projectId}}",
+                    "supervisions"
                   ]
                 }
               },

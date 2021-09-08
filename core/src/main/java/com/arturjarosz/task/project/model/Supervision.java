@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.model;
 
 import com.arturjarosz.task.finance.model.FinancialData;
+import com.arturjarosz.task.project.application.dto.SupervisionDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
@@ -109,5 +110,13 @@ public class Supervision extends AbstractEntity {
 
     public Set<SupervisionVisit> getSupervisionVisits() {
         return this.supervisionVisits;
+    }
+
+    public void update(SupervisionDto supervisionDto) {
+        this.hasInvoice = supervisionDto.isHasInvoice();
+        this.baseNetRate.setValue(supervisionDto.getBaseNetRate());
+        this.hourlyNetRate.setValue(supervisionDto.getHourlyNetRate());
+        this.visitNetRate.setValue(supervisionDto.getVisitNetRate());
+        this.note = supervisionDto.getNote();
     }
 }

@@ -7,13 +7,7 @@ import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("projects")
@@ -37,23 +31,29 @@ public class SupervisionRestController {
         return new ResponseEntity<>(createdSupervisionDto, httpHeaders, HttpStatus.OK);
     }
 
-    @PutMapping("{project}/supervisions")
-    public ResponseEntity<SupervisionDto> updateSupervision() {
-        return null;
+    @PutMapping("{projectId}/supervisions")
+    public ResponseEntity<SupervisionDto> updateSupervision(@PathVariable("projectId") Long projectId,
+                                                            @RequestBody SupervisionDto supervisionDto) {
+        return new ResponseEntity<>(this.supervisionApplicationService.updateSupervision(projectId, supervisionDto),
+                HttpStatus.OK);
     }
 
-    public ResponseEntity<Void> deleteSupervision() {
-        return null;
+    @GetMapping("{projectId}/supervisions")
+    public ResponseEntity<SupervisionDto> getSupervision(@PathVariable("projectId") Long projectId) {
+
+        return new ResponseEntity<>(this.supervisionApplicationService.getSupervision(projectId), HttpStatus.OK);
     }
 
-    public ResponseEntity<SupervisionDto> getSupervision() {
-        return null;
+    @DeleteMapping("{projectId}/supervisions")
+    public ResponseEntity<Void> deleteSupervision(@PathVariable("projectId") Long projectId) {
+        this.supervisionApplicationService.deleteSupervision(projectId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
     @PostMapping("{projectId}/supervisions/supervisionVisits")
     public ResponseEntity<SupervisionVisitDto> addSupervisionVisit(@PathVariable("projectId") Long projectId,
-                                                                   @RequestBody
-                                                                           SupervisionVisitDto supervisionVisitDto) {
+                                                                   @RequestBody SupervisionVisitDto supervisionVisitDto) {
         SupervisionVisitDto createdSupervisionVisitDto = this.supervisionApplicationService
                 .createSupervisionVisit(projectId, supervisionVisitDto);
         return new ResponseEntity<>(createdSupervisionVisitDto, HttpStatus.OK);
@@ -62,11 +62,7 @@ public class SupervisionRestController {
     @GetMapping("{projectId}/supervisions/supervisionVisits/{supervisionVisitId}")
     public ResponseEntity<SupervisionVisitDto> getSupervisionVisit(@PathVariable("projectId") Long projectId,
                                                                    @PathVariable("supervisionVisitId") Long supervisionVisitId) {
-        SupervisionVisitDto supervisionVisit = this.supervisionApplicationService.getSupervisionVisit(projectId,
-                supervisionVisitId);
-        HttpHeaders httpHeaders = new HttpHeadersBuilder()
-                .withLocation("/projects/{projectId}/supervisions/{supervisionId}", projectId,
-                        supervisionVisit.getId()).build();
-        return new ResponseEntity<>(supervisionVisit, httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(this.supervisionApplicationService.getSupervisionVisit(projectId,
+                supervisionVisitId), HttpStatus.OK);
     }
 }
