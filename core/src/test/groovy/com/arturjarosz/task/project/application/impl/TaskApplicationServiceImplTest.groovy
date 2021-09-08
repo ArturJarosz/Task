@@ -1,13 +1,13 @@
 package com.arturjarosz.task.project.application.impl
 
 import com.arturjarosz.task.project.application.ProjectValidator
-import com.arturjarosz.task.project.application.StageValidator
+import com.arturjarosz.task.stage.application.StageValidator
 import com.arturjarosz.task.project.application.TaskValidator
 import com.arturjarosz.task.project.application.dto.TaskDto
 import com.arturjarosz.task.project.domain.TaskDomainService
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
-import com.arturjarosz.task.project.model.Stage
+import com.arturjarosz.task.stage.model.Stage
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.model.TaskType
 import com.arturjarosz.task.project.model.dto.TaskInnerDto
@@ -16,7 +16,7 @@ import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.task.TaskStatus
 import com.arturjarosz.task.project.status.task.TaskWorkflowService
 import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
+import com.arturjarosz.task.stage.utils.StageBuilder
 import com.arturjarosz.task.project.utils.TaskBuilder
 import spock.lang.Specification
 

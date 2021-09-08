@@ -1,13 +1,13 @@
 package com.arturjarosz.task.project.query;
 
-import com.arturjarosz.task.project.application.dto.StageDto;
+import com.arturjarosz.task.stage.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.SupervisionDto;
 import com.arturjarosz.task.project.application.dto.SupervisionVisitDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.stage.model.Stage;
 import com.arturjarosz.task.project.model.Supervision;
 
 import java.util.List;
@@ -21,14 +21,6 @@ public interface ProjectQueryService {
      * @return
      */
     Cost getCostById(Long costId);
-
-    /**
-     * Load Stage by given stageId.
-     *
-     * @param stageId
-     * @return
-     */
-    Stage getStageById(Long stageId);
 
     /**
      * Load CooperatorJob by given cooperatorJobId.

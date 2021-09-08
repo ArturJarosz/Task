@@ -4,7 +4,7 @@ import com.arturjarosz.task.project.application.InstallmentValidator;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.domain.InstallmentDomainService;
 import com.arturjarosz.task.project.model.Installment;
-import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.stage.model.Stage;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;

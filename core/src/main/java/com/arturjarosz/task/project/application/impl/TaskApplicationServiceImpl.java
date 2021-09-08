@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.application.impl;
 
 import com.arturjarosz.task.project.application.ProjectValidator;
-import com.arturjarosz.task.project.application.StageValidator;
+import com.arturjarosz.task.stage.application.StageValidator;
 import com.arturjarosz.task.project.application.TaskApplicationService;
 import com.arturjarosz.task.project.application.TaskValidator;
 import com.arturjarosz.task.project.application.dto.TaskDto;
@@ -9,7 +9,7 @@ import com.arturjarosz.task.project.application.mapper.TaskDtoMapper;
 import com.arturjarosz.task.project.domain.TaskDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.stage.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.query.ProjectQueryService;

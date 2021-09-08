@@ -2,10 +2,10 @@ package com.arturjarosz.task.project.status.task.impl;
 
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.stage.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
-import com.arturjarosz.task.project.status.stage.StageStatus;
+import com.arturjarosz.task.stage.status.StageStatus;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.project.status.task.TaskStatusTransition;
 import com.arturjarosz.task.project.status.task.TaskWorkflowService;

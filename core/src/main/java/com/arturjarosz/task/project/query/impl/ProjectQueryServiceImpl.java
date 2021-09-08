@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.query.impl;
 
-import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.SupervisionDto;
 import com.arturjarosz.task.project.application.dto.SupervisionVisitDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
@@ -10,14 +9,14 @@ import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.QCooperatorJob;
 import com.arturjarosz.task.project.model.QCost;
 import com.arturjarosz.task.project.model.QProject;
-import com.arturjarosz.task.project.model.QStage;
 import com.arturjarosz.task.project.model.QSupervision;
 import com.arturjarosz.task.project.model.QSupervisionVisit;
 import com.arturjarosz.task.project.model.QTask;
-import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Supervision;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
+import com.arturjarosz.task.stage.application.dto.StageDto;
+import com.arturjarosz.task.stage.model.QStage;
 import com.querydsl.core.types.Projections;
 import org.springframework.stereotype.Repository;
 
@@ -44,10 +43,6 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
         return this.query().from(COST).select(COST).where(COST.id.eq(costId)).fetchOne();
     }
 
-    @Override
-    public Stage getStageById(Long stageId) {
-        return this.query().from(STAGE).select(STAGE).where(STAGE.id.eq(stageId)).fetchOne();
-    }
 
     @Override
     public CooperatorJob getCooperatorJobByIdForProject(Long cooperatorJobId) {

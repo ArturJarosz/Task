@@ -1,9 +1,9 @@
 package com.arturjarosz.task.project.domain.impl
 
 import com.arturjarosz.task.project.model.Installment
-import com.arturjarosz.task.project.model.Stage
-import com.arturjarosz.task.project.model.StageType
-import com.arturjarosz.task.project.status.stage.StageWorkflow
+import com.arturjarosz.task.stage.model.Stage
+import com.arturjarosz.task.stage.model.StageType
+import com.arturjarosz.task.stage.status.StageWorkflow
 import com.arturjarosz.task.project.utils.InstallmentBuilder
 import com.arturjarosz.task.sharedkernel.model.Money
 import com.arturjarosz.task.sharedkernel.utils.TestUtils

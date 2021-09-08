@@ -1,17 +1,17 @@
 package com.arturjarosz.task.project.application.impl
 
 import com.arturjarosz.task.project.application.ProjectValidator
-import com.arturjarosz.task.project.application.StageValidator
+import com.arturjarosz.task.stage.application.StageValidator
 import com.arturjarosz.task.project.application.dto.InstallmentDto
 import com.arturjarosz.task.project.domain.impl.InstallmentDomainServiceImpl
 import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
 import com.arturjarosz.task.project.model.Installment
 import com.arturjarosz.task.project.model.Project
-import com.arturjarosz.task.project.model.Stage
+import com.arturjarosz.task.stage.model.Stage
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.utils.InstallmentBuilder
 import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
+import com.arturjarosz.task.stage.utils.StageBuilder
 import com.arturjarosz.task.sharedkernel.model.Money
 import com.arturjarosz.task.sharedkernel.utils.TestUtils
 import spock.lang.Specification
@@ -71,10 +71,10 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def projectValidator = new ProjectValidator(projectRepository, projectQueryService);
 
-    def stageValidator = new StageValidator(projectRepository, projectQueryService);
+    def stageValidator = new StageValidator(projectRepository, stageQueryService);
 
     def installmentApplicationService = new InstallmentApplicationServiceImpl(installmentDomainService,
-            projectValidator, projectQueryService, projectRepository, stageValidator);
+            projectValidator, projectRepository, stageValidator, stageQueryService);
 
     def "createInstallment should throw an exception, when project with given id does not exist"() {
         given:

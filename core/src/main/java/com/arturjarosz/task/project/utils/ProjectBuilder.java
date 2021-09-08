@@ -3,7 +3,7 @@ package com.arturjarosz.task.project.utils;
 import com.arturjarosz.task.project.model.Contract;
 import com.arturjarosz.task.project.model.Offer;
 import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.stage.model.Stage;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
 import com.arturjarosz.task.sharedkernel.utils.TestUtils;

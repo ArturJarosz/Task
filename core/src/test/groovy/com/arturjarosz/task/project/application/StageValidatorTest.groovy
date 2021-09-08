@@ -1,14 +1,15 @@
 package com.arturjarosz.task.project.application
 
-import com.arturjarosz.task.project.application.dto.StageDto
+import com.arturjarosz.task.stage.application.dto.StageDto
 import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
 import com.arturjarosz.task.project.model.Installment
 import com.arturjarosz.task.project.model.Project
-import com.arturjarosz.task.project.model.Stage
-import com.arturjarosz.task.project.model.StageType
+import com.arturjarosz.task.stage.application.StageValidator
+import com.arturjarosz.task.stage.model.Stage
+import com.arturjarosz.task.stage.model.StageType
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
+import com.arturjarosz.task.stage.utils.StageBuilder
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import spock.lang.Specification
 
@@ -24,7 +25,7 @@ class StageValidatorTest extends Specification {
     def projectRepository = Mock(ProjectRepositoryImpl);
     def projectQueryService = Mock(ProjectQueryServiceImpl);
 
-    def stageValidator = new StageValidator(projectRepository, projectQueryService);
+    def stageValidator = new StageValidator(projectRepository, stageQueryService);
 
     def "validateCreateStageDto should throw an exception, when passed stageDto is null"() {
         given:

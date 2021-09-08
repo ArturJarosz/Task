@@ -8,13 +8,13 @@ import com.arturjarosz.task.project.domain.ProjectDataValidator
 import com.arturjarosz.task.project.model.Offer
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
-import com.arturjarosz.task.project.model.Stage
+import com.arturjarosz.task.stage.model.Stage
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
 import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionServiceImpl
-import com.arturjarosz.task.project.status.stage.StageStatus
+import com.arturjarosz.task.stage.status.StageStatus
 import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
+import com.arturjarosz.task.stage.utils.StageBuilder
 import com.arturjarosz.task.sharedkernel.utils.TestUtils
 import spock.lang.Ignore
 import spock.lang.Specification

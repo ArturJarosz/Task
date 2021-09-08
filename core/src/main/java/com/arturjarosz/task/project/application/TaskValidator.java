@@ -1,10 +1,11 @@
 package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.project.application.dto.TaskDto;
-import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.stage.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import com.arturjarosz.task.stage.query.StageQueryService;
 import org.springframework.stereotype.Component;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
@@ -14,10 +15,10 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 @Component
 public class TaskValidator {
 
-    ProjectQueryService projectQueryService;
+    StageQueryService stageQueryService;
 
-    public TaskValidator(ProjectQueryService projectQueryService) {
-        this.projectQueryService = projectQueryService;
+    public TaskValidator(StageQueryService stageQueryService) {
+        this.stageQueryService = stageQueryService;
     }
 
     /**
@@ -36,7 +37,7 @@ public class TaskValidator {
     }
 
     public void validateExistenceOfTaskInStage(Long stageId, Long taskId) {
-        Stage stage = this.projectQueryService.getStageById(stageId);
+        Stage stage = this.stageQueryService.getStageById(stageId);
         assertNotNull(stage.getTasks(),
                 createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TASK));
         Task task = stage.getTasks().stream()

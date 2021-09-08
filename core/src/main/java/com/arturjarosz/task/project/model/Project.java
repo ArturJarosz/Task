@@ -7,6 +7,8 @@ import com.arturjarosz.task.project.status.project.ProjectWorkflow;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
+import com.arturjarosz.task.stage.model.Stage;
+import com.arturjarosz.task.stage.model.StageType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

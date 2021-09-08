@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.domain;
 
 import com.arturjarosz.task.project.model.Installment;
-import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.stage.model.Stage;
 
 import java.time.LocalDate;
 

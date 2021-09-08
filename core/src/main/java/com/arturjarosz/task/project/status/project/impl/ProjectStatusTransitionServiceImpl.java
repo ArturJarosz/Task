@@ -2,11 +2,11 @@ package com.arturjarosz.task.project.status.project.impl;
 
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.stage.model.Stage;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectStatusTransitionService;
 import com.arturjarosz.task.project.status.project.ProjectWorkflowService;
-import com.arturjarosz.task.project.status.stage.StageStatus;
+import com.arturjarosz.task.stage.status.StageStatus;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
