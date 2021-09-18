@@ -72,6 +72,14 @@ public class Supervision extends AbstractEntity {
         this.supervisionVisits = new HashSet<>();
     }
 
+    public void update(SupervisionDto supervisionDto){
+        this.hasInvoice = supervisionDto.isHasInvoice();
+        this.baseNetRate.setValue(supervisionDto.getBaseNetRate());
+        this.hourlyNetRate.setValue(supervisionDto.getHourlyNetRate());
+        this.visitNetRate.setValue(supervisionDto.getVisitNetRate());
+        this.note = supervisionDto.getNote();
+    }
+
     public BigDecimal getBaseNetRate() {
         return this.baseNetRate.getValue();
     }
@@ -110,13 +118,5 @@ public class Supervision extends AbstractEntity {
 
     public Set<SupervisionVisit> getSupervisionVisits() {
         return this.supervisionVisits;
-    }
-
-    public void update(SupervisionDto supervisionDto) {
-        this.hasInvoice = supervisionDto.isHasInvoice();
-        this.baseNetRate.setValue(supervisionDto.getBaseNetRate());
-        this.hourlyNetRate.setValue(supervisionDto.getHourlyNetRate());
-        this.visitNetRate.setValue(supervisionDto.getVisitNetRate());
-        this.note = supervisionDto.getNote();
     }
 }

@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.application.impl;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.SupervisionApplicationService;
+import com.arturjarosz.task.project.application.SupervisionValidator;
 import com.arturjarosz.task.project.application.dto.SupervisionDto;
 import com.arturjarosz.task.project.application.dto.SupervisionVisitDto;
 import com.arturjarosz.task.project.application.mapper.SupervisionDtoMapper;
@@ -26,32 +27,28 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     private final ProjectValidator projectValidator;
     private final ProjectRepository projectRepository;
     private final ProjectQueryService projectQueryService;
+    private final SupervisionValidator supervisionValidator;
 
     @Autowired
     public SupervisionApplicationServiceImpl(ProjectValidator projectValidator, ProjectRepository projectRepository,
-                                             ProjectQueryService projectQueryService) {
+                                             ProjectQueryService projectQueryService,
+                                             SupervisionValidator supervisionValidator) {
         this.projectValidator = projectValidator;
         this.projectRepository = projectRepository;
         this.projectQueryService = projectQueryService;
+        this.supervisionValidator = supervisionValidator;
     }
 
     @Transactional
     @Override
     public SupervisionDto createSupervision(Long projectId, SupervisionDto supervisionDto) {
         this.projectValidator.validateProjectExistence(projectId);
+        this.supervisionValidator.validateCreateSupervision(supervisionDto);
         Project project = this.projectRepository.load(projectId);
-        //TODO: TA-185 add data validation
-        project.addSupervision(supervisionDto.isHasInvoice(), supervisionDto.getBaseNetRate(),
-                supervisionDto.getHourlyNetRate(), supervisionDto.getVisitNetRate());
+        project.addSupervision(supervisionDto);
         project = this.projectRepository.save(project);
         Supervision supervision = project.getSupervision();
         return SupervisionDtoMapper.INSTANCE.supervisionToSupervisionDto(supervision);
-    }
-
-    @Override
-    public SupervisionDto getSupervision(Long projectId) {
-        this.projectValidator.validateProjectExistence(projectId);
-        return this.projectQueryService.getProjectSupervision(projectId);
     }
 
     @Transactional
@@ -59,10 +56,12 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     public SupervisionDto updateSupervision(Long projectId, SupervisionDto supervisionDto) {
         this.projectValidator.validateProjectExistence(projectId);
         this.validateProjectHavingSupervision(projectId);
+        this.supervisionValidator.validateUpdateSupervision(supervisionDto);
         Project project = this.projectRepository.load(projectId);
-        Supervision updatedSupervision = project.updateSupervision(supervisionDto);
-        this.projectRepository.save(project);
-        return null;
+        project.updateSupervision(supervisionDto);
+        project = this.projectRepository.save(project);
+        Supervision supervision = project.getSupervision();
+        return SupervisionDtoMapper.INSTANCE.supervisionToSupervisionDto(supervision);
     }
 
     @Transactional
@@ -73,6 +72,14 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         Project project = this.projectRepository.load(projectId);
         project.removeSupervision();
         this.projectRepository.save(project);
+    }
+
+    @Override
+    public SupervisionDto getSupervision(Long projectId) {
+        this.projectValidator.validateProjectExistence(projectId);
+        this.validateProjectHavingSupervision(projectId);
+        Project project = this.projectRepository.load(projectId);
+        return SupervisionDtoMapper.INSTANCE.supervisionToSupervisionDto(project.getSupervision());
     }
 
     @Transactional

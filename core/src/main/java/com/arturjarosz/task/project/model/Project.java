@@ -19,7 +19,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -301,9 +300,9 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         return this.arrangement;
     }
 
-    public void addSupervision(boolean hasInvoice, BigDecimal baseNetRate, BigDecimal hourlyRate,
-                               BigDecimal visitRate) {
-        this.supervision = new Supervision(hasInvoice, baseNetRate, hourlyRate, visitRate);
+    public void addSupervision(SupervisionDto supervisionDto) {
+        this.supervision = new Supervision(supervisionDto.isHasInvoice(), supervisionDto.getBaseNetRate(),
+                supervisionDto.getHourlyNetRate(), supervisionDto.getVisitNetRate());
     }
 
     public Supervision getSupervision() {

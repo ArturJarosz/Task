@@ -14,11 +14,18 @@ public interface SupervisionApplicationService {
      */
     SupervisionDto createSupervision(Long projectId, SupervisionDto supervisionDto);
 
-    SupervisionDto getSupervision(Long projectId);
-
+    /**
+     * Updates Supervision for Project with projectId according to data in supervisionDto. If Project does not have
+     * a Supervision then new exception will be thrown.
+     * @param projectId
+     * @param supervisionDto
+     * @return
+     */
     SupervisionDto updateSupervision(Long projectId, SupervisionDto supervisionDto);
 
     void deleteSupervision(Long projectId);
+
+    SupervisionDto getSupervision(Long projectId);
 
     /**
      * Creates SupervisionVisit on Supervision for Project with given projectId. If Project does not exist or id does not
@@ -38,5 +45,4 @@ public interface SupervisionApplicationService {
      * @return
      */
     SupervisionVisitDto getSupervisionVisit(Long projectId, Long supervisionVisitId);
-
 }
