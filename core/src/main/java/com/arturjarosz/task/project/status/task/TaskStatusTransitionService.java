@@ -25,5 +25,4 @@ public interface TaskStatusTransitionService {
     void reject(Project project, Long stageId, Long taskId);
 
     void changeTaskStatus(Project project, Long stageId, Long taskId, TaskStatus newStatus);
-
 }
