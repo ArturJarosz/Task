@@ -74,10 +74,4 @@ public class ProjectValidator {
         validateProjectName(projectDto.getName());
     }
 
-    public void validateProjectHasSupervision(Long projectId) {
-        assertNotNull(this.projectQueryService.getProjectSupervision(projectId),
-                createMessageCode(ExceptionCodes.NOT_PRESENT, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.SUPERVISION));
-    }
-
 }

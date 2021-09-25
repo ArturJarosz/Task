@@ -1,8 +1,8 @@
 package com.arturjarosz.task.project.query.impl;
 
 import com.arturjarosz.task.project.application.dto.StageDto;
-import com.arturjarosz.task.project.application.dto.SupervisionDto;
-import com.arturjarosz.task.project.application.dto.SupervisionVisitDto;
+import com.arturjarosz.task.supervision.application.dto.SupervisionDto;
+import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.Cost;
@@ -11,11 +11,11 @@ import com.arturjarosz.task.project.model.QCooperatorJob;
 import com.arturjarosz.task.project.model.QCost;
 import com.arturjarosz.task.project.model.QProject;
 import com.arturjarosz.task.project.model.QStage;
-import com.arturjarosz.task.project.model.QSupervision;
-import com.arturjarosz.task.project.model.QSupervisionVisit;
+import com.arturjarosz.task.supervision.model.QSupervision;
+import com.arturjarosz.task.supervision.model.QSupervisionVisit;
 import com.arturjarosz.task.project.model.QTask;
 import com.arturjarosz.task.project.model.Stage;
-import com.arturjarosz.task.project.model.Supervision;
+import com.arturjarosz.task.supervision.model.Supervision;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
 import com.querydsl.core.types.Projections;

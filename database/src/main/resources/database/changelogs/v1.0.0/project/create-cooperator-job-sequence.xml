@@ -6,7 +6,7 @@
 
     <changeSet author="liquibase" id="create-cooperator-job-sequence">
         <createSequence sequenceName="cooperator_job_sequence"
-                        startValue="100" cacheSize="10"/>
+                        startValue="100" cacheSize="10" incrementBy="1"/>
     </changeSet>
 
 </databaseChangeLog>

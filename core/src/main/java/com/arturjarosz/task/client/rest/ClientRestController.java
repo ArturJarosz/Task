@@ -34,13 +34,13 @@ public class ClientRestController {
         HttpHeaders headers = new HttpHeadersBuilder()
                 .withLocation("/clients/{id}", createdClientDto.getId())
                 .build();
-        return new ResponseEntity(createdClientDto, headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(createdClientDto, headers, HttpStatus.CREATED);
     }
 
     @DeleteMapping("{clientId}")
     public ResponseEntity<Void> removeClient(@PathVariable("clientId") Long clientId) {
         this.clientApplicationService.removeClient(clientId);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("{clientId}")

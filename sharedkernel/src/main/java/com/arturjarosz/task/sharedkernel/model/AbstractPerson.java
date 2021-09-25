@@ -18,7 +18,7 @@ public abstract class AbstractPerson extends AbstractEntity {
         //needed by Hibernate
     }
 
-    public AbstractPerson(PersonName name) {
+    protected AbstractPerson(PersonName name) {
         this.name = name;
     }
 

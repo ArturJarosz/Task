@@ -13,7 +13,6 @@ public class ProjectExceptionCodes {
     public static final String INSTALLMENT = "installment";
     public static final String PROJECT = "project";
     public static final String STAGE = "stage";
-    public static final String SUPERVISION = "supervision";
     public static final String TASK = "task";
 
     //Fields
@@ -22,8 +21,6 @@ public class ProjectExceptionCodes {
     public static final String COST_DATE = "costDate";
     public static final String DEADLINE = "deadline";
     public static final String END_DATE = "endDate";
-    public static final String HOURLY_NET_RATE = "hourlyNetRate";
-    public static final String INVOICE_FLAG = "invoiceFlag";
     public static final String IS_PAID = "isPaid";
     public static final String NAME = "name";
     public static final String PAY_DATE = "payDate";
@@ -32,7 +29,6 @@ public class ProjectExceptionCodes {
     public static final String STATUS = "status";
     public static final String TYPE = "type";
     public static final String VALUE = "value";
-    public static final String VISIT_NET_RATE = "visitNetRate";
 
     public static final String NEGATIVE = "negative";
     public static final String TRANSITION = "transition";
@@ -46,7 +42,6 @@ public class ProjectExceptionCodes {
 
     public static final String DONE = "done";
     public static final String REJECTED = "rejected";
-    public static final String BASE_NET_RATE = "baseNetRate";
 
     private ProjectExceptionCodes() {
         throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);

@@ -1,13 +1,19 @@
-package com.arturjarosz.task.project.application.dto;
+package com.arturjarosz.task.supervision.application.dto;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
 public class SupervisionVisitDto implements Serializable {
     private static final long serialVersionUID = 3217650597832433311L;
+    @JsonIgnore
     public static final String ID = "id";
+    @JsonIgnore
     public static final String DATE_OF_VISIT = "dateOfVisit";
+    @JsonIgnore
     public static final String IS_PAYABLE = "isPayable";
+    @JsonIgnore
     public static final String HOURS_COUNT = "hoursCount";
 
     private long projectId;

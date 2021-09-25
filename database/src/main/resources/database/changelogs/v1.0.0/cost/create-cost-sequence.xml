@@ -6,7 +6,7 @@
 
     <changeSet author="liquibase" id="create-cost-sequence">
         <createSequence sequenceName="cost_sequence"
-                        startValue="100" cacheSize="10"/>
+                        startValue="100" cacheSize="10" incrementBy="1"/>
     </changeSet>
 
 </databaseChangeLog>

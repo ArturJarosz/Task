@@ -1,4 +1,4 @@
-package com.arturjarosz.task.project.application.dto;
+package com.arturjarosz.task.supervision.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

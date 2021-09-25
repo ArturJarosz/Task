@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.model;
 
-import com.arturjarosz.task.project.application.dto.SupervisionDto;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
@@ -24,7 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@SequenceGenerator(name = "project_sequence_generator", sequenceName = "project_sequence", allocationSize = 1)
+@SequenceGenerator(name = "sequence_generator", sequenceName = "project_sequence", allocationSize = 1)
 @Table(name = "PROJECT")
 public class Project extends AbstractAggregateRoot implements WorkflowAware<ProjectStatus> {
     private static final long serialVersionUID = 5437961881026141924L;
@@ -73,10 +72,6 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
 
     @Column(name = "WORKFLOW_NAME", nullable = false)
     private String workflowName;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "SUPERVISION_ID")
-    private Supervision supervision;
 
     protected Project() {
         //needed by Hibernate
@@ -300,25 +295,4 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         return this.arrangement;
     }
 
-    public void addSupervision(SupervisionDto supervisionDto) {
-        this.supervision = new Supervision(supervisionDto.isHasInvoice(), supervisionDto.getBaseNetRate(),
-                supervisionDto.getHourlyNetRate(), supervisionDto.getVisitNetRate());
-    }
-
-    public Supervision getSupervision() {
-        return this.supervision;
-    }
-
-    public void addSupervisionVisit(SupervisionVisit supervisionVisit) {
-        this.supervision.addSupervisionVisit(supervisionVisit);
-    }
-
-    public Supervision updateSupervision(SupervisionDto supervisionDto) {
-        this.supervision.update(supervisionDto);
-        return this.supervision;
-    }
-
-    public void removeSupervision(){
-        this.supervision = null;
-    }
 }

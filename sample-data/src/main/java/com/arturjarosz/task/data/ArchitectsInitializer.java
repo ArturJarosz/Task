@@ -19,7 +19,7 @@ import java.util.List;
 @Component
 public class ArchitectsInitializer {
 
-    private final Logger LOG = LogManager.getLogger(ArchitectsInitializer.class);
+    private static final Logger LOG = LogManager.getLogger(ArchitectsInitializer.class);
 
     private final ArchitectApplicationService architectApplicationService;
 
@@ -30,9 +30,9 @@ public class ArchitectsInitializer {
 
     @Transactional
     void run() {
-        this.LOG.info("Starting importing architects.");
+        LOG.info("Starting importing architects.");
         this.importArchitectsFromFile();
-        this.LOG.info("Architects added to the database.");
+        LOG.info("Architects added to the database.");
     }
 
     private void importArchitectsFromFile() {

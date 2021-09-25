@@ -15,9 +15,6 @@
             <column name="BASE_NET_RATE" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="BASE_GROSS_RATE" type="${big_decimal.type}" defaultValueNumeric="0.0">
-                <constraints nullable="false"/>
-            </column>
             <column name="HOURLY_NET_RATE" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
@@ -27,11 +24,11 @@
             <column name="VISIT_NET_RATE" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="HAS_INVOICE" type="${boolean.type}">
-                <constraints nullable="false"/>
-            </column>
             <column name="NOTE" type="VARCHAR2(1000 ${char.unit})"/>
             <column name="UUID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PROJECT_ID" type="${long.type}">
                 <constraints nullable="false"/>
             </column>
         </createTable>
