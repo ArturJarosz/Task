@@ -16,21 +16,21 @@ public class SupervisionVisitDto implements Serializable {
     @JsonIgnore
     public static final String HOURS_COUNT = "hoursCount";
 
-    private long projectId;
+    private long supervisionId;
     private long id;
     private LocalDate dateOfVisit;
-    private boolean isPayable;
-    private int hoursCount;
+    private Boolean isPayable;
+    private Integer hoursCount;
 
     public SupervisionVisitDto() {
     }
 
-    public long getProjectId() {
-        return this.projectId;
+    public long getSupervisionId() {
+        return this.supervisionId;
     }
 
-    public void setProjectId(long projectId) {
-        this.projectId = projectId;
+    public void setSupervisionId(long supervisionId) {
+        this.supervisionId = supervisionId;
     }
 
     public long getId() {
@@ -49,19 +49,19 @@ public class SupervisionVisitDto implements Serializable {
         this.dateOfVisit = dateOfVisit;
     }
 
-    public boolean isPayable() {
+    public Boolean isPayable() {
         return this.isPayable;
     }
 
-    public void setPayable(boolean payable) {
+    public void setPayable(Boolean payable) {
         this.isPayable = payable;
     }
 
-    public int getHoursCount() {
+    public Integer getHoursCount() {
         return this.hoursCount;
     }
 
-    public void setHoursCount(int hoursCount) {
+    public void setHoursCount(Integer hoursCount) {
         this.hoursCount = hoursCount;
     }
 }
