@@ -18,13 +18,20 @@ public class SupervisionValidator {
     }
 
     public void validateCreateSupervision(SupervisionDto supervisionDto) {
-        assertNotNull(supervisionDto.getProjectId(), ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION,
-                SupervisionExceptionCodes.PROJECT_ID);
+        this.validateSupervisionDtoNotNull(supervisionDto);
+        assertNotNull(supervisionDto.getProjectId(),
+                createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION,
+                        SupervisionExceptionCodes.PROJECT_ID));
         this.validateSupervisionData(supervisionDto);
     }
 
     public void validateUpdateSupervision(SupervisionDto supervisionDto) {
+        this.validateSupervisionDtoNotNull(supervisionDto);
         this.validateSupervisionData(supervisionDto);
+    }
+
+    private void validateSupervisionDtoNotNull(SupervisionDto supervisionDto) {
+        assertNotNull(supervisionDto, createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION));
     }
 
     private void validateSupervisionData(SupervisionDto supervisionDto) {
@@ -32,24 +39,27 @@ public class SupervisionValidator {
                 createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION,
                         SupervisionExceptionCodes.INVOICE_FLAG));
         assertNotNull(supervisionDto.getBaseNetRate(),
-                createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.BASE_NET_RATE));
+                createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION,
+                        SupervisionExceptionCodes.BASE_NET_RATE));
         assertIsTrue(supervisionDto.getBaseNetRate().doubleValue() >= 0.0,
-                createMessageCode(ExceptionCodes.NOT_VALID, SupervisionExceptionCodes.SUPERVISION,
-                        SupervisionExceptionCodes.BASE_NET_RATE, ExceptionCodes.NEGATIVE));
+                createMessageCode(ExceptionCodes.NEGATIVE, SupervisionExceptionCodes.SUPERVISION,
+                        SupervisionExceptionCodes.BASE_NET_RATE));
         assertNotNull(supervisionDto.getHourlyNetRate(),
-                createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.HOURLY_NET_RATE));
+                createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION,
+                        SupervisionExceptionCodes.HOURLY_NET_RATE));
         assertIsTrue(supervisionDto.getHourlyNetRate().doubleValue() >= 0.0,
                 createMessageCode(ExceptionCodes.NEGATIVE, SupervisionExceptionCodes.SUPERVISION,
                         SupervisionExceptionCodes.HOURLY_NET_RATE));
         assertNotNull(supervisionDto.getVisitNetRate(),
-                createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.VISIT_NET_RATE));
+                createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION,
+                        SupervisionExceptionCodes.VISIT_NET_RATE));
         assertIsTrue(supervisionDto.getVisitNetRate().doubleValue() >= 0.0,
                 createMessageCode(ExceptionCodes.NEGATIVE, SupervisionExceptionCodes.SUPERVISION,
                         SupervisionExceptionCodes.VISIT_NET_RATE));
     }
 
     public void validateSupervisionExistence(Long supervisionId) {
-        assertNotNull(this.supervisionQueryService.supervisionExists(supervisionId),
+        assertIsTrue(this.supervisionQueryService.supervisionExists(supervisionId),
                 createMessageCode(ExceptionCodes.NOT_EXISTS, SupervisionExceptionCodes.SUPERVISION));
     }
 }

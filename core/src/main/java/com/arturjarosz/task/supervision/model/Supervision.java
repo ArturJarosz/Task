@@ -73,6 +73,7 @@ public class Supervision extends AbstractAggregateRoot {
         this.baseNetRate.setValue(supervisionDto.getBaseNetRate());
         this.hourlyNetRate.setValue(supervisionDto.getHourlyNetRate());
         this.visitNetRate.setValue(supervisionDto.getVisitNetRate());
+        this.financialData.setHasInvoice(supervisionDto.isHasInvoice());
         this.note = supervisionDto.getNote();
     }
 

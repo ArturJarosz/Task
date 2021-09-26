@@ -1,14 +1,14 @@
 package com.arturjarosz.task.supervision.query.impl;
 
+import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
 import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto;
 import com.arturjarosz.task.supervision.model.QSupervision;
 import com.arturjarosz.task.supervision.model.QSupervisionVisit;
 import com.arturjarosz.task.supervision.query.SupervisionQueryService;
 import com.querydsl.core.types.Projections;
-import org.springframework.stereotype.Repository;
 
-@Repository
+@Finder
 public class SupervisionQueryServiceImpl extends AbstractQueryService<QSupervision> implements SupervisionQueryService {
 
     private static final QSupervision SUPERVISION = QSupervision.supervision;

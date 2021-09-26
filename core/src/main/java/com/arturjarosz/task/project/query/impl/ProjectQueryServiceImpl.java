@@ -12,14 +12,13 @@ import com.arturjarosz.task.project.model.QStage;
 import com.arturjarosz.task.project.model.QTask;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.query.ProjectQueryService;
+import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
-import com.arturjarosz.task.supervision.model.QSupervisionVisit;
 import com.querydsl.core.types.Projections;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+@Finder
 public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> implements ProjectQueryService {
 
     private static final QProject PROJECT = QProject.project;
@@ -28,7 +27,6 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     private static final QCost COST = QCost.cost;
     private static final QStage STAGE = QStage.stage;
     private static final QTask TASK = QTask.task;
-    private static final QSupervisionVisit SUPERVISION_VISIT = QSupervisionVisit.supervisionVisit;
 
     public ProjectQueryServiceImpl() {
         super(PROJECT);
