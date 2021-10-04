@@ -609,7 +609,6 @@ class ProjectApplicationServiceImplTest extends Specification {
     }
 
     private Project prepareNewlyCreatedProject() {
-        print("mocking project repository save 1");
         return new ProjectBuilder().withId(NEW_PROJECT_ID).withOffer(new Offer(0)).build();
     }
 }

@@ -70,9 +70,9 @@ public class Supervision extends AbstractAggregateRoot {
     }
 
     public void update(SupervisionDto supervisionDto) {
-        this.baseNetRate.setValue(supervisionDto.getBaseNetRate());
-        this.hourlyNetRate.setValue(supervisionDto.getHourlyNetRate());
-        this.visitNetRate.setValue(supervisionDto.getVisitNetRate());
+        this.baseNetRate = new Money(supervisionDto.getBaseNetRate());
+        this.hourlyNetRate = new Money(supervisionDto.getHourlyNetRate());
+        this.visitNetRate = new Money(supervisionDto.getVisitNetRate());
         this.financialData.setHasInvoice(supervisionDto.isHasInvoice());
         this.note = supervisionDto.getNote();
     }
@@ -98,6 +98,9 @@ public class Supervision extends AbstractAggregateRoot {
     }
 
     public void addSupervisionVisit(SupervisionVisit supervisionVisit) {
+        if (this.supervisionVisits == null) {
+            this.supervisionVisits = new HashSet<>();
+        }
         this.supervisionVisits.add(supervisionVisit);
     }
 
@@ -114,7 +117,7 @@ public class Supervision extends AbstractAggregateRoot {
     }
 
     public SupervisionVisit updateSupervisionVisit(Long supervisionVisitId,
-                                                      SupervisionVisitDto supervisionVisitDto) {
+                                                   SupervisionVisitDto supervisionVisitDto) {
         SupervisionVisit supervisionVisit = this.supervisionVisits.stream()
                 .filter(sv -> sv.getId().equals(supervisionVisitId)).findFirst().orElse(null);
         return supervisionVisit.update(supervisionVisitDto);

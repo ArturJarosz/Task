@@ -27,7 +27,7 @@ public interface ProjectDomainService {
     Project updateProject(Project project, ProjectDto projectDto);
 
     /**
-     * Accepts offer for client, fills all dates on Project and moves Project to To Do.
+     * Accepts offer for client, fills all dates on Project and moves Project to 'To Do'.
      *
      * @param project
      * @param projectContractDto
@@ -45,7 +45,7 @@ public interface ProjectDomainService {
     Project finishProject(Project project, LocalDate endDate);
 
     /**
-     * Reject offer for Project. Work on rejected Project cannot be continued. It it not possible to add Stage or
+     * Reject offer for Project. Work on rejected Project cannot be continued. It is not possible to add Stage or
      * Task on rejected Project as well as changing their statuses.
      *
      * @param project
