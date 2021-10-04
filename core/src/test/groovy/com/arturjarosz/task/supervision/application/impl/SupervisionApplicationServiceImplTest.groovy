@@ -27,12 +27,12 @@ class SupervisionApplicationServiceImplTest extends Specification {
     private static final Long SUPERVISION_VISIT_ID = 100L;
     private static final int HOURS_COUNT = 10;
     private static final int UPDATED_HOURS_COUNT = 11;
-    private static final BigDecimal VISIT_RATE = new BigDecimal(100);
-    private static final BigDecimal UPDATED_VISIT_RATE = new BigDecimal(101);
-    private static final BigDecimal HOURLY_RATE = new BigDecimal(100);
-    private static final BigDecimal UPDATED_HOURLY_RATE = new BigDecimal(102);
-    private static final BigDecimal BASE_RATE = new BigDecimal(100);
-    private static final BigDecimal UPDATED_BASE_RATE = new BigDecimal(103);
+    private static final BigDecimal VISIT_NET_RATE = new BigDecimal(100);
+    private static final BigDecimal UPDATED_VISIT_NET_RATE = new BigDecimal(101);
+    private static final BigDecimal HOURLY_NET_RATE = new BigDecimal(100);
+    private static final BigDecimal UPDATED_HOURLY_NET_RATE = new BigDecimal(102);
+    private static final BigDecimal BASE_NET_RATE = new BigDecimal(100);
+    private static final BigDecimal UPDATED_BASE_NET_RATE = new BigDecimal(103);
     private static final LocalDate DATE_OF_VISIT = new LocalDate(2021, 01, 01);
     private static final LocalDate UPDATED_DATE_OF_VISIT = new LocalDate(2021, 01, 01);
 
@@ -137,18 +137,18 @@ class SupervisionApplicationServiceImplTest extends Specification {
             SupervisionDto supervisionDto = new SupervisionDto();
             supervisionDto.setHasInvoice(true);
             supervisionDto.setProjectId(PROJECT_ID);
-            supervisionDto.setVisitNetRate(UPDATED_VISIT_RATE);
-            supervisionDto.setHourlyNetRate(UPDATED_HOURLY_RATE);
-            supervisionDto.setBaseNetRate(UPDATED_BASE_RATE);
+            supervisionDto.setVisitNetRate(UPDATED_VISIT_NET_RATE);
+            supervisionDto.setHourlyNetRate(UPDATED_HOURLY_NET_RATE);
+            supervisionDto.setBaseNetRate(UPDATED_BASE_NET_RATE);
             this.mockSupervisionRepositoryLoad();
         when:
             this.supervisionApplicationService.updateSupervision(SUPERVISION_ID, supervisionDto);
         then:
             1 * this.supervisionRepository.save({ Supervision supervision ->
                 {
-                    supervision.getVisitNetRate() == UPDATED_VISIT_RATE;
-                    supervision.getHourlyNetRate() == UPDATED_HOURLY_RATE;
-                    supervision.getBaseNetRate() == UPDATED_BASE_RATE;
+                    supervision.getVisitNetRate() == UPDATED_VISIT_NET_RATE;
+                    supervision.getHourlyNetRate() == UPDATED_HOURLY_NET_RATE;
+                    supervision.getBaseNetRate() == UPDATED_BASE_NET_RATE;
                 }
             });
     }
@@ -340,6 +340,10 @@ class SupervisionApplicationServiceImplTest extends Specification {
         FinancialData financialData = new FinancialData(new Money(0), true, true);
         return new SupervisionBuilder()
                 .withFinancialData(financialData)
+                .withHoursCount(0)
+                .withBaseNetRate(new Money(BASE_NET_RATE))
+                .withVisitNetRate(new Money(VISIT_NET_RATE))
+                .withHourlyNetRate(new Money(HOURLY_NET_RATE))
                 .withId(SUPERVISION_ID)
                 .build();
     }
@@ -353,6 +357,10 @@ class SupervisionApplicationServiceImplTest extends Specification {
                 .withFinancialData(financialData)
                 .withSupervisionVisit(supervisionVisit)
                 .withId(SUPERVISION_ID)
+                .withHoursCount(0)
+                .withBaseNetRate(new Money(BASE_NET_RATE))
+                .withVisitNetRate(new Money(VISIT_NET_RATE))
+                .withHourlyNetRate(new Money(HOURLY_NET_RATE))
                 .build();
     }
 
@@ -361,9 +369,9 @@ class SupervisionApplicationServiceImplTest extends Specification {
         supervisionDto.setHasInvoice(true);
         supervisionDto.setProjectId(PROJECT_ID);
         supervisionDto.setHoursCount(HOURS_COUNT);
-        supervisionDto.setVisitNetRate(VISIT_RATE);
-        supervisionDto.setHourlyNetRate(HOURLY_RATE);
-        supervisionDto.setBaseNetRate(BASE_RATE);
+        supervisionDto.setVisitNetRate(VISIT_NET_RATE);
+        supervisionDto.setHourlyNetRate(HOURLY_NET_RATE);
+        supervisionDto.setBaseNetRate(BASE_NET_RATE);
         return supervisionDto;
     }
 

@@ -165,13 +165,15 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         BigDecimal value = new BigDecimal(0);
         // Adding base rate
         value = value.add(BigDecimal.valueOf(supervision.getBaseNetRate().doubleValue()));
-        // Adding hours value and rate per visit
-        for (SupervisionVisit supervisionVisit : supervision.getSupervisionVisits()) {
-            if (supervisionVisit.isPayable()) {
-                BigDecimal hoursValue = BigDecimal.valueOf(
-                        supervisionVisit.getHoursCount() * supervision.getHourlyNetRate().doubleValue());
-                value = value.add(hoursValue);
-                value = value.add(supervision.getVisitNetRate());
+        if (supervision.getSupervisionVisits() != null) {
+            // Adding hours value and rate per visit
+            for (SupervisionVisit supervisionVisit : supervision.getSupervisionVisits()) {
+                if (supervisionVisit.isPayable()) {
+                    BigDecimal hoursValue = BigDecimal.valueOf(
+                            supervisionVisit.getHoursCount() * supervision.getHourlyNetRate().doubleValue());
+                    value = value.add(hoursValue);
+                    value = value.add(supervision.getVisitNetRate());
+                }
             }
         }
         supervision.getFinancialData().setValue(new Money(value));
