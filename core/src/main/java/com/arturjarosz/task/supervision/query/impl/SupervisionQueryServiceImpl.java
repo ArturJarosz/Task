@@ -24,9 +24,10 @@ public class SupervisionQueryServiceImpl extends AbstractQueryService<QSupervisi
 
     @Override
     public boolean supervisionVisitExistsInSupervision(Long supervisionId, Long supervisionVisitId) {
-        return this.query().from(SUPERVISION_VISIT)
+        return this.query().from(SUPERVISION)
                 .join(SUPERVISION.supervisionVisits, SUPERVISION_VISIT)
                 .where(SUPERVISION.id.eq(supervisionId).and(SUPERVISION_VISIT.id.eq(supervisionVisitId)))
+                .select(SUPERVISION_VISIT)
                 .fetchOne() != null;
     }
 
@@ -37,7 +38,7 @@ public class SupervisionQueryServiceImpl extends AbstractQueryService<QSupervisi
                         SUPERVISION_VISIT.id.as(SupervisionVisitDto.ID),
                         SUPERVISION_VISIT.hoursCount.as(SupervisionVisitDto.HOURS_COUNT),
                         SUPERVISION_VISIT.dateOfVisit.as(SupervisionVisitDto.DATE_OF_VISIT),
-                        SUPERVISION_VISIT.isPayable.as(SupervisionVisitDto.IS_PAYABLE)
+                        SUPERVISION_VISIT.isPayable.as(SupervisionVisitDto.PAYABLE)
                 )).fetchOne();
     }
 }

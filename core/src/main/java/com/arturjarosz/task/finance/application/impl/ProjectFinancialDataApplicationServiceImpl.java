@@ -26,4 +26,12 @@ public class ProjectFinancialDataApplicationServiceImpl implements ProjectFinanc
         projectFinancialData = this.projectFinancialDataRepository.save(projectFinancialData);
         return projectFinancialData;
     }
+
+    public void recalculateProjectFinancialData(Long projectId){
+        // get project installments
+        // get project costs
+        // get project commissions
+        // get supervisions
+        // recalculate
+    }
 }

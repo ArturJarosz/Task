@@ -26,6 +26,7 @@ public class SupervisionDto implements Serializable {
     private BigDecimal hourlyNetRate;
     private BigDecimal visitNetRate;
     private int hoursCount;
+    private BigDecimal value;
     private String note;
 
     public SupervisionDto() {
@@ -40,11 +41,11 @@ public class SupervisionDto implements Serializable {
         this.id = id;
     }
 
-    public Boolean isHasInvoice() {
-        return this.hasInvoice;
+    public Boolean getHasInvoice() {
+        return hasInvoice;
     }
 
-    public void setHasInvoice(boolean hasInvoice) {
+    public void setHasInvoice(Boolean hasInvoice) {
         this.hasInvoice = hasInvoice;
     }
 
@@ -94,5 +95,13 @@ public class SupervisionDto implements Serializable {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    public void setValue(BigDecimal value) {
+        this.value = value;
     }
 }

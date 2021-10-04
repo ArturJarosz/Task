@@ -28,7 +28,7 @@ public class SupervisionVisitValidator {
     private void validateSupervisionVisitData(SupervisionVisitDto supervisionVisitDto) {
         assertNotNull(supervisionVisitDto,
                 createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION_VISIT));
-        assertNotNull(supervisionVisitDto.isPayable(),
+        assertNotNull(supervisionVisitDto.getPayable(),
                 createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION_VISIT,
                         SupervisionExceptionCodes.IS_PAYABLE_FLAG));
         assertNotNull(supervisionVisitDto.getDateOfVisit(),

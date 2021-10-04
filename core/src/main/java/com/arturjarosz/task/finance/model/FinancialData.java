@@ -30,8 +30,8 @@ public class FinancialData extends AbstractAggregateRoot {
     @Column(name = "PAYABLE", nullable = false)
     private boolean payable;
 
-    @Column(name = "IS_PAID")
-    private boolean isPaid;
+    @Column(name = "PAID")
+    private boolean paid;
 
     protected FinancialData() {
         // Needed by Hibernate
@@ -44,7 +44,7 @@ public class FinancialData extends AbstractAggregateRoot {
     }
 
     public void pay() {
-        this.isPaid = true;
+        this.paid = true;
     }
 
     public Money getValue() {
@@ -59,11 +59,11 @@ public class FinancialData extends AbstractAggregateRoot {
         return this.payable;
     }
 
-    public boolean isPaid() {
-        return this.isPaid;
-    }
-
     public void setHasInvoice(boolean hasInvoice) {
         this.hasInvoice = hasInvoice;
+    }
+
+    public void setValue(Money value) {
+        this.value = value;
     }
 }

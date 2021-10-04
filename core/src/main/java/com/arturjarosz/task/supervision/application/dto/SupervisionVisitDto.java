@@ -12,14 +12,14 @@ public class SupervisionVisitDto implements Serializable {
     @JsonIgnore
     public static final String DATE_OF_VISIT = "dateOfVisit";
     @JsonIgnore
-    public static final String IS_PAYABLE = "isPayable";
+    public static final String PAYABLE = "payable";
     @JsonIgnore
     public static final String HOURS_COUNT = "hoursCount";
 
     private long supervisionId;
     private long id;
     private LocalDate dateOfVisit;
-    private Boolean isPayable;
+    private Boolean payable;
     private Integer hoursCount;
 
     public SupervisionVisitDto() {
@@ -49,12 +49,12 @@ public class SupervisionVisitDto implements Serializable {
         this.dateOfVisit = dateOfVisit;
     }
 
-    public Boolean isPayable() {
-        return this.isPayable;
+    public Boolean getPayable() {
+        return payable;
     }
 
     public void setPayable(Boolean payable) {
-        this.isPayable = payable;
+        this.payable = payable;
     }
 
     public Integer getHoursCount() {

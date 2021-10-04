@@ -47,7 +47,7 @@ public class SupervisionVisit extends AbstractEntity {
     }
 
     public SupervisionVisit update(SupervisionVisitDto supervisionVisitDto) {
-        this.isPayable = supervisionVisitDto.isPayable();
+        this.isPayable = supervisionVisitDto.getPayable();
         this.hoursCount = supervisionVisitDto.getHoursCount();
         this.dateOfVisit = supervisionVisitDto.getDateOfVisit();
         return this;
