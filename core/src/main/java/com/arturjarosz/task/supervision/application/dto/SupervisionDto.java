@@ -1,4 +1,4 @@
-package com.arturjarosz.task.project.application.dto;
+package com.arturjarosz.task.supervision.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -21,7 +21,7 @@ public class SupervisionDto implements Serializable {
 
     private Long id;
     private Long projectId;
-    private boolean hasInvoice;
+    private Boolean hasInvoice;
     private BigDecimal baseNetRate;
     private BigDecimal hourlyNetRate;
     private BigDecimal visitNetRate;
@@ -40,7 +40,7 @@ public class SupervisionDto implements Serializable {
         this.id = id;
     }
 
-    public boolean isHasInvoice() {
+    public Boolean isHasInvoice() {
         return this.hasInvoice;
     }
 

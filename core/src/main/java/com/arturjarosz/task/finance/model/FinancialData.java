@@ -62,4 +62,8 @@ public class FinancialData extends AbstractAggregateRoot {
     public boolean isPaid() {
         return this.isPaid;
     }
+
+    public void setHasInvoice(boolean hasInvoice) {
+        this.hasInvoice = hasInvoice;
+    }
 }

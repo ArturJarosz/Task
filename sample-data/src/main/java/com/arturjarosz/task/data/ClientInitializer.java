@@ -18,7 +18,7 @@ import java.util.List;
 @Component
 public class ClientInitializer {
 
-    private final Logger LOG = LogManager.getLogger(ClientInitializer.class);
+    private static final Logger LOG = LogManager.getLogger(ClientInitializer.class);
 
     private final ClientApplicationService clientApplicationService;
 

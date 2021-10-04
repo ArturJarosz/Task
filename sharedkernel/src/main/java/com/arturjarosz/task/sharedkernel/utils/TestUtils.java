@@ -55,7 +55,6 @@ public final class TestUtils {
             if (theClass == null) {
                 throw new IllegalArgumentException(String.format(NO_SUCH_FIELD, fieldName, theClass.getName()));
             }
-            ;
             field = getDeclaredField(theClass, fieldName);
         }
         return field;

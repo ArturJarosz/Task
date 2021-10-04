@@ -18,8 +18,8 @@ public interface ArchitectApplicationService {
     ArchitectDto createArchitect(ArchitectBasicDto architectBasicDto);
 
     /**
-     * Removes {@link com.arturjarosz.task.architect.model.Architect} of given Id.
-     * If entity with given Id does not exists then
+     * Removes {@link com.arturjarosz.task.architect.model.Architect} of given I.
+     * If entity with given Id does not exist then
      * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
      *
      * @param architectId
@@ -28,7 +28,7 @@ public interface ArchitectApplicationService {
 
     /**
      * Loads all architect data by given id.
-     * If entity with given Id does not exists then
+     * If entity with given Id does not exist then
      * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
      *
      * @param architectId
@@ -38,7 +38,7 @@ public interface ArchitectApplicationService {
 
     /**
      * Updates Architect of given Id with data provided in architectDto.
-     * If entity with given Id does not exists then
+     * If entity with given Id does not exist then
      * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
      *
      * @param architectId

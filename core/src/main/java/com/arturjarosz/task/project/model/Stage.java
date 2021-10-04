@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@SequenceGenerator(name = "stage_sequence_generator", sequenceName = "stage_sequence", allocationSize = 1)
+@SequenceGenerator(name = "sequence_generator", sequenceName = "stage_sequence", allocationSize = 1)
 @Table(name = "STAGE")
 public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> {
 

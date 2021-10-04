@@ -15,7 +15,7 @@ import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Entity
-@SequenceGenerator(name = "task_sequence_generator", sequenceName = "task_sequence", allocationSize = 1)
+@SequenceGenerator(name = "sequence_generator", sequenceName = "task_sequence", allocationSize = 1)
 @Table(name = "TASK")
 public class Task extends AbstractEntity implements WorkflowAware<TaskStatus> {
     private static final long serialVersionUID = 9208147376126632528L;

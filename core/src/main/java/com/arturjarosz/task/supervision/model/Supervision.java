@@ -1,9 +1,10 @@
-package com.arturjarosz.task.project.model;
+package com.arturjarosz.task.supervision.model;
 
 import com.arturjarosz.task.finance.model.FinancialData;
-import com.arturjarosz.task.project.application.dto.SupervisionDto;
-import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
+import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
+import com.arturjarosz.task.supervision.application.dto.SupervisionDto;
+import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
@@ -21,21 +22,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@SequenceGenerator(name = "supervision_sequence_generator", sequenceName = "supervision_sequence", allocationSize = 1)
+@SequenceGenerator(name = "sequence_generator", sequenceName = "supervision_sequence", allocationSize = 1)
 @Table(name = "SUPERVISION")
-public class Supervision extends AbstractEntity {
+public class Supervision extends AbstractAggregateRoot {
     private static final long serialVersionUID = -1180515376945392460L;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "BASE_NET_RATE", nullable = false))
     private Money baseNetRate;
-
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "BASE_GROSS_RATE", nullable = false))
-    private Money baseGrossNet;
-
-    @Column(name = "HAS_INVOICE")
-    private boolean hasInvoice;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "HOURLY_NET_RATE", nullable = false))
@@ -58,38 +52,33 @@ public class Supervision extends AbstractEntity {
     @JoinColumn(name = "SUPERVISION_ID")
     private Set<SupervisionVisit> supervisionVisits;
 
+    @Column(name = "PROJECT_ID")
+    private Long projectId;
+
     protected Supervision() {
         // Needed by Hibernate
     }
 
-    public Supervision(boolean hasInvoice, BigDecimal baseNetRate, BigDecimal hourlyNetRate, BigDecimal visitNetRate) {
-        this.financialData = new FinancialData(new Money(0), hasInvoice, true);
-        this.baseNetRate = new Money(baseNetRate);
-        //TODO: implement gross
-        this.baseGrossNet = this.baseNetRate;
-        this.hourlyNetRate = new Money(hourlyNetRate);
-        this.visitNetRate = new Money(visitNetRate);
+    public Supervision(SupervisionDto supervisionDto) {
+        this.projectId = supervisionDto.getProjectId();
+        this.baseNetRate = new Money(supervisionDto.getBaseNetRate());
+        this.hourlyNetRate = new Money(supervisionDto.getHourlyNetRate());
+        this.visitNetRate = new Money(supervisionDto.getVisitNetRate());
+        this.note = supervisionDto.getNote();
         this.supervisionVisits = new HashSet<>();
+        this.financialData = new FinancialData(new Money(0), supervisionDto.isHasInvoice(), true);
     }
 
-    public void update(SupervisionDto supervisionDto){
-        this.hasInvoice = supervisionDto.isHasInvoice();
-        this.baseNetRate.setValue(supervisionDto.getBaseNetRate());
-        this.hourlyNetRate.setValue(supervisionDto.getHourlyNetRate());
-        this.visitNetRate.setValue(supervisionDto.getVisitNetRate());
+    public void update(SupervisionDto supervisionDto) {
+        this.baseNetRate = new Money(supervisionDto.getBaseNetRate());
+        this.hourlyNetRate = new Money(supervisionDto.getHourlyNetRate());
+        this.visitNetRate = new Money(supervisionDto.getVisitNetRate());
+        this.financialData.setHasInvoice(supervisionDto.isHasInvoice());
         this.note = supervisionDto.getNote();
     }
 
     public BigDecimal getBaseNetRate() {
         return this.baseNetRate.getValue();
-    }
-
-    public BigDecimal getBaseGrossNet() {
-        return this.baseGrossNet.getValue();
-    }
-
-    public boolean isHasInvoice() {
-        return this.hasInvoice;
     }
 
     public BigDecimal getHourlyNetRate() {
@@ -109,6 +98,9 @@ public class Supervision extends AbstractEntity {
     }
 
     public void addSupervisionVisit(SupervisionVisit supervisionVisit) {
+        if (this.supervisionVisits == null) {
+            this.supervisionVisits = new HashSet<>();
+        }
         this.supervisionVisits.add(supervisionVisit);
     }
 
@@ -118,5 +110,16 @@ public class Supervision extends AbstractEntity {
 
     public Set<SupervisionVisit> getSupervisionVisits() {
         return this.supervisionVisits;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public SupervisionVisit updateSupervisionVisit(Long supervisionVisitId,
+                                                   SupervisionVisitDto supervisionVisitDto) {
+        SupervisionVisit supervisionVisit = this.supervisionVisits.stream()
+                .filter(sv -> sv.getId().equals(supervisionVisitId)).findFirst().orElse(null);
+        return supervisionVisit.update(supervisionVisitDto);
     }
 }

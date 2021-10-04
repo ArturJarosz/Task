@@ -38,8 +38,6 @@ public class Architect extends AbstractAggregateRoot {
         this.personName = name;
     }
 
-    //TODO: implement method responsible for updating all projects value
-
     public PersonName getPersonName() {
         return this.personName;
     }

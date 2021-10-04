@@ -20,7 +20,8 @@ public class BaseConfiguration {
             "classpath:/i18n/contractor/contractor",
             "classpath:/i18n/architect/architect",
             "classpath:/i18n/project/project",
-            "classpath:/i18n/project/status"
+            "classpath:/i18n/project/status",
+            "classpath:/i18n/project/supervision"
     };
 
     public BaseConfiguration(@Value("${task.language}") String defaultLanguageCode,
@@ -40,8 +41,7 @@ public class BaseConfiguration {
 
     @Bean
     public LocaleResolver localeResolver() {
-        CookieLocaleResolver localeResolver = new CookieLocaleResolver();
-        return localeResolver;
+        return new CookieLocaleResolver();
     }
 
 }

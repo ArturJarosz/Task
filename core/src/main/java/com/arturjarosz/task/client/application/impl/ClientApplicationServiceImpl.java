@@ -30,7 +30,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     @Transactional
     @Override
     public ClientDto createClient(ClientDto clientDto) {
-        LOG.debug("Creating client");
+        LOG.debug("Creating client.");
 
         this.clientValidator.validateClientBasicDto(clientDto);
         ClientType clientType = clientDto.getClientType();

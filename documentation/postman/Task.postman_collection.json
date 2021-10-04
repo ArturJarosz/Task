@@ -1021,7 +1021,7 @@
               "name": "supervision visit",
               "item": [
                 {
-                  "name": "create supervision visit Copy",
+                  "name": "create supervision visit",
                   "request": {
                     "method": "POST",
                     "header": [],
@@ -1035,14 +1035,14 @@
                       }
                     },
                     "url": {
-                      "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions",
+                      "raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits",
                       "host": [
                         "{{taskAddress}}"
                       ],
                       "path": [
-                        "projects",
-                        "{{projectId}}",
-                        "supervisions"
+                        "supervisions",
+                        "{{supervisionId}}",
+                        "supervisionVisits"
                       ]
                     }
                   },
@@ -1063,16 +1063,14 @@
                       }
                     },
                     "url": {
-                      "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions/supervisionVisits/{{supervisionVisitId}}",
+                      "raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits{{supervisionVisitId}}",
                       "host": [
                         "{{taskAddress}}"
                       ],
                       "path": [
-                        "projects",
-                        "{{projectId}}",
                         "supervisions",
-                        "supervisionVisits",
-                        "{{supervisionVisitId}}"
+                        "{{supervisionId}}",
+                        "supervisionVisits{{supervisionVisitId}}"
                       ]
                     }
                   },
@@ -1084,14 +1082,13 @@
                     "method": "GET",
                     "header": [],
                     "url": {
-                      "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions/supervisionVisits/{{supervisionVisitId}}",
+                      "raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits/{{supervisionVisitId}}",
                       "host": [
                         "{{taskAddress}}"
                       ],
                       "path": [
-                        "projects",
-                        "{{projectId}}",
                         "supervisions",
+                        "{{supervisionId}}",
                         "supervisionVisits",
                         "{{supervisionVisitId}}"
                       ]
@@ -1105,14 +1102,13 @@
                     "method": "PUT",
                     "header": [],
                     "url": {
-                      "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions/supervisionVisits/{{supervisionVisitId}}",
+                      "raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits/{{supervisionVisitId}}",
                       "host": [
                         "{{taskAddress}}"
                       ],
                       "path": [
-                        "projects",
-                        "{{projectId}}",
                         "supervisions",
+                        "{{supervisionId}}",
                         "supervisionVisits",
                         "{{supervisionVisitId}}"
                       ]
@@ -1129,7 +1125,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"hasInvoice\": true,\n    \"baseNetRate\": 500, \n    \"hourlyNetRate\": 150.50,\n    \"visitNetRate\": 200\n}",
+                  "raw": "{\n    \"projectId\": 100,\n    \"hasInvoice\": true,\n    \"baseNetRate\": 500, \n    \"hourlyNetRate\": 150.50,\n    \"visitNetRate\": 200\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1137,13 +1133,11 @@
                   }
                 },
                 "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions",
+                  "raw": "{{taskAddress}}/supervisions",
                   "host": [
                     "{{taskAddress}}"
                   ],
                   "path": [
-                    "projects",
-                    "{{projectId}}",
                     "supervisions"
                   ]
                 }
@@ -1165,14 +1159,13 @@
                   }
                 },
                 "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions",
+                  "raw": "{{taskAddress}}/supervisions/{{supervisionsId}}",
                   "host": [
                     "{{taskAddress}}"
                   ],
                   "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "supervisions"
+                    "supervisions",
+                    "{{supervisionsId}}"
                   ]
                 }
               },
@@ -1184,14 +1177,13 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions",
+                  "raw": "{{taskAddress}}/supervisions/{{supervisionsId}}",
                   "host": [
                     "{{taskAddress}}"
                   ],
                   "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "supervisions"
+                    "supervisions",
+                    "{{supervisionsId}}"
                   ]
                 }
               },
@@ -1492,6 +1484,10 @@
     {
       "key": "taskAddress",
       "value": "localhost:8099"
+    },
+    {
+      "key": "projectId",
+      "value": "100"
     }
   ]
 }

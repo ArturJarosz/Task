@@ -9,14 +9,10 @@
     <include file="create-task-sequence.xml" relativeToChangelogFile="true"/>
     <include file="create-cooperator-job-sequence.xml" relativeToChangelogFile="true"/>
     <include file="create-arrangement-sequence.xml" relativeToChangelogFile="true"/>
-    <include file="create-supervision-sequence.xml" relativeToChangelogFile="true"/>
-    <include file="create-supervision-visit-sequence.xml" relativeToChangelogFile="true"/>
     <include file="create-arrangement-table.xml" relativeToChangelogFile="true"/>
     <include file="create-project-table.xml" relativeToChangelogFile="true"/>
     <include file="create-stage-table.xml" relativeToChangelogFile="true"/>
     <include file="create-task-table.xml" relativeToChangelogFile="true"/>
     <include file="create-cooperator-job-table.xml" relativeToChangelogFile="true"/>
-    <include file="create-supervision-table.xml" relativeToChangelogFile="true"/>
-    <include file="create-supervision-visit-table.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
