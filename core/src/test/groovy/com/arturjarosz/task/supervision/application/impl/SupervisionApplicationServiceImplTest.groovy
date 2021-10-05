@@ -10,6 +10,7 @@ import com.arturjarosz.task.supervision.application.SupervisionValidator
 import com.arturjarosz.task.supervision.application.SupervisionVisitValidator
 import com.arturjarosz.task.supervision.application.dto.SupervisionDto
 import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto
+import com.arturjarosz.task.supervision.domain.impl.SupervisionCalculationServiceImpl
 import com.arturjarosz.task.supervision.infrastructure.repository.impl.SupervisionRepositoryImpl
 import com.arturjarosz.task.supervision.model.Supervision
 import com.arturjarosz.task.supervision.model.SupervisionVisit
@@ -41,9 +42,10 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def supervisionVisitValidator = Mock(SupervisionVisitValidator);
     def supervisionRepository = Mock(SupervisionRepositoryImpl);
     def supervisionQueryService = Mock(SupervisionQueryServiceImpl);
+    def supervisionCalculationService = Mock(SupervisionCalculationServiceImpl);
 
     def supervisionApplicationService = new SupervisionApplicationServiceImpl(projectValidator, supervisionValidator,
-            supervisionVisitValidator, supervisionRepository, supervisionQueryService);
+            supervisionVisitValidator, supervisionRepository, supervisionQueryService, supervisionCalculationService);
 
     def "createSupervision should call validateCreateSupervision from supervisionValidator"() {
         given:
@@ -132,6 +134,21 @@ class SupervisionApplicationServiceImplTest extends Specification {
             0 * this.supervisionRepository.save(_ as Supervision);
     }
 
+    def "updateSupervision should recalculated supervision FinancialData"() {
+        given:
+            SupervisionDto supervisionDto = new SupervisionDto();
+            supervisionDto.setHasInvoice(true);
+            supervisionDto.setProjectId(PROJECT_ID);
+            supervisionDto.setVisitNetRate(UPDATED_VISIT_NET_RATE);
+            supervisionDto.setHourlyNetRate(UPDATED_HOURLY_NET_RATE);
+            supervisionDto.setBaseNetRate(UPDATED_BASE_NET_RATE);
+            this.mockSupervisionRepositoryLoad();
+        when:
+            this.supervisionApplicationService.updateSupervision(SUPERVISION_ID, supervisionDto);
+        then:
+            1 * this.supervisionCalculationService.recalculateSupervision(_ as Supervision);
+    }
+
     def "updateSupervision should save supervision with updated fields"() {
         given:
             SupervisionDto supervisionDto = new SupervisionDto();
@@ -199,6 +216,17 @@ class SupervisionApplicationServiceImplTest extends Specification {
             1 * this.supervisionVisitValidator.validateCreateSupervisionVisit(supervisionVisitDto);
     }
 
+    def "createSupervisionVisit should recalculate supervision FinancialData"() {
+        given:
+            SupervisionVisitDto supervisionVisitDto = this.prepareProperSupervisionVisitDto();
+            this.mockSupervisionRepositoryLoad();
+            this.mockSupervisionRepositorySaveWithSupervisionVisit();
+        when:
+            this.supervisionApplicationService.createSupervisionVisit(SUPERVISION_ID, supervisionVisitDto);
+        then:
+            1 * this.supervisionCalculationService.recalculateSupervision(_ as Supervision);
+    }
+
     def "createSupervisionVisit should add new visit to supervision and saved with supervisionRepository"() {
         given:
             SupervisionVisitDto supervisionVisitDto = this.prepareProperSupervisionVisitDto();
@@ -258,6 +286,18 @@ class SupervisionApplicationServiceImplTest extends Specification {
                     SUPERVISION_VISIT_ID);
     }
 
+    def "updateSupervisionVisit recalculated supervision FinancialData"() {
+        given:
+            SupervisionVisitDto supervisionVisitDto = this.prepareProperSupervisionVisitDtoToUpdate();
+            this.mockSupervisionRepositoryLoadWithSupervisionVisit();
+            this.mockSupervisionRepositorySaveWithSupervisionVisit();
+        when:
+            this.supervisionApplicationService.updateSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID,
+                    supervisionVisitDto)
+        then:
+            1 * this.supervisionCalculationService.recalculateSupervision(_ as Supervision);
+    }
+
     def "updateSupervisionVisit changes data on supervisionVisit"() {
         given:
             SupervisionVisitDto supervisionVisitDto = this.prepareProperSupervisionVisitDtoToUpdate();
@@ -298,6 +338,15 @@ class SupervisionApplicationServiceImplTest extends Specification {
         then:
             1 * this.supervisionVisitValidator.validateSupervisionHavingSupervisionVisit(SUPERVISION_ID,
                     SUPERVISION_VISIT_ID);
+    }
+
+    def "deleteSupervisionVisit recalculates supervision FinancialData"() {
+        given:
+            this.mockSupervisionRepositoryLoadWithSupervisionVisit();
+        when:
+            this.supervisionApplicationService.deleteSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID);
+        then:
+            1 * this.supervisionCalculationService.recalculateSupervision(_ as Supervision);
     }
 
     def "deleteSupervisionVisit removes supervisionVisit from supervision"() {

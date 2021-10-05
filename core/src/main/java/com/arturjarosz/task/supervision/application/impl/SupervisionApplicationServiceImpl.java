@@ -3,7 +3,6 @@ package com.arturjarosz.task.supervision.application.impl;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
-import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.supervision.application.SupervisionApplicationService;
 import com.arturjarosz.task.supervision.application.SupervisionValidator;
 import com.arturjarosz.task.supervision.application.SupervisionVisitValidator;
@@ -11,6 +10,7 @@ import com.arturjarosz.task.supervision.application.dto.SupervisionDto;
 import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto;
 import com.arturjarosz.task.supervision.application.mapper.SupervisionDtoMapper;
 import com.arturjarosz.task.supervision.application.mapper.SupervisionVisitDtoMapper;
+import com.arturjarosz.task.supervision.domain.SupervisionCalculationService;
 import com.arturjarosz.task.supervision.infrastructure.repository.SupervisionRepository;
 import com.arturjarosz.task.supervision.model.Supervision;
 import com.arturjarosz.task.supervision.model.SupervisionVisit;
@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
 
 @ApplicationService
 public class SupervisionApplicationServiceImpl implements SupervisionApplicationService {
@@ -31,18 +30,21 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     private final SupervisionVisitValidator supervisionVisitValidator;
     private final SupervisionRepository supervisionRepository;
     private final SupervisionQueryService supervisionQueryService;
+    private final SupervisionCalculationService supervisionCalculationService;
 
     @Autowired
     public SupervisionApplicationServiceImpl(ProjectValidator projectValidator,
                                              SupervisionValidator supervisionValidator,
                                              SupervisionVisitValidator supervisionVisitValidator,
                                              SupervisionRepository supervisionRepository,
-                                             SupervisionQueryService supervisionQueryService) {
+                                             SupervisionQueryService supervisionQueryService,
+                                             SupervisionCalculationService supervisionCalculationService) {
         this.projectValidator = projectValidator;
         this.supervisionValidator = supervisionValidator;
         this.supervisionVisitValidator = supervisionVisitValidator;
         this.supervisionRepository = supervisionRepository;
         this.supervisionQueryService = supervisionQueryService;
+        this.supervisionCalculationService = supervisionCalculationService;
     }
 
     @Transactional
@@ -68,7 +70,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionValidator.validateUpdateSupervision(supervisionDto);
         Supervision supervision = this.supervisionRepository.load(supervisionId);
         supervision.update(supervisionDto);
-        this.recalculateSupervisionFinancialData(supervision);
+        this.supervisionCalculationService.recalculateSupervision(supervision);
         this.supervisionRepository.save(supervision);
 
         LOG.debug("Supervision with id {} updated.", supervisionId);
@@ -107,7 +109,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         SupervisionVisitDto createdSupervisionVisitDto = SupervisionVisitDtoMapper.INSTANCE
                 .supervisionVisitToSupervisionVisionDto(supervisionVisit);
         this.updateSupervisionHoursCount(supervision);
-        this.recalculateSupervisionFinancialData(supervision);
+        this.supervisionCalculationService.recalculateSupervision(supervision);
         this.supervisionRepository.save(supervision);
         createdSupervisionVisitDto.setId(this.getIdForCreatedSupervisionVisit(supervision, supervisionVisit));
         createdSupervisionVisitDto.setSupervisionId(supervisionId);
@@ -128,7 +130,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         Supervision supervision = this.supervisionRepository.load(supervisionId);
         supervision.updateSupervisionVisit(supervisionVisitId, supervisionVisitDto);
         this.updateSupervisionHoursCount(supervision);
-        this.recalculateSupervisionFinancialData(supervision);
+        this.supervisionCalculationService.recalculateSupervision(supervision);
         this.supervisionRepository.save(supervision);
 
         LOG.debug("Supervision visit with id {} updated.", supervisionVisitId);
@@ -155,28 +157,10 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         Supervision supervision = this.supervisionRepository.load(supervisionId);
         supervision.removeSupervisionVisit(supervisionVisitId);
         this.updateSupervisionHoursCount(supervision);
-        this.recalculateSupervisionFinancialData(supervision);
+        this.supervisionCalculationService.recalculateSupervision(supervision);
         this.supervisionRepository.save(supervision);
 
         LOG.debug("Supervision visit with id {} removed.", supervisionVisitId);
-    }
-
-    private void recalculateSupervisionFinancialData(Supervision supervision) {
-        BigDecimal value = new BigDecimal(0);
-        // Adding base rate
-        value = value.add(BigDecimal.valueOf(supervision.getBaseNetRate().doubleValue()));
-        if (supervision.getSupervisionVisits() != null) {
-            // Adding hours value and rate per visit
-            for (SupervisionVisit supervisionVisit : supervision.getSupervisionVisits()) {
-                if (supervisionVisit.isPayable()) {
-                    BigDecimal hoursValue = BigDecimal.valueOf(
-                            supervisionVisit.getHoursCount() * supervision.getHourlyNetRate().doubleValue());
-                    value = value.add(hoursValue);
-                    value = value.add(supervision.getVisitNetRate());
-                }
-            }
-        }
-        supervision.getFinancialData().setValue(new Money(value));
     }
 
     private void updateSupervisionHoursCount(Supervision supervision) {
