@@ -15,7 +15,7 @@
             <column name="HOURS_COUNT" type="${integer.type}" defaultValueNumeric="0">
                 <constraints nullable="false"/>
             </column>
-            <column name="IS_PAYABLE" type="${boolean.type}">
+            <column name="PAYABLE" type="${boolean.type}">
                 <constraints nullable="false"/>
             </column>
             <column name="UUID" type="UUID">

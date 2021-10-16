@@ -30,7 +30,7 @@ public class SupervisionVisitValidator {
                 createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION_VISIT));
         assertNotNull(supervisionVisitDto.getPayable(),
                 createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION_VISIT,
-                        SupervisionExceptionCodes.IS_PAYABLE_FLAG));
+                        SupervisionExceptionCodes.PAYABLE_FLAG));
         assertNotNull(supervisionVisitDto.getDateOfVisit(),
                 createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION_VISIT,
                         SupervisionExceptionCodes.DATE_OF_VISIT));

@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 public class Offer extends Arrangement {
     private static final long serialVersionUID = -3315754399242136650L;
 
-    @Column(name = "IS_OFFER_ACCEPTED")
+    @Column(name = "OFFER_ACCEPTED")
     private boolean isAccepted;
 
     protected Offer() {

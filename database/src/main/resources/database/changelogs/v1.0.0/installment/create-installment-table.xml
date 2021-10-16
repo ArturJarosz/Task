@@ -15,7 +15,7 @@
             <column name="AMOUNT" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="IS_PAID" type="${boolean.type}">
+            <column name="PAID" type="${boolean.type}">
                 <constraints nullable="false"/>
             </column>
             <column name="NOTE" type="VARCHAR2(1000 ${char.unit})"/>

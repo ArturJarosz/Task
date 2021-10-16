@@ -6,7 +6,7 @@ import com.arturjarosz.task.architect.application.dto.ArchitectDto;
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.ClientValidator;
 import com.arturjarosz.task.client.application.dto.ClientDto;
-import com.arturjarosz.task.finance.application.ProjectFinancialDataApplicationService;
+import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.dto.OfferDto;
@@ -37,7 +37,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final ProjectRepository projectRepository;
     private final ProjectDomainService projectDomainService;
     private final ProjectValidator projectValidator;
-    private final ProjectFinancialDataApplicationService projectFinancialDataApplicationService;
+    private final ProjectFinancialDataService projectFinancialDataService;
 
     @Autowired
     public ProjectApplicationServiceImpl(ClientApplicationService clientApplicationService,
@@ -47,7 +47,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
                                          ProjectRepository projectRepository,
                                          ProjectDomainService projectDomainService,
                                          ProjectValidator projectValidator,
-                                         ProjectFinancialDataApplicationService projectFinancialDataApplicationService) {
+                                         ProjectFinancialDataService projectFinancialDataService) {
         this.clientApplicationService = clientApplicationService;
         this.clientValidator = clientValidator;
         this.architectApplicationService = architectApplicationService;
@@ -55,7 +55,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectRepository = projectRepository;
         this.projectDomainService = projectDomainService;
         this.projectValidator = projectValidator;
-        this.projectFinancialDataApplicationService = projectFinancialDataApplicationService;
+        this.projectFinancialDataService = projectFinancialDataService;
     }
 
     @Transactional
@@ -67,7 +67,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.clientValidator.validateClientExistence(projectCreateDto.getClientId());
         Project project = this.projectDomainService.createProject(projectCreateDto);
         project = this.projectRepository.save(project);
-        this.projectFinancialDataApplicationService.createProjectFinancialData(project.getId());
+        this.projectFinancialDataService.createProjectFinancialData(project.getId());
         LOG.debug("Project created.");
         return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
     }

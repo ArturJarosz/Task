@@ -15,7 +15,7 @@ public class SupervisionExceptionCodes {
     public static final String HOURS_COUNT = "hoursCount";
     public static final String HOURLY_NET_RATE = "hourlyNetRate";
     public static final String INVOICE_FLAG = "invoiceFlag";
-    public static final String IS_PAYABLE_FLAG = "isPayableFlag";
+    public static final String PAYABLE_FLAG = "payableFlag";
     public static final String PROJECT_ID = "projectId";
     public static final String VISIT_NET_RATE = "visitNetRate";
 

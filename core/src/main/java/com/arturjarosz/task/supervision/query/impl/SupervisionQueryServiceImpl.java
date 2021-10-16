@@ -38,7 +38,7 @@ public class SupervisionQueryServiceImpl extends AbstractQueryService<QSupervisi
                         SUPERVISION_VISIT.id.as(SupervisionVisitDto.ID),
                         SUPERVISION_VISIT.hoursCount.as(SupervisionVisitDto.HOURS_COUNT),
                         SUPERVISION_VISIT.dateOfVisit.as(SupervisionVisitDto.DATE_OF_VISIT),
-                        SUPERVISION_VISIT.isPayable.as(SupervisionVisitDto.PAYABLE)
+                        SUPERVISION_VISIT.payable.as(SupervisionVisitDto.PAYABLE)
                 )).fetchOne();
     }
 }

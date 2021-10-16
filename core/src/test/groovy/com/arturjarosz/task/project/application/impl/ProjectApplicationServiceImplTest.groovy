@@ -5,7 +5,7 @@ import com.arturjarosz.task.architect.application.impl.ArchitectApplicationServi
 import com.arturjarosz.task.client.application.ClientValidator
 import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
-import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataApplicationServiceImpl
+import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.OfferDto
 import com.arturjarosz.task.project.application.dto.ProjectContractDto
@@ -47,7 +47,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def projectRepository = Mock(ProjectRepositoryImpl);
     def projectDomainService = Mock(ProjectDomainServiceImpl);
     def projectValidator = Mock(ProjectValidator);
-    def projectFinancialDataApplicationService = Mock(ProjectFinancialDataApplicationServiceImpl);
+    def projectFinancialDataApplicationService = Mock(ProjectFinancialDataServiceImpl);
 
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator,

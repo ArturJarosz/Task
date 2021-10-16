@@ -1,5 +1,6 @@
 package com.arturjarosz.task.supervision.application.impl
 
+import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataServiceImpl
 import com.arturjarosz.task.finance.model.FinancialData
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
@@ -43,9 +44,12 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def supervisionRepository = Mock(SupervisionRepositoryImpl);
     def supervisionQueryService = Mock(SupervisionQueryServiceImpl);
     def supervisionCalculationService = Mock(SupervisionCalculationServiceImpl);
+    def projectFinancialDataApplicationService = Mock(ProjectFinancialDataServiceImpl);
 
     def supervisionApplicationService = new SupervisionApplicationServiceImpl(projectValidator, supervisionValidator,
-            supervisionVisitValidator, supervisionRepository, supervisionQueryService, supervisionCalculationService);
+            supervisionVisitValidator, supervisionRepository, supervisionQueryService,
+            projectFinancialDataApplicationService
+    );
 
     def "createSupervision should call validateCreateSupervision from supervisionValidator"() {
         given:
@@ -146,7 +150,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.updateSupervision(SUPERVISION_ID, supervisionDto);
         then:
-            1 * this.supervisionCalculationService.recalculateSupervision(_ as Supervision);
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(_ as Supervision);
     }
 
     def "updateSupervision should save supervision with updated fields"() {
@@ -224,7 +228,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.createSupervisionVisit(SUPERVISION_ID, supervisionVisitDto);
         then:
-            1 * this.supervisionCalculationService.recalculateSupervision(_ as Supervision);
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(_ as Supervision);
     }
 
     def "createSupervisionVisit should add new visit to supervision and saved with supervisionRepository"() {
@@ -295,7 +299,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
             this.supervisionApplicationService.updateSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID,
                     supervisionVisitDto)
         then:
-            1 * this.supervisionCalculationService.recalculateSupervision(_ as Supervision);
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(_ as Supervision);
     }
 
     def "updateSupervisionVisit changes data on supervisionVisit"() {
@@ -346,7 +350,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.deleteSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID);
         then:
-            1 * this.supervisionCalculationService.recalculateSupervision(_ as Supervision);
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(_ as Supervision);
     }
 
     def "deleteSupervisionVisit removes supervisionVisit from supervision"() {
