@@ -35,7 +35,7 @@ public class SupervisionValidator {
     }
 
     private void validateSupervisionData(SupervisionDto supervisionDto) {
-        assertNotNull(supervisionDto.isHasInvoice(),
+        assertNotNull(supervisionDto.getHasInvoice(),
                 createMessageCode(ExceptionCodes.NULL, SupervisionExceptionCodes.SUPERVISION,
                         SupervisionExceptionCodes.INVOICE_FLAG));
         assertNotNull(supervisionDto.getBaseNetRate(),

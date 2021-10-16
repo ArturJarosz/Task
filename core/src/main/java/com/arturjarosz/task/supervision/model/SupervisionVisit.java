@@ -21,17 +21,17 @@ public class SupervisionVisit extends AbstractEntity {
     @Column(name = "HOURS_COUNT", nullable = false)
     private int hoursCount;
 
-    @Column(name = "IS_PAYABLE", nullable = false)
-    private boolean isPayable;
+    @Column(name = "PAYABLE", nullable = false)
+    private boolean payable;
 
     protected SupervisionVisit() {
         // Needed by Hibernate
     }
 
-    public SupervisionVisit(LocalDate dateOfVisit, int hoursCount, boolean isPayable) {
+    public SupervisionVisit(LocalDate dateOfVisit, int hoursCount, boolean payable) {
         this.dateOfVisit = dateOfVisit;
         this.hoursCount = hoursCount;
-        this.isPayable = isPayable;
+        this.payable = payable;
     }
 
     public LocalDate getDateOfVisit() {
@@ -43,11 +43,11 @@ public class SupervisionVisit extends AbstractEntity {
     }
 
     public boolean isPayable() {
-        return this.isPayable;
+        return this.payable;
     }
 
     public SupervisionVisit update(SupervisionVisitDto supervisionVisitDto) {
-        this.isPayable = supervisionVisitDto.isPayable();
+        this.payable = supervisionVisitDto.getPayable();
         this.hoursCount = supervisionVisitDto.getHoursCount();
         this.dateOfVisit = supervisionVisitDto.getDateOfVisit();
         return this;

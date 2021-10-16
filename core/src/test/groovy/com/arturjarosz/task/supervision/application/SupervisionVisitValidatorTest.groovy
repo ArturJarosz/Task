@@ -42,7 +42,7 @@ class SupervisionVisitValidatorTest extends Specification {
             ex.message == exceptionMessage;
         where:
             supervisionId  | dateOfVisit   | isPayable | hoursCount           || exceptionMessage
-            SUPERVISION_ID | DATE_OF_VISIT | null      | HOURS_COUNT          || "isNull.supervisionVisit.isPayableFlag"
+            SUPERVISION_ID | DATE_OF_VISIT | null      | HOURS_COUNT          || "isNull.supervisionVisit.payableFlag"
             SUPERVISION_ID | null          | true      | HOURS_COUNT          || "isNull.supervisionVisit.dateOfVisit"
             SUPERVISION_ID | DATE_OF_VISIT | true      | null                 || "isNull.supervisionVisit.hoursCount"
             SUPERVISION_ID | DATE_OF_VISIT | true      | NEGATIVE_HOURS_COUNT || "negative.supervisionVisit.hoursCount"

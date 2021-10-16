@@ -1,5 +1,6 @@
 package com.arturjarosz.task.supervision.application.impl
 
+import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataServiceImpl
 import com.arturjarosz.task.finance.model.FinancialData
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
@@ -10,10 +11,12 @@ import com.arturjarosz.task.supervision.application.SupervisionValidator
 import com.arturjarosz.task.supervision.application.SupervisionVisitValidator
 import com.arturjarosz.task.supervision.application.dto.SupervisionDto
 import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto
+import com.arturjarosz.task.supervision.domain.impl.SupervisionCalculationServiceImpl
 import com.arturjarosz.task.supervision.infrastructure.repository.impl.SupervisionRepositoryImpl
 import com.arturjarosz.task.supervision.model.Supervision
 import com.arturjarosz.task.supervision.model.SupervisionVisit
 import com.arturjarosz.task.supervision.query.impl.SupervisionQueryServiceImpl
+import com.arturjarosz.task.supervision.utils.FinancialDataBuilder
 import com.arturjarosz.task.supervision.utils.SupervisionBuilder
 import com.arturjarosz.task.supervision.utils.SupervisionVisitBuilder
 import spock.lang.Specification
@@ -25,14 +28,15 @@ class SupervisionApplicationServiceImplTest extends Specification {
     private static final Long NOT_EXISTING_PROJECT_ID = 2L;
     private static final Long SUPERVISION_ID = 10L;
     private static final Long SUPERVISION_VISIT_ID = 100L;
+    private static final Long SUPERVISION_FINANCIAL_DATA_ID = 500L;
     private static final int HOURS_COUNT = 10;
     private static final int UPDATED_HOURS_COUNT = 11;
-    private static final BigDecimal VISIT_RATE = new BigDecimal(100);
-    private static final BigDecimal UPDATED_VISIT_RATE = new BigDecimal(101);
-    private static final BigDecimal HOURLY_RATE = new BigDecimal(100);
-    private static final BigDecimal UPDATED_HOURLY_RATE = new BigDecimal(102);
-    private static final BigDecimal BASE_RATE = new BigDecimal(100);
-    private static final BigDecimal UPDATED_BASE_RATE = new BigDecimal(103);
+    private static final BigDecimal VISIT_NET_RATE = new BigDecimal(100);
+    private static final BigDecimal UPDATED_VISIT_NET_RATE = new BigDecimal(101);
+    private static final BigDecimal HOURLY_NET_RATE = new BigDecimal(100);
+    private static final BigDecimal UPDATED_HOURLY_NET_RATE = new BigDecimal(102);
+    private static final BigDecimal BASE_NET_RATE = new BigDecimal(100);
+    private static final BigDecimal UPDATED_BASE_NET_RATE = new BigDecimal(103);
     private static final LocalDate DATE_OF_VISIT = new LocalDate(2021, 01, 01);
     private static final LocalDate UPDATED_DATE_OF_VISIT = new LocalDate(2021, 01, 01);
 
@@ -41,9 +45,13 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def supervisionVisitValidator = Mock(SupervisionVisitValidator);
     def supervisionRepository = Mock(SupervisionRepositoryImpl);
     def supervisionQueryService = Mock(SupervisionQueryServiceImpl);
+    def supervisionCalculationService = Mock(SupervisionCalculationServiceImpl);
+    def projectFinancialDataApplicationService = Mock(ProjectFinancialDataServiceImpl);
 
     def supervisionApplicationService = new SupervisionApplicationServiceImpl(projectValidator, supervisionValidator,
-            supervisionVisitValidator, supervisionRepository, supervisionQueryService);
+            supervisionVisitValidator, supervisionRepository, supervisionQueryService,
+            projectFinancialDataApplicationService
+    );
 
     def "createSupervision should call validateCreateSupervision from supervisionValidator"() {
         given:
@@ -132,23 +140,38 @@ class SupervisionApplicationServiceImplTest extends Specification {
             0 * this.supervisionRepository.save(_ as Supervision);
     }
 
+    def "updateSupervision should recalculated supervision FinancialData"() {
+        given:
+            SupervisionDto supervisionDto = new SupervisionDto();
+            supervisionDto.setHasInvoice(true);
+            supervisionDto.setProjectId(PROJECT_ID);
+            supervisionDto.setVisitNetRate(UPDATED_VISIT_NET_RATE);
+            supervisionDto.setHourlyNetRate(UPDATED_HOURLY_NET_RATE);
+            supervisionDto.setBaseNetRate(UPDATED_BASE_NET_RATE);
+            this.mockSupervisionRepositoryLoad();
+        when:
+            this.supervisionApplicationService.updateSupervision(SUPERVISION_ID, supervisionDto);
+        then:
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID, SUPERVISION_FINANCIAL_DATA_ID);
+    }
+
     def "updateSupervision should save supervision with updated fields"() {
         given:
             SupervisionDto supervisionDto = new SupervisionDto();
             supervisionDto.setHasInvoice(true);
             supervisionDto.setProjectId(PROJECT_ID);
-            supervisionDto.setVisitNetRate(UPDATED_VISIT_RATE);
-            supervisionDto.setHourlyNetRate(UPDATED_HOURLY_RATE);
-            supervisionDto.setBaseNetRate(UPDATED_BASE_RATE);
+            supervisionDto.setVisitNetRate(UPDATED_VISIT_NET_RATE);
+            supervisionDto.setHourlyNetRate(UPDATED_HOURLY_NET_RATE);
+            supervisionDto.setBaseNetRate(UPDATED_BASE_NET_RATE);
             this.mockSupervisionRepositoryLoad();
         when:
             this.supervisionApplicationService.updateSupervision(SUPERVISION_ID, supervisionDto);
         then:
             1 * this.supervisionRepository.save({ Supervision supervision ->
                 {
-                    supervision.getVisitNetRate() == UPDATED_VISIT_RATE;
-                    supervision.getHourlyNetRate() == UPDATED_HOURLY_RATE;
-                    supervision.getBaseNetRate() == UPDATED_BASE_RATE;
+                    supervision.getVisitNetRate() == UPDATED_VISIT_NET_RATE;
+                    supervision.getHourlyNetRate() == UPDATED_HOURLY_NET_RATE;
+                    supervision.getBaseNetRate() == UPDATED_BASE_NET_RATE;
                 }
             });
     }
@@ -197,6 +220,18 @@ class SupervisionApplicationServiceImplTest extends Specification {
             this.supervisionApplicationService.createSupervisionVisit(SUPERVISION_ID, supervisionVisitDto);
         then:
             1 * this.supervisionVisitValidator.validateCreateSupervisionVisit(supervisionVisitDto);
+    }
+
+    def "createSupervisionVisit should recalculate supervision FinancialData"() {
+        given:
+            SupervisionVisitDto supervisionVisitDto = this.prepareProperSupervisionVisitDto();
+            this.mockSupervisionRepositoryLoad();
+            this.mockSupervisionRepositorySaveWithSupervisionVisit();
+        when:
+            this.supervisionApplicationService.createSupervisionVisit(SUPERVISION_ID, supervisionVisitDto);
+        then:
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID,
+                    SUPERVISION_FINANCIAL_DATA_ID);
     }
 
     def "createSupervisionVisit should add new visit to supervision and saved with supervisionRepository"() {
@@ -258,6 +293,18 @@ class SupervisionApplicationServiceImplTest extends Specification {
                     SUPERVISION_VISIT_ID);
     }
 
+    def "updateSupervisionVisit recalculated supervision FinancialData"() {
+        given:
+            SupervisionVisitDto supervisionVisitDto = this.prepareProperSupervisionVisitDtoToUpdate();
+            this.mockSupervisionRepositoryLoadWithSupervisionVisit();
+            this.mockSupervisionRepositorySaveWithSupervisionVisit();
+        when:
+            this.supervisionApplicationService.updateSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID,
+                    supervisionVisitDto)
+        then:
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID, SUPERVISION_FINANCIAL_DATA_ID);
+    }
+
     def "updateSupervisionVisit changes data on supervisionVisit"() {
         given:
             SupervisionVisitDto supervisionVisitDto = this.prepareProperSupervisionVisitDtoToUpdate();
@@ -300,6 +347,15 @@ class SupervisionApplicationServiceImplTest extends Specification {
                     SUPERVISION_VISIT_ID);
     }
 
+    def "deleteSupervisionVisit recalculates supervision FinancialData"() {
+        given:
+            this.mockSupervisionRepositoryLoadWithSupervisionVisit();
+        when:
+            this.supervisionApplicationService.deleteSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID);
+        then:
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID, SUPERVISION_FINANCIAL_DATA_ID);
+    }
+
     def "deleteSupervisionVisit removes supervisionVisit from supervision"() {
         given:
             this.mockSupervisionRepositoryLoadWithSupervisionVisit();
@@ -337,15 +393,29 @@ class SupervisionApplicationServiceImplTest extends Specification {
     }
 
     private Supervision createSupervisionWithFinancialData() {
-        FinancialData financialData = new FinancialData(new Money(0), true, true);
+        FinancialData financialData = new FinancialDataBuilder()
+                .withId(SUPERVISION_FINANCIAL_DATA_ID)
+                .withHasInvoice(true)
+                .withPayable(true)
+                .withValue(new Money(0))
+                .build();
         return new SupervisionBuilder()
                 .withFinancialData(financialData)
+                .withHoursCount(0)
+                .withBaseNetRate(new Money(BASE_NET_RATE))
+                .withVisitNetRate(new Money(VISIT_NET_RATE))
+                .withHourlyNetRate(new Money(HOURLY_NET_RATE))
                 .withId(SUPERVISION_ID)
                 .build();
     }
 
     private Supervision createSupervisionWithSupervisionVisit() {
-        FinancialData financialData = new FinancialData(new Money(0), true, true);
+        FinancialData financialData = new FinancialDataBuilder()
+                .withId(SUPERVISION_FINANCIAL_DATA_ID)
+                .withHasInvoice(true)
+                .withPayable(true)
+                .withValue(new Money(0))
+                .build();
         SupervisionVisit supervisionVisit = new SupervisionVisitBuilder()
                 .withId(SUPERVISION_VISIT_ID).withDateOfVisit(DATE_OF_VISIT).withHoursCount(HOURS_COUNT).withIsPayable(
                 true).build();
@@ -353,6 +423,10 @@ class SupervisionApplicationServiceImplTest extends Specification {
                 .withFinancialData(financialData)
                 .withSupervisionVisit(supervisionVisit)
                 .withId(SUPERVISION_ID)
+                .withHoursCount(0)
+                .withBaseNetRate(new Money(BASE_NET_RATE))
+                .withVisitNetRate(new Money(VISIT_NET_RATE))
+                .withHourlyNetRate(new Money(HOURLY_NET_RATE))
                 .build();
     }
 
@@ -361,9 +435,9 @@ class SupervisionApplicationServiceImplTest extends Specification {
         supervisionDto.setHasInvoice(true);
         supervisionDto.setProjectId(PROJECT_ID);
         supervisionDto.setHoursCount(HOURS_COUNT);
-        supervisionDto.setVisitNetRate(VISIT_RATE);
-        supervisionDto.setHourlyNetRate(HOURLY_RATE);
-        supervisionDto.setBaseNetRate(BASE_RATE);
+        supervisionDto.setVisitNetRate(VISIT_NET_RATE);
+        supervisionDto.setHourlyNetRate(HOURLY_NET_RATE);
+        supervisionDto.setBaseNetRate(BASE_NET_RATE);
         return supervisionDto;
     }
 

@@ -22,8 +22,8 @@ public class Installment extends AbstractEntity {
     @AttributeOverride(name = "value", column = @Column(name = "AMOUNT"))
     private Money amount;
 
-    @Column(name = "IS_PAID", nullable = false)
-    private Boolean isPaid;
+    @Column(name = "PAID", nullable = false)
+    private Boolean paid;
 
     @Column(name = "PAYMENT_DATE")
     private LocalDate paymentDate;
@@ -37,11 +37,11 @@ public class Installment extends AbstractEntity {
 
     public Installment(Double amount) {
         this.amount = new Money(amount);
-        this.isPaid = false;
+        this.paid = false;
     }
 
     public void payInstallment(LocalDate date) {
-        this.isPaid = true;
+        this.paid = true;
         this.paymentDate = date;
     }
 
@@ -52,7 +52,7 @@ public class Installment extends AbstractEntity {
     }
 
     public Boolean isPaid() {
-        return this.isPaid;
+        return this.paid;
     }
 
     public Money getAmount() {
@@ -60,7 +60,7 @@ public class Installment extends AbstractEntity {
     }
 
     public Boolean getPaid() {
-        return this.isPaid;
+        return this.paid;
     }
 
     public LocalDate getPaymentDate() {
@@ -70,5 +70,7 @@ public class Installment extends AbstractEntity {
     public String getNote() {
         return this.note;
     }
+
+
 
 }

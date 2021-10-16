@@ -41,7 +41,7 @@ public class InstallmentDomainServiceImpl implements InstallmentDomainService {
         Installment installment = stage.getInstallment();
         if (installment.isPaid()) {
             throw new IllegalStateException(BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
-                    ProjectExceptionCodes.INSTALLMENT, ProjectExceptionCodes.IS_PAID));
+                    ProjectExceptionCodes.INSTALLMENT, ProjectExceptionCodes.PAID));
         }
         installment.payInstallment(payDate);
         return installment;

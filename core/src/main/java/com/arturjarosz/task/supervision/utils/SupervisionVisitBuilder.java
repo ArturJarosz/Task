@@ -10,7 +10,7 @@ public class SupervisionVisitBuilder extends AbstractBuilder<SupervisionVisit, S
     private static final String ID = "id";
     private static final String DATE_OF_VISIT = "dateOfVisit";
     private static final String HOURS_COUNT = "hoursCount";
-    private static final String IS_PAYABLE = "isPayable";
+    private static final String PAYABLE = "payable";
 
     public SupervisionVisitBuilder(){
         super(SupervisionVisit.class);
@@ -32,7 +32,7 @@ public class SupervisionVisitBuilder extends AbstractBuilder<SupervisionVisit, S
     }
 
     public SupervisionVisitBuilder withIsPayable(boolean isPayable){
-        TestUtils.setFieldForObject(this.object, IS_PAYABLE, isPayable);
+        TestUtils.setFieldForObject(this.object, PAYABLE, isPayable);
         return this;
     }
 }

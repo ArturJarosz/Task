@@ -11,7 +11,7 @@ public class InstallmentBuilder extends AbstractBuilder<Installment, Installment
 
     public static final String AMOUNT = "amount";
     public static final String NOTE = "note";
-    public static final String IS_PAID = "isPaid";
+    public static final String PAID = "paid";
     public static final String PAYMENT_DATE = "paymentDate";
 
     public InstallmentBuilder() {
@@ -28,8 +28,8 @@ public class InstallmentBuilder extends AbstractBuilder<Installment, Installment
         return this;
     }
 
-    public InstallmentBuilder withIsPaid(Boolean isPaid) {
-        TestUtils.setFieldForObject(this.object, IS_PAID, isPaid);
+    public InstallmentBuilder withIsPaid(Boolean paid) {
+        TestUtils.setFieldForObject(this.object, PAID, paid);
         return this;
     }
 

@@ -7,8 +7,7 @@ import com.arturjarosz.task.sharedkernel.infrastructure.impl.GenericJpaRepositor
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ProjectFinancialDataRepositoryImpl
-        extends GenericJpaRepositoryImpl<ProjectFinancialData, QProjectFinancialData>
+public class ProjectFinancialDataRepositoryImpl extends GenericJpaRepositoryImpl<ProjectFinancialData, QProjectFinancialData>
         implements ProjectFinancialDataRepository {
 
     public static final QProjectFinancialData PROJECT_FINANCIAL_DATA = QProjectFinancialData.projectFinancialData;

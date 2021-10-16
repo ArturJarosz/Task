@@ -66,14 +66,14 @@ public class Supervision extends AbstractAggregateRoot {
         this.visitNetRate = new Money(supervisionDto.getVisitNetRate());
         this.note = supervisionDto.getNote();
         this.supervisionVisits = new HashSet<>();
-        this.financialData = new FinancialData(new Money(0), supervisionDto.isHasInvoice(), true);
+        this.financialData = new FinancialData(new Money(0), supervisionDto.getHasInvoice(), true);
     }
 
     public void update(SupervisionDto supervisionDto) {
         this.baseNetRate = new Money(supervisionDto.getBaseNetRate());
         this.hourlyNetRate = new Money(supervisionDto.getHourlyNetRate());
         this.visitNetRate = new Money(supervisionDto.getVisitNetRate());
-        this.financialData.setHasInvoice(supervisionDto.isHasInvoice());
+        this.financialData.setHasInvoice(supervisionDto.getHasInvoice());
         this.note = supervisionDto.getNote();
     }
 
@@ -121,5 +121,9 @@ public class Supervision extends AbstractAggregateRoot {
         SupervisionVisit supervisionVisit = this.supervisionVisits.stream()
                 .filter(sv -> sv.getId().equals(supervisionVisitId)).findFirst().orElse(null);
         return supervisionVisit.update(supervisionVisitDto);
+    }
+
+    public void setHoursCount(int hoursCount) {
+        this.hoursCount = hoursCount;
     }
 }

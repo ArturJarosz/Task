@@ -1,5 +1,6 @@
 package com.arturjarosz.task.supervision.application.impl;
 
+import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
@@ -29,18 +30,21 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     private final SupervisionVisitValidator supervisionVisitValidator;
     private final SupervisionRepository supervisionRepository;
     private final SupervisionQueryService supervisionQueryService;
+    private final ProjectFinancialDataService projectFinancialDataApplicationService;
 
     @Autowired
     public SupervisionApplicationServiceImpl(ProjectValidator projectValidator,
                                              SupervisionValidator supervisionValidator,
                                              SupervisionVisitValidator supervisionVisitValidator,
                                              SupervisionRepository supervisionRepository,
-                                             SupervisionQueryService supervisionQueryService) {
+                                             SupervisionQueryService supervisionQueryService,
+                                             ProjectFinancialDataService projectFinancialDataApplicationService) {
         this.projectValidator = projectValidator;
         this.supervisionValidator = supervisionValidator;
         this.supervisionVisitValidator = supervisionVisitValidator;
         this.supervisionRepository = supervisionRepository;
         this.supervisionQueryService = supervisionQueryService;
+        this.projectFinancialDataApplicationService = projectFinancialDataApplicationService;
     }
 
     @Transactional
@@ -66,6 +70,8 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionValidator.validateUpdateSupervision(supervisionDto);
         Supervision supervision = this.supervisionRepository.load(supervisionId);
         supervision.update(supervisionDto);
+        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
+                supervision.getFinancialData().getId());
         this.supervisionRepository.save(supervision);
 
         LOG.debug("Supervision with id {} updated.", supervisionId);
@@ -99,13 +105,16 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionVisitValidator.validateCreateSupervisionVisit(supervisionVisitDto);
         Supervision supervision = this.supervisionRepository.load(supervisionId);
         SupervisionVisit supervisionVisit = new SupervisionVisit(supervisionVisitDto.getDateOfVisit(),
-                supervisionVisitDto.getHoursCount(), supervisionVisitDto.isPayable());
+                supervisionVisitDto.getHoursCount(), supervisionVisitDto.getPayable());
         supervision.addSupervisionVisit(supervisionVisit);
         SupervisionVisitDto createdSupervisionVisitDto = SupervisionVisitDtoMapper.INSTANCE
                 .supervisionVisitToSupervisionVisionDto(supervisionVisit);
+        this.updateSupervisionHoursCount(supervision);
+        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
+                supervision.getFinancialData().getId());
         this.supervisionRepository.save(supervision);
         createdSupervisionVisitDto.setId(this.getIdForCreatedSupervisionVisit(supervision, supervisionVisit));
-
+        createdSupervisionVisitDto.setSupervisionId(supervisionId);
         LOG.debug("Visit with id {} for supervision with id {} created.", createdSupervisionVisitDto.getId(),
                 supervisionId);
         return createdSupervisionVisitDto;
@@ -122,6 +131,9 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionVisitValidator.validateSupervisionHavingSupervisionVisit(supervisionId, supervisionVisitId);
         Supervision supervision = this.supervisionRepository.load(supervisionId);
         supervision.updateSupervisionVisit(supervisionVisitId, supervisionVisitDto);
+        this.updateSupervisionHoursCount(supervision);
+        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
+                supervision.getFinancialData().getId());
         this.supervisionRepository.save(supervision);
 
         LOG.debug("Supervision visit with id {} updated.", supervisionVisitId);
@@ -147,9 +159,17 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionVisitValidator.validateSupervisionHavingSupervisionVisit(supervisionId, supervisionVisitId);
         Supervision supervision = this.supervisionRepository.load(supervisionId);
         supervision.removeSupervisionVisit(supervisionVisitId);
+        this.updateSupervisionHoursCount(supervision);
+        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
+                supervision.getFinancialData().getId());
         this.supervisionRepository.save(supervision);
 
         LOG.debug("Supervision visit with id {} removed.", supervisionVisitId);
+    }
+
+    private void updateSupervisionHoursCount(Supervision supervision) {
+        int hoursCount = supervision.getSupervisionVisits().stream().mapToInt(SupervisionVisit::getHoursCount).sum();
+        supervision.setHoursCount(hoursCount);
     }
 
 
