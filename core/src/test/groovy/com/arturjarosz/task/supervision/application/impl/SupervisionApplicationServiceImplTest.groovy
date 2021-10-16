@@ -16,6 +16,7 @@ import com.arturjarosz.task.supervision.infrastructure.repository.impl.Supervisi
 import com.arturjarosz.task.supervision.model.Supervision
 import com.arturjarosz.task.supervision.model.SupervisionVisit
 import com.arturjarosz.task.supervision.query.impl.SupervisionQueryServiceImpl
+import com.arturjarosz.task.supervision.utils.FinancialDataBuilder
 import com.arturjarosz.task.supervision.utils.SupervisionBuilder
 import com.arturjarosz.task.supervision.utils.SupervisionVisitBuilder
 import spock.lang.Specification
@@ -27,6 +28,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
     private static final Long NOT_EXISTING_PROJECT_ID = 2L;
     private static final Long SUPERVISION_ID = 10L;
     private static final Long SUPERVISION_VISIT_ID = 100L;
+    private static final Long SUPERVISION_FINANCIAL_DATA_ID = 500L;
     private static final int HOURS_COUNT = 10;
     private static final int UPDATED_HOURS_COUNT = 11;
     private static final BigDecimal VISIT_NET_RATE = new BigDecimal(100);
@@ -150,7 +152,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.updateSupervision(SUPERVISION_ID, supervisionDto);
         then:
-            1 * this.projectFinancialDataApplicationService.recalculateSupervision(_ as Supervision);
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID, SUPERVISION_FINANCIAL_DATA_ID);
     }
 
     def "updateSupervision should save supervision with updated fields"() {
@@ -228,7 +230,8 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.createSupervisionVisit(SUPERVISION_ID, supervisionVisitDto);
         then:
-            1 * this.projectFinancialDataApplicationService.recalculateSupervision(_ as Supervision);
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID,
+                    SUPERVISION_FINANCIAL_DATA_ID);
     }
 
     def "createSupervisionVisit should add new visit to supervision and saved with supervisionRepository"() {
@@ -299,7 +302,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
             this.supervisionApplicationService.updateSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID,
                     supervisionVisitDto)
         then:
-            1 * this.projectFinancialDataApplicationService.recalculateSupervision(_ as Supervision);
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID, SUPERVISION_FINANCIAL_DATA_ID);
     }
 
     def "updateSupervisionVisit changes data on supervisionVisit"() {
@@ -350,7 +353,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.deleteSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID);
         then:
-            1 * this.projectFinancialDataApplicationService.recalculateSupervision(_ as Supervision);
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID, SUPERVISION_FINANCIAL_DATA_ID);
     }
 
     def "deleteSupervisionVisit removes supervisionVisit from supervision"() {
@@ -390,7 +393,12 @@ class SupervisionApplicationServiceImplTest extends Specification {
     }
 
     private Supervision createSupervisionWithFinancialData() {
-        FinancialData financialData = new FinancialData(new Money(0), true, true);
+        FinancialData financialData = new FinancialDataBuilder()
+                .withId(SUPERVISION_FINANCIAL_DATA_ID)
+                .withHasInvoice(true)
+                .withPayable(true)
+                .withValue(new Money(0))
+                .build();
         return new SupervisionBuilder()
                 .withFinancialData(financialData)
                 .withHoursCount(0)
@@ -402,7 +410,12 @@ class SupervisionApplicationServiceImplTest extends Specification {
     }
 
     private Supervision createSupervisionWithSupervisionVisit() {
-        FinancialData financialData = new FinancialData(new Money(0), true, true);
+        FinancialData financialData = new FinancialDataBuilder()
+                .withId(SUPERVISION_FINANCIAL_DATA_ID)
+                .withHasInvoice(true)
+                .withPayable(true)
+                .withValue(new Money(0))
+                .build();
         SupervisionVisit supervisionVisit = new SupervisionVisitBuilder()
                 .withId(SUPERVISION_VISIT_ID).withDateOfVisit(DATE_OF_VISIT).withHoursCount(HOURS_COUNT).withIsPayable(
                 true).build();

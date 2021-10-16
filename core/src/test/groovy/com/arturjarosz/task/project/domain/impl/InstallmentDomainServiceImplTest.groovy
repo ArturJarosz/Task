@@ -80,7 +80,7 @@ class InstallmentDomainServiceImplTest extends Specification {
         then:
             Exception exception = thrown();
             exception.message == "notValid.installment.payDate";
-            Boolean isPaid = (boolean) TestUtils.getFieldValue(installment, "isPaid");
+            Boolean isPaid = (boolean) TestUtils.getFieldValue(installment, "paid");
             isPaid == false;
     }
 
@@ -96,7 +96,7 @@ class InstallmentDomainServiceImplTest extends Specification {
             this.installmentDomainService.payForInstallment(stage, NEW_DATE);
         then:
             Exception exception = thrown();
-            exception.message == "notValid.installment.isPaid";
+            exception.message == "notValid.installment.paid";
     }
 
     def "payForInstallment should set payment day for today is date is not given and set isPaid to true"() {
@@ -113,7 +113,7 @@ class InstallmentDomainServiceImplTest extends Specification {
             noExceptionThrown();
             LocalDate date = (LocalDate) TestUtils.getFieldValue(installment, "paymentDate");
             date.isEqual(LocalDate.now());
-            Boolean isPaid = (boolean) TestUtils.getFieldValue(installment, "isPaid");
+            Boolean isPaid = (boolean) TestUtils.getFieldValue(installment, "paid");
             isPaid == true;
     }
 
@@ -131,7 +131,7 @@ class InstallmentDomainServiceImplTest extends Specification {
             noExceptionThrown();
             LocalDate date = (LocalDate) TestUtils.getFieldValue(installment, "paymentDate");
             date.isEqual(NEW_DATE);
-            Boolean isPaid = (boolean) TestUtils.getFieldValue(installment, "isPaid");
+            Boolean isPaid = (boolean) TestUtils.getFieldValue(installment, "paid");
             isPaid;
     }
 }
