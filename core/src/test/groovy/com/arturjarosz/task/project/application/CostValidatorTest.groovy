@@ -4,7 +4,6 @@ import com.arturjarosz.task.project.application.dto.CostDto
 import com.arturjarosz.task.project.model.Cost
 import com.arturjarosz.task.project.model.CostCategory
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
-import com.arturjarosz.task.sharedkernel.model.Money
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -15,8 +14,8 @@ class CostValidatorTest extends Specification {
     private static final Long NOT_EXISTING_COST_ID = 2L;
     private static final String NOTE = "note";
     private static final String NAME = "cost_name";
-    private static final Double NEGATIVE_VALUE = -1.0;
-    private static final Double VALUE = 10.0;
+    private static final BigDecimal NEGATIVE_VALUE = new BigDecimal(-1.0);
+    private static final BigDecimal VALUE = new BigDecimal(10.0);
 
     private static final LocalDate DATE = LocalDate.now();
 
@@ -142,7 +141,7 @@ class CostValidatorTest extends Specification {
 
     def "with existing cost id, validateCostExistence should not throw any exception"() {
         given:
-            Cost cost = new Cost(NAME, new Money(VALUE), CostCategory.FUEL, DATE, NOTE);
+            Cost cost = new Cost(NAME, VALUE, CostCategory.FUEL, DATE, NOTE, true, true);
             this.projectQueryService.getCostById(COST_ID) >> cost;
         when:
             this.costValidator.validateCostExistence(COST_ID);

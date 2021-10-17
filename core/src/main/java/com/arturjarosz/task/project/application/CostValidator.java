@@ -28,7 +28,7 @@ public class CostValidator {
                 .createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.CATEGORY));
         assertNotNull(costDto.getDate(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.COST_DATE));
-        assertIsTrue(costDto.getValue() >= 0, createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.COST,
+        assertIsTrue(costDto.getValue().doubleValue() >= 0, createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.COST,
                 ProjectExceptionCodes.NEGATIVE));
         this.validateCostName(costDto.getName());
     }

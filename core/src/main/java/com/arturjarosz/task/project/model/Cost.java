@@ -1,16 +1,20 @@
 package com.arturjarosz.task.project.model;
 
+import com.arturjarosz.task.finance.model.FinancialData;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
-import javax.persistence.AttributeOverride;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -22,10 +26,6 @@ public class Cost extends AbstractEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "COST_VALUE"))
-    private Money value;
-
     @Column(name = "CATEGORY", nullable = false)
     @Enumerated(EnumType.STRING)
     private CostCategory category;
@@ -36,28 +36,33 @@ public class Cost extends AbstractEntity {
     @Column(name = "NOTE")
     private String note;
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "FINANCIAL_DATA_ID", referencedColumnName = "ID")
+    private FinancialData financialData;
+
     protected Cost() {
         //needed by Hibernate
     }
 
-    public Cost(String name, Money value, CostCategory category, LocalDate date, String note) {
+    public Cost(String name, BigDecimal value, CostCategory category, LocalDate date, String note, boolean hasInvoice,
+                boolean payable) {
         this.name = name;
-        this.value = value;
         this.category = category;
         this.date = date;
         this.note = note;
+        this.financialData = new FinancialData(new Money(value), hasInvoice, payable);
     }
 
-    public void setValue(Money value) {
-        this.value = value;
+    public void setValue(BigDecimal value) {
+        this.financialData.setValue(new Money(value));
     }
 
     public String getName() {
         return this.name;
     }
 
-    public Money getValue() {
-        return this.value;
+    public BigDecimal getValue() {
+        return this.financialData.getValue().getValue();
     }
 
     public CostCategory getCategory() {
@@ -72,9 +77,9 @@ public class Cost extends AbstractEntity {
         return this.note;
     }
 
-    public void updateCost(String name, Double value, LocalDate date, String note, CostCategory category) {
+    public void updateCost(String name, BigDecimal value, LocalDate date, String note, CostCategory category) {
         this.name = name;
-        this.value = new Money(value);
+        this.financialData.setValue(new Money(value));
         this.date = date;
         this.note = note;
         this.category = category;

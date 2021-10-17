@@ -10,7 +10,6 @@ import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
-import com.arturjarosz.task.sharedkernel.model.Money
 import com.arturjarosz.task.sharedkernel.utils.TestUtils
 import spock.lang.Specification
 
@@ -18,9 +17,8 @@ import java.time.LocalDate
 
 class CostApplicationServiceImplTest extends Specification {
 
-    private final static Double VALUE = 100.0;
-    private final static Double NEW_VALUE = 120.0;
-    private final static Double OFFER_VALUE = 5000.0;
+    private final static BigDecimal VALUE = new BigDecimal(100.0);
+    private final static BigDecimal NEW_VALUE = new BigDecimal(120.0);
     private final static Long ARCHITECT_ID = 33L;
     private final static Long CLIENT_ID = 44L;
     private final static Long COST_ID = 100L;
@@ -221,7 +219,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.save({
                 Project project ->
                     Cost cost = project.getCosts().iterator().next();
-                    cost.getValue().value.doubleValue() == NEW_VALUE;
+                    cost.getValue().doubleValue() == NEW_VALUE;
                     cost.getName() == NEW_NAME;
                     cost.getNote() == NEW_NOTE;
                     cost.getDate() == NEW_DATE;
@@ -256,7 +254,7 @@ class CostApplicationServiceImplTest extends Specification {
     private Project prepareProjectWithCost() {
         Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
                 PROJECT_WORKFLOW); ;
-        def cost = new Cost(NAME, new Money(VALUE), CostCategory.FUEL, DATE, NOTE);
+        def cost = new Cost(NAME, VALUE, CostCategory.FUEL, DATE, NOTE, true, true);
         TestUtils.setFieldForObject(cost, "id", COST_ID);
         project.addCost(cost);
         return project;
@@ -282,7 +280,7 @@ class CostApplicationServiceImplTest extends Specification {
     }
 
     private void mockProjectQueryService() {
-        def cost = new Cost(NAME, new Money(VALUE), CostCategory.FUEL, DATE, NOTE);
+        def cost = new Cost(NAME, VALUE, CostCategory.FUEL, DATE, NOTE, true, true);
         this.projectQueryService.getCostById(COST_ID) >> {
             TestUtils.setFieldForObject(cost, "id", COST_ID);
             return cost;

@@ -15,9 +15,6 @@
             <column name="NAME" type="VARCHAR2(60 ${char.unit})">
                 <constraints nullable="false"/>
             </column>
-            <column name="COST_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
-                <constraints nullable="false"/>
-            </column>
             <column name="CATEGORY" type="VARCHAR2(32 ${char.unit})">
                 <constraints nullable="false"/>
             </column>

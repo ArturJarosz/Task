@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -198,7 +199,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
 
     }
 
-    public Cost updateCost(Long costId, String name, LocalDate date, Double value, CostCategory category,
+    public Cost updateCost(Long costId, String name, LocalDate date, BigDecimal value, CostCategory category,
                            String note) {
         Cost cost = this.getCosts().stream().filter(costOnProject -> costOnProject.getId().equals(costId)).findFirst()
                 .orElseThrow(IllegalArgumentException::new);
