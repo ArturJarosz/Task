@@ -23,7 +23,7 @@ public class Installment extends AbstractEntity {
     private static final long serialVersionUID = -8420590861357070177L;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "FINANCIAL_DATA_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "FINANCIAL_DATA_ID", referencedColumnName = "ID", nullable = false)
     private FinancialData financialData;
 
     @Column(name = "NOTE")

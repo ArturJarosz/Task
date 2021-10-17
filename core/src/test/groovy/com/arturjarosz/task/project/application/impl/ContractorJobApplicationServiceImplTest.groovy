@@ -19,11 +19,10 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     private static final CONTRACTOR_ID = 20L;
     private static final PROJECT_ID = 30L;
     private static final PROJECT_WITH_COOPERATOR_JOB_ID = 31L;
-    private static final Double OFFER_VALUE = 5000.0;
     private static final Long ARCHITECT_ID = 40L;
     private static final Long CLIENT_ID = 41L;
-    private static final Long VALUE = 100L;
-    private static final Long NEW_VALUE = 200L;
+    private static final BigDecimal VALUE = new BigDecimal(100.0);
+    private static final BigDecimal NEW_VALUE = new BigDecimal(200.0);
     private static final String NAME = "name";
     private static final String NEW_NAME = "newName";
     private static final String NOTE = "note";
@@ -273,6 +272,8 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         contractorJobDto.setValue(VALUE);
         contractorJobDto.setContractorId(CONTRACTOR_ID);
         contractorJobDto.setId(EXISTING_CONTRACTOR_JOB_ID);
+        contractorJobDto.setHasInvoice(true);
+        contractorJobDto.setPayable(true);
         return contractorJobDto;
     }
 
@@ -283,6 +284,8 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         contractorJobDto.setValue(NEW_VALUE);
         contractorJobDto.setContractorId(CONTRACTOR_ID);
         contractorJobDto.setId(EXISTING_CONTRACTOR_JOB_ID);
+        contractorJobDto.setHasInvoice(true);
+        contractorJobDto.setPayable(true);
         return contractorJobDto;
     }
 
@@ -306,7 +309,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     private Project prepareProjectWithCooperatorJob() {
         Project project = this.prepareProjectWithoutCooperatorJobs();
         CooperatorJob cooperatorJob = new CooperatorJob(NAME, EXISTING_CONTRACTOR_JOB_ID, CooperatorJobType
-                .CONTRACTOR_JOB);
+                .CONTRACTOR_JOB, VALUE, true, true);
         TestUtils.setFieldForObject(cooperatorJob, "id", EXISTING_CONTRACTOR_JOB_ID);
         project.addCooperatorJob(cooperatorJob);
         return project;
@@ -314,8 +317,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     private void mockProjectQueryService() {
         CooperatorJob cooperatorJob = new CooperatorJob(NAME, EXISTING_CONTRACTOR_JOB_ID,
-                CooperatorJobType.CONTRACTOR_JOB);
-        cooperatorJob.setValue(VALUE);
+                CooperatorJobType.CONTRACTOR_JOB, VALUE, true, true);
         TestUtils.setFieldForObject(cooperatorJob, "id", EXISTING_CONTRACTOR_JOB_ID);
         this.projectQueryService.getCooperatorJobByIdForProject(EXISTING_CONTRACTOR_JOB_ID) >> cooperatorJob;
     }

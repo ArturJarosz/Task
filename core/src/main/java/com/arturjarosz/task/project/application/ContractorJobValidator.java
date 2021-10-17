@@ -62,7 +62,7 @@ public class ContractorJobValidator {
         assertNotNull(contractorJobDto.getValue(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACTOR_JOB,
                         ProjectExceptionCodes.VALUE));
-        assertIsTrue(contractorJobDto.getValue() >= 0,
+        assertIsTrue(contractorJobDto.getValue().doubleValue() >= 0,
                 createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.CONTRACTOR_JOB,
                         ProjectExceptionCodes.VALUE));
     }

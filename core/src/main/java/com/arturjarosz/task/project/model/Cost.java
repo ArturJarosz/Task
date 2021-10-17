@@ -37,7 +37,7 @@ public class Cost extends AbstractEntity {
     private String note;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "FINANCIAL_DATA_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "FINANCIAL_DATA_ID", referencedColumnName = "ID", nullable = false)
     private FinancialData financialData;
 
     protected Cost() {

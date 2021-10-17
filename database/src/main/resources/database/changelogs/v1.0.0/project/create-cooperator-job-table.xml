@@ -25,7 +25,7 @@
             <column name="TYPE" type="VARCHAR2(50 ${char.unit})">
                 <constraints nullable="false"/>
             </column>
-            <column name="VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+            <column name="FINANCIAL_DATA_ID" type="${long.type}">
                 <constraints nullable="false"/>
             </column>
         </createTable>

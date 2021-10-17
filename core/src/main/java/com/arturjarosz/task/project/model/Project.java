@@ -241,7 +241,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         this.cooperatorJobs.removeIf(cooperatorJob -> cooperatorJob.getId().equals(contractorJobId));
     }
 
-    public CooperatorJob updateContractorJob(Long contractorJobId, String name, Double value, String note) {
+    public CooperatorJob updateContractorJob(Long contractorJobId, String name, BigDecimal value, String note) {
         CooperatorJob cooperatorJob = this.cooperatorJobs.stream()
                 .filter(cooperatorJobOnProject -> cooperatorJobOnProject.getId().equals(contractorJobId)).findFirst()
                 .orElseThrow(IllegalArgumentException::new);
