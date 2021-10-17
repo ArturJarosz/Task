@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.application.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class InstallmentDto implements Serializable {
@@ -8,20 +9,21 @@ public class InstallmentDto implements Serializable {
     private static final long serialVersionUID = -4338716799879536304L;
 
     private Long id;
-    private Double value;
+    private BigDecimal value;
     private Boolean isPaid;
     private String note;
-    private LocalDate payDate;
+    private LocalDate paymentDate;
+    private Boolean hasInvoice;
 
     public InstallmentDto() {
         //needed by Hibernate
     }
 
-    public Double getValue() {
+    public BigDecimal getValue() {
         return this.value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 
@@ -41,12 +43,12 @@ public class InstallmentDto implements Serializable {
         this.note = note;
     }
 
-    public LocalDate getPayDate() {
-        return this.payDate;
+    public LocalDate getPaymentDate() {
+        return this.paymentDate;
     }
 
-    public void setPayDate(LocalDate payDate) {
-        this.payDate = payDate;
+    public void setPaymentDate(LocalDate paymentDate) {
+        this.paymentDate = paymentDate;
     }
 
     public Long getId() {
@@ -55,5 +57,13 @@ public class InstallmentDto implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getHasInvoice() {
+        return hasInvoice;
+    }
+
+    public void setHasInvoice(Boolean hasInvoice) {
+        this.hasInvoice = hasInvoice;
     }
 }

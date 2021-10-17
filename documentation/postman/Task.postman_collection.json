@@ -1,1493 +1,1493 @@
 {
-  "info": {
-    "_postman_id": "95c62f1b-42d3-4f65-b8cb-70413c9e339d",
-    "name": "Task",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Client",
-      "item": [
-        {
-          "name": "add client",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Kovalsky\",\n    \"clientType\": \"PRIVATE\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{taskAddress}}/clients",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "clients"
-              ]
-            }
-          },
-          "response": [
-            {
-              "name": "create private client",
-              "originalRequest": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Kovalsky\",\n    \"clientType\": \"PRIVATE\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "localhost:8099/clients/",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8099",
-                  "path": [
-                    "clients",
-                    ""
-                  ]
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": "Text",
-              "header": [],
-              "cookie": [],
-              "body": ""
-            },
-            {
-              "name": "create corporate client",
-              "originalRequest": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"companyName\": \"SomeCompany\",\n    \"clientType\": \"CORPORATE\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "localhost:8099/clients/",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8099",
-                  "path": [
-                    "clients",
-                    ""
-                  ]
-                }
-              },
-              "_postman_previewlanguage": "Text",
-              "header": [],
-              "cookie": [],
-              "body": ""
-            }
-          ]
-        },
-        {
-          "name": "remove client",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{taskAddress}}/clients/{{clientId}}",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "clients",
-                "{{clientId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "updateClient",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"firstName\": \"Johnny\",\n    \"lastName\": \"Bravo\",\n    \"contact\": {\n        \"address\": {\n            \"city\": \"New York\",\n            \"postCode\": \"1NYEC3\",\n            \"street\": \"High Street\",\n            \"houseNumber\": \"102\",\n            \"flatNumber\": \"1\"\n        },\n        \"email\": \"johhnybravo@example.com\",\n        \"telephone\": \"604258789\"\n    },\n    \"additionalData\": {\n        \"note\": \"some additional informations about client\"\n    }\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{taskAddress}}/clients/{{clientId}}",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "clients",
-                "{{clientId}}"
-              ]
-            }
-          },
-          "response": [
-            {
-              "name": "updatePrivateClient",
-              "originalRequest": {
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"firstName\": \"Johnny\",\n    \"lastName\": \"Bravo\",\n    \"contact\": {\n        \"address\": {\n            \"city\": \"New York\",\n            \"postCode\": \"1NYEC3\",\n            \"street\": \"High Street\",\n            \"houseNumber\": \"102\",\n            \"flatNumber\": \"1\"\n        },\n        \"email\": \"johhnybravo@example.com\",\n        \"telephone\": \"604258789\"\n    },\n    \"additionalData\": {\n        \"note\": \"some additional informations about client\"\n    }\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "localhost:8099/clients/11",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8099",
-                  "path": [
-                    "clients",
-                    "11"
-                  ]
-                }
-              },
-              "_postman_previewlanguage": "Text",
-              "header": [],
-              "cookie": [],
-              "body": ""
-            }
-          ]
-        },
-        {
-          "name": "get client",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{taskAddress}}/clients/{{clientId}}",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "clients",
-                "{{clientId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "get basic client data list",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{taskAddress}}/clients/",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "clients",
-                ""
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Architect",
-      "item": [
-        {
-          "name": "create architect",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"firstName\": \"New\",\n    \"lastName\": \"Architect\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{taskAddress}}/architects",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "architects"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "remove architect",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{taskAddress}}/architects/{{architectId}}",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "architects",
-                "{{architectId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "update architect",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"firstName\": \"New\",\n    \"lastName\": \"Architect\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{taskAddress}}/architects/{{architectId}}",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "architects",
-                "{{architectId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "get architect",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{taskAddress}}/architects/{{architectId}}",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "architects",
-                "{{architectId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "get basic architect data list",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{taskAddress}}/architects",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "architects"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Project",
-      "item": [
-        {
-          "name": "Cost",
-          "item": [
-            {
-              "name": "create cost  for project",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"name\": \"Paliwo za dojazd\",\n    \"category\": \"FUEL\",\n    \"value\": 200.00,\n    \"date\": \"2021-01-15\",\n    \"note\": \"dojazd na posesję klienta\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/costs",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "costs"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "get costs for project",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/costs",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "costs"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "get cost",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/costs{{costId}}",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "costs{{costId}}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "remove cost from project",
-              "request": {
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/costs/{{costId}}",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "costs",
-                    "{{costId}}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "update cost on project",
-              "request": {
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"name\": \"new cost name\",\n    \"category\": \"FUEL\",\n    \"value\": 150.0,\n    \"date\": \"2020-01-01\",\n    \"note\": \"new cost note\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/costs/{{costId}}",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "costs",
-                    "{{costId}}"
-                  ]
-                }
-              },
-              "response": []
-            }
-          ]
-        },
-        {
-          "name": "Stage",
-          "item": [
-            {
-              "name": "create stage for project",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"name\": \"Etap 01\",\n    \"stageType\": \"VISUALISATIONS\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    ""
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "reject Stage",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/reject",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "reject"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "reopen Stage",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/reopen",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "reopen"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "remove stage from project",
-              "request": {
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "update stage",
-              "request": {
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"name\": \"Etap 01a\",\n    \"stageType\": \"VISUALISATIONS\",\n    \"note\": \"some note about stage\",\n    \"deadline\": \"2021-09-12\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "get stage",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "get stages for project",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    ""
-                  ]
-                }
-              },
-              "response": []
-            }
-          ]
-        },
-        {
-          "name": "Installment",
-          "item": [
-            {
-              "name": "create installment",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"value\": 10.0\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "installments"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "update installment",
-              "request": {
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"value\": 10.0,\n    \"note\": \"some note\",\n    \"payDate\": \"2020-10-10\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "installments"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "remove installment",
-              "request": {
-                "method": "DELETE",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "installments"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "pay installment",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"payDate\": \"2020-10-10\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments/pay",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "installments",
-                    "pay"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "get installment for stage",
-              "protocolProfileBehavior": {
-                "disableBodyPruning": true
-              },
-              "request": {
-                "method": "GET",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments/pay",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "installments",
-                    "pay"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "get installments for project",
-              "protocolProfileBehavior": {
-                "disableBodyPruning": true
-              },
-              "request": {
-                "method": "GET",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/installments/pay",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "installments",
-                    "pay"
-                  ]
-                }
-              },
-              "response": []
-            }
-          ]
-        },
-        {
-          "name": "Task",
-          "item": [
-            {
-              "name": "create task",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"name\": \"Wizualizacje parteru\",\n    \"type\": \"RENDER\"\n\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "tasks"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "change Task status",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"status\": \"IN_PROGRESS\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/updateStatus",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "tasks",
-                    "{{taskId}}",
-                    "updateStatus"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "reject Task",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/reject",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "tasks",
-                    "{{taskId}}",
-                    "reject"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "reopen Task",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/reopen",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "tasks",
-                    "{{taskId}}",
-                    "reopen"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "remove Task",
-              "request": {
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "tasks",
-                    "{{taskId}}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "update Task",
-              "request": {
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"name\": \"Wizualizacje parteru\",\n    \"note\": \"dodatkowe wizki lazienki potrzebne\"\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "tasks",
-                    "{{taskId}}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "get Task",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "tasks",
-                    "{{taskId}}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "get list of Tasks for Stage on Project",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "stages",
-                    "{{stageId}}",
-                    "tasks"
-                  ]
-                }
-              },
-              "response": []
-            }
-          ]
-        },
-        {
-          "name": "supervision",
-          "item": [
-            {
-              "name": "supervision visit",
-              "item": [
-                {
-                  "name": "create supervision visit",
-                  "request": {
-                    "method": "POST",
-                    "header": [],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\n    \"hasInvoice\": true,\n    \"baseNetRate\": 500, \n    \"hourlyNetRate\": 150.50,\n    \"visitNetRate\": 200\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits",
-                      "host": [
-                        "{{taskAddress}}"
-                      ],
-                      "path": [
-                        "supervisions",
-                        "{{supervisionId}}",
-                        "supervisionVisits"
-                      ]
-                    }
-                  },
-                  "response": []
-                },
-                {
-                  "name": "update supervision visit",
-                  "request": {
-                    "method": "PUT",
-                    "header": [],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\n    \"dateOfVisit\": \"2021-09-01\",\n    \"hoursCount\": 5,\n    \"isPayable\": true\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits{{supervisionVisitId}}",
-                      "host": [
-                        "{{taskAddress}}"
-                      ],
-                      "path": [
-                        "supervisions",
-                        "{{supervisionId}}",
-                        "supervisionVisits{{supervisionVisitId}}"
-                      ]
-                    }
-                  },
-                  "response": []
-                },
-                {
-                  "name": "get supervision visit",
-                  "request": {
-                    "method": "GET",
-                    "header": [],
-                    "url": {
-                      "raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits/{{supervisionVisitId}}",
-                      "host": [
-                        "{{taskAddress}}"
-                      ],
-                      "path": [
-                        "supervisions",
-                        "{{supervisionId}}",
-                        "supervisionVisits",
-                        "{{supervisionVisitId}}"
-                      ]
-                    }
-                  },
-                  "response": []
-                },
-                {
-                  "name": "delete supervision visit",
-                  "request": {
-                    "method": "PUT",
-                    "header": [],
-                    "url": {
-                      "raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits/{{supervisionVisitId}}",
-                      "host": [
-                        "{{taskAddress}}"
-                      ],
-                      "path": [
-                        "supervisions",
-                        "{{supervisionId}}",
-                        "supervisionVisits",
-                        "{{supervisionVisitId}}"
-                      ]
-                    }
-                  },
-                  "response": []
-                }
-              ]
-            },
-            {
-              "name": "create supervision",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"projectId\": 100,\n    \"hasInvoice\": true,\n    \"baseNetRate\": 500, \n    \"hourlyNetRate\": 150.50,\n    \"visitNetRate\": 200\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/supervisions",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "supervisions"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "update supervision",
-              "request": {
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n    \"hasInvoice\": true,\n    \"baseNetRate\": 500, \n    \"hourlyNetRate\": 150.50,\n    \"visitNetRate\": 200\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{taskAddress}}/supervisions/{{supervisionsId}}",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "supervisions",
-                    "{{supervisionsId}}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "get supervision",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/supervisions/{{supervisionsId}}",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "supervisions",
-                    "{{supervisionsId}}"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "remove supervision from project",
-              "request": {
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                  "raw": "{{taskAddress}}/projects/{{projectId}}/supervisions",
-                  "host": [
-                    "{{taskAddress}}"
-                  ],
-                  "path": [
-                    "projects",
-                    "{{projectId}}",
-                    "supervisions"
-                  ]
-                }
-              },
-              "response": []
-            }
-          ]
-        },
-        {
-          "name": "create project",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Lublin 01\",\n    \"architectId\": \"100\",\n    \"clientId\": \"100\",\n    \"projectType\": \"INTERIOR_HOUSE\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{taskAddress}}/projects",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "projects"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "update project",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Lublin 02\",\n    \"note\": \"note about project\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{taskAddress}}/projects/{{projectId}}",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "projects",
-                "{{projectId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "remove project",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{taskAddress}}/projects/{{projectId}}",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "projects",
-                "{{projectId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "sign project",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"signingDate\": \"2020-10-01\",\n    \"startDate\": \"2020-11-12\",\n    \"deadline\": \"2021-02-15\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{taskAddress}}/projects/{{projectId}}/sign",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "projects",
-                "{{projectId}}",
-                "sign"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "finish project",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"endDate\": \"2020-12-01\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{taskAddress}}/projects/{{projectId}}/finish",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "projects",
-                "{{projectId}}",
-                "finish"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "reject Project",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{taskAddress}}/projects/{{projectId}}/reject",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "projects",
-                "{{projectId}}",
-                "reject"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "reopen Project",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{taskAddress}}/projects/{{projectId}}/reopen",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "projects",
-                "{{projectId}}",
-                "reopen"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "make new offer",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"offerValue\": 5000.00\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{taskAddress}}/projects/{{projectId}}/newOffer",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "projects",
-                "{{projectId}}",
-                "newOffer"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "accept offer",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{taskAddress}}/projects/{{projectId}}/acceptOffer",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "projects",
-                "{{projectId}}",
-                "acceptOffer"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "get projects",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{taskAddress}}/projects",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "projects"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "get project",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{taskAddress}}/projects/{{projectId}}",
-              "host": [
-                "{{taskAddress}}"
-              ],
-              "path": [
-                "projects",
-                "{{projectId}}"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    }
-  ],
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          ""
-        ]
-      }
-    },
-    {
-      "listen": "test",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          ""
-        ]
-      }
-    }
-  ],
-  "variable": [
-    {
-      "key": "taskAddress",
-      "value": "localhost:8099"
-    },
-    {
-      "key": "projectId",
-      "value": "100"
-    }
-  ]
+	"info": {
+		"_postman_id": "95c62f1b-42d3-4f65-b8cb-70413c9e339d",
+		"name": "Task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Client",
+			"item": [
+				{
+					"name": "add client",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Kovalsky\",\n    \"clientType\": \"PRIVATE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/clients",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "create private client",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Kovalsky\",\n    \"clientType\": \"PRIVATE\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8099/clients/",
+									"host": [
+										"localhost"
+									],
+									"port": "8099",
+									"path": [
+										"clients",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "create corporate client",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"companyName\": \"SomeCompany\",\n    \"clientType\": \"CORPORATE\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8099/clients/",
+									"host": [
+										"localhost"
+									],
+									"port": "8099",
+									"path": [
+										"clients",
+										""
+									]
+								}
+							},
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "remove client",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/clients/{{clientId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"clients",
+								"{{clientId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateClient",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Johnny\",\n    \"lastName\": \"Bravo\",\n    \"contact\": {\n        \"address\": {\n            \"city\": \"New York\",\n            \"postCode\": \"1NYEC3\",\n            \"street\": \"High Street\",\n            \"houseNumber\": \"102\",\n            \"flatNumber\": \"1\"\n        },\n        \"email\": \"johhnybravo@example.com\",\n        \"telephone\": \"604258789\"\n    },\n    \"additionalData\": {\n        \"note\": \"some additional informations about client\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/clients/{{clientId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"clients",
+								"{{clientId}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "updatePrivateClient",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\": \"Johnny\",\n    \"lastName\": \"Bravo\",\n    \"contact\": {\n        \"address\": {\n            \"city\": \"New York\",\n            \"postCode\": \"1NYEC3\",\n            \"street\": \"High Street\",\n            \"houseNumber\": \"102\",\n            \"flatNumber\": \"1\"\n        },\n        \"email\": \"johhnybravo@example.com\",\n        \"telephone\": \"604258789\"\n    },\n    \"additionalData\": {\n        \"note\": \"some additional informations about client\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8099/clients/11",
+									"host": [
+										"localhost"
+									],
+									"port": "8099",
+									"path": [
+										"clients",
+										"11"
+									]
+								}
+							},
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "get client",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/clients/{{clientId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"clients",
+								"{{clientId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get basic client data list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/clients/",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"clients",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Architect",
+			"item": [
+				{
+					"name": "create architect",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"New\",\n    \"lastName\": \"Architect\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/architects",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"architects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove architect",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/architects/{{architectId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"architects",
+								"{{architectId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update architect",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"New\",\n    \"lastName\": \"Architect\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/architects/{{architectId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"architects",
+								"{{architectId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get architect",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/architects/{{architectId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"architects",
+								"{{architectId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get basic architect data list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/architects",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"architects"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Project",
+			"item": [
+				{
+					"name": "Cost",
+					"item": [
+						{
+							"name": "create cost  for project",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Paliwo za dojazd\",\n    \"category\": \"FUEL\",\n    \"value\": 200.00,\n    \"date\": \"2021-01-15\",\n    \"note\": \"dojazd na posesję klienta\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/costs",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"costs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get costs for project",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/costs",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"costs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get cost",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/costs{{costId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"costs{{costId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "remove cost from project",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/costs/{{costId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"costs",
+										"{{costId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update cost on project",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"new cost name\",\n    \"category\": \"FUEL\",\n    \"value\": 150.0,\n    \"date\": \"2020-01-01\",\n    \"note\": \"new cost note\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/costs/{{costId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"costs",
+										"{{costId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Stage",
+					"item": [
+						{
+							"name": "create stage for project",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Etap 01\",\n    \"stageType\": \"VISUALISATIONS\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "reject Stage",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/reject",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"reject"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "reopen Stage",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/reopen",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"reopen"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "remove stage from project",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update stage",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Etap 01a\",\n    \"stageType\": \"VISUALISATIONS\",\n    \"note\": \"some note about stage\",\n    \"deadline\": \"2021-09-12\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get stage",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get stages for project",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Installment",
+					"item": [
+						{
+							"name": "create installment",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"value\": 10.0,\n    \"hasInvoice\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"installments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update installment",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"value\": 10.0,\n    \"hasInvoice\": false,\n    \"note\": \"some note\",\n    \"paymentDate\": \"2020-10-10\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"installments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "remove installment",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"installments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pay installment",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"paymentDate\": \"2020-10-10\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments/pay",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"installments",
+										"pay"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get installment for stage",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/installments/pay",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"installments",
+										"pay"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get installments for project",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/installments/pay",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"installments",
+										"pay"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Task",
+					"item": [
+						{
+							"name": "create task",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Wizualizacje parteru\",\n    \"type\": \"RENDER\"\n\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"tasks"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "change Task status",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"IN_PROGRESS\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/updateStatus",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"tasks",
+										"{{taskId}}",
+										"updateStatus"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "reject Task",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/reject",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"tasks",
+										"{{taskId}}",
+										"reject"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "reopen Task",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/reopen",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"tasks",
+										"{{taskId}}",
+										"reopen"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "remove Task",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"tasks",
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update Task",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Wizualizacje parteru\",\n    \"note\": \"dodatkowe wizki lazienki potrzebne\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"tasks",
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get Task",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"tasks",
+										"{{taskId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get list of Tasks for Stage on Project",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"stages",
+										"{{stageId}}",
+										"tasks"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "supervision",
+					"item": [
+						{
+							"name": "supervision visit",
+							"item": [
+								{
+									"name": "create supervision visit",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"dateOfVisit\": \"2021-09-12\", \n    \"payable\": true,\n    \"hoursCount\": 5\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits",
+											"host": [
+												"{{taskAddress}}"
+											],
+											"path": [
+												"supervisions",
+												"{{supervisionId}}",
+												"supervisionVisits"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "update supervision visit",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"dateOfVisit\": \"2021-09-01\",\n    \"hoursCount\": 1,\n    \"payable\": true\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits{{supervisionVisitId}}",
+											"host": [
+												"{{taskAddress}}"
+											],
+											"path": [
+												"supervisions",
+												"{{supervisionId}}",
+												"supervisionVisits{{supervisionVisitId}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "get supervision visit",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits/{{supervisionVisitId}}",
+											"host": [
+												"{{taskAddress}}"
+											],
+											"path": [
+												"supervisions",
+												"{{supervisionId}}",
+												"supervisionVisits",
+												"{{supervisionVisitId}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "delete supervision visit",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"url": {
+											"raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits/{{supervisionVisitId}}",
+											"host": [
+												"{{taskAddress}}"
+											],
+											"path": [
+												"supervisions",
+												"{{supervisionId}}",
+												"supervisionVisits",
+												"{{supervisionVisitId}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "create supervision",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"projectId\": 100,\n    \"hasInvoice\": true,\n    \"baseNetRate\": 500, \n    \"hourlyNetRate\": 150.50,\n    \"visitNetRate\": 200\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/supervisions",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"supervisions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update supervision",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"hasInvoice\": true,\n    \"baseNetRate\": 500, \n    \"hourlyNetRate\": 150.50,\n    \"visitNetRate\": 200\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/supervisions/{{supervisionsId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"supervisions",
+										"{{supervisionsId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get supervision",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/supervisions/{{supervisionsId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"supervisions",
+										"{{supervisionsId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "remove supervision from project",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/supervisions",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"supervisions"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "create project",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Lublin 01\",\n    \"architectId\": \"100\",\n    \"clientId\": \"100\",\n    \"projectType\": \"INTERIOR_HOUSE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/projects",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update project",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Lublin 02\",\n    \"note\": \"note about project\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/projects/{{projectId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"projects",
+								"{{projectId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove project",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/projects/{{projectId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"projects",
+								"{{projectId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign project",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"signingDate\": \"2020-10-01\",\n    \"startDate\": \"2020-11-12\",\n    \"deadline\": \"2021-02-15\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/projects/{{projectId}}/sign",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"projects",
+								"{{projectId}}",
+								"sign"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "finish project",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"endDate\": \"2020-12-01\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/projects/{{projectId}}/finish",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"projects",
+								"{{projectId}}",
+								"finish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reject Project",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/projects/{{projectId}}/reject",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"projects",
+								"{{projectId}}",
+								"reject"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reopen Project",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/projects/{{projectId}}/reopen",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"projects",
+								"{{projectId}}",
+								"reopen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "make new offer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"offerValue\": 5000.00\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/projects/{{projectId}}/newOffer",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"projects",
+								"{{projectId}}",
+								"newOffer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "accept offer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/projects/{{projectId}}/acceptOffer",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"projects",
+								"{{projectId}}",
+								"acceptOffer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get projects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/projects",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get project",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/projects/{{projectId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"projects",
+								"{{projectId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "taskAddress",
+			"value": "localhost:8099"
+		},
+		{
+			"key": "projectId",
+			"value": "100"
+		}
+	]
 }

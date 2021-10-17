@@ -2,6 +2,7 @@ package com.arturjarosz.task.project.domain.impl;
 
 import com.arturjarosz.task.project.application.InstallmentValidator;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
+import com.arturjarosz.task.project.application.dto.InstallmentDto;
 import com.arturjarosz.task.project.domain.InstallmentDomainService;
 import com.arturjarosz.task.project.model.Installment;
 import com.arturjarosz.task.project.model.Stage;
@@ -20,19 +21,16 @@ public class InstallmentDomainServiceImpl implements InstallmentDomainService {
     }
 
     @Override
-    public Installment updateInstallment(Stage stage, Double value, LocalDate payDate, String note) {
-        Installment installment = stage.getInstallment();
-        if (!installment.isPaid()) {
-            installment.update(value, note, null);
-        } else {
-            InstallmentValidator.validatePayDateNotFuture(payDate);
-            installment.update(value, note, payDate);
+    public Installment updateInstallment(Installment installment, InstallmentDto installmentDto) {
+        if (installment.isPaid()) {
+            InstallmentValidator.validatePayDateNotFuture(installmentDto.getPaymentDate());
         }
+        installment.update(installmentDto);
         return installment;
     }
 
     @Override
-    public Installment payForInstallment(Stage stage, LocalDate payDate) {
+    public Installment payInstallment(Stage stage, LocalDate payDate) {
         if (payDate != null) {
             InstallmentValidator.validatePayDateNotFuture(payDate);
         } else {

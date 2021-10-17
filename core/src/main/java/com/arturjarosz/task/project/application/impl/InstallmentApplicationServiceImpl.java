@@ -70,9 +70,8 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);
         Project project = this.projectRepository.load(projectId);
-        Installment installment = this.installmentDomainService
-                .updateInstallment(stage, installmentDto.getValue(), installmentDto.getPayDate(),
-                        installmentDto.getNote());
+        Installment installment = this.installmentDomainService.updateInstallment(stage.getInstallment(),
+                installmentDto);
         LOG.debug("installment for stage with id {} updated", stageId);
         this.projectRepository.save(project);
         return InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(installment);
@@ -102,7 +101,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);
         Project project = this.projectRepository.load(projectId);
-        Installment installment = this.installmentDomainService.payForInstallment(stage, installmentDto.getPayDate());
+        Installment installment = this.installmentDomainService.payInstallment(stage, installmentDto.getPaymentDate());
 
         LOG.debug("payment for installment on stage with id {} made", stageId);
         this.projectRepository.save(project);
