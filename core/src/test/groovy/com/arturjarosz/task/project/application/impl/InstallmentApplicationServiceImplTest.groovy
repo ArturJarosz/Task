@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application.impl
 
+import com.arturjarosz.task.finance.model.FinancialData
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.dto.InstallmentDto
@@ -14,6 +15,7 @@ import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.project.utils.StageBuilder
 import com.arturjarosz.task.sharedkernel.model.Money
 import com.arturjarosz.task.sharedkernel.utils.TestUtils
+import com.arturjarosz.task.supervision.utils.FinancialDataBuilder
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -28,11 +30,13 @@ class InstallmentApplicationServiceImplTest extends Specification {
     private static final Long EXISTING_PROJECT_ID = 100L;
     private static final Long EXISTING_PROJECT_WITH_INSTALLMENT_ID = 200L;
     private static final Long NOT_EXISTING_PROJECT_ID = 999L;
-    private static final Double OLD_VALUE = 100.00;
-    private static final Double NEW_VALUE = 200.00;
+    private static final BigDecimal OLD_VALUE = new BigDecimal(100.00);
+    private static final BigDecimal NEW_VALUE = new BigDecimal(200.00);
     private static final String PROJECT_NAME = "project name";
 
-    private Installment installment = new InstallmentBuilder().withAmount(new Money(OLD_VALUE)).withIsPaid(false)
+    private FinancialData financialData = new FinancialDataBuilder().withValue(new Money(OLD_VALUE)).withHasInvoice(
+            true).build();
+    private Installment installment = new InstallmentBuilder().withFinancialData(financialData)
             .build();
     private Stage stageWithoutInstallment = new StageBuilder().withId(STAGE_WITHOUT_INSTALLMENT_ID)
             .build();
@@ -128,6 +132,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
         given:
             InstallmentDto installmentDto = new InstallmentDto();
             installmentDto.setValue(OLD_VALUE);
+            installmentDto.setHasInvoice(true);
         when:
             InstallmentDto createdInstallmentDto = this.installmentApplicationService.
                     createInstallment(EXISTING_PROJECT_ID, STAGE_WITHOUT_INSTALLMENT_ID, installmentDto);
@@ -164,6 +169,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
         given:
             InstallmentDto installmentDto = new InstallmentDto();
             installmentDto.setValue(NEW_VALUE);
+            installmentDto.setHasInvoice(true);
         when:
             this.installmentApplicationService.
                     updateInstallment(EXISTING_PROJECT_WITH_INSTALLMENT_ID, STAGE_WITH_INSTALLMENT_ID, installmentDto)
@@ -211,7 +217,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
     def "payInstallment should throw an exception if project with given id does not exist"() {
         given:
             InstallmentDto installmentDto = new InstallmentDto();
-            installmentDto.setPayDate(LocalDate.now().minusDays(1));
+            installmentDto.setPaymentDate(LocalDate.now().minusDays(1));
         when:
             this.installmentApplicationService.payInstallment(NOT_EXISTING_PROJECT_ID,
                     STAGE_WITH_INSTALLMENT_ID, installmentDto);
@@ -223,7 +229,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
     def "payInstallment should throw an exception if stage with given id does not exist"() {
         given:
             InstallmentDto installmentDto = new InstallmentDto();
-            installmentDto.setPayDate(LocalDate.now().minusDays(1));
+            installmentDto.setPaymentDate(LocalDate.now().minusDays(1));
         when:
             this.installmentApplicationService.payInstallment(EXISTING_PROJECT_WITH_INSTALLMENT_ID,
                     NOT_EXISTING_STAGE_ID, installmentDto);
@@ -235,7 +241,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
     def "payInstallment should throw an exception if dto is not correct"() {
         given:
             InstallmentDto installmentDto = new InstallmentDto();
-            installmentDto.setPayDate(LocalDate.now().plusDays(2));
+            installmentDto.setPaymentDate(LocalDate.now().plusDays(2));
         when:
             this.installmentApplicationService.payInstallment(EXISTING_PROJECT_WITH_INSTALLMENT_ID,
                     STAGE_WITH_INSTALLMENT_ID, installmentDto);
@@ -247,7 +253,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
     def "payInstallment should change installment status to paid if dto is correct and both project and stage exist"() {
         given:
             InstallmentDto installmentDto = new InstallmentDto();
-            installmentDto.setPayDate(LocalDate.now().minusDays(2));
+            installmentDto.setPaymentDate(LocalDate.now().minusDays(2));
         when:
             this.installmentApplicationService.payInstallment(EXISTING_PROJECT_WITH_INSTALLMENT_ID,
                     STAGE_WITH_INSTALLMENT_ID, installmentDto);

@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.domain;
 
+import com.arturjarosz.task.project.application.dto.InstallmentDto;
 import com.arturjarosz.task.project.model.Installment;
 import com.arturjarosz.task.project.model.Stage;
 
@@ -9,12 +10,8 @@ public interface InstallmentDomainService {
     /**
      * Update information on installment.
      *
-     * @param stage
-     * @param value
-     * @param payDate
-     * @param note
      */
-    Installment updateInstallment(Stage stage, Double value, LocalDate payDate, String note);
+    Installment updateInstallment(Installment installment, InstallmentDto installmentDto);
 
     /**
      * Mark installment as paid and puts passed date as pay date. If payDate is null, then today is set as a pay date.
@@ -22,5 +19,5 @@ public interface InstallmentDomainService {
      * @param stage
      * @param payDate
      */
-    Installment payForInstallment(Stage stage, LocalDate payDate);
+    Installment payInstallment(Stage stage, LocalDate payDate);
 }

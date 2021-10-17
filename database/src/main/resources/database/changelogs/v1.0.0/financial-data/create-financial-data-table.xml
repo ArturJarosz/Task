@@ -22,6 +22,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="PAID" type="${boolean.type}"/>
+            <column name="PAYMENT_DATE" type="${date.type}"/>
         </createTable>
         <sql dbms="postgresql">
             alter table FINANCIAL_DATA add constraint IS_PAID_NOT_NULL

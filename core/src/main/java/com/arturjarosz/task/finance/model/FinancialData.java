@@ -9,6 +9,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.time.LocalDate;
 
 /**
  * Object that represents financial data in every Entity that stores Money value and participates in Project value.
@@ -33,6 +34,9 @@ public class FinancialData extends AbstractAggregateRoot {
     @Column(name = "PAID")
     private boolean paid;
 
+    @Column(name = "PAYMENT_DATE")
+    private LocalDate paymentDate;
+
     protected FinancialData() {
         // Needed by Hibernate
     }
@@ -41,10 +45,19 @@ public class FinancialData extends AbstractAggregateRoot {
         this.value = value;
         this.hasInvoice = hasInvoice;
         this.payable = payable;
+        this.paid = false;
     }
 
-    public void pay() {
+    public FinancialData(Money value, boolean hasInvoice, boolean payable, boolean paid) {
+        this.value = value;
+        this.hasInvoice = hasInvoice;
+        this.payable = payable;
+        this.paid = paid;
+    }
+
+    public void pay(LocalDate paymentDate) {
         this.paid = true;
+        this.paymentDate = paymentDate;
     }
 
     public Money getValue() {
@@ -65,5 +78,17 @@ public class FinancialData extends AbstractAggregateRoot {
 
     public void setValue(Money value) {
         this.value = value;
+    }
+
+    public LocalDate getPaymentDate() {
+        return paymentDate;
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public void setPaymentDate(LocalDate paymentDate) {
+        this.paymentDate = paymentDate;
     }
 }

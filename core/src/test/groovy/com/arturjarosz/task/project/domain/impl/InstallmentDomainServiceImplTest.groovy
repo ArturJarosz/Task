@@ -1,12 +1,14 @@
 package com.arturjarosz.task.project.domain.impl
 
+import com.arturjarosz.task.finance.model.FinancialData
+import com.arturjarosz.task.project.application.dto.InstallmentDto
 import com.arturjarosz.task.project.model.Installment
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.StageType
 import com.arturjarosz.task.project.status.stage.StageWorkflow
 import com.arturjarosz.task.project.utils.InstallmentBuilder
 import com.arturjarosz.task.sharedkernel.model.Money
-import com.arturjarosz.task.sharedkernel.utils.TestUtils
+import com.arturjarosz.task.supervision.utils.FinancialDataBuilder
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -15,8 +17,8 @@ class InstallmentDomainServiceImplTest extends Specification {
 
     private static final String STAGE_NAME = "stage";
     private static final StageType STAGE_TYPE = StageType.AUTHORS_SUPERVISION;
-    private static final Double OLD_AMOUNT = 1.00D;
-    private static final Double NEW_AMOUNT = 2.00D;
+    private static final BigDecimal OLD_AMOUNT = new BigDecimal(1.00D);
+    private static final BigDecimal NEW_AMOUNT = new BigDecimal(2.00D);
     private static final LocalDate OLD_DATE = LocalDate.now().minusDays(10);
     private static final LocalDate NEW_DATE = LocalDate.now();
     private static final LocalDate FUTURE_DATE = LocalDate.now().plusDays(10);
@@ -28,72 +30,90 @@ class InstallmentDomainServiceImplTest extends Specification {
     def "updateInstallment should update value and note when updating not paid installment"() {
         given:
             Stage stage = new Stage(STAGE_NAME, STAGE_TYPE, new StageWorkflow());
+            FinancialData financialData = new FinancialDataBuilder()
+                    .withValue(new Money(OLD_AMOUNT))
+                    .withPaid(false)
+                    .withHasInvoice(true)
+                    .build();
             Installment installment = new InstallmentBuilder()
-                    .withAmount(new Money(OLD_AMOUNT))
+                    .withFinancialData(financialData)
                     .withNote(OLD_NOTE)
-                    .withPayDate(null)
-                    .withIsPaid(false)
                     .build();
             stage.setInstallment(installment);
+            InstallmentDto installmentDto = new InstallmentDto();
+            installmentDto.setValue(NEW_AMOUNT);
+            installmentDto.setPaymentDate(OLD_DATE);
+            installmentDto.setNote(NEW_NOTE);
+            installmentDto.setHasInvoice(true);
         when:
-            this.installmentDomainService.updateInstallment(stage, NEW_AMOUNT, OLD_DATE, NEW_NOTE);
+            Installment updatedInstallment = this.installmentDomainService.updateInstallment(installment,
+                    installmentDto);
         then:
-            String note = (String) TestUtils.getFieldValue(installment, "note");
-            note == NEW_NOTE;
-            Double value = ((Money) TestUtils.getFieldValue(installment, "amount")).value.doubleValue();
-            value == NEW_AMOUNT;
-            LocalDate date = (LocalDate) TestUtils.getFieldValue(installment, "paymentDate");
-            date == null;
+            updatedInstallment.getAmount().hasSameValueAs(new Money(NEW_AMOUNT));
+            updatedInstallment.getNote() == NEW_NOTE;
+            updatedInstallment.getPaymentDate() == null;
     }
 
     def "updateInstallment should update value, note and date when updating paid installment"() {
         given:
             Stage stage = new Stage(STAGE_NAME, STAGE_TYPE, new StageWorkflow());
+            FinancialData financialData = new FinancialDataBuilder().withValue(new Money(OLD_AMOUNT))
+                    .withPaid(true)
+                    .withPaymentDate(OLD_DATE)
+                    .withHasInvoice(true)
+                    .build();
             Installment installment = new InstallmentBuilder()
-                    .withAmount(new Money(OLD_AMOUNT))
                     .withNote(OLD_NOTE)
-                    .withPayDate(OLD_DATE)
-                    .withIsPaid(true)
+                    .withFinancialData(financialData)
                     .build();
             stage.setInstallment(installment);
+            InstallmentDto installmentDto = new InstallmentDto();
+            installmentDto.setValue(NEW_AMOUNT);
+            installmentDto.setPaymentDate(NEW_DATE);
+            installmentDto.setNote(NEW_NOTE);
+            installmentDto.setHasInvoice(true);
         when:
-            this.installmentDomainService.updateInstallment(stage, NEW_AMOUNT, NEW_DATE, NEW_NOTE);
+            Installment updatedInstallment = this.installmentDomainService.updateInstallment(installment,
+                    installmentDto);
         then:
-            String note = (String) TestUtils.getFieldValue(installment, "note");
-            note == NEW_NOTE;
-            Double value = ((Money) TestUtils.getFieldValue(installment, "amount")).value.doubleValue();
-            value == NEW_AMOUNT;
-            LocalDate date = (LocalDate) TestUtils.getFieldValue(installment, "paymentDate");
-            date.isEqual(NEW_DATE);
+            updatedInstallment.getAmount().hasSameValueAs(new Money(NEW_AMOUNT));
+            updatedInstallment.getNote() == NEW_NOTE;
+            updatedInstallment.getPaymentDate() == NEW_DATE;
     }
 
-    def "payForInstallment should not change installment isPaid to true and throw an exception if dto date is in future"() {
+    def "payForInstallment should throw an exception if dto date is in future"() {
         given:
             Stage stage = new Stage(STAGE_NAME, STAGE_TYPE, new StageWorkflow());
+            FinancialData financialData = new FinancialDataBuilder()
+                    .withValue(new Money(OLD_AMOUNT))
+                    .withPaid(false)
+                    .withHasInvoice(true)
+                    .build();
             Installment installment = new InstallmentBuilder()
-                    .withAmount(new Money(OLD_AMOUNT))
-                    .withIsPaid(false)
+                    .withFinancialData(financialData)
                     .build();
             stage.setInstallment(installment);
         when:
-            this.installmentDomainService.payForInstallment(stage, FUTURE_DATE);
+            this.installmentDomainService.payInstallment(stage, FUTURE_DATE);
         then:
             Exception exception = thrown();
             exception.message == "notValid.installment.payDate";
-            Boolean isPaid = (boolean) TestUtils.getFieldValue(installment, "paid");
-            isPaid == false;
     }
 
     def "payForInstallment should throw an exception if installment is already paid"() {
         given:
             Stage stage = new Stage(STAGE_NAME, STAGE_TYPE, new StageWorkflow());
+            FinancialData financialData = new FinancialDataBuilder()
+                    .withValue(new Money(OLD_AMOUNT))
+                    .withPaid(true)
+                    .withHasInvoice(true)
+                    .build();
             Installment installment = new InstallmentBuilder()
-                    .withAmount(new Money(OLD_AMOUNT))
-                    .withIsPaid(true)
+                    .withFinancialData(financialData)
                     .build();
             stage.setInstallment(installment);
         when:
-            this.installmentDomainService.payForInstallment(stage, NEW_DATE);
+            this.installmentDomainService.payInstallment(stage, NEW_DATE);
         then:
             Exception exception = thrown();
             exception.message == "notValid.installment.paid";
@@ -102,36 +122,40 @@ class InstallmentDomainServiceImplTest extends Specification {
     def "payForInstallment should set payment day for today is date is not given and set isPaid to true"() {
         given:
             Stage stage = new Stage(STAGE_NAME, STAGE_TYPE, new StageWorkflow());
+            FinancialData financialData = new FinancialDataBuilder()
+                    .withValue(new Money(OLD_AMOUNT))
+                    .withPaid(false)
+                    .withHasInvoice(true)
+                    .build();
             Installment installment = new InstallmentBuilder()
-                    .withAmount(new Money(OLD_AMOUNT))
-                    .withIsPaid(false)
+                    .withFinancialData(financialData)
                     .build();
             stage.setInstallment(installment);
         when:
-            this.installmentDomainService.payForInstallment(stage, null);
+            Installment paidInstallment = this.installmentDomainService.payInstallment(stage, null);
         then:
             noExceptionThrown();
-            LocalDate date = (LocalDate) TestUtils.getFieldValue(installment, "paymentDate");
-            date.isEqual(LocalDate.now());
-            Boolean isPaid = (boolean) TestUtils.getFieldValue(installment, "paid");
-            isPaid == true;
+            paidInstallment.getPaymentDate() == LocalDate.now();
+            paidInstallment.getPaid();
     }
 
     def "payForInstallment should set payment day for given date and set isPaid to true"() {
         given:
             Stage stage = new Stage(STAGE_NAME, STAGE_TYPE, new StageWorkflow());
+            FinancialData financialData = new FinancialDataBuilder()
+                    .withValue(new Money(OLD_AMOUNT))
+                    .withPaid(false)
+                    .withHasInvoice(true)
+                    .build();
             Installment installment = new InstallmentBuilder()
-                    .withAmount(new Money(OLD_AMOUNT))
-                    .withIsPaid(false)
+                    .withFinancialData(financialData)
                     .build();
             stage.setInstallment(installment);
         when:
-            this.installmentDomainService.payForInstallment(stage, NEW_DATE);
+            Installment paidInstallment = this.installmentDomainService.payInstallment(stage, NEW_DATE);
         then:
             noExceptionThrown();
-            LocalDate date = (LocalDate) TestUtils.getFieldValue(installment, "paymentDate");
-            date.isEqual(NEW_DATE);
-            Boolean isPaid = (boolean) TestUtils.getFieldValue(installment, "paid");
-            isPaid;
+            paidInstallment.getPaymentDate() == NEW_DATE;
+            paidInstallment.getPaid();
     }
 }

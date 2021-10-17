@@ -1,12 +1,16 @@
 package com.arturjarosz.task.project.model;
 
+import com.arturjarosz.task.finance.model.FinancialData;
+import com.arturjarosz.task.project.application.dto.InstallmentDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
-import javax.persistence.AttributeOverride;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDate;
@@ -18,15 +22,9 @@ public class Installment extends AbstractEntity {
 
     private static final long serialVersionUID = -8420590861357070177L;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "AMOUNT"))
-    private Money amount;
-
-    @Column(name = "PAID", nullable = false)
-    private Boolean paid;
-
-    @Column(name = "PAYMENT_DATE")
-    private LocalDate paymentDate;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "FINANCIAL_DATA_ID", referencedColumnName = "ID")
+    private FinancialData financialData;
 
     @Column(name = "NOTE")
     private String note;
@@ -35,42 +33,47 @@ public class Installment extends AbstractEntity {
         //needed by Hibernate
     }
 
-    public Installment(Double amount) {
-        this.amount = new Money(amount);
-        this.paid = false;
+    public Installment(InstallmentDto installmentDto) {
+        this.financialData = new FinancialData(new Money(installmentDto.getValue()), installmentDto.getHasInvoice(),
+                true);
     }
 
     public void payInstallment(LocalDate date) {
-        this.paid = true;
-        this.paymentDate = date;
+        this.financialData.pay(date);
     }
 
-    public void update(Double amount, String note, LocalDate date) {
-        this.amount = new Money(amount);
-        this.note = note;
-        this.paymentDate = date;
+    public void update(InstallmentDto installmentDto) {
+        this.financialData = new FinancialData(new Money(installmentDto.getValue()), installmentDto.getHasInvoice(),
+                true, this.financialData.isPaid());
+        this.note = installmentDto.getNote();
+        if (this.financialData.isPaid()) {
+            this.financialData.setPaymentDate(installmentDto.getPaymentDate());
+        }
     }
 
-    public Boolean isPaid() {
-        return this.paid;
+    public boolean isPaid() {
+        return this.financialData.isPaid();
     }
 
     public Money getAmount() {
-        return this.amount;
+        return this.financialData.getValue();
     }
 
-    public Boolean getPaid() {
-        return this.paid;
+    public boolean getPaid() {
+        return this.financialData.isPaid();
     }
 
     public LocalDate getPaymentDate() {
-        return this.paymentDate;
+        return this.financialData.getPaymentDate();
     }
 
     public String getNote() {
         return this.note;
     }
 
+    public boolean isHasInvoice() {
+        return this.financialData.isHasInvoice();
+    }
 
 
 }

@@ -5,10 +5,14 @@ import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
 import com.arturjarosz.task.sharedkernel.utils.TestUtils;
 
+import java.time.LocalDate;
+
 public class FinancialDataBuilder extends AbstractBuilder<FinancialData, FinancialDataBuilder> {
     private static final String ID = "id";
     private static final String HAS_INVOICE = "hasInvoice";
+    private static final String PAID = "paid";
     private static final String PAYABLE = "payable";
+    private static final String PAYMENT_DATE = "paymentDate";
     private static final String VALUE = "value";
 
     public FinancialDataBuilder() {
@@ -32,6 +36,16 @@ public class FinancialDataBuilder extends AbstractBuilder<FinancialData, Financi
 
     public FinancialDataBuilder withValue(Money value) {
         TestUtils.setFieldForObject(this.object, VALUE, value);
+        return this;
+    }
+
+    public FinancialDataBuilder withPaid(boolean paid) {
+        TestUtils.setFieldForObject(this.object, PAID, paid);
+        return this;
+    }
+
+    public FinancialDataBuilder withPaymentDate(LocalDate paymentDate) {
+        TestUtils.setFieldForObject(this.object, PAYMENT_DATE, paymentDate);
         return this;
     }
 }

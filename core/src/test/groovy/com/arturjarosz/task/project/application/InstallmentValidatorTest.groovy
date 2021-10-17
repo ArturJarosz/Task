@@ -37,7 +37,7 @@ class InstallmentValidatorTest extends Specification {
             InstallmentDto installmentDto = new InstallmentDto();
             installmentDto.setValue(VALUE);
             installmentDto.setNote(NOTE);
-            installmentDto.setPayDate(PAY_DATE);
+            installmentDto.setPaymentDate(PAY_DATE);
         when:
             InstallmentValidator.validateCreateInstallmentDto(installmentDto);
         then:

@@ -1,18 +1,14 @@
 package com.arturjarosz.task.project.utils;
 
+import com.arturjarosz.task.finance.model.FinancialData;
 import com.arturjarosz.task.project.model.Installment;
-import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
 import com.arturjarosz.task.sharedkernel.utils.TestUtils;
 
-import java.time.LocalDate;
-
 public class InstallmentBuilder extends AbstractBuilder<Installment, InstallmentBuilder> {
 
-    public static final String AMOUNT = "amount";
+    public static final String FINANCIAL_DATA = "financialData";
     public static final String NOTE = "note";
-    public static final String PAID = "paid";
-    public static final String PAYMENT_DATE = "paymentDate";
 
     public InstallmentBuilder() {
         super(Installment.class);
@@ -23,18 +19,8 @@ public class InstallmentBuilder extends AbstractBuilder<Installment, Installment
         return this;
     }
 
-    public InstallmentBuilder withPayDate(LocalDate date) {
-        TestUtils.setFieldForObject(this.object, PAYMENT_DATE, date);
-        return this;
-    }
-
-    public InstallmentBuilder withIsPaid(Boolean paid) {
-        TestUtils.setFieldForObject(this.object, PAID, paid);
-        return this;
-    }
-
-    public InstallmentBuilder withAmount(Money amount) {
-        TestUtils.setFieldForObject(this.object, AMOUNT, amount);
+    public InstallmentBuilder withFinancialData(FinancialData financialData) {
+        TestUtils.setFieldForObject(this.object, FINANCIAL_DATA, financialData);
         return this;
     }
 }

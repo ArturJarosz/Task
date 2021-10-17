@@ -13,14 +13,15 @@ public interface InstallmentDtoMapper {
     InstallmentDtoMapper INSTANCE = Mappers.getMapper(InstallmentDtoMapper.class);
 
     default Installment installmentDtoToInstallment(InstallmentDto installmentDto) {
-        return new Installment(installmentDto.getValue());
+        return new Installment(installmentDto);
     }
 
     @Mapping(source = "amount", target = "value", qualifiedByName = "moneyToDouble")
     @Mapping(source = "id", target = "id")
     @Mapping(source = "paid", target = "paid")
     @Mapping(source = "note", target = "note")
-    @Mapping(source = "paymentDate", target = "payDate")
+    @Mapping(source = "hasInvoice", target = "hasInvoice")
+    @Mapping(source = "paymentDate", target = "paymentDate")
     InstallmentDto installmentToInstallmentDto(Installment installment);
 
     @Named("moneyToDouble")
