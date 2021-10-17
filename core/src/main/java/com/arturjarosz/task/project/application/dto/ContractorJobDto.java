@@ -1,15 +1,18 @@
 package com.arturjarosz.task.project.application.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class ContractorJobDto implements Serializable {
     private static final long serialVersionUID = -532775551414801250L;
 
     private Long id;
     private String name;
-    private Double value;
+    private BigDecimal value;
     private Long contractorId;
     private String note;
+    private Boolean hasInvoice;
+    private Boolean payable;
 
     public ContractorJobDto() {
         //needed by Hibernate
@@ -23,11 +26,11 @@ public class ContractorJobDto implements Serializable {
         this.name = name;
     }
 
-    public Double getValue() {
+    public BigDecimal getValue() {
         return this.value;
     }
 
-    public void setValue(Double value) {
+    public void setValue(BigDecimal value) {
         this.value = value;
     }
 
@@ -53,5 +56,21 @@ public class ContractorJobDto implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getHasInvoice() {
+        return hasInvoice;
+    }
+
+    public void setHasInvoice(Boolean hasInvoice) {
+        this.hasInvoice = hasInvoice;
+    }
+
+    public Boolean getPayable() {
+        return payable;
+    }
+
+    public void setPayable(Boolean payable) {
+        this.payable = payable;
     }
 }

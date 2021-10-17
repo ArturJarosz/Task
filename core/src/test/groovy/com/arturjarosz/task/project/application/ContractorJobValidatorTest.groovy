@@ -19,8 +19,7 @@ class ContractorJobValidatorTest extends Specification {
     private static final String NAME = "name";
     private static final String NOTE = "note";
     private static final String PROJECT_NAME = "projectName"
-    private static final Double VALUE = 100.0;
-    private static final Double OFFER_VALUE = 5000.0;
+    private static final BigDecimal VALUE = new BigDecimal(100.0);
     private static final Long ARCHITECT_ID = 99L
     private static final Long CLIENT_ID = 98L;
     private static final Long EXISTING_CONTRACTOR_ID = 1L;
@@ -239,7 +238,8 @@ class ContractorJobValidatorTest extends Specification {
     }
 
     private Project prepareProjectWithContractorJob() {
-        CooperatorJob cooperatorJob = new CooperatorJob(NAME, EXISTING_CONTRACTOR_ID, CooperatorJobType.CONTRACTOR_JOB);
+        CooperatorJob cooperatorJob = new CooperatorJob(NAME, EXISTING_CONTRACTOR_ID, CooperatorJobType.CONTRACTOR_JOB,
+                VALUE, true, true);
         TestUtils.setFieldForObject(cooperatorJob, "id", EXISTING_CONTRACTOR_JOB_ID);
         Project project = this.prepareProjectWithoutCooperatorJob();
         project.addCooperatorJob(cooperatorJob);
@@ -247,7 +247,8 @@ class ContractorJobValidatorTest extends Specification {
     }
 
     private Project prepareProjectWithWrongContractorJobType() {
-        CooperatorJob cooperatorJob = new CooperatorJob(NAME, EXISTING_CONTRACTOR_ID, CooperatorJobType.SUPPLY);
+        CooperatorJob cooperatorJob = new CooperatorJob(NAME, EXISTING_CONTRACTOR_ID, CooperatorJobType.SUPPLY, VALUE,
+                true, true);
         TestUtils.setFieldForObject(cooperatorJob, "id", EXISTING_CONTRACTOR_JOB_ID);
         Project project = this.prepareProjectWithoutCooperatorJob();
         project.addCooperatorJob(cooperatorJob);

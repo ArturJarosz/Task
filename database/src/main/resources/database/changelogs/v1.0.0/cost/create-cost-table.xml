@@ -23,6 +23,9 @@
             <column name="PROJECT_ID" type="${long.type}">
                 <constraints nullable="true"/>
             </column>
+            <column name="FINANCIAL_DATA_ID" type="${long.type}">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <addPrimaryKey tableName="COST" columnNames="ID" constraintName="PK_COST"/>
         <addForeignKeyConstraint baseTableName="COST" baseColumnNames="PROJECT_ID"
