@@ -338,7 +338,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\": \"Paliwo za dojazd\",\n    \"category\": \"FUEL\",\n    \"value\": 200.00,\n    \"date\": \"2021-01-15\",\n    \"note\": \"dojazd na posesję klienta\"\n}",
+									"raw": "{\n    \"name\": \"Paliwo za dojazd\",\n    \"category\": \"FUEL\",\n    \"value\": 200.00,\n    \"date\": \"2021-01-15\",\n    \"note\": \"dojazd na posesję klienta\",\n    \"hasInvoice\": true,\n    \"payable\": true\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -423,7 +423,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\": \"new cost name\",\n    \"category\": \"FUEL\",\n    \"value\": 150.0,\n    \"date\": \"2020-01-01\",\n    \"note\": \"new cost note\"\n}",
+									"raw": "{\n    \"name\": \"new cost name\",\n    \"category\": \"FUEL\",\n    \"value\": 150.0,\n    \"date\": \"2020-01-01\",\n    \"note\": \"new cost note\",\n    \"hasInvoice\": true,\n    \"payable\": true\n}",
 									"options": {
 										"raw": {
 											"language": "json"

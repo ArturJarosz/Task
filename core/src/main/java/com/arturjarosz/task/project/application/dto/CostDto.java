@@ -15,6 +15,9 @@ public class CostDto implements Serializable {
     private BigDecimal value;
     private LocalDate date;
     private String note;
+    private Boolean hasInvoice;
+    private Boolean payable;
+    private Boolean paid;
 
     public CostDto() {
         //needed by Hibernate
@@ -66,5 +69,29 @@ public class CostDto implements Serializable {
 
     public void setValue(BigDecimal value) {
         this.value = value;
+    }
+
+    public Boolean getHasInvoice() {
+        return hasInvoice;
+    }
+
+    public void setHasInvoice(Boolean hasInvoice) {
+        this.hasInvoice = hasInvoice;
+    }
+
+    public Boolean getPayable() {
+        return payable;
+    }
+
+    public void setPayable(Boolean payable) {
+        this.payable = payable;
+    }
+
+    public Boolean getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Boolean paid) {
+        this.paid = paid;
     }
 }
