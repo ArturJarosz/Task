@@ -233,6 +233,13 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         this.cooperatorJobs.add(cooperatorJob);
     }
 
+    public void addSupply(Supply supply) {
+        if (this.cooperatorJobs == null) {
+            this.cooperatorJobs = new HashSet<>();
+        }
+        this.cooperatorJobs.add(supply);
+    }
+
     public Set<CooperatorJob> getCooperatorJobs() {
         return new HashSet<>(this.cooperatorJobs);
     }

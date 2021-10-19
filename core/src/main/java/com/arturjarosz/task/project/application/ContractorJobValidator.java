@@ -9,17 +9,16 @@ import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.CooperatorJobType;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 
 @Component
 public class ContractorJobValidator {
-    private CooperatorRepository cooperatorRepository;
+    private final CooperatorRepository cooperatorRepository;
 
+    @Autowired
     public ContractorJobValidator(CooperatorRepository cooperatorRepository) {
         this.cooperatorRepository = cooperatorRepository;
     }
@@ -36,9 +35,10 @@ public class ContractorJobValidator {
 
     public void validateContractorExistence(Long contractorId) {
         Cooperator cooperator = this.cooperatorRepository.load(contractorId);
-        assertNotNull(cooperator, createMessageCode(ExceptionCodes.NOT_EXISTS, CooperatorExceptionCodes.CONTRACTOR));
+        assertNotNull(cooperator, createMessageCode(ExceptionCodes.NOT_EXISTS, CooperatorExceptionCodes.CONTRACTOR),
+                contractorId);
         assertIsTrue(cooperator.getType().equals(CooperatorType.CONTRACTOR),
-                createMessageCode(ExceptionCodes.NOT_EXISTS, CooperatorExceptionCodes.CONTRACTOR));
+                createMessageCode(ExceptionCodes.NOT_EXISTS, CooperatorExceptionCodes.CONTRACTOR), contractorId);
     }
 
     public void validateContractorJobOnProjectExistence(Project project, Long contractorJobId) {
@@ -46,9 +46,11 @@ public class ContractorJobValidator {
                 .filter(cooperatorJobOnProject -> cooperatorJobOnProject.getId().equals(contractorJobId)).findFirst()
                 .orElse(null);
         assertNotNull(cooperatorJob,
-                createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.CONTRACTOR_JOB));
+                createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.PROJECT,
+                        ProjectExceptionCodes.CONTRACTOR_JOB), project.getId(), contractorJobId);
         assertIsTrue(cooperatorJob.getType().equals(CooperatorJobType.CONTRACTOR_JOB),
-                createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.CONTRACTOR_JOB));
+                createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.PROJECT,
+                        ProjectExceptionCodes.CONTRACTOR_JOB));
     }
 
     public void validateUpdateContractorJobDto(ContractorJobDto contractorJobDto) {
@@ -63,7 +65,7 @@ public class ContractorJobValidator {
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACTOR_JOB,
                         ProjectExceptionCodes.VALUE));
         assertIsTrue(contractorJobDto.getValue().doubleValue() >= 0,
-                createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.CONTRACTOR_JOB,
+                createMessageCode(ExceptionCodes.NEGATIVE, ProjectExceptionCodes.CONTRACTOR_JOB,
                         ProjectExceptionCodes.VALUE));
     }
 

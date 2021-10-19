@@ -37,7 +37,6 @@ public class ProjectExceptionCodes {
     public static final String CHANGE = "change";
     public static final String REOPEN = "reopen";
     public static final String SIGN = "sign";
-    public static final String START_PROGRESS = "startProgress";
     public static final String UPDATE = "update";
 
     public static final String DONE = "done";
