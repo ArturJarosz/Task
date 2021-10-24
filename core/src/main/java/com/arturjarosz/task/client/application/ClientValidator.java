@@ -12,9 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 
 /**
  * Validates Client entity and Client related Dtos.
@@ -59,7 +57,7 @@ public class ClientValidator {
 
     public void validateClientExistence(Client client, Long clientId) {
         assertIsTrue(client != null,
-                createMessageCode(ExceptionCodes.NOT_EXISTS, ClientExceptionCodes.CLIENT), clientId);
+                createMessageCode(ExceptionCodes.NOT_EXIST, ClientExceptionCodes.CLIENT), clientId);
     }
 
     private void validateName(String name, String nameExceptionCode) {

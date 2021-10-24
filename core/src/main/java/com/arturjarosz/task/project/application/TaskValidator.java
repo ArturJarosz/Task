@@ -7,9 +7,7 @@ import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 
 @Component
 public class TaskValidator {
@@ -38,12 +36,12 @@ public class TaskValidator {
     public void validateExistenceOfTaskInStage(Long stageId, Long taskId) {
         Stage stage = this.projectQueryService.getStageById(stageId);
         assertNotNull(stage.getTasks(),
-                createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TASK));
+                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TASK));
         Task task = stage.getTasks().stream()
                 .filter(taskOnStage -> taskOnStage.getId().equals(taskId))
                 .findFirst()
                 .orElse(null);
         assertNotNull(task,
-                createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TASK));
+                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TASK));
     }
 }

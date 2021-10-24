@@ -7,10 +7,7 @@ import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 
 @Component
 public class CostValidator {
@@ -35,7 +32,7 @@ public class CostValidator {
 
     public void validateCostExistence(Cost cost, Long costId) {
         assertNotNull(cost,
-                BaseValidator.createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.COST), costId);
+                BaseValidator.createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.COST), costId);
     }
 
     private void validateCostName(String costName) {

@@ -82,4 +82,5 @@ public class CooperatorJob extends AbstractEntity {
     public void setNote(String note) {
         this.note = note;
     }
+
 }

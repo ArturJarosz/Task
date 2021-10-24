@@ -126,7 +126,7 @@ class CostValidatorTest extends Specification {
             this.costValidator.validateCostExistence(cost, COST_ID);
         then:
             Exception ex = thrown();
-            ex.message == "notExists.cost";
+            ex.message == "notExist.cost";
     }
 
     def "with not existing cost id, validateCostExistence should throw an exception with specific error message"() {
@@ -136,7 +136,7 @@ class CostValidatorTest extends Specification {
             this.costValidator.validateCostExistence(COST_ID);
         then:
             Exception ex = thrown();
-            ex.message == "notExists.cost";
+            ex.message == "notExist.cost";
     }
 
     def "with existing cost id, validateCostExistence should not throw any exception"() {

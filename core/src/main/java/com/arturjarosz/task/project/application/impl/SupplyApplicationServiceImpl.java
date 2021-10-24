@@ -48,7 +48,17 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
 
     @Override
     public SupplyDto updateSupply(Long projectId, Long supplyId, SupplyDto supplyDto) {
-        return null;
+        LOG.debug("Updating Supply with id {}", supplyId);
+
+        this.projectValidator.validateProjectExistence(projectId);
+        this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
+        this.supplyValidator.validateUpdateSupplyDto(supplyDto);
+        Project project = this.projectRepository.load(projectId);
+        Supply supply = project.updateSupply(supplyId, supplyDto);
+        this.projectRepository.save(project);
+
+        LOG.debug("Supply with id {} updated", supplyId);
+        return SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply);
     }
 
     @Override

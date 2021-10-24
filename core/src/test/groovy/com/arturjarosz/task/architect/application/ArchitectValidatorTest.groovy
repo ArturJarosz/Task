@@ -174,7 +174,7 @@ class ArchitectValidatorTest extends Specification {
             this.architectValidator.validateArchitectExistence(NON_EXISTING_ID);
         then:
             Exception exception = thrown();
-            exception.message == "notExists.architect";
+            exception.message == "notExist.architect";
     }
 
     def "when passing existing architect id validateArchitectExistence should not throw any exception"() {

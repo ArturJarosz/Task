@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.query.impl;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.model.CooperatorJob;
+import com.arturjarosz.task.project.model.CooperatorJobType;
 import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.QCooperatorJob;
@@ -83,6 +84,16 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
                         STAGE.stageType.as(StageDto.STAGE_TYPE),
                         STAGE.status.as(StageDto.STATUS)))
                 .fetch();
+    }
+
+    public CooperatorJob cooperatorJobOfTypeExistsOnProject(Long projectId, Long cooperatorJobId,
+                                                      CooperatorJobType cooperatorJobType) {
+        return this.query().from(PROJECT)
+                .where(PROJECT.id.eq(projectId))
+                .join(PROJECT.cooperatorJobs, COOPERATOR_JOB)
+                .where(COOPERATOR_JOB.id.eq(cooperatorJobId).and(COOPERATOR_JOB.type.eq(cooperatorJobType)))
+                .select(COOPERATOR_JOB)
+                .fetchOne();
     }
 
 }

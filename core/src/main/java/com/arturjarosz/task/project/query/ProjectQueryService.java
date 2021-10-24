@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.query;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.model.CooperatorJob;
+import com.arturjarosz.task.project.model.CooperatorJobType;
 import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
@@ -65,4 +66,15 @@ public interface ProjectQueryService {
      * @return
      */
     List<StageDto> getStagesForProjectById(Long projectId);
+
+    /**
+     * Checks whether CooperatorJob with cooperatorJobId of given CooperatorJobType exists for Project with projectId.
+     *
+     * @param projectId
+     * @param cooperatorJobId
+     * @param cooperatorJobType
+     * @return
+     */
+    CooperatorJob cooperatorJobOfTypeExistsOnProject(Long projectId, Long cooperatorJobId,
+                                               CooperatorJobType cooperatorJobType);
 }

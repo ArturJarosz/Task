@@ -112,7 +112,7 @@ class ContractorJobValidatorTest extends Specification {
             this.contractorJobValidator.validateContractorExistence(NOT_EXISTING_CONTRACTOR_ID);
         then:
             IllegalArgumentException ex = thrown();
-            ex.getMessage() == "notExists.contractor";
+            ex.getMessage() == "notExist.contractor";
     }
 
     def "on existing contractor id, validateContractorExistence should now throw any exception"() {
@@ -132,7 +132,7 @@ class ContractorJobValidatorTest extends Specification {
                     NOT_EXISTING_CONTRACTOR_JOB_ID);
         then:
             IllegalArgumentException ex = thrown();
-            ex.getMessage() == "notExists.project.contractorJob";
+            ex.getMessage() == "notExist.project.contractorJob";
     }
 
     def "on contractorJob with wrong job type validateContractorJobExistence should throw an exception"() {
@@ -143,7 +143,7 @@ class ContractorJobValidatorTest extends Specification {
                     NOT_EXISTING_CONTRACTOR_JOB_ID);
         then:
             IllegalArgumentException ex = thrown();
-            ex.getMessage() == "notExists.project.contractorJob";
+            ex.getMessage() == "notExist.project.contractorJob";
     }
 
     def "on correct contractorJobDto id validateContractorJobExistence should not throw any exception"() {
@@ -201,7 +201,7 @@ class ContractorJobValidatorTest extends Specification {
     def "when contractorJobDto value is negative validateUpdateContractorJobDto should throw an exception"() {
         given:
             ContractorJobDto contractorJobDto = this.prepareProperContractorJobDto();
-            contractorJobDto.setValue(-1)
+            contractorJobDto.setValue(new BigDecimal(-1))
         when:
             this.contractorJobValidator.validateUpdateContractorJobDto(contractorJobDto);
         then:

@@ -35,10 +35,10 @@ public class ContractorJobValidator {
 
     public void validateContractorExistence(Long contractorId) {
         Cooperator cooperator = this.cooperatorRepository.load(contractorId);
-        assertNotNull(cooperator, createMessageCode(ExceptionCodes.NOT_EXISTS, CooperatorExceptionCodes.CONTRACTOR),
+        assertNotNull(cooperator, createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.CONTRACTOR),
                 contractorId);
         assertIsTrue(cooperator.getType().equals(CooperatorType.CONTRACTOR),
-                createMessageCode(ExceptionCodes.NOT_EXISTS, CooperatorExceptionCodes.CONTRACTOR), contractorId);
+                createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.CONTRACTOR), contractorId);
     }
 
     public void validateContractorJobOnProjectExistence(Project project, Long contractorJobId) {
@@ -46,10 +46,10 @@ public class ContractorJobValidator {
                 .filter(cooperatorJobOnProject -> cooperatorJobOnProject.getId().equals(contractorJobId)).findFirst()
                 .orElse(null);
         assertNotNull(cooperatorJob,
-                createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.PROJECT,
+                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
                         ProjectExceptionCodes.CONTRACTOR_JOB), project.getId(), contractorJobId);
         assertIsTrue(cooperatorJob.getType().equals(CooperatorJobType.CONTRACTOR_JOB),
-                createMessageCode(ExceptionCodes.NOT_EXISTS, ProjectExceptionCodes.PROJECT,
+                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
                         ProjectExceptionCodes.CONTRACTOR_JOB));
     }
 

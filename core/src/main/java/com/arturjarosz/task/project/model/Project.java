@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.model;
 
+import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
@@ -256,6 +257,16 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         cooperatorJob.setValue(value);
         cooperatorJob.setNote(note);
         return cooperatorJob;
+    }
+
+    public Supply updateSupply(Long supplyId, SupplyDto supplyDto) {
+        CooperatorJob cooperatorJob = this.cooperatorJobs.stream()
+                .filter(cooperatorJobToUpdate -> cooperatorJobToUpdate.getCooperatorId().equals(supplyId)).findFirst()
+                .orElseThrow(IllegalArgumentException::new);
+        cooperatorJob.setName(supplyDto.getName());
+        cooperatorJob.setValue(supplyDto.getValue());
+        cooperatorJob.setNote(supplyDto.getNote());
+        return (Supply) cooperatorJob;
     }
 
     @Override
