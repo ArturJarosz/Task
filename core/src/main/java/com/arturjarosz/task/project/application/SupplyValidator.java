@@ -54,7 +54,7 @@ public class SupplyValidator {
     }
 
     public void validateSupplyOnProjectExistence(Long projectId, Long supplyId) {
-        assertNotNull(this.projectQueryService.cooperatorJobOfTypeExistsOnProject(projectId, supplyId,
+        assertNotNull(this.projectQueryService.getCooperatorJobOfTypeExistsOnProject(projectId, supplyId,
                 CooperatorJobType.SUPPLY), createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
                 SupplyExceptionCodes.SUPPLY), projectId, supplyId);
     }

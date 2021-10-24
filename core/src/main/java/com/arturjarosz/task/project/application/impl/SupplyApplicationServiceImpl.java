@@ -8,28 +8,34 @@ import com.arturjarosz.task.project.application.mapper.SupplyDtoMapper;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Supply;
+import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.transaction.Transactional;
+
 @ApplicationService
 public class SupplyApplicationServiceImpl implements SupplyApplicationService {
     private static final Logger LOG = LoggerFactory.getLogger(SupplyApplicationServiceImpl.class);
 
+    private final ProjectQueryService projectQueryService;
     private final ProjectRepository projectRepository;
     private final ProjectValidator projectValidator;
     private final SupplyValidator supplyValidator;
 
     @Autowired
-    public SupplyApplicationServiceImpl(
-            ProjectRepository projectRepository,
-            ProjectValidator projectValidator, SupplyValidator supplyValidator) {
+    public SupplyApplicationServiceImpl(ProjectQueryService projectQueryService,
+                                        ProjectRepository projectRepository, ProjectValidator projectValidator,
+                                        SupplyValidator supplyValidator) {
+        this.projectQueryService = projectQueryService;
         this.projectRepository = projectRepository;
         this.projectValidator = projectValidator;
         this.supplyValidator = supplyValidator;
     }
 
+    @Transactional
     @Override
     public SupplyDto createSupply(Long projectId, SupplyDto supplyDto) {
         LOG.debug("Creating Supply for Project with id {}", projectId);
@@ -46,6 +52,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         return SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply);
     }
 
+    @Transactional
     @Override
     public SupplyDto updateSupply(Long projectId, Long supplyId, SupplyDto supplyDto) {
         LOG.debug("Updating Supply with id {}", supplyId);
@@ -63,11 +70,21 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
 
     @Override
     public SupplyDto getSupply(Long projectId, Long supplyId) {
-        return null;
+        LOG.debug("Loading Supply with id {} for Project with id {}.", supplyId, projectId);
+        this.projectValidator.validateProjectExistence(projectId);
+        this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
+        return SupplyDtoMapper.INSTANCE.supplyToSupplyDto((Supply)
+                this.projectQueryService.getCooperatorJobByIdForProject(supplyId));
     }
 
+    @Transactional
     @Override
     public void deleteSupply(Long projectId, Long supplyId) {
-        // to implement
+        LOG.debug("Removing Supply with id {} for Project wit id {}.", supplyId, projectId);
+        this.projectValidator.validateProjectExistence(projectId);
+        this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
+        Project project = this.projectRepository.load(projectId);
+        project.removeSupply(supplyId);
+        LOG.debug("Supply with id {} for Project with id {} removed.", supplyId, projectId);
     }
 }

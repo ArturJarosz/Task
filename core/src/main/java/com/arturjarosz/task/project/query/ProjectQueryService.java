@@ -75,6 +75,7 @@ public interface ProjectQueryService {
      * @param cooperatorJobType
      * @return
      */
-    CooperatorJob cooperatorJobOfTypeExistsOnProject(Long projectId, Long cooperatorJobId,
-                                               CooperatorJobType cooperatorJobType);
+    CooperatorJob getCooperatorJobOfTypeExistsOnProject(Long projectId, Long cooperatorJobId,
+                                                        CooperatorJobType cooperatorJobType);
+
 }

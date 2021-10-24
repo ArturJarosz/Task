@@ -86,8 +86,8 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
                 .fetch();
     }
 
-    public CooperatorJob cooperatorJobOfTypeExistsOnProject(Long projectId, Long cooperatorJobId,
-                                                      CooperatorJobType cooperatorJobType) {
+    public CooperatorJob getCooperatorJobOfTypeExistsOnProject(Long projectId, Long cooperatorJobId,
+                                                               CooperatorJobType cooperatorJobType) {
         return this.query().from(PROJECT)
                 .where(PROJECT.id.eq(projectId))
                 .join(PROJECT.cooperatorJobs, COOPERATOR_JOB)

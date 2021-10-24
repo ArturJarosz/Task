@@ -314,4 +314,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         return this.arrangement;
     }
 
+    public void removeSupply(Long supplyId) {
+        this.cooperatorJobs.removeIf(supply -> supply.getId().equals(supplyId));
+    }
 }
