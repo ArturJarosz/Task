@@ -5,9 +5,8 @@ import com.arturjarosz.task.cooperator.infrastructure.CooperatorRepository;
 import com.arturjarosz.task.cooperator.model.Cooperator;
 import com.arturjarosz.task.cooperator.model.CooperatorType;
 import com.arturjarosz.task.project.application.dto.ContractorJobDto;
-import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.CooperatorJobType;
-import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,10 +16,12 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 @Component
 public class ContractorJobValidator {
     private final CooperatorRepository cooperatorRepository;
+    private final ProjectQueryService projectQueryService;
 
     @Autowired
-    public ContractorJobValidator(CooperatorRepository cooperatorRepository) {
+    public ContractorJobValidator(CooperatorRepository cooperatorRepository, ProjectQueryService projectQueryService) {
         this.cooperatorRepository = cooperatorRepository;
+        this.projectQueryService = projectQueryService;
     }
 
     public void validateCreateContractorJobDto(ContractorJobDto contractorJobDto) {
@@ -41,16 +42,11 @@ public class ContractorJobValidator {
                 createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.CONTRACTOR), contractorId);
     }
 
-    public void validateContractorJobOnProjectExistence(Project project, Long contractorJobId) {
-        CooperatorJob cooperatorJob = project.getCooperatorJobs().stream()
-                .filter(cooperatorJobOnProject -> cooperatorJobOnProject.getId().equals(contractorJobId)).findFirst()
-                .orElse(null);
-        assertNotNull(cooperatorJob,
+    public void validateContractorJobOnProjectExistence(Long projectId, Long contractorJobId) {
+        assertNotNull(this.projectQueryService.getCooperatorJobOfTypeExistsOnProject(projectId, contractorJobId,
+                        CooperatorJobType.CONTRACTOR_JOB),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.CONTRACTOR_JOB), project.getId(), contractorJobId);
-        assertIsTrue(cooperatorJob.getType().equals(CooperatorJobType.CONTRACTOR_JOB),
-                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.CONTRACTOR_JOB));
+                        ProjectExceptionCodes.CONTRACTOR_JOB), projectId, contractorJobId);
     }
 
     public void validateUpdateContractorJobDto(ContractorJobDto contractorJobDto) {

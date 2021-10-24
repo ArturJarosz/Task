@@ -52,7 +52,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         LOG.debug("Removing ContractorJob with id {} from Project with id {}", contractorJobId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
-        this.contractorJobValidator.validateContractorJobOnProjectExistence(project, contractorJobId);
+        this.contractorJobValidator.validateContractorJobOnProjectExistence(projectId, contractorJobId);
         project.removeContractorJob(contractorJobId);
         this.projectRepository.save(project);
         LOG.debug("ContractorJob with id {} removed from Project with id {}", contractorJobId, projectId);
@@ -64,7 +64,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         LOG.debug("Updating ContractorJob with id {} from Project with id {}", contractorJobId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
-        this.contractorJobValidator.validateContractorJobOnProjectExistence(project, contractorJobId);
+        this.contractorJobValidator.validateContractorJobOnProjectExistence(projectId, contractorJobId);
         this.contractorJobValidator.validateUpdateContractorJobDto(contractorJobDto);
         CooperatorJob cooperatorJob = project
                 .updateContractorJob(contractorJobId, contractorJobDto.getName(), contractorJobDto.getValue(),
@@ -79,7 +79,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         LOG.debug("Loading ContractorJob with id {} for Project with id {}", contractorJobId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
-        this.contractorJobValidator.validateContractorJobOnProjectExistence(project, contractorJobId);
+        this.contractorJobValidator.validateContractorJobOnProjectExistence(projectId, contractorJobId);
         CooperatorJob cooperatorJob = this.projectQueryService.getCooperatorJobByIdForProject(contractorJobId);
         return CooperatorJobDtoMapper.INSTANCE.cooperatorJobToContractorJobDto(cooperatorJob);
     }

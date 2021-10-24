@@ -28,7 +28,7 @@ class ContractorJobValidatorTest extends Specification {
     private static final Long NOT_EXISTING_CONTRACTOR_JOB_ID = 20L;
 
     def cooperatorRepository = Mock(CooperatorRepositoryImpl);
-    def contractorJobValidator = new ContractorJobValidator(cooperatorRepository)
+    def contractorJobValidator = new ContractorJobValidator(cooperatorRepository, projectQueryService)
 
 
     def "when contractorJobDto is null validateCreateContractorJobDto should throw an exception"() {
