@@ -27,7 +27,7 @@ public interface ProjectQueryService {
      * @return
      */
     Stage getStageById(Long stageId);
-
+    //TODO TA-191
     /**
      * Load CooperatorJob by given cooperatorJobId.
      *
@@ -66,7 +66,7 @@ public interface ProjectQueryService {
      * @return
      */
     List<StageDto> getStagesForProjectById(Long projectId);
-
+    //TODO TA-191
     /**
      * Checks whether CooperatorJob with cooperatorJobId of given CooperatorJobType exists for Project with projectId.
      *
@@ -77,5 +77,4 @@ public interface ProjectQueryService {
      */
     CooperatorJob getCooperatorJobOfTypeExistsOnProject(Long projectId, Long cooperatorJobId,
                                                         CooperatorJobType cooperatorJobType);
-
 }

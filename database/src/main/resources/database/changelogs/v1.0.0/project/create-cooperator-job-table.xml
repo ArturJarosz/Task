@@ -32,6 +32,7 @@
         <addPrimaryKey tableName="COOPERATOR_JOB" columnNames="ID" constraintName="PK_COOPERATOR_JOB"/>
         <addForeignKeyConstraint baseTableName="COOPERATOR_JOB" baseColumnNames="PROJECT_ID"
                                  constraintName="FK_COOPERATOR_JOB_PROJECT"
-                                 referencedTableName="PROJECT" referencedColumnNames="ID"/>
+                                 referencedTableName="PROJECT"
+                                 referencedColumnNames="ID"/>
     </changeSet>
 </databaseChangeLog>

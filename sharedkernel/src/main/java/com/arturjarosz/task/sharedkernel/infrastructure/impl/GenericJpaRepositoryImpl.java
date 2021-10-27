@@ -24,7 +24,7 @@ import java.util.List;
  * @param <S>
  */
 
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+@Transactional(propagation = Propagation.SUPPORTS)
 @Repository
 public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, S extends EntityPathBase<T>>
         implements AbstractBaseRepository<T> {

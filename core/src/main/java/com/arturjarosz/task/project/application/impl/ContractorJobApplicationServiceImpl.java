@@ -42,7 +42,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         Project project = this.projectRepository.load(projectId);
         CooperatorJob cooperatorJob = CooperatorJobDtoMapper.INSTANCE
                 .contractorJobCreateDtoToCooperatorJob(contractorJobDto);
-        project.addCooperatorJob(cooperatorJob);
+        //project.addCooperatorJob(cooperatorJob);
         this.projectRepository.save(project);
         return CooperatorJobDtoMapper.INSTANCE.cooperatorJobToContractorJobDto(cooperatorJob);
     }

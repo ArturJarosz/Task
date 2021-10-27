@@ -12,13 +12,15 @@ public class SupplyDto implements Serializable {
     private String note;
     private Boolean hasInvoice;
     private Boolean payable;
+    private Long projectId;
+    private Boolean paid;
 
     public SupplyDto() {
         //needed by Hibernate
     }
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {
@@ -26,7 +28,7 @@ public class SupplyDto implements Serializable {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -34,7 +36,7 @@ public class SupplyDto implements Serializable {
     }
 
     public BigDecimal getValue() {
-        return value;
+        return this.value;
     }
 
     public void setValue(BigDecimal value) {
@@ -42,7 +44,7 @@ public class SupplyDto implements Serializable {
     }
 
     public Long getSupplierId() {
-        return supplierId;
+        return this.supplierId;
     }
 
     public void setSupplierId(Long supplierId) {
@@ -50,7 +52,7 @@ public class SupplyDto implements Serializable {
     }
 
     public String getNote() {
-        return note;
+        return this.note;
     }
 
     public void setNote(String note) {
@@ -58,7 +60,7 @@ public class SupplyDto implements Serializable {
     }
 
     public Boolean getHasInvoice() {
-        return hasInvoice;
+        return this.hasInvoice;
     }
 
     public void setHasInvoice(Boolean hasInvoice) {
@@ -66,10 +68,26 @@ public class SupplyDto implements Serializable {
     }
 
     public Boolean getPayable() {
-        return payable;
+        return this.payable;
     }
 
     public void setPayable(Boolean payable) {
         this.payable = payable;
+    }
+
+    public Long getProjectId() {
+        return this.projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
+
+    public Boolean getPaid() {
+        return this.paid;
+    }
+
+    public void setPaid(Boolean paid) {
+        this.paid = paid;
     }
 }

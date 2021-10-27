@@ -48,8 +48,9 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         project.addSupply(supply);
         this.projectRepository.save(project);
         LOG.debug("Supply for Project with id {} created", projectId);
-
-        return SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply);
+        SupplyDto createdSupplyDto = SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply, projectId);
+        createdSupplyDto.setId(this.getCreatedSupply(project, supply).getId());
+        return createdSupplyDto;
     }
 
     @Transactional
@@ -62,10 +63,9 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         this.supplyValidator.validateUpdateSupplyDto(supplyDto);
         Project project = this.projectRepository.load(projectId);
         Supply supply = project.updateSupply(supplyId, supplyDto);
-        this.projectRepository.save(project);
 
         LOG.debug("Supply with id {} updated", supplyId);
-        return SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply);
+        return SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply, projectId);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
         return SupplyDtoMapper.INSTANCE.supplyToSupplyDto((Supply)
-                this.projectQueryService.getCooperatorJobByIdForProject(supplyId));
+                this.projectQueryService.getCooperatorJobByIdForProject(supplyId), projectId);
     }
 
     @Transactional
@@ -85,6 +85,13 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
         Project project = this.projectRepository.load(projectId);
         project.removeSupply(supplyId);
+        this.projectRepository.save(project);
         LOG.debug("Supply with id {} for Project with id {} removed.", supplyId, projectId);
+    }
+
+    private Supply getCreatedSupply(Project project, Supply supply) {
+        return project.getSupplies().stream()
+                .filter(cooperatorJob -> (cooperatorJob).equals(supply)).findFirst()
+                .orElse(null);
     }
 }
