@@ -14,9 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 
 /**
  * Validates architect related dtos and Architect domain model.
@@ -57,7 +55,7 @@ public class ArchitectValidator {
 
     public static void validateArchitectExistence(Architect architect, Long architectId) {
         assertIsTrue(architect != null,
-                BaseValidator.createMessageCode(ExceptionCodes.NOT_EXISTS, ArchitectExceptionCodes.ARCHITECT),
+                BaseValidator.createMessageCode(ExceptionCodes.NOT_EXIST, ArchitectExceptionCodes.ARCHITECT),
                 architectId);
     }
 

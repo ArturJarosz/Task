@@ -133,7 +133,7 @@ class ProjectValidatorTest extends Specification {
             this.projectValidator.validateProjectExistence(NOT_EXISTING_PROJECT_ID);
         then:
             Exception ex = thrown();
-            ex.message == "notExists.project";
+            ex.message == "notExist.project";
     }
 
     def "when passing existing project id validateProjectExistence should not throw any exception"() {

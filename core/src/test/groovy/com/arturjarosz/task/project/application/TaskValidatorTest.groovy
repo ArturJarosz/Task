@@ -74,7 +74,7 @@ class TaskValidatorTest extends Specification {
             this.taskValidator.validateExistenceOfTaskInStage(STAGE_ID, TASK_ID)
         then:
             IllegalArgumentException ex = thrown();
-            ex.message == "notExists.stage.task";
+            ex.message == "notExist.stage.task";
     }
 
     def "validateExistenceOfTaskInStage should not throw any exception when task is present on stage"() {

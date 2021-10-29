@@ -22,7 +22,9 @@
             <column name="END_DATE" type="DATE"/>
             <column name="DEADLINE" type="DATE"/>
             <column name="NOTE" type="VARCHAR2(1000 ${char.unit})"/>
-            <column name="PROJECT_ID" type="${long.type}"/>
+            <column name="PROJECT_ID" type="${long.type}">
+                <constraints nullable="false"/>
+            </column>
             <column name="INSTALLMENT_ID" type="${long.type}"/>
             <column name="STATUS" type="VARCHAR2(50 ${char.unit})">
                 <constraints nullable="true"/>

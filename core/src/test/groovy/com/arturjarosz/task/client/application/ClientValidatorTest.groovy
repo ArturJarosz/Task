@@ -191,7 +191,7 @@ class ClientValidatorTest extends Specification {
             this.clientValidator.validateClientExistence(NON_EXISTING_ID);
         then:
             Exception exception = thrown();
-            exception.message == "notExists.client";
+            exception.message == "notExist.client";
     }
 
     def "when passing existing client id validateArchitectExistence should not throw any exception"() {

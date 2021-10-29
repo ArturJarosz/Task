@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.model;
 
+import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
@@ -48,7 +49,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     private String note;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "PROJECT_ID")
+    @JoinColumn(name = "PROJECT_ID", nullable = false)
     private Set<Stage> stages;
 
     @Enumerated(EnumType.STRING)
@@ -56,12 +57,16 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     private ProjectType projectType;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "PROJECT_ID")
+    @JoinColumn(name = "PROJECT_ID", nullable = false)
     private Set<Cost> costs;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "PROJECT_ID")
-    private Set<CooperatorJob> cooperatorJobs;
+    @JoinColumn(name = "PROJECT_ID", nullable = false)
+    private Set<ContractorJob> contractorJobs;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "PROJECT_ID", nullable = false)
+    private Set<Supply> supplies;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "ARRANGEMENT_ID")
@@ -226,29 +231,51 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         return stageToUpdate.updateTask(taskId, taskInnerDto);
     }
 
-    public void addCooperatorJob(CooperatorJob cooperatorJob) {
+    //TODO TA-191
+/*    public void addCooperatorJob(CooperatorJob cooperatorJob) {
         if (this.cooperatorJobs == null) {
             this.cooperatorJobs = new HashSet<>();
         }
         this.cooperatorJobs.add(cooperatorJob);
+    }*/
+
+    public void addSupply(Supply supply) {
+        if (this.supplies == null) {
+            this.supplies = new HashSet<>();
+        }
+        this.supplies.add(supply);
     }
 
     public Set<CooperatorJob> getCooperatorJobs() {
-        return new HashSet<>(this.cooperatorJobs);
+        return null;
+        /*return new HashSet<>(this.cooperatorJobs);*/
     }
-
+    //TODO TA-191
     public void removeContractorJob(Long contractorJobId) {
-        this.cooperatorJobs.removeIf(cooperatorJob -> cooperatorJob.getId().equals(contractorJobId));
+        /*this.cooperatorJobs.removeIf(cooperatorJob -> cooperatorJob.getId().equals(contractorJobId));*/
     }
-
+    //TODO TA-191
     public CooperatorJob updateContractorJob(Long contractorJobId, String name, BigDecimal value, String note) {
-        CooperatorJob cooperatorJob = this.cooperatorJobs.stream()
+        /*CooperatorJob cooperatorJob = this.cooperatorJobs.stream()
                 .filter(cooperatorJobOnProject -> cooperatorJobOnProject.getId().equals(contractorJobId)).findFirst()
                 .orElseThrow(IllegalArgumentException::new);
         cooperatorJob.setName(name);
         cooperatorJob.setValue(value);
         cooperatorJob.setNote(note);
-        return cooperatorJob;
+        return cooperatorJob;*/
+        return null;
+    }
+
+    public Supply updateSupply(long supplyId, SupplyDto supplyDto) {
+        Supply supply = this.supplies.stream()
+                .filter(supplyToUpdate -> supplyToUpdate.getId() == (supplyId)).findFirst()
+                .orElseThrow(IllegalArgumentException::new);
+        supply.update(supplyDto);
+        return supply;
+    }
+
+    public Set<Supply> getSupplies() {
+        return this.supplies;
     }
 
     @Override
@@ -296,4 +323,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         return this.arrangement;
     }
 
+    public void removeSupply(Long supplyId) {
+        this.supplies.removeIf(supply -> supply.getId().equals(supplyId));
+    }
 }

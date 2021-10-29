@@ -1,14 +1,17 @@
 package com.arturjarosz.task.project.query.impl;
 
 import com.arturjarosz.task.project.application.dto.StageDto;
+import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.model.CooperatorJob;
+import com.arturjarosz.task.project.model.CooperatorJobType;
 import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.QCooperatorJob;
 import com.arturjarosz.task.project.model.QCost;
 import com.arturjarosz.task.project.model.QProject;
 import com.arturjarosz.task.project.model.QStage;
+import com.arturjarosz.task.project.model.QSupply;
 import com.arturjarosz.task.project.model.QTask;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.query.ProjectQueryService;
@@ -27,6 +30,7 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     private static final QCost COST = QCost.cost;
     private static final QStage STAGE = QStage.stage;
     private static final QTask TASK = QTask.task;
+    private static final QSupply SUPPLY = QSupply.supply;
 
     public ProjectQueryServiceImpl() {
         super(PROJECT);
@@ -83,6 +87,28 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
                         STAGE.stageType.as(StageDto.STAGE_TYPE),
                         STAGE.status.as(StageDto.STATUS)))
                 .fetch();
+    }
+
+    //TODO TA-191
+    @Override
+    public CooperatorJob getCooperatorJobOfTypeExistsOnProject(Long projectId, Long cooperatorJobId,
+                                                               CooperatorJobType cooperatorJobType) {
+/*        return this.query().from(PROJECT)
+                .where(PROJECT.id.eq(projectId))
+                .join(PROJECT.cooperatorJobs, COOPERATOR_JOB)
+                .where(COOPERATOR_JOB.id.eq(cooperatorJobId).and(COOPERATOR_JOB.type.eq(cooperatorJobType)))
+                .select(COOPERATOR_JOB)
+                .fetchOne();*/
+        return null;
+    }
+
+    @Override
+    public SupplyDto getSupplyForProject(long supplyId, long projectId) {
+        return this.query()
+                .from(COOPERATOR_JOB)
+                .where(COOPERATOR_JOB.id.eq(supplyId).and(COOPERATOR_JOB.type.eq(CooperatorJobType.SUPPLY)))
+                .select(Projections.bean(SupplyDto.class))
+                .fetchOne();
     }
 
 }

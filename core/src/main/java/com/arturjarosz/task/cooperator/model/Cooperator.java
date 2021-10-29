@@ -14,7 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@SequenceGenerator(name = "sequence_generator", sequenceName = "cooperator_generator", allocationSize = 1)
+@SequenceGenerator(name = "sequence_generator", sequenceName = "cooperator_sequence", allocationSize = 1)
 @Table(name = "COOPERATOR")
 public class Cooperator extends AbstractAggregateRoot {
     private static final long serialVersionUID = -1662769005230262558L;
@@ -51,6 +51,7 @@ public class Cooperator extends AbstractAggregateRoot {
         this.name = name;
         this.type = type;
         this.category = category;
+        this.value = new Money(0.0);
     }
 
     public static Cooperator createSupplier(String name, CooperatorCategory.SupplierCategory category) {

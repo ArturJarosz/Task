@@ -60,6 +60,6 @@ public class SupervisionValidator {
 
     public void validateSupervisionExistence(Long supervisionId) {
         assertIsTrue(this.supervisionQueryService.supervisionExists(supervisionId),
-                createMessageCode(ExceptionCodes.NOT_EXISTS, SupervisionExceptionCodes.SUPERVISION));
+                createMessageCode(ExceptionCodes.NOT_EXIST, SupervisionExceptionCodes.SUPERVISION));
     }
 }

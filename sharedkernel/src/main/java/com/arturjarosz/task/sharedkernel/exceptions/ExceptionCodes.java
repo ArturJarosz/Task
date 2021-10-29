@@ -8,7 +8,7 @@ public class ExceptionCodes {
     public static final String EMPTY = "isEmpty";
     public static final String NEGATIVE = "negative";
     public static final String NULL = "isNull";
-    public static final String NOT_EXISTS = "notExists";
+    public static final String NOT_EXIST = "notExist";
     public static final String NOT_NULL = "notNull";
     public static final String NOT_PRESENT = "notPresent";
     public static final String NOT_VALID = "notValid";

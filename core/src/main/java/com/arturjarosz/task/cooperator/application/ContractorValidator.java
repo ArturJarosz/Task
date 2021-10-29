@@ -8,10 +8,7 @@ import com.arturjarosz.task.cooperator.model.CooperatorType;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 
 @Component
 public class ContractorValidator {
@@ -44,9 +41,9 @@ public class ContractorValidator {
 
     public void validateContractorExistence(Long contractorId) {
         Cooperator cooperator = this.cooperatorRepository.load(contractorId);
-        assertNotNull(cooperator, createMessageCode(ExceptionCodes.NOT_EXISTS, CooperatorExceptionCodes.CONTRACTOR));
+        assertNotNull(cooperator, createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.CONTRACTOR));
         assertIsTrue(cooperator.getType().equals(CooperatorType.CONTRACTOR),
-                createMessageCode(ExceptionCodes.NOT_EXISTS, CooperatorExceptionCodes.CONTRACTOR));
+                createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.CONTRACTOR));
     }
 
     public void validateContractorHasNotJobs(Long contractorId) {

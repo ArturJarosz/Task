@@ -143,7 +143,7 @@ class StageValidatorTest extends Specification {
             this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, NOT_EXISTING_STAGE_ID);
         then:
             IllegalArgumentException exception = thrown();
-            exception.message == "notExists.project.stage";
+            exception.message == "notExist.project.stage";
     }
 
     def "validateExistenceStageInProject should not throw any exception when stage present on project"() {
@@ -181,7 +181,7 @@ class StageValidatorTest extends Specification {
             this.stageValidator.validateStageHavingInstallment(STAGE_WITHOUT_INSTALLMENT_ID);
         then:
             IllegalArgumentException exception = thrown();
-            exception.message == "notExists.stage.installment";
+            exception.message == "notExist.stage.installment";
     }
 
     def "validateStageHavingInstallment should not throw any exception, when stage has installment"() {

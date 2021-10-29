@@ -11,11 +11,9 @@ public interface CooperatorJobDtoMapper {
     CooperatorJobDtoMapper INSTANCE = Mappers.getMapper(CooperatorJobDtoMapper.class);
 
     default CooperatorJob contractorJobCreateDtoToCooperatorJob(ContractorJobDto contractorJobDto) {
-        CooperatorJob cooperatorJob = new CooperatorJob(contractorJobDto.getName(), contractorJobDto.getContractorId(),
+        return new CooperatorJob(contractorJobDto.getName(), contractorJobDto.getContractorId(),
                 CooperatorJobType.CONTRACTOR_JOB, contractorJobDto.getValue(), contractorJobDto.getHasInvoice(),
                 contractorJobDto.getPayable());
-        cooperatorJob.setValue(contractorJobDto.getValue());
-        return cooperatorJob;
     }
 
     ContractorJobDto cooperatorJobToContractorJobDto(CooperatorJob cooperatorJob);

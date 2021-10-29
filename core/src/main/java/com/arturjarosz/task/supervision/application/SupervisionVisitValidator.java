@@ -45,7 +45,7 @@ public class SupervisionVisitValidator {
     public void validateSupervisionHavingSupervisionVisit(Long supervisionId, Long supervisionVisitId) {
         assertNotNull(
                 this.supervisionQueryService.supervisionVisitExistsInSupervision(supervisionId, supervisionVisitId),
-                createMessageCode(ExceptionCodes.NOT_EXISTS, SupervisionExceptionCodes.SUPERVISION,
+                createMessageCode(ExceptionCodes.NOT_EXIST, SupervisionExceptionCodes.SUPERVISION,
                         SupervisionExceptionCodes.SUPERVISION_VISIT));
     }
 }

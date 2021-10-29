@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("projects")
 public class ContractorJobRestController {
 
-    private ContractorJobApplicationService contractorJobApplicationService;
+    private final ContractorJobApplicationService contractorJobApplicationService;
 
     public ContractorJobRestController(ContractorJobApplicationService contractorJobApplicationService) {
         this.contractorJobApplicationService = contractorJobApplicationService;
@@ -48,8 +48,9 @@ public class ContractorJobRestController {
     public ResponseEntity<ContractorJobDto> updateContractorJob(@PathVariable("projectId") Long projectId,
                                                                 @PathVariable("contractorJobId") Long contractorJobId,
                                                                 @RequestBody ContractorJobDto contractorJobDto) {
-        this.contractorJobApplicationService.updateContractorJob(projectId, contractorJobId, contractorJobDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(
+                this.contractorJobApplicationService.updateContractorJob(projectId, contractorJobId, contractorJobDto),
+                HttpStatus.OK);
     }
 
     @GetMapping("{projectId}/contractorJob/{contractorJobId}")

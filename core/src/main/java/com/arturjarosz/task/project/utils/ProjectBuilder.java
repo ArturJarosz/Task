@@ -4,6 +4,7 @@ import com.arturjarosz.task.project.model.Contract;
 import com.arturjarosz.task.project.model.Offer;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.project.model.Supply;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
 import com.arturjarosz.task.sharedkernel.utils.TestUtils;
@@ -24,6 +25,7 @@ public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
     private static final String STAGES = "stages";
     private static final String START_DATE = "startDate";
     private static final String STATUS = "status";
+    private static final String SUPPLIES = "supplies";
 
     public ProjectBuilder() {
         super(Project.class);
@@ -88,6 +90,13 @@ public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
 
     public ProjectBuilder withContract(Contract contract) {
         TestUtils.setFieldForObject(this.object, ARRANGEMENT, contract);
+        return this;
+    }
+
+    public ProjectBuilder withSupply(Supply supply) {
+        HashSet<Supply> supplies = new HashSet<>();
+        supplies.add(supply);
+        TestUtils.setFieldForObject(this.object, SUPPLIES, supplies);
         return this;
     }
 }

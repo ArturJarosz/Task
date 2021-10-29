@@ -301,7 +301,7 @@ class SupervisionValidatorTest extends Specification {
             this.supervisionValidator.validateSupervisionExistence(SUPERVISION_ID);
         then:
             Exception ex = thrown();
-            ex.message == "notExists.supervision";
+            ex.message == "notExist.supervision";
     }
 
     private void mockSupervisionQueryServiceSupervisionExistsFalse() {
