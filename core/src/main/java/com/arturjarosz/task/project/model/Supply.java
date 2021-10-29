@@ -1,5 +1,8 @@
 package com.arturjarosz.task.project.model;
 
+import com.arturjarosz.task.project.application.dto.SupplyDto;
+import com.arturjarosz.task.sharedkernel.model.Money;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -21,4 +24,13 @@ public class Supply extends CooperatorJob {
     public long getSupplierId(){
         return this.getCooperatorId();
     }
+
+    public void update(SupplyDto supplyDto){
+        this.name = supplyDto.getName();
+        this.note = supplyDto.getNote();
+        this.financialData.setValue(new Money(supplyDto.getValue()));
+        this.financialData.setHasInvoice(supplyDto.getHasInvoice());
+        this.financialData.setPayable(supplyDto.getPayable());
+    }
+
 }

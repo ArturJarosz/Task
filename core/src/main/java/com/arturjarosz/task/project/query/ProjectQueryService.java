@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.query;
 
 import com.arturjarosz.task.project.application.dto.StageDto;
+import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.CooperatorJobType;
@@ -77,4 +78,12 @@ public interface ProjectQueryService {
      */
     CooperatorJob getCooperatorJobOfTypeExistsOnProject(Long projectId, Long cooperatorJobId,
                                                         CooperatorJobType cooperatorJobType);
+
+    /**
+     * Returns Supply with supplyId for Project with projectId.
+     * @param supplyId
+     * @param projectId
+     * @return
+     */
+    SupplyDto getSupplyForProject (long supplyId, long projectId);
 }

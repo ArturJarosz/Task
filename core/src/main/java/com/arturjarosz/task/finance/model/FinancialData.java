@@ -81,14 +81,18 @@ public class FinancialData extends AbstractAggregateRoot {
     }
 
     public LocalDate getPaymentDate() {
-        return paymentDate;
+        return this.paymentDate;
     }
 
     public boolean isPaid() {
-        return paid;
+        return this.paid;
     }
 
     public void setPaymentDate(LocalDate paymentDate) {
         this.paymentDate = paymentDate;
+    }
+
+    public void setPayable(boolean payable) {
+        this.payable = payable;
     }
 }

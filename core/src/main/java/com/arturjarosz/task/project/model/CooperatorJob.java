@@ -24,21 +24,21 @@ public class CooperatorJob extends AbstractEntity {
     private static final long serialVersionUID = -2817735161319438104L;
 
     @Column(name = "NAME", nullable = false)
-    private String name;
+    String name;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "FINANCIAL_DATA_ID", referencedColumnName = "ID", nullable = false)
-    private FinancialData financialData;
+    FinancialData financialData;
 
     @Column(name = "NOTE")
-    private String note;
+    String note;
 
     @Column(name = "COOPERATOR_ID", nullable = false)
-    private long cooperatorId;
+    long cooperatorId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TYPE", nullable = false)
-    private CooperatorJobType type;
+    CooperatorJobType type;
 
     protected CooperatorJob() {
         // Needed by Hibernate

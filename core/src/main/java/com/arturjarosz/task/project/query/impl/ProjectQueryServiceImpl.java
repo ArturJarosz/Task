@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.query.impl;
 
 import com.arturjarosz.task.project.application.dto.StageDto;
+import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.CooperatorJobType;
@@ -87,6 +88,7 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
                         STAGE.status.as(StageDto.STATUS)))
                 .fetch();
     }
+
     //TODO TA-191
     @Override
     public CooperatorJob getCooperatorJobOfTypeExistsOnProject(Long projectId, Long cooperatorJobId,
@@ -98,6 +100,15 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
                 .select(COOPERATOR_JOB)
                 .fetchOne();*/
         return null;
+    }
+
+    @Override
+    public SupplyDto getSupplyForProject(long supplyId, long projectId) {
+        return this.query()
+                .from(COOPERATOR_JOB)
+                .where(COOPERATOR_JOB.id.eq(supplyId).and(COOPERATOR_JOB.type.eq(CooperatorJobType.SUPPLY)))
+                .select(Projections.bean(SupplyDto.class))
+                .fetchOne();
     }
 
 }

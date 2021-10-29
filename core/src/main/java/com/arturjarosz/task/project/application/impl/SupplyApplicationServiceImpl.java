@@ -73,8 +73,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         LOG.debug("Loading Supply with id {} for Project with id {}.", supplyId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
-        return SupplyDtoMapper.INSTANCE.supplyToSupplyDto((Supply)
-                this.projectQueryService.getCooperatorJobByIdForProject(supplyId), projectId);
+        return this.projectQueryService.getSupplyForProject(supplyId, projectId);
     }
 
     @Transactional

@@ -268,11 +268,9 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
 
     public Supply updateSupply(long supplyId, SupplyDto supplyDto) {
         Supply supply = this.supplies.stream()
-                .filter(cooperatorJobToUpdate -> cooperatorJobToUpdate.getCooperatorId() == (supplyId)).findFirst()
+                .filter(supplyToUpdate -> supplyToUpdate.getId() == (supplyId)).findFirst()
                 .orElseThrow(IllegalArgumentException::new);
-        supply.setName(supplyDto.getName());
-        supply.setValue(supplyDto.getValue());
-        supply.setNote(supplyDto.getNote());
+        supply.update(supplyDto);
         return supply;
     }
 
