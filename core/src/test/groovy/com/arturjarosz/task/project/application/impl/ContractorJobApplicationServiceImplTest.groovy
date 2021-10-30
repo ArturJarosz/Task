@@ -1,25 +1,22 @@
 package com.arturjarosz.task.project.application.impl
 
-
 import com.arturjarosz.task.project.application.ContractorJobValidator
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.ContractorJobDto
 import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
-import com.arturjarosz.task.project.model.CooperatorJob
-import com.arturjarosz.task.project.model.CooperatorJobType
+import com.arturjarosz.task.project.model.ContractorJob
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
 import com.arturjarosz.task.sharedkernel.utils.TestUtils
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class ContractorJobApplicationServiceImplTest extends Specification {
     private static final EXISTING_CONTRACTOR_JOB_ID = 1L;
     private static final CONTRACTOR_ID = 20L;
     private static final PROJECT_ID = 30L;
-    private static final PROJECT_WITH_COOPERATOR_JOB_ID = 31L;
+    private static final PROJECT_WITH_CONTRACTOR_JOB_ID = 31L;
     private static final Long ARCHITECT_ID = 40L;
     private static final Long CLIENT_ID = 41L;
     private static final BigDecimal VALUE = new BigDecimal(100.0);
@@ -87,7 +84,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         then:
             1 * projectRepository.save(_);
     }
-    @Ignore
+
     def "createContractorJob should add cooperatorJob to project"() {
         given:
             this.mockProjectRepositoryWithProjectWithoutCooperatorJobs();
@@ -97,171 +94,168 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         then:
             1 * this.projectRepository.save({
                 Project project ->
-                    project.getCooperatorJobs().size() == 1;
+                    project.getContractorJobs().size() == 1;
             });
     }
-    @Ignore
+
     def "deleteContractorJob should call validateProjectExistence on projectValidator"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
         when:
-            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID,
+            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID);
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_COOPERATOR_JOB_ID);
+            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_CONTRACTOR_JOB_ID);
     }
-    @Ignore
+
     def "deleteContractorJob should call load on projectRepository"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
         when:
-            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID,
+            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID);
         then:
-            1 * this.projectRepository.load(PROJECT_WITH_COOPERATOR_JOB_ID) >> this.prepareProjectWithCooperatorJob();
+            1 * this.projectRepository.load(PROJECT_WITH_CONTRACTOR_JOB_ID) >> this.prepareProjectWithContractorJob();
     }
-    @Ignore
+
     def "deleteContractorJob should call validateContractorJobOnProjectExistence on contractorJobValidator"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
         when:
-            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID,
+            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID);
         then:
             1 * this.contractorJobValidator.validateContractorJobOnProjectExistence(_, EXISTING_CONTRACTOR_JOB_ID);
     }
-    @Ignore
+
     def "deleteContractorJob should call save on projectRepository"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
         when:
-            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID,
+            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID);
         then:
             1 * this.projectRepository.save(_);
     }
-    @Ignore
+
     def "deleteContractorJob should remove existing cooperatorJob from project"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
         when:
-            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID,
+            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID);
         then:
             1 * this.projectRepository.save({
                 Project project ->
-                    project.getCooperatorJobs().size() == 0;
+                    project.getContractorJobs().size() == 0;
             });
     }
-    @Ignore
+
     def "updateContractorJob should call validateProjectExistence on project validator"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
             ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate();
         when:
-            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID,
+            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto);
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_COOPERATOR_JOB_ID);
+            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_CONTRACTOR_JOB_ID);
     }
-    @Ignore
+
     def "updateContractorJob should call load on projectRepository"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
             ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate();
         when:
-            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID,
+            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto);
         then:
-            1 * this.projectRepository.load(PROJECT_WITH_COOPERATOR_JOB_ID) >> this.prepareProjectWithCooperatorJob();
+            1 * this.projectRepository.load(PROJECT_WITH_CONTRACTOR_JOB_ID) >> this.prepareProjectWithContractorJob();
     }
-    @Ignore
+
     def "updateContractorJob should call validateContractorJobOnProjectExistence on contractJobValidator"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
             ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate();
         when:
-            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID,
+            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto);
         then:
             1 * this.contractorJobValidator.validateContractorJobOnProjectExistence(_, EXISTING_CONTRACTOR_JOB_ID);
     }
-    @Ignore
+
     def "updateContractorJob should call validateUpdateContractorJobDto on contractorJobValidator"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
             ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate();
         when:
-            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID,
+            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto);
         then:
             1 * this.contractorJobValidator.validateUpdateContractorJobDto(contractorJobDto);
     }
-    @Ignore
+
     def "updateContractorJob should call save on projectRepository"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
             ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate();
         when:
-            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID,
+            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto);
         then:
             1 * this.projectRepository.save(_);
     }
-    @Ignore
+
     def "updateContractorJob should update data on cooperatorJob with contractorJobId"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
             ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate();
         when:
             ContractorJobDto updatedContractorJobDto = this.contractorJobApplicationService
-                    .updateContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID, contractorJobDto);
+                    .updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID, contractorJobDto);
         then:
             updatedContractorJobDto.getName() == NEW_NAME;
             updatedContractorJobDto.getValue() == NEW_VALUE;
             updatedContractorJobDto.getNote() == NEW_NOTE;
     }
-    @Ignore
+
     def "getContractorJob should call validateProjectExistence on projectRepository"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
             this.mockProjectQueryService();
         when:
             ContractorJobDto contractorJobDto = this.contractorJobApplicationService
-                    .getContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID);
+                    .getContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID);
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_COOPERATOR_JOB_ID);
+            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_CONTRACTOR_JOB_ID);
     }
-    @Ignore
-    def "getContractorJob should call load on projectRepository"() {
+
+    def "getContractorJob should call getContractorJobForProject on projectQueryService"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
             this.mockProjectQueryService();
         when:
             ContractorJobDto contractorJobDto = this.contractorJobApplicationService
-                    .getContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID);
+                    .getContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID);
         then:
-            1 * this.projectRepository.load(PROJECT_WITH_COOPERATOR_JOB_ID) >> this.prepareProjectWithCooperatorJob();
+            1 * this.projectQueryService.getContractorJobForProject(EXISTING_CONTRACTOR_JOB_ID,
+                    PROJECT_WITH_CONTRACTOR_JOB_ID) >> this.prepareContractorJobDto();
     }
-    @Ignore
+
     def "getContractorJob should call validateContractorJobOnProjectExistence"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
             this.mockProjectQueryService();
         when:
             ContractorJobDto contractorJobDto = this.contractorJobApplicationService
-                    .getContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID);
+                    .getContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID);
         then:
             1 * this.contractorJobValidator.validateContractorJobOnProjectExistence(_, EXISTING_CONTRACTOR_JOB_ID);
     }
-    @Ignore
+
     def "getContractorJob should return contractorJobDto"() {
         given:
-            this.mockProjectRepositoryWithProjectWithCooperatorJobs();
             this.mockProjectQueryService();
         when:
             ContractorJobDto contractorJobDto = this.contractorJobApplicationService
-                    .getContractorJob(PROJECT_WITH_COOPERATOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID);
+                    .getContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID);
         then:
             contractorJobDto != null;
     }
@@ -290,15 +284,14 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         return contractorJobDto;
     }
 
-    private Project mockProjectRepositoryWithProjectWithoutCooperatorJobs() {
+    private void mockProjectRepositoryWithProjectWithoutCooperatorJobs() {
         Project project = this.prepareProjectWithoutCooperatorJobs()
         this.projectRepository.load(PROJECT_ID) >> project;
-        return project;
     }
 
-    private Project mockProjectRepositoryWithProjectWithCooperatorJobs() {
-        Project project = this.prepareProjectWithCooperatorJob();
-        this.projectRepository.load(PROJECT_WITH_COOPERATOR_JOB_ID) >> project;
+    private void mockProjectRepositoryWithProjectWithContractorJobs() {
+        Project project = this.prepareProjectWithContractorJob();
+        this.projectRepository.load(PROJECT_WITH_CONTRACTOR_JOB_ID) >> project;
     }
 
     private Project prepareProjectWithoutCooperatorJobs() {
@@ -307,20 +300,19 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         return project;
     }
 
-    private Project prepareProjectWithCooperatorJob() {
+    private Project prepareProjectWithContractorJob() {
         Project project = this.prepareProjectWithoutCooperatorJobs();
-        CooperatorJob cooperatorJob = new CooperatorJob(NAME, EXISTING_CONTRACTOR_JOB_ID, CooperatorJobType
-                .CONTRACTOR_JOB, VALUE, true, true);
-        TestUtils.setFieldForObject(cooperatorJob, "id", EXISTING_CONTRACTOR_JOB_ID);
-        project.addCooperatorJob(cooperatorJob);
+        ContractorJob contractorJob = new ContractorJob(NAME, EXISTING_CONTRACTOR_JOB_ID, VALUE, true, true);
+        TestUtils.setFieldForObject(contractorJob, "id", EXISTING_CONTRACTOR_JOB_ID);
+        project.addContractorJob(contractorJob);
         return project;
     }
 
     private void mockProjectQueryService() {
-        CooperatorJob cooperatorJob = new CooperatorJob(NAME, EXISTING_CONTRACTOR_JOB_ID,
-                CooperatorJobType.CONTRACTOR_JOB, VALUE, true, true);
-        TestUtils.setFieldForObject(cooperatorJob, "id", EXISTING_CONTRACTOR_JOB_ID);
-        this.projectQueryService.getCooperatorJobByIdForProject(EXISTING_CONTRACTOR_JOB_ID) >> cooperatorJob;
+        ContractorJobDto contractorJobDto = this.prepareContractorJobDto();
+        contractorJobDto.setId(EXISTING_CONTRACTOR_JOB_ID);
+        this.projectQueryService.getContractorJobForProject(EXISTING_CONTRACTOR_JOB_ID,
+                PROJECT_WITH_CONTRACTOR_JOB_ID) >> contractorJobDto ;
     }
 
 }
