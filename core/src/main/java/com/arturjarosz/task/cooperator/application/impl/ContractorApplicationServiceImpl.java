@@ -61,7 +61,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     public void deleteContractor(Long contractorId) {
         LOG.debug("Deleting Contractor with id {}", contractorId);
         this.contractorValidator.validateContractorExistence(contractorId);
-        this.contractorValidator.validateContractorHasNotJobs(contractorId);
+        this.contractorValidator.validateContractorHasNoJobs(contractorId);
         this.cooperatorRepository.remove(contractorId);
         LOG.debug("Contractor with id {} deleted.", contractorId);
     }

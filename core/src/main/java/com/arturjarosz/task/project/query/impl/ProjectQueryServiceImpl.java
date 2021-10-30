@@ -4,7 +4,6 @@ import com.arturjarosz.task.project.application.dto.ContractorJobDto;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
-import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.CooperatorJobType;
 import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
@@ -45,12 +44,6 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     @Override
     public Stage getStageById(Long stageId) {
         return this.query().from(STAGE).select(STAGE).where(STAGE.id.eq(stageId)).fetchOne();
-    }
-
-    @Override
-    public CooperatorJob getCooperatorJobByIdForProject(Long cooperatorJobId) {
-        return this.query().from(COOPERATOR_JOB).select(COOPERATOR_JOB).where(COOPERATOR_JOB.id.eq(cooperatorJobId))
-                .fetchOne();
     }
 
     @Override

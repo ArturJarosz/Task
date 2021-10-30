@@ -12,7 +12,7 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 @Component
 public class TaskValidator {
 
-    ProjectQueryService projectQueryService;
+    private final ProjectQueryService projectQueryService;
 
     public TaskValidator(ProjectQueryService projectQueryService) {
         this.projectQueryService = projectQueryService;

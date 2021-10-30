@@ -8,7 +8,7 @@ import java.time.LocalDate
 class InstallmentValidatorTest extends Specification {
 
     private static final String NOTE = "note";
-    private static final Double VALUE = 20.0D;
+    private static final BigDecimal VALUE = new BigDecimal(20.0D);
     private static final LocalDate PAY_DATE = LocalDate.now();
 
     def "when dto is null, validateCreateInstallmentDto should throw an exception with specific message"() {

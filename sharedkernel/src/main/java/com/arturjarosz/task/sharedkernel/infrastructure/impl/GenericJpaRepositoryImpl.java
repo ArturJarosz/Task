@@ -32,8 +32,8 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
     private AutowireCapableBeanFactory spring;
     @PersistenceContext
     private EntityManager entityManager;
-    private S qAggregateRoot;
-    private QAbstractAggregateRoot qAbstractAggregateRoot;
+    private final S qAggregateRoot;
+    private final QAbstractAggregateRoot qAbstractAggregateRoot;
 
     public GenericJpaRepositoryImpl(S qAggregateRoot) {
         this.qAggregateRoot = qAggregateRoot;
@@ -64,8 +64,7 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
      */
     @Override
     public T load(Long id) {
-        T aggregate = this.queryFromAggregateRoot().where(this.qAbstractAggregateRoot.id.eq(id)).fetchOne();
-        return aggregate;
+        return this.queryFromAggregateRoot().where(this.qAbstractAggregateRoot.id.eq(id)).fetchOne();
     }
 
     /**

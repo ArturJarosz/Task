@@ -34,8 +34,7 @@ public class Architect extends AbstractAggregateRoot {
     }
 
     public void updateArchitectName(String firstName, String lastName) {
-        PersonName name = new PersonName(firstName, lastName);
-        this.personName = name;
+        this.personName = new PersonName(firstName, lastName);
     }
 
     public PersonName getPersonName() {

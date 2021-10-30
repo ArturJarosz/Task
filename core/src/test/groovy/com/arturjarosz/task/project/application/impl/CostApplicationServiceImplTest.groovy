@@ -219,7 +219,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.save({
                 Project project ->
                     Cost cost = project.getCosts().iterator().next();
-                    cost.getValue().doubleValue() == NEW_VALUE;
+                    cost.getValue() == NEW_VALUE;
                     cost.getName() == NEW_NAME;
                     cost.getNote() == NEW_NOTE;
                     cost.getDate() == NEW_DATE;

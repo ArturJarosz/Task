@@ -351,7 +351,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoadAll();
         when:
-            List<Project> projects = this.projectApplicationService.getProjects();
+            List<ProjectDto> projects = this.projectApplicationService.getProjects();
         then:
             projects.size() == 1;
     }

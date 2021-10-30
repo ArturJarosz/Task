@@ -4,7 +4,6 @@ import com.arturjarosz.task.project.application.dto.ContractorJobDto;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
-import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
@@ -28,15 +27,6 @@ public interface ProjectQueryService {
      * @return
      */
     Stage getStageById(Long stageId);
-    //TODO TA-191
-
-    /**
-     * Load CooperatorJob by given cooperatorJobId.
-     *
-     * @param cooperatorJobId
-     * @return
-     */
-    CooperatorJob getCooperatorJobByIdForProject(Long cooperatorJobId);
 
     /**
      * Load list of Project for given Client with clientId.
