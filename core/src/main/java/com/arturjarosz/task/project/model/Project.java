@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.model;
 
+import com.arturjarosz.task.project.application.dto.ContractorJobDto;
 import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
@@ -224,20 +225,18 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         stageToUpdate.removeTask(taskId);
     }
 
-    public Task updateTaskOnStage(Long stageId, Long taskId,
-                                  TaskInnerDto taskInnerDto) {
+    public Task updateTaskOnStage(Long stageId, Long taskId, TaskInnerDto taskInnerDto) {
         Stage stageToUpdate = this.stages.stream().filter(stage -> stage.getId().equals(stageId)).findFirst()
                 .orElseThrow(IllegalArgumentException::new);
         return stageToUpdate.updateTask(taskId, taskInnerDto);
     }
 
-    //TODO TA-191
-/*    public void addCooperatorJob(CooperatorJob cooperatorJob) {
-        if (this.cooperatorJobs == null) {
-            this.cooperatorJobs = new HashSet<>();
+    public void addContractorJob(ContractorJob contractorJob) {
+        if (this.contractorJobs == null){
+            this.contractorJobs = new HashSet<>();
         }
-        this.cooperatorJobs.add(cooperatorJob);
-    }*/
+        this.contractorJobs.add(contractorJob);
+    }
 
     public void addSupply(Supply supply) {
         if (this.supplies == null) {
@@ -246,24 +245,20 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         this.supplies.add(supply);
     }
 
-    public Set<CooperatorJob> getCooperatorJobs() {
-        return null;
-        /*return new HashSet<>(this.cooperatorJobs);*/
+    public Set<ContractorJob> getContractorJobs() {
+        return this.contractorJobs;
     }
-    //TODO TA-191
+
     public void removeContractorJob(Long contractorJobId) {
-        /*this.cooperatorJobs.removeIf(cooperatorJob -> cooperatorJob.getId().equals(contractorJobId));*/
+        this.contractorJobs.removeIf(contractorJob -> contractorJob.getId().equals(contractorJobId));
     }
-    //TODO TA-191
-    public CooperatorJob updateContractorJob(Long contractorJobId, String name, BigDecimal value, String note) {
-        /*CooperatorJob cooperatorJob = this.cooperatorJobs.stream()
-                .filter(cooperatorJobOnProject -> cooperatorJobOnProject.getId().equals(contractorJobId)).findFirst()
+
+    public ContractorJob updateContractorJob(long contractorJobId, ContractorJobDto contractorJobDto) {
+        ContractorJob contractorJob = this.contractorJobs.stream()
+                .filter(contractorJobToUpdate -> contractorJobToUpdate.getId() == (contractorJobId)).findFirst()
                 .orElseThrow(IllegalArgumentException::new);
-        cooperatorJob.setName(name);
-        cooperatorJob.setValue(value);
-        cooperatorJob.setNote(note);
-        return cooperatorJob;*/
-        return null;
+        contractorJob.update(contractorJobDto);
+        return contractorJob;
     }
 
     public Supply updateSupply(long supplyId, SupplyDto supplyDto) {

@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.query.impl;
 
+import com.arturjarosz.task.project.application.dto.ContractorJobDto;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
@@ -108,6 +109,16 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
                 .from(COOPERATOR_JOB)
                 .where(COOPERATOR_JOB.id.eq(supplyId).and(COOPERATOR_JOB.type.eq(CooperatorJobType.SUPPLY)))
                 .select(Projections.bean(SupplyDto.class))
+                .fetchOne();
+    }
+
+    @Override
+    public ContractorJobDto getContractorJobForProject(long contractorJobId,
+                                                       long projectId) {
+        return this.query()
+                .from(COOPERATOR_JOB)
+                .where(COOPERATOR_JOB.id.eq(contractorJobId).and(COOPERATOR_JOB.type.eq(CooperatorJobType.SUPPLY)))
+                .select(Projections.bean(ContractorJobDto.class))
                 .fetchOne();
     }
 

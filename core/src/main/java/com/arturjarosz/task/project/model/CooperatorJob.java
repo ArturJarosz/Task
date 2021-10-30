@@ -64,7 +64,7 @@ public class CooperatorJob extends AbstractEntity {
         return this.note;
     }
 
-    public long getCooperatorId() {
+    long getCooperatorId() {
         return this.cooperatorId;
     }
 

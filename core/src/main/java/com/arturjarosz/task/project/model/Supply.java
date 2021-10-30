@@ -12,20 +12,19 @@ import java.math.BigDecimal;
 @DiscriminatorValue(value = "SUPPLY")
 @Table(name = "COOPERATOR_JOB")
 public class Supply extends CooperatorJob {
-    private static final long serialVersionUID = 5502825087405032096L;
 
-    public Supply() {
+    protected Supply() {
     }
 
-    public Supply(String name, Long cooperatorId, BigDecimal value, boolean hasInvoice, boolean payable) {
-        super(name, cooperatorId, CooperatorJobType.SUPPLY, value, hasInvoice, payable);
+    public Supply(String name, Long supplierId, BigDecimal value, boolean hasInvoice, boolean payable) {
+        super(name, supplierId, CooperatorJobType.SUPPLY, value, hasInvoice, payable);
     }
 
-    public long getSupplierId(){
+    public long getSupplierId() {
         return this.getCooperatorId();
     }
 
-    public void update(SupplyDto supplyDto){
+    public void update(SupplyDto supplyDto) {
         this.name = supplyDto.getName();
         this.note = supplyDto.getNote();
         this.financialData.setValue(new Money(supplyDto.getValue()));

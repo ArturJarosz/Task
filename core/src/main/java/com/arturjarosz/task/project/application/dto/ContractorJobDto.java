@@ -13,6 +13,8 @@ public class ContractorJobDto implements Serializable {
     private String note;
     private Boolean hasInvoice;
     private Boolean payable;
+    private Long projectId;
+    private Boolean paid;
 
     public ContractorJobDto() {
         //needed by Hibernate
@@ -59,7 +61,7 @@ public class ContractorJobDto implements Serializable {
     }
 
     public Boolean getHasInvoice() {
-        return hasInvoice;
+        return this.hasInvoice;
     }
 
     public void setHasInvoice(Boolean hasInvoice) {
@@ -67,10 +69,26 @@ public class ContractorJobDto implements Serializable {
     }
 
     public Boolean getPayable() {
-        return payable;
+        return this.payable;
     }
 
     public void setPayable(Boolean payable) {
         this.payable = payable;
+    }
+
+    public Long getProjectId() {
+        return this.projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
+    }
+
+    public Boolean getPaid() {
+        return this.paid;
+    }
+
+    public void setPaid(Boolean paid) {
+        this.paid = paid;
     }
 }

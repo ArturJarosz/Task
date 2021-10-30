@@ -90,7 +90,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
 
     private Supply getCreatedSupply(Project project, Supply supply) {
         return project.getSupplies().stream()
-                .filter(cooperatorJob -> (cooperatorJob).equals(supply)).findFirst()
+                .filter(supplyOnProject -> (supplyOnProject).equals(supply)).findFirst()
                 .orElse(null);
     }
 }

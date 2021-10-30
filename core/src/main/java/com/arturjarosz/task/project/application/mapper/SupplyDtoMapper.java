@@ -14,6 +14,7 @@ public interface SupplyDtoMapper {
         return new Supply(supplyDto.getName(), supplyDto.getSupplierId(), supplyDto.getValue(),
                 supplyDto.getHasInvoice(), supplyDto.getPayable());
     }
-@Mapping(source = "projectId", target = "projectId")
+
+    @Mapping(source = "projectId", target = "projectId")
     SupplyDto supplyToSupplyDto(Supply supply, Long projectId);
 }
