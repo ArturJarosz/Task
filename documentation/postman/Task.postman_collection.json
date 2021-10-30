@@ -384,13 +384,15 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{taskAddress}}/projects/costs{{costId}}",
+									"raw": "{{taskAddress}}/projects/{{projectId}}/costs/{{costId}}",
 									"host": [
 										"{{taskAddress}}"
 									],
 									"path": [
 										"projects",
-										"costs{{costId}}"
+										"{{projectId}}",
+										"costs",
+										"{{costId}}"
 									]
 								}
 							},
@@ -1015,10 +1017,10 @@
 					]
 				},
 				{
-					"name": "supervision",
+					"name": "Supervision",
 					"item": [
 						{
-							"name": "supervision visit",
+							"name": "Supervision Visit",
 							"item": [
 								{
 									"name": "create supervision visit",
@@ -1203,6 +1205,210 @@
 										"projects",
 										"{{projectId}}",
 										"supervisions"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Supply",
+					"item": [
+						{
+							"name": "Create Supply",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"supplierId\": 100,\n    \"name\": \"dostawa bananów\",\n    \"value\": 120.0,\n    \"hasInvoice\" : true,\n    \"payable\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/supplies",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"supplies"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Supply",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"dostawa bananów\",\n    \"value\": 120.0,\n    \"hasInvoice\" : true,\n    \"payable\": true,\n    \"note\": \"some note\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/supplies/{{supplyId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"supplies",
+										"{{supplyId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Supply",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/supplies/{{supplyId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"supplies",
+										"{{supplyId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Supply",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/supplies/{{supplyId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"supplies",
+										"{{supplyId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Contractor Job",
+					"item": [
+						{
+							"name": "Create Contractor Job",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"contractorId\": 100,\n    \"name\": \"układanie płytek\",\n    \"value\": 120.0,\n    \"hasInvoice\" : true,\n    \"payable\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/contractorJobs",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"contractorJobs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Contractor Job",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"układanie płytek\",\n    \"value\": 120.0,\n    \"hasInvoice\" : true,\n    \"payable\": true,\n    \"note\": \"some note\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/contractorJob/{{contractorJobId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"contractorJob",
+										"{{contractorJobId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Contractor Job",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/contractorJobs/{{contractorJobId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"contractorJobs",
+										"{{contractorJobId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Contractor Job",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/contractorJobs/{{contractorJobs}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"contractorJobs",
+										"{{contractorJobs}}"
 									]
 								}
 							},
@@ -1452,6 +1658,194 @@
 							"path": [
 								"projects",
 								"{{projectId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Supplier",
+			"item": [
+				{
+					"name": "Create Supplier",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"X-Kom\",\n    \"category\": \"PAINT_SHOP\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/suppliers",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"suppliers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Supplier",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Leroy Merlin\",\n    \"category\": \"SHOP_WITH_TILES\",\n    \"email\": \"testmail@test.pl\",\n    \"telephone\": \"606225578\",\n    \"note\": \"some basic note\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/suppliers/{{supplierId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"suppliers",
+								"{{supplierId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Supplier",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/suppliers/{{supplierId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"suppliers",
+								"{{supplierId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Supplier",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/suppliers/{{supplierId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"suppliers",
+								"{{supplierId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contractor Copy",
+			"item": [
+				{
+					"name": "Create Contractor",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"X-Kom\",\n    \"category\": \"PAINT_SHOP\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/suppliers",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"suppliers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Supplier",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New Contractor\",\n    \"category\": \"CARPENTER\",\n    \"email\": \"testmail@test.pl\",\n    \"telephone\": \"606225578\",\n    \"note\": \"some basic note\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/contractors/{{contractorId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"contractors",
+								"{{contractorId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contractor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/contractors/{{contractorId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"contractors",
+								"{{contractorId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Contractor",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/contractors/{{contractorId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"contractors",
+								"{{contractorId}}"
 							]
 						}
 					},

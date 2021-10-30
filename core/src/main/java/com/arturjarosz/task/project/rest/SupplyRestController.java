@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("projects")
-public class SupplyJobRestController {
+public class SupplyRestController {
 
     private final SupplyApplicationService supplyApplicationService;
 
     @Autowired
-    public SupplyJobRestController(SupplyApplicationService supplyApplicationService) {
+    public SupplyRestController(SupplyApplicationService supplyApplicationService) {
         this.supplyApplicationService = supplyApplicationService;
     }
 
