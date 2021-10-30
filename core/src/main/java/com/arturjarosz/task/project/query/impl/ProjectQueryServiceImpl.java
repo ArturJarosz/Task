@@ -90,19 +90,6 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
                 .fetch();
     }
 
-    //TODO TA-191
-    @Override
-    public CooperatorJob getCooperatorJobOfTypeExistsOnProject(Long projectId, Long cooperatorJobId,
-                                                               CooperatorJobType cooperatorJobType) {
-/*        return this.query().from(PROJECT)
-                .where(PROJECT.id.eq(projectId))
-                .join(PROJECT.cooperatorJobs, COOPERATOR_JOB)
-                .where(COOPERATOR_JOB.id.eq(cooperatorJobId).and(COOPERATOR_JOB.type.eq(cooperatorJobType)))
-                .select(COOPERATOR_JOB)
-                .fetchOne();*/
-        return null;
-    }
-
     @Override
     public SupplyDto getSupplyForProject(long supplyId, long projectId) {
         return this.query()

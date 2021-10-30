@@ -16,10 +16,18 @@ public class CooperatorQueryServiceImpl extends AbstractQueryService<QCooperator
     }
 
     @Override
-    public boolean supplierWithIdExists(Long cooperatorId) {
+    public boolean supplierWithIdExists(Long supplierId) {
         return this.query()
                 .from(COOPERATOR)
-                .where(COOPERATOR.id.eq(cooperatorId).and(COOPERATOR.type.eq(CooperatorType.SUPPLIER)))
+                .where(COOPERATOR.id.eq(supplierId).and(COOPERATOR.type.eq(CooperatorType.SUPPLIER)))
+                .fetchOne() != null;
+    }
+
+    @Override
+    public boolean contractorWithIdExists(Long contractorId) {
+        return this.query()
+                .from(COOPERATOR)
+                .where(COOPERATOR.id.eq(contractorId).and(COOPERATOR.type.eq(CooperatorType.CONTRACTOR)))
                 .fetchOne() != null;
     }
 }

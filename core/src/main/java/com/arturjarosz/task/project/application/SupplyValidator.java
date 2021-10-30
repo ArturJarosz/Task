@@ -3,7 +3,6 @@ package com.arturjarosz.task.project.application;
 import com.arturjarosz.task.cooperator.domain.CooperatorExceptionCodes;
 import com.arturjarosz.task.cooperator.query.CooperatorQueryService;
 import com.arturjarosz.task.project.application.dto.SupplyDto;
-import com.arturjarosz.task.project.model.CooperatorJobType;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +53,9 @@ public class SupplyValidator {
     }
 
     public void validateSupplyOnProjectExistence(Long projectId, Long supplyId) {
-        assertNotNull(this.projectQueryService.getCooperatorJobOfTypeExistsOnProject(projectId, supplyId,
-                CooperatorJobType.SUPPLY), createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
-                SupplyExceptionCodes.SUPPLY), projectId, supplyId);
+        assertNotNull(this.projectQueryService.getSupplyForProject(projectId, supplyId),
+                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
+                        SupplyExceptionCodes.SUPPLY), projectId, supplyId);
     }
 
     public void validateUpdateSupplyDto(SupplyDto supplyDto) {
