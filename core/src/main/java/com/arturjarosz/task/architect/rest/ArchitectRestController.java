@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("architects")
 public class ArchitectRestController {
 
-    private ArchitectApplicationService architectApplicationService;
+    private final ArchitectApplicationService architectApplicationService;
 
     public ArchitectRestController(ArchitectApplicationService architectApplicationService) {
         this.architectApplicationService = architectApplicationService;

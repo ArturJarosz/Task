@@ -46,7 +46,7 @@ public class ContractorValidator {
                 createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.CONTRACTOR));
     }
 
-    public void validateContractorHasNotJobs(Long contractorId) {
+    public void validateContractorHasNoJobs(Long contractorId) {
         //TODO: to implemented when CooperatorJob is ready
     }
 }

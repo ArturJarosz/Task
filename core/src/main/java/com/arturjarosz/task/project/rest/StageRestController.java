@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("projects/{projectId}")
 public class StageRestController {
 
-    private StageApplicationService stageApplicationService;
+    private final StageApplicationService stageApplicationService;
 
     public StageRestController(StageApplicationService stageApplicationService) {
         this.stageApplicationService = stageApplicationService;

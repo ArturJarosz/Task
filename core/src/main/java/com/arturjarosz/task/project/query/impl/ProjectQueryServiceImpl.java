@@ -4,7 +4,6 @@ import com.arturjarosz.task.project.application.dto.ContractorJobDto;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
-import com.arturjarosz.task.project.model.CooperatorJob;
 import com.arturjarosz.task.project.model.CooperatorJobType;
 import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
@@ -48,12 +47,6 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     }
 
     @Override
-    public CooperatorJob getCooperatorJobByIdForProject(Long cooperatorJobId) {
-        return this.query().from(COOPERATOR_JOB).select(COOPERATOR_JOB).where(COOPERATOR_JOB.id.eq(cooperatorJobId))
-                .fetchOne();
-    }
-
-    @Override
     public List<Project> getProjectsForClientId(Long clientId) {
         return this.query().from(PROJECT).select(PROJECT).where(PROJECT.clientId.eq(clientId)).fetch();
     }
@@ -88,19 +81,6 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
                         STAGE.stageType.as(StageDto.STAGE_TYPE),
                         STAGE.status.as(StageDto.STATUS)))
                 .fetch();
-    }
-
-    //TODO TA-191
-    @Override
-    public CooperatorJob getCooperatorJobOfTypeExistsOnProject(Long projectId, Long cooperatorJobId,
-                                                               CooperatorJobType cooperatorJobType) {
-/*        return this.query().from(PROJECT)
-                .where(PROJECT.id.eq(projectId))
-                .join(PROJECT.cooperatorJobs, COOPERATOR_JOB)
-                .where(COOPERATOR_JOB.id.eq(cooperatorJobId).and(COOPERATOR_JOB.type.eq(cooperatorJobType)))
-                .select(COOPERATOR_JOB)
-                .fetchOne();*/
-        return null;
     }
 
     @Override

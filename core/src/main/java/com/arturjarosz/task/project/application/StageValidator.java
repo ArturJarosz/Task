@@ -12,8 +12,8 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 @Component
 public class StageValidator {
 
-    private ProjectRepository projectRepository;
-    ProjectQueryService projectQueryService;
+    private final ProjectRepository projectRepository;
+    private final ProjectQueryService projectQueryService;
 
     public StageValidator(ProjectRepository projectRepository, ProjectQueryService projectQueryService) {
         this.projectRepository = projectRepository;

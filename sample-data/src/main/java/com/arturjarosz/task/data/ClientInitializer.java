@@ -28,9 +28,9 @@ public class ClientInitializer {
     }
 
     void run() {
-        this.LOG.info("Starting importing clients.");
+        LOG.info("Starting importing clients.");
         this.importClientsFromFile();
-        this.LOG.info("Clients added to the database.");
+        LOG.info("Clients added to the database.");
     }
 
     private void importClientsFromFile() {

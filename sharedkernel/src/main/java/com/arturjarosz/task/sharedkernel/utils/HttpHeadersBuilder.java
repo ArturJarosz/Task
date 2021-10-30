@@ -5,8 +5,8 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class HttpHeadersBuilder {
-    private HttpHeaders headers;
-    private HttpHeadersBuilder headersBuilder;
+    private final HttpHeaders headers;
+    private final HttpHeadersBuilder headersBuilder;
 
     public HttpHeadersBuilder() {
         this.headers = new HttpHeaders();

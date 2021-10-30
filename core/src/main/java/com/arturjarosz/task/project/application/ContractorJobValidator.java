@@ -1,11 +1,8 @@
 package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.cooperator.domain.CooperatorExceptionCodes;
-import com.arturjarosz.task.cooperator.infrastructure.CooperatorRepository;
-import com.arturjarosz.task.cooperator.model.Cooperator;
-import com.arturjarosz.task.cooperator.model.CooperatorType;
+import com.arturjarosz.task.cooperator.query.CooperatorQueryService;
 import com.arturjarosz.task.project.application.dto.ContractorJobDto;
-import com.arturjarosz.task.project.model.CooperatorJobType;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,36 +12,33 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 
 @Component
 public class ContractorJobValidator {
-    private final CooperatorRepository cooperatorRepository;
+    private final CooperatorQueryService cooperatorQueryService;
     private final ProjectQueryService projectQueryService;
 
     @Autowired
-    public ContractorJobValidator(CooperatorRepository cooperatorRepository, ProjectQueryService projectQueryService) {
-        this.cooperatorRepository = cooperatorRepository;
+    public ContractorJobValidator(CooperatorQueryService cooperatorQueryService,
+                                  ProjectQueryService projectQueryService) {
+        this.cooperatorQueryService = cooperatorQueryService;
         this.projectQueryService = projectQueryService;
     }
 
     public void validateCreateContractorJobDto(ContractorJobDto contractorJobDto) {
         assertNotNull(contractorJobDto,
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACTOR_JOB));
-        this.validateContractorName(contractorJobDto);
         assertNotNull(contractorJobDto.getContractorId(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACTOR_JOB,
                         ProjectExceptionCodes.CONTRACTOR));
+        this.validateContractorName(contractorJobDto);
         this.validateContractorJobValue(contractorJobDto);
     }
 
     public void validateContractorExistence(Long contractorId) {
-        Cooperator cooperator = this.cooperatorRepository.load(contractorId);
-        assertNotNull(cooperator, createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.CONTRACTOR),
-                contractorId);
-        assertIsTrue(cooperator.getType().equals(CooperatorType.CONTRACTOR),
+        assertIsTrue(this.cooperatorQueryService.contractorWithIdExists(contractorId),
                 createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.CONTRACTOR), contractorId);
     }
 
     public void validateContractorJobOnProjectExistence(Long projectId, Long contractorJobId) {
-        assertNotNull(this.projectQueryService.getCooperatorJobOfTypeExistsOnProject(projectId, contractorJobId,
-                        CooperatorJobType.CONTRACTOR_JOB),
+        assertNotNull(this.projectQueryService.getContractorJobForProject(projectId, contractorJobId),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
                         ProjectExceptionCodes.CONTRACTOR_JOB), projectId, contractorJobId);
     }

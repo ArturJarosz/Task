@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("projects")
 public class InstallmentRestController {
 
-    private InstallmentApplicationService installmentApplicationService;
+    private final InstallmentApplicationService installmentApplicationService;
 
     public InstallmentRestController(InstallmentApplicationService installmentApplicationService) {
         this.installmentApplicationService = installmentApplicationService;

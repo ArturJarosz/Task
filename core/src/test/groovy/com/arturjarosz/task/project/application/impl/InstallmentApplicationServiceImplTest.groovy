@@ -179,7 +179,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
                 Project projectResult ->
                     Set<Stage> stagesFromProject = projectResult.getStages();
                     Installment installmentFromUpdate = stagesFromProject.iterator().next().getInstallment();
-                    installmentFromUpdate.getAmount().getValue().doubleValue() == NEW_VALUE;
+                    installmentFromUpdate.getAmount().getValue() == NEW_VALUE;
             });
     }
 
@@ -269,7 +269,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
     def "getInstallmentList should throw an exception if project with given id does not exist"() {
         given:
         when:
-            List<Installment> installments =
+            List<InstallmentDto> installments =
                     this.installmentApplicationService.getInstallmentList(NOT_EXISTING_PROJECT_ID);
         then:
             Exception exception = thrown();
@@ -279,7 +279,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
     def "getInstallmentList should return list of all installments for given project"() {
         given:
         when:
-            List<Installment> installments =
+            List<InstallmentDto> installments =
                     this.installmentApplicationService.getInstallmentList(EXISTING_PROJECT_WITH_INSTALLMENT_ID);
         then:
             noExceptionThrown();
