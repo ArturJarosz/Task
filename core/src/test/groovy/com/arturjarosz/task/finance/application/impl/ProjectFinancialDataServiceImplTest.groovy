@@ -1,5 +1,6 @@
 package com.arturjarosz.task.finance.application.impl
 
+import com.arturjarosz.task.finance.domain.PartialFinancialDataService
 import com.arturjarosz.task.finance.infrastructure.impl.FinancialDataRepositoryImpl
 import com.arturjarosz.task.finance.infrastructure.impl.ProjectFinancialDataRepositoryImpl
 import com.arturjarosz.task.finance.model.FinancialData
@@ -27,6 +28,8 @@ class ProjectFinancialDataServiceImplTest extends Specification {
     def projectValidator = Mock(ProjectValidator);
     def financialDataQueryService = Mock(FinancialDataQueryServiceImpl);
     def financialDataRepository = Mock(FinancialDataRepositoryImpl);
+    def partialFinancialDataService = Mock(PartialFinancialDataService);
+    List<PartialFinancialDataService> partialFinancialDataServices = Arrays.asList( partialFinancialDataService);
 
     def projectFinancialDataApplicationService = new ProjectFinancialDataServiceImpl
             (projectFinancialDataRepository, projectValidator, financialDataQueryService, financialDataRepository, partialFinancialDataServices);

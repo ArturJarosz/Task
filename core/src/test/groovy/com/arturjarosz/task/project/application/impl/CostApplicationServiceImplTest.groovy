@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application.impl
 
+import com.arturjarosz.task.finance.application.ProjectFinancialDataService
 import com.arturjarosz.task.project.application.CostValidator
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.CostDto
@@ -44,8 +45,10 @@ class CostApplicationServiceImplTest extends Specification {
 
     def costValidator = Mock(CostValidator);
 
+    def projectFinancialDataService = Mock(ProjectFinancialDataService);
+
     def projectCostApplicationService = new CostApplicationServiceImpl(costValidator, projectValidator,
-            projectRepository, projectQueryService, costPartialFinancialDataService);
+            projectRepository, projectQueryService, projectFinancialDataService);
 
     def "createCostShouldRunValidateProjectExistence"() {
         given:
