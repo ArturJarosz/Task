@@ -27,16 +27,16 @@
             <column name="BASE_INCOME_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="COMMISSIONS_NET_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+            <column name="CONTRACTORS_JOBS_NET_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="COMMISSIONS_GROSS_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+            <column name="CONTRACTORS_JOBS_GROSS_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="COMMISSIONS_VAT_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+            <column name="CONTRACTORS_JOBS_VAT_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
-            <column name="COMMISSIONS_INCOME_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+            <column name="CONTRACTORS_JOBS_INCOME_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
             <column name="COSTS_NET_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
@@ -49,6 +49,18 @@
                 <constraints nullable="false"/>
             </column>
             <column name="COSTS_INCOME_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SUPPLIES_JOBS_NET_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SUPPLIES_JOBS_GROSS_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SUPPLIES_JOBS_VAT_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SUPPLIES_JOBS_INCOME_TAX" type="${big_decimal.type}" defaultValueNumeric="0.0">
                 <constraints nullable="false"/>
             </column>
             <column name="TOTAL_NET_VALUE" type="${big_decimal.type}" defaultValueNumeric="0.0">

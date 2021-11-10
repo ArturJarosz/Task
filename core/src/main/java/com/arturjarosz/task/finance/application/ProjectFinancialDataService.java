@@ -17,4 +17,6 @@ public interface ProjectFinancialDataService {
      * @param supervisionId
      */
     void recalculateSupervision(Long supervisionId, Long supervisionFinancialData);
+
+    void recalculateProjectFinancialData(long projectId);
 }

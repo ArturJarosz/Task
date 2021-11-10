@@ -1,2 +1,4 @@
 user-preferences:
-  vat: 23
+  vatTax: 23
+  incomeTax: 18
+

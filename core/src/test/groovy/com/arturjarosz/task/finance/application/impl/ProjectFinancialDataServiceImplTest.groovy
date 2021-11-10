@@ -29,7 +29,7 @@ class ProjectFinancialDataServiceImplTest extends Specification {
     def financialDataRepository = Mock(FinancialDataRepositoryImpl);
 
     def projectFinancialDataApplicationService = new ProjectFinancialDataServiceImpl
-            (projectFinancialDataRepository, projectValidator, financialDataQueryService, financialDataRepository);
+            (projectFinancialDataRepository, projectValidator, financialDataQueryService, financialDataRepository, partialFinancialDataServices);
 
     def "createProjectFinancialData should call validateProjectExistence on projectValidator"() {
         given:

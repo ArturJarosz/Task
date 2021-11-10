@@ -1,5 +1,7 @@
 package com.arturjarosz.task.project.application.impl;
 
+import com.arturjarosz.task.finance.application.PartialFinancialDataProvider;
+import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.project.application.CostApplicationService;
 import com.arturjarosz.task.project.application.CostValidator;
 import com.arturjarosz.task.project.application.ProjectValidator;
@@ -20,22 +22,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationService
-public class CostApplicationServiceImpl implements CostApplicationService {
+public class CostApplicationServiceImpl implements CostApplicationService, PartialFinancialDataProvider {
 
     private final CostValidator costValidator;
     private final ProjectValidator projectValidator;
     private final ProjectRepository projectRepository;
     private final ProjectQueryService projectQueryService;
+    private final ProjectFinancialDataService projectFinancialDataService;
 
     @Autowired
-    public CostApplicationServiceImpl(CostValidator costValidator,
-                                      ProjectValidator projectValidator,
-                                      ProjectRepository projectRepository,
-                                      ProjectQueryService projectQueryService) {
+    public CostApplicationServiceImpl(CostValidator costValidator, ProjectValidator projectValidator,
+                                      ProjectRepository projectRepository, ProjectQueryService projectQueryService,
+                                      ProjectFinancialDataService projectFinancialDataService) {
         this.costValidator = costValidator;
         this.projectValidator = projectValidator;
         this.projectRepository = projectRepository;
         this.projectQueryService = projectQueryService;
+        this.projectFinancialDataService = projectFinancialDataService;
     }
 
     @Transactional
@@ -49,6 +52,7 @@ public class CostApplicationServiceImpl implements CostApplicationService {
         project = this.projectRepository.save(project);
         CostDto createdCostDto = CostDtoMapper.INSTANCE.costToCostDto(cost);
         createdCostDto.setId(this.getIdForCreatedCost(project, cost));
+        this.triggerProjectFinancialDataRecalculation(projectId);
         return createdCostDto;
     }
 
@@ -78,6 +82,7 @@ public class CostApplicationServiceImpl implements CostApplicationService {
         Project project = this.projectRepository.load(projectId);
         project.removeCost(costId);
         this.projectRepository.save(project);
+        this.triggerProjectFinancialDataRecalculation(projectId);
     }
 
     @Transactional
@@ -91,6 +96,7 @@ public class CostApplicationServiceImpl implements CostApplicationService {
                 .updateCost(costId, costDto.getName(), costDto.getDate(), costDto.getValue(), costDto.getCategory(),
                         costDto.getNote());
         this.projectRepository.save(project);
+        this.triggerProjectFinancialDataRecalculation(projectId);
         return CostDtoMapper.INSTANCE.costToCostDto(cost);
     }
 
@@ -99,5 +105,10 @@ public class CostApplicationServiceImpl implements CostApplicationService {
                 .filter(costOnProject -> costOnProject.equals(cost))
                 .map(AbstractEntity::getId)
                 .findFirst().orElse(null);
+    }
+
+    @Override
+    public void triggerProjectFinancialDataRecalculation(long projectId) {
+        this.projectFinancialDataService.recalculateProjectFinancialData(projectId);
     }
 }

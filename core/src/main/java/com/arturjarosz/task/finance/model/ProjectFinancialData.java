@@ -1,5 +1,6 @@
 package com.arturjarosz.task.finance.model;
 
+import com.arturjarosz.task.finance.application.dto.ProjectFinancialDataDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
@@ -33,20 +34,20 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
     private Money baseIncomeTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "COMMISSIONS_NET_VALUE", nullable = false))
-    private Money commissionsNetValue;
+    @AttributeOverride(name = "value", column = @Column(name = "CONTRACTORS_JOBS_NET_VALUE", nullable = false))
+    private Money contractorsJobsNetValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "COMMISSIONS_GROSS_VALUE", nullable = false))
-    private Money commissionsGrossValue;
+    @AttributeOverride(name = "value", column = @Column(name = "CONTRACTORS_JOBS_GROSS_VALUE", nullable = false))
+    private Money contractorsJobsGrossValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "COMMISSIONS_VAT_TAX", nullable = false))
-    private Money commissionsVatTax;
+    @AttributeOverride(name = "value", column = @Column(name = "CONTRACTORS_JOBS_VAT_TAX", nullable = false))
+    private Money contractorsJobsVatTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "COMMISSIONS_INCOME_TAX", nullable = false))
-    private Money commissionsIncomeTax;
+    @AttributeOverride(name = "value", column = @Column(name = "CONTRACTORS_JOBS_INCOME_TAX", nullable = false))
+    private Money contractorsJobsIncomeTax;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "COSTS_NET_VALUE", nullable = false))
@@ -63,6 +64,22 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "COSTS_INCOME_TAX", nullable = false))
     private Money costsIncomeTax;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_JOBS_NET_VALUE", nullable = false))
+    private Money suppliesNetValue;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_JOBS_GROSS_VALUE", nullable = false))
+    private Money suppliesGrossValue;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_JOBS_VAT_TAX", nullable = false))
+    private Money suppliesVatTax;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_JOBS_INCOME_TAX", nullable = false))
+    private Money suppliesIncomeTax;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "TOTAL_NET_VALUE", nullable = false))
@@ -92,23 +109,26 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
     }
 
     public void initiateProjectFinancialData() {
-        Money zeroValue = new Money(0);
-        this.baseGrossValue = zeroValue;
-        this.baseNetValue = zeroValue;
-        this.baseIncomeTax = zeroValue;
-        this.baseVatTax = zeroValue;
-        this.commissionsGrossValue = zeroValue;
-        this.commissionsNetValue = zeroValue;
-        this.commissionsIncomeTax = zeroValue;
-        this.commissionsVatTax = zeroValue;
-        this.costsGrossValue = zeroValue;
-        this.costsNetValue = zeroValue;
-        this.costsIncomeTax = zeroValue;
-        this.costsVatTax = zeroValue;
-        this.totalGrossValue = zeroValue;
-        this.totalNetValue = zeroValue;
-        this.totalIncomeTax = zeroValue;
-        this.totalVatTax = zeroValue;
+        this.baseGrossValue = new Money(0);
+        this.baseNetValue = new Money(0);
+        this.baseIncomeTax = new Money(0);
+        this.baseVatTax = new Money(0);
+        this.contractorsJobsGrossValue = new Money(0);
+        this.contractorsJobsNetValue = new Money(0);
+        this.contractorsJobsIncomeTax = new Money(0);
+        this.contractorsJobsVatTax = new Money(0);
+        this.costsGrossValue = new Money(0);
+        this.costsNetValue = new Money(0);
+        this.costsIncomeTax = new Money(0);
+        this.costsVatTax = new Money(0);
+        this.suppliesGrossValue = new Money(0);
+        this.suppliesNetValue = new Money(0);
+        this.suppliesVatTax = new Money(0);
+        this.suppliesIncomeTax = new Money(0);
+        this.totalGrossValue = new Money(0);
+        this.totalNetValue = new Money(0);
+        this.totalIncomeTax = new Money(0);
+        this.totalVatTax = new Money(0);
 
     }
 
@@ -116,129 +136,91 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
         return this.baseNetValue;
     }
 
-    public void setBaseNetValue(Money netValue) {
-        this.baseNetValue = netValue;
-    }
-
     public Money getBaseGrossValue() {
         return this.baseGrossValue;
-    }
-
-    public void setBaseGrossValue(Money grossValue) {
-        this.baseGrossValue = grossValue;
     }
 
     public Money getBaseVatTax() {
         return this.baseVatTax;
     }
 
-    public void setBaseVatTax(Money vatTax) {
-        this.baseVatTax = vatTax;
-    }
-
     public Money getBaseIncomeTax() {
         return this.baseIncomeTax;
     }
 
-    public void setBaseIncomeTax(Money incomeTax) {
-        this.baseIncomeTax = incomeTax;
+    public Money getContractorsJobsNetValue() {
+        return this.contractorsJobsNetValue;
     }
 
-    public Money getCommissionsNetValue() {
-        return this.commissionsNetValue;
+    public Money getContractorsJobsGrossValue() {
+        return this.contractorsJobsGrossValue;
     }
 
-    public void setCommissionsNetValue(Money commissionsNetValue) {
-        this.commissionsNetValue = commissionsNetValue;
+    public Money getContractorsJobsVatTax() {
+        return this.contractorsJobsVatTax;
     }
 
-    public Money getCommissionsGrossValue() {
-        return this.commissionsGrossValue;
+    public Money getContractorsJobsIncomeTax() {
+        return this.contractorsJobsIncomeTax;
     }
 
-    public void setCommissionsGrossValue(Money commissionsGrossValue) {
-        this.commissionsGrossValue = commissionsGrossValue;
-    }
-
-    public Money getCommissionsVatTax() {
-        return this.commissionsVatTax;
-    }
-
-    public void setCommissionsVatTax(Money commissionsVatTax) {
-        this.commissionsVatTax = commissionsVatTax;
-    }
-
-    public Money getCommissionsIncomeTax() {
-        return this.commissionsIncomeTax;
-    }
-
-    public void setCommissionsIncomeTax(Money commissionsIncomeTax) {
-        this.commissionsIncomeTax = commissionsIncomeTax;
-    }
 
     public Money getCostsNetValue() {
         return this.costsNetValue;
-    }
-
-    public void setCostsNetValue(Money costsNetValue) {
-        this.costsNetValue = costsNetValue;
     }
 
     public Money getCostsGrossValue() {
         return this.costsGrossValue;
     }
 
-    public void setCostsGrossValue(Money costsGrossValue) {
-        this.costsGrossValue = costsGrossValue;
-    }
-
     public Money getCostsVatTax() {
         return this.costsVatTax;
-    }
-
-    public void setCostsVatTax(Money costsVatTax) {
-        this.costsVatTax = costsVatTax;
     }
 
     public Money getCostsIncomeTax() {
         return this.costsIncomeTax;
     }
 
-    public void setCostsIncomeTax(Money costsIncomeTax) {
-        this.costsIncomeTax = costsIncomeTax;
-    }
 
     public Money getTotalNetValue() {
         return this.totalNetValue;
     }
 
-    public void setTotalNetValue(Money totalNetValue) {
-        this.totalNetValue = totalNetValue;
-    }
 
     public Money getTotalGrossValue() {
         return this.totalGrossValue;
     }
 
-    public void setTotalGrossValue(Money totalGrossValue) {
-        this.totalGrossValue = totalGrossValue;
-    }
 
     public Money getTotalVatTax() {
         return this.totalVatTax;
     }
 
-    public void setTotalVatTax(Money totalVatTax) {
-        this.totalVatTax = totalVatTax;
-    }
 
     public Money getTotalIncomeTax() {
         return this.totalIncomeTax;
     }
 
-    public void setTotalIncomeTax(Money totalIncomeTax) {
-        this.totalIncomeTax = totalIncomeTax;
+
+    public Money getSuppliesNetValue() {
+        return this.suppliesNetValue;
     }
+
+
+    public Money getSuppliesGrossValue() {
+        return this.suppliesGrossValue;
+    }
+
+
+    public Money getSuppliesVatTax() {
+        return this.suppliesVatTax;
+    }
+
+
+    public Money getSuppliesIncomeTax() {
+        return this.suppliesIncomeTax;
+    }
+
 
     public Long getProjectId() {
         return this.projectId;
@@ -247,4 +229,35 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
     }
+
+    public void updateWithPartcialData(ProjectFinancialDataDto projectFinancialDataDto) {
+        if (projectFinancialDataDto.getCostsValue() != null) {
+            this.costsGrossValue.setValue(projectFinancialDataDto.getCostsValue().getGrossValue());
+            this.costsNetValue.setValue(projectFinancialDataDto.getCostsValue().getNetValue());
+            this.costsIncomeTax.setValue(projectFinancialDataDto.getCostsValue().getIncomeTax());
+            this.costsVatTax.setValue(projectFinancialDataDto.getCostsValue().getVatTax());
+        }
+
+        if (projectFinancialDataDto.getContractorJobsValue() != null) {
+            this.contractorsJobsGrossValue.setValue(projectFinancialDataDto.getContractorJobsValue().getGrossValue());
+            this.contractorsJobsNetValue.setValue(projectFinancialDataDto.getContractorJobsValue().getNetValue());
+            this.contractorsJobsIncomeTax.setValue(projectFinancialDataDto.getContractorJobsValue().getIncomeTax());
+            this.contractorsJobsVatTax.setValue(projectFinancialDataDto.getContractorJobsValue().getVatTax());
+        }
+
+        if (projectFinancialDataDto.getSuppliesValue() != null) {
+            this.suppliesGrossValue.setValue(projectFinancialDataDto.getSuppliesValue().getGrossValue());
+            this.suppliesNetValue.setValue(projectFinancialDataDto.getSuppliesValue().getNetValue());
+            this.suppliesIncomeTax.setValue(projectFinancialDataDto.getSuppliesValue().getIncomeTax());
+            this.suppliesVatTax.setValue(projectFinancialDataDto.getSuppliesValue().getVatTax());
+        }
+
+        if (projectFinancialDataDto.getTotalProjectValue() != null) {
+            this.totalGrossValue.setValue(projectFinancialDataDto.getTotalProjectValue().getGrossValue());
+            this.totalNetValue.setValue(projectFinancialDataDto.getTotalProjectValue().getNetValue());
+            this.totalIncomeTax.setValue(projectFinancialDataDto.getTotalProjectValue().getIncomeTax());
+            this.totalVatTax.setValue(projectFinancialDataDto.getTotalProjectValue().getVatTax());
+        }
+    }
+
 }
