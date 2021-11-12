@@ -59,6 +59,13 @@ public class FinancialValueDto {
         this.vatTax = financialValueDto.getVatTax();
     }
 
+    public void addValues(FinancialValueDto financialValueDto){
+        this.netValue = this.netValue.add(financialValueDto.getNetValue());
+        this.grossValue = this.grossValue.add(financialValueDto.getGrossValue());
+        this.incomeTax = this.incomeTax.add(financialValueDto.getIncomeTax());
+        this.vatTax = this.vatTax.add(financialValueDto.getVatTax());
+    }
+
     public void addGross(BigDecimal value) {
         this.grossValue = this.grossValue.add(value);
     }

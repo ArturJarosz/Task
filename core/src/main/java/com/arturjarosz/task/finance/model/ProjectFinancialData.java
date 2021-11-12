@@ -66,19 +66,19 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
     private Money costsIncomeTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_JOBS_NET_VALUE", nullable = false))
+    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_NET_VALUE", nullable = false))
     private Money suppliesNetValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_JOBS_GROSS_VALUE", nullable = false))
+    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_GROSS_VALUE", nullable = false))
     private Money suppliesGrossValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_JOBS_VAT_TAX", nullable = false))
+    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_VAT_TAX", nullable = false))
     private Money suppliesVatTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_JOBS_INCOME_TAX", nullable = false))
+    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_INCOME_TAX", nullable = false))
     private Money suppliesIncomeTax;
 
     @Embedded
@@ -106,6 +106,7 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
 
     public ProjectFinancialData(Long projectId) {
         this.projectId = projectId;
+        this.initiateProjectFinancialData();
     }
 
     public void initiateProjectFinancialData() {
@@ -230,7 +231,7 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
         this.projectId = projectId;
     }
 
-    public void updateWithPartcialData(ProjectFinancialDataDto projectFinancialDataDto) {
+    public void updateWithPartialData(ProjectFinancialDataDto projectFinancialDataDto) {
         if (projectFinancialDataDto.getCostsValue() != null) {
             this.costsGrossValue.setValue(projectFinancialDataDto.getCostsValue().getGrossValue());
             this.costsNetValue.setValue(projectFinancialDataDto.getCostsValue().getNetValue());

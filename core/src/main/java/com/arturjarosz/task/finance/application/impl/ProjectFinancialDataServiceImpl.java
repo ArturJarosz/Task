@@ -1,6 +1,7 @@
 package com.arturjarosz.task.finance.application.impl;
 
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
+import com.arturjarosz.task.finance.application.dto.ProjectFinancialDataDto;
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService;
 import com.arturjarosz.task.finance.infrastructure.FinancialDataRepository;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
@@ -43,7 +44,6 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
     public ProjectFinancialData createProjectFinancialData(Long projectId) {
         this.projectValidator.validateProjectExistence(projectId);
         ProjectFinancialData projectFinancialData = new ProjectFinancialData(projectId);
-        projectFinancialData.initiateProjectFinancialData();
         projectFinancialData = this.projectFinancialDataRepository.save(projectFinancialData);
         return projectFinancialData;
     }
@@ -76,11 +76,16 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
 
     @Override
     public void recalculateProjectFinancialData(long projectId) {
-        ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.loadProjectFinancialDataWithProjectId(projectId);
+        ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.loadProjectFinancialDataWithProjectId(
+                projectId);
+        ProjectFinancialDataDto summedUpFinancialData = new ProjectFinancialDataDto();
         for (PartialFinancialDataService partialFinancialDataService : this.partialFinancialDataServices) {
-            projectFinancialData.updateWithPartcialData(
+            summedUpFinancialData.addFinancialValues(
                     partialFinancialDataService.providePartialFinancialData(projectFinancialData.getId()));
         }
+        projectFinancialData.updateWithPartialData(summedUpFinancialData);
         this.projectFinancialDataRepository.save(projectFinancialData);
     }
+
+
 }
