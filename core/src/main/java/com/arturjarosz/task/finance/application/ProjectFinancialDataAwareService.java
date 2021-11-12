@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.application;
 
-public interface PartialFinancialDataProvider {
+public interface ProjectFinancialDataAwareService {
 
     void triggerProjectFinancialDataRecalculation(long projectId);
 }

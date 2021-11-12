@@ -50,7 +50,7 @@ class CostApplicationServiceImplTest extends Specification {
     def projectCostApplicationService = new CostApplicationServiceImpl(costValidator, projectValidator,
             projectRepository, projectQueryService, projectFinancialDataService);
 
-    def "createCostShouldRunValidateProjectExistence"() {
+    def "createCost should run validateProjectExistence"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepository();
@@ -61,7 +61,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.projectValidator.validateProjectExistence(_);
     }
 
-    def "createCostShouldRunValidateCostDto"() {
+    def "createCost should run ValidateCostDto"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepository();
@@ -72,7 +72,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.costValidator.validateCostDto(_);
     }
 
-    def "createCostShouldCallSaveOnProjectRepository"() {
+    def "createCost should call save on projectRepository"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepository();
@@ -83,7 +83,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.save(_) >> this.prepareProjectWithCost();
     }
 
-    def "createCostShouldAddCostToProject"() {
+    def "createCost should add cost to project"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepository();
@@ -97,7 +97,18 @@ class CostApplicationServiceImplTest extends Specification {
             }) >> this.prepareProjectWithCost();
     }
 
-    def "getCostShouldCallValidateCostExistence"() {
+    def "createCost should call projectFinancialDataRecalculation"() {
+        given:
+            this.mockProjectQueryService();
+            this.mockProjectRepository();
+            CostDto costDto = this.prepareCostDto();
+        when:
+            this.projectCostApplicationService.createCost(EXISTING_PROJECT_ID, costDto);
+        then:
+            1 * this.projectFinancialDataService.recalculateProjectFinancialData(EXISTING_PROJECT_ID);
+    }
+
+    def "getCost should call validateCostExistence"() {
         given:
             this.mockProjectQueryService();
         when:
@@ -106,7 +117,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.costValidator.validateCostExistence(_, _);
     }
 
-    def "getCostsShouldCallValidateProjectExistence"() {
+    def "getCosts should call validateProjectExistence"() {
         given:
             this.mockProjectRepositoryForProjectWithCost()
         when:
@@ -115,7 +126,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_COST_ID);
     }
 
-    def "getCostsShouldReturnListOfProjectCosts"() {
+    def "getCosts should return list of projectCosts"() {
         given:
             this.mockProjectRepositoryForProjectWithCost()
         when:
@@ -124,7 +135,7 @@ class CostApplicationServiceImplTest extends Specification {
             costDtos.size() == 1;
     }
 
-    def "deleteCostShouldCallValidateProjectExistence"() {
+    def "deleteCost should call validate projectExistence"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepositoryForProjectWithCost()
@@ -134,7 +145,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_COST_ID);
     }
 
-    def "deleteCostShouldCallValidateCostExistence"() {
+    def "deleteCost should call validateCostExistence"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepositoryForProjectWithCost()
@@ -144,7 +155,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.costValidator.validateCostExistence(COST_ID);
     }
 
-    def "deleteCostShouldCallSaveOnProjectRepository"() {
+    def "deleteCost should call save on projectRepository"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepositoryForProjectWithCost()
@@ -154,7 +165,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.save(_);
     }
 
-    def "deleteCostShouldRemoveCostFromProject"() {
+    def "deleteCost should remove cost from project"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepositoryForProjectWithCost()
@@ -167,7 +178,17 @@ class CostApplicationServiceImplTest extends Specification {
             });
     }
 
-    def "updateCostShouldCallValidateProjectExistence"() {
+    def "deleteCost should trigger projectFinancialData recalculation"() {
+        given:
+            this.mockProjectQueryService();
+            this.mockProjectRepositoryForProjectWithCost()
+        when:
+            this.projectCostApplicationService.deleteCost(PROJECT_WITH_COST_ID, COST_ID);
+        then:
+            1 * this.projectFinancialDataService.recalculateProjectFinancialData(PROJECT_WITH_COST_ID);
+    }
+
+    def "updateCost should call validateProjectExistence"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepositoryForProjectWithCost();
@@ -178,7 +199,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_COST_ID);
     }
 
-    def "updateCostShouldCallValidateCostExistence"() {
+    def "updateCost should call validateCostExistence"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepositoryForProjectWithCost();
@@ -189,7 +210,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.costValidator.validateCostExistence(COST_ID);
     }
 
-    def "updateCostShouldCallValidateUpdateCostDto"() {
+    def "update cost should call validateUpdateCostDto"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepositoryForProjectWithCost();
@@ -200,7 +221,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.costValidator.validateUpdateCostDto(_);
     }
 
-    def "updateCostShouldCallSaveOnProjectRepository"() {
+    def "updateCost should call save on projectRepository"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepositoryForProjectWithCost();
@@ -211,7 +232,7 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.save(_);
     }
 
-    def "updateCostShouldUpdateCostData"() {
+    def "update cost should update cost data"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepositoryForProjectWithCost();
@@ -227,6 +248,17 @@ class CostApplicationServiceImplTest extends Specification {
                     cost.getNote() == NEW_NOTE;
                     cost.getDate() == NEW_DATE;
             });
+    }
+
+    def "update cost should trigger projectFinancialData recalculate"() {
+        given:
+            this.mockProjectQueryService();
+            this.mockProjectRepositoryForProjectWithCost();
+            CostDto costDto = this.prepareUpdateCostDto()
+        when:
+            this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto);
+        then:
+            1 * this.projectFinancialDataService.recalculateProjectFinancialData(PROJECT_WITH_COST_ID);
     }
 
     private CostDto prepareUpdateCostDto() {

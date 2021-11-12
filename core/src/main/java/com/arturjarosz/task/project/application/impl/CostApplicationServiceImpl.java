@@ -1,6 +1,6 @@
 package com.arturjarosz.task.project.application.impl;
 
-import com.arturjarosz.task.finance.application.PartialFinancialDataProvider;
+import com.arturjarosz.task.finance.application.ProjectFinancialDataAwareService;
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.project.application.CostApplicationService;
 import com.arturjarosz.task.project.application.CostValidator;
@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationService
-public class CostApplicationServiceImpl implements CostApplicationService, PartialFinancialDataProvider {
+public class CostApplicationServiceImpl implements CostApplicationService, ProjectFinancialDataAwareService {
 
     private final CostValidator costValidator;
     private final ProjectValidator projectValidator;
