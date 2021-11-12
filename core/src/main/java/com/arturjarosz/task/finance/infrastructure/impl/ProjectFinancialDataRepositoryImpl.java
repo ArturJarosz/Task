@@ -15,4 +15,12 @@ public class ProjectFinancialDataRepositoryImpl extends GenericJpaRepositoryImpl
     public ProjectFinancialDataRepositoryImpl() {
         super(PROJECT_FINANCIAL_DATA);
     }
+
+    @Override
+    public ProjectFinancialData loadProjectFinancialDataWithProjectId(long projectId) {
+        return this.queryFromAggregateRoot()
+                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
+                .select(PROJECT_FINANCIAL_DATA)
+                .fetchOne();
+    }
 }

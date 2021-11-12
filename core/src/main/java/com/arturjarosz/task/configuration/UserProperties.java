@@ -8,14 +8,23 @@ import org.springframework.context.annotation.PropertySource;
 @ConfigurationProperties(prefix = "user-preferences")
 @Configuration
 public class UserProperties {
-    String vat;
+    Double vatTax;
+    Double incomeTax;
 
-    public String getVat() {
-        return this.vat;
+    public Double getVatTax() {
+        return this.vatTax;
     }
 
-    public void setVat(String vat) {
-        this.vat = vat;
+    public void setVatTax(Double vatTax) {
+        this.vatTax = vatTax;
+    }
+
+    public Double getIncomeTax() {
+        return this.incomeTax;
+    }
+
+    public void setIncomeTax(Double incomeTax) {
+        this.incomeTax = incomeTax;
     }
 }
 
