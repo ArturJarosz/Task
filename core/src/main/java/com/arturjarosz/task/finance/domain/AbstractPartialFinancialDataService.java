@@ -3,7 +3,6 @@ package com.arturjarosz.task.finance.domain;
 import com.arturjarosz.task.configuration.UserProperties;
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
-import org.apache.logging.log4j.core.util.Integers;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -23,12 +22,13 @@ public abstract class AbstractPartialFinancialDataService {
         FinancialValueDto summedUpFinancialValueDto = new FinancialValueDto();
         summedUpFinancialValueDto.copyValues(financialValueDto);
 
-        int withVatValue = 1 + Integers.parseInt(this.userProperties.getVatTax());
+        double withVatValue = 1 + this.userProperties.getVatTax();
 
         for (FinancialDataDto financialDataDto : objectsFinancialDataDtos) {
             summedUpFinancialValueDto.addGross(financialDataDto.getValue());
             if (financialDataDto.isHasInvoice()) {
-                BigDecimal netValue = financialDataDto.getValue().divide(BigDecimal.valueOf(withVatValue), 2, RoundingMode.HALF_UP);
+                BigDecimal netValue = financialDataDto.getValue()
+                        .divide(BigDecimal.valueOf(withVatValue), 2, RoundingMode.HALF_UP);
                 BigDecimal vatTaxValue = financialDataDto.getValue().subtract(netValue)
                         .setScale(2, RoundingMode.HALF_UP);
                 BigDecimal incomeTaxValue = netValue.multiply(new BigDecimal(this.userProperties.getIncomeTax()))

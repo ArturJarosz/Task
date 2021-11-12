@@ -13,17 +13,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @DomainService
-public class CostPartialFinancialDataServiceImpl extends AbstractPartialFinancialDataService implements PartialFinancialDataService {
+public class CostFinancialDataServiceImpl extends AbstractPartialFinancialDataService implements PartialFinancialDataService {
 
     private final FinancialDataQueryService financialDataQueryService;
-    private final UserProperties userProperties;
 
     @Autowired
-    public CostPartialFinancialDataServiceImpl(FinancialDataQueryService financialDataQueryService,
-                                               UserProperties userProperties) {
+    public CostFinancialDataServiceImpl(FinancialDataQueryService financialDataQueryService,
+                                        UserProperties userProperties) {
         super(userProperties);
         this.financialDataQueryService = financialDataQueryService;
-        this.userProperties = userProperties;
     }
 
     @Override

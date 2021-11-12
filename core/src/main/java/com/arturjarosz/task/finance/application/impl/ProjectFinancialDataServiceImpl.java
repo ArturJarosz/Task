@@ -82,6 +82,5 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
                     partialFinancialDataService.providePartialFinancialData(projectFinancialData.getId()));
         }
         this.projectFinancialDataRepository.save(projectFinancialData);
-
     }
 }

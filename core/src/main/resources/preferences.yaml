@@ -1,4 +1,4 @@
 user-preferences:
-  vatTax: 23
-  incomeTax: 18
+  vatTax: 0.23
+  incomeTax: 0.18
 
