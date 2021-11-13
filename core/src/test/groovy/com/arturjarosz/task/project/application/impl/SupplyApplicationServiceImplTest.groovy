@@ -1,5 +1,7 @@
 package com.arturjarosz.task.project.application.impl
 
+
+import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.SupplyValidator
 import com.arturjarosz.task.project.application.dto.SupplyDto
@@ -29,8 +31,10 @@ class SupplyApplicationServiceImplTest extends Specification {
     def projectRepository = Mock(ProjectRepositoryImpl)
     def projectValidator = Mock(ProjectValidator);
     def supplyValidator = Mock(SupplyValidator);
+    def projectFinancialDataService = Mock(ProjectFinancialDataServiceImpl);
 
-    def supplyApplicationService = new SupplyApplicationServiceImpl(projectQueryService, projectRepository,
+    def supplyApplicationService = new SupplyApplicationServiceImpl(projectFinancialDataService, projectQueryService,
+            projectRepository,
             projectValidator, supplyValidator);
 
     def "createSupply should validate project existence"() {
@@ -76,6 +80,16 @@ class SupplyApplicationServiceImplTest extends Specification {
             })
     }
 
+    def "createSupply should trigger projectFinancialData recalculation"() {
+        given:
+            mockProjectRepositoryLoad();
+            SupplyDto supplyDto = prepareCreateSupplyDto()
+        when:
+            this.supplyApplicationService.createSupply(PROJECT_ID, supplyDto);
+        then:
+            1 * this.projectFinancialDataService.recalculateProjectFinancialData(PROJECT_ID);
+    }
+
     def "updateSupply should validate project existence"() {
         given:
             mockProjectRepositoryLoadWithSupply();
@@ -118,6 +132,16 @@ class SupplyApplicationServiceImplTest extends Specification {
             updatedSupply.getValue() == NEW_VALUE;
             updatedSupply.getHasInvoice() == NEW_HAS_INVOICE;
             updatedSupply.getPayable() == NEW_PAYABLE;
+    }
+
+    def "updateSupply should trigger projectFinancialData recalculation"() {
+        given:
+            mockProjectRepositoryLoadWithSupply();
+            SupplyDto supplyDto = prepareUpdateSupplyDto()
+        when:
+            SupplyDto updatedSupply = this.supplyApplicationService.updateSupply(PROJECT_ID, SUPPLY_ID, supplyDto);
+        then:
+            1 * this.projectFinancialDataService.recalculateProjectFinancialData(PROJECT_ID);
     }
 
     def "getSupply should validate project existence"() {
@@ -172,6 +196,15 @@ class SupplyApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.save({ Project project ->
                 project.getSupplies().size() == 0;
             });
+    }
+
+    def "deleteSupply should trigger projectFinancialData recalculation"() {
+        given:
+            mockProjectRepositoryLoadWithSupply();
+        when:
+            this.supplyApplicationService.deleteSupply(PROJECT_ID, SUPPLY_ID);
+        then:
+            1 * this.projectFinancialDataService.recalculateProjectFinancialData(PROJECT_ID);
     }
 
     private static SupplyDto prepareCreateSupplyDto() {

@@ -153,7 +153,7 @@ class ProjectDomainServiceImplTest extends Specification {
             1 * project.finishProject(_);
     }
 
-    @Ignore
+    @Ignore //TODO TA-194: analyze finishing project
     def "finishProject should call completeWork on projectStatusTransitionService"() {
         given:
             Project project = this.prepareProjectInProgressWithStatus();
@@ -164,7 +164,7 @@ class ProjectDomainServiceImplTest extends Specification {
             1 * projectStatusTransitionService.completeWork(_ as Project);
     }
 
-    @Ignore
+    @Ignore //TODO TA-194: analyze finishing project
     def "finishProject should changeProject status to Completed"() {
         given:
             Project project = this.prepareProjectInProgressWithStatus();
