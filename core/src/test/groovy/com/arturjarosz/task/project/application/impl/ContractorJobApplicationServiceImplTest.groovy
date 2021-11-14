@@ -102,6 +102,16 @@ class ContractorJobApplicationServiceImplTest extends Specification {
             });
     }
 
+    def "createContractorJob should call onCreate on projectFinanceAwareObjectService"() {
+        given:
+            this.mockProjectRepositoryWithProjectWithoutCooperatorJobs();
+            ContractorJobDto contractorJobDto = this.prepareContractorJobDto();
+        when:
+            this.contractorJobApplicationService.createContractorJob(PROJECT_ID, contractorJobDto);
+        then:
+            1 * this.projectFinanceAwareObjectService.onCreate(PROJECT_ID);
+    }
+
     def "deleteContractorJob should call validateProjectExistence on projectValidator"() {
         given:
             this.mockProjectRepositoryWithProjectWithContractorJobs();
@@ -153,6 +163,16 @@ class ContractorJobApplicationServiceImplTest extends Specification {
                 Project project ->
                     project.getContractorJobs().size() == 0;
             });
+    }
+
+    def "deleteContractorJob should call onRemove on projectFinanceAwareObjectService"() {
+        given:
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
+        when:
+            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
+                    EXISTING_CONTRACTOR_JOB_ID);
+        then:
+            1 * this.projectFinanceAwareObjectService.onRemove(PROJECT_WITH_CONTRACTOR_JOB_ID);
     }
 
     def "updateContractorJob should call validateProjectExistence on project validator"() {
@@ -221,6 +241,17 @@ class ContractorJobApplicationServiceImplTest extends Specification {
             updatedContractorJobDto.getName() == NEW_NAME;
             updatedContractorJobDto.getValue() == NEW_VALUE;
             updatedContractorJobDto.getNote() == NEW_NOTE;
+    }
+
+    def "updateContractorJob should call onUpdate on projectFinanceAwareObjectService"() {
+        given:
+            this.mockProjectRepositoryWithProjectWithContractorJobs();
+            ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate();
+        when:
+            ContractorJobDto updatedContractorJobDto = this.contractorJobApplicationService
+                    .updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID, contractorJobDto);
+        then:
+            1 * this.projectFinanceAwareObjectService.onUpdate(PROJECT_WITH_CONTRACTOR_JOB_ID);
     }
 
     def "getContractorJob should call validateProjectExistence on projectRepository"() {
