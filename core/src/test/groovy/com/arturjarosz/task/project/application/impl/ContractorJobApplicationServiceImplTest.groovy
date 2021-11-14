@@ -33,6 +33,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def projectValidator = Mock(ProjectValidator);
 
     def contractorJobApplicationService = new ContractorJobApplicationServiceImpl(contractorJobValidator,
+            projectFinancialDataService,
             projectQueryService, projectRepository, projectValidator);
 
     def "createContractorJob should call validateProjectExistence on projectValidator"() {

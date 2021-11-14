@@ -48,7 +48,7 @@ class CostApplicationServiceImplTest extends Specification {
     def projectFinancialDataService = Mock(ProjectFinancialDataService);
 
     def projectCostApplicationService = new CostApplicationServiceImpl(costValidator, projectValidator,
-            projectRepository, projectQueryService, projectFinancialDataService);
+            projectRepository, projectQueryService, projectFinanceAwareObjectService);
 
     def "createCost should run validateProjectExistence"() {
         given:

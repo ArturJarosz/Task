@@ -1,7 +1,6 @@
 package com.arturjarosz.task.project.application.impl;
 
-import com.arturjarosz.task.finance.application.ProjectFinancialDataAwareService;
-import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
+import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.SupplyApplicationService;
 import com.arturjarosz.task.project.application.SupplyValidator;
@@ -19,20 +18,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.transaction.Transactional;
 
 @ApplicationService
-public class SupplyApplicationServiceImpl implements SupplyApplicationService, ProjectFinancialDataAwareService {
+public class SupplyApplicationServiceImpl implements SupplyApplicationService {
     private static final Logger LOG = LoggerFactory.getLogger(SupplyApplicationServiceImpl.class);
 
-    private final ProjectFinancialDataService projectFinancialDataService;
+    private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
     private final ProjectQueryService projectQueryService;
     private final ProjectRepository projectRepository;
     private final ProjectValidator projectValidator;
     private final SupplyValidator supplyValidator;
 
     @Autowired
-    public SupplyApplicationServiceImpl(ProjectFinancialDataService projectFinancialDataService, ProjectQueryService projectQueryService,
-                                        ProjectRepository projectRepository, ProjectValidator projectValidator,
-                                        SupplyValidator supplyValidator) {
-        this.projectFinancialDataService = projectFinancialDataService;
+    public SupplyApplicationServiceImpl(ProjectFinanceAwareObjectService projectFinanceAwareObjectService,
+                                        ProjectQueryService projectQueryService, ProjectRepository projectRepository,
+                                        ProjectValidator projectValidator, SupplyValidator supplyValidator) {
+        this.projectFinanceAwareObjectService = projectFinanceAwareObjectService;
         this.projectQueryService = projectQueryService;
         this.projectRepository = projectRepository;
         this.projectValidator = projectValidator;
@@ -51,7 +50,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService, P
         Supply supply = SupplyDtoMapper.INSTANCE.supplyDtoToSupply(supplyDto);
         project.addSupply(supply);
         this.projectRepository.save(project);
-        this.triggerProjectFinancialDataRecalculation(projectId);
+        this.projectFinanceAwareObjectService.onCreate(projectId);
         LOG.debug("Supply for Project with id {} created", projectId);
         SupplyDto createdSupplyDto = SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply, projectId);
         createdSupplyDto.setId(this.getCreatedSupply(project, supply).getId());
@@ -68,7 +67,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService, P
         this.supplyValidator.validateUpdateSupplyDto(supplyDto);
         Project project = this.projectRepository.load(projectId);
         Supply supply = project.updateSupply(supplyId, supplyDto);
-        this.triggerProjectFinancialDataRecalculation(projectId);
+        this.projectFinanceAwareObjectService.onUpdate(projectId);
 
         LOG.debug("Supply with id {} updated", supplyId);
         return SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply, projectId);
@@ -91,7 +90,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService, P
         Project project = this.projectRepository.load(projectId);
         project.removeSupply(supplyId);
         this.projectRepository.save(project);
-        this.triggerProjectFinancialDataRecalculation(projectId);
+        this.projectFinanceAwareObjectService.onRemove(projectId);
         LOG.debug("Supply with id {} for Project with id {} removed.", supplyId, projectId);
     }
 
@@ -99,10 +98,5 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService, P
         return project.getSupplies().stream()
                 .filter(supplyOnProject -> (supplyOnProject).equals(supply)).findFirst()
                 .orElse(null);
-    }
-
-    @Override
-    public void triggerProjectFinancialDataRecalculation(long projectId) {
-        this.projectFinancialDataService.recalculateProjectFinancialData(projectId);
     }
 }

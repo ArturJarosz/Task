@@ -3,10 +3,12 @@ package com.arturjarosz.task.project.model;
 import com.arturjarosz.task.finance.model.FinancialData;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
+import org.hibernate.annotations.DiscriminatorOptions;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -19,8 +21,9 @@ import java.math.BigDecimal;
 
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TYPE")
-public class CooperatorJob extends AbstractEntity {
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorOptions(force = true)
+public abstract class CooperatorJob extends AbstractEntity {
     private static final long serialVersionUID = -2817735161319438104L;
 
     @Column(name = "NAME", nullable = false)

@@ -8,7 +8,10 @@ import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @Component
 public class ContractorJobValidator {
@@ -38,7 +41,7 @@ public class ContractorJobValidator {
     }
 
     public void validateContractorJobOnProjectExistence(Long projectId, Long contractorJobId) {
-        assertNotNull(this.projectQueryService.getContractorJobForProject(projectId, contractorJobId),
+        assertNotNull(this.projectQueryService.getContractorJobForProject(contractorJobId, projectId),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
                         ProjectExceptionCodes.CONTRACTOR_JOB), projectId, contractorJobId);
     }

@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application.impl;
 
+import com.arturjarosz.task.finance.application.impl.ProjectFinanceAwareObjectServiceImpl;
 import com.arturjarosz.task.project.application.ContractorJobApplicationService;
 import com.arturjarosz.task.project.application.ContractorJobValidator;
 import com.arturjarosz.task.project.application.ProjectValidator;
@@ -20,16 +21,18 @@ import javax.transaction.Transactional;
 public class ContractorJobApplicationServiceImpl implements ContractorJobApplicationService {
     private static final Logger LOG = LoggerFactory.getLogger(ContractorJobApplicationServiceImpl.class);
     private final ContractorJobValidator contractorJobValidator;
+    private final ProjectFinanceAwareObjectServiceImpl projectFinanceAwareObjectService;
     private final ProjectQueryService projectQueryService;
     private final ProjectRepository projectRepository;
     private final ProjectValidator projectValidator;
 
     @Autowired
     public ContractorJobApplicationServiceImpl(ContractorJobValidator contractorJobValidator,
+                                               ProjectFinanceAwareObjectServiceImpl projectFinanceAwareObjectService,
                                                ProjectQueryService projectQueryService,
-                                               ProjectRepository projectRepository,
-                                               ProjectValidator projectValidator) {
+                                               ProjectRepository projectRepository, ProjectValidator projectValidator) {
         this.contractorJobValidator = contractorJobValidator;
+        this.projectFinanceAwareObjectService = projectFinanceAwareObjectService;
         this.projectQueryService = projectQueryService;
         this.projectRepository = projectRepository;
         this.projectValidator = projectValidator;
@@ -47,6 +50,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         ContractorJob contractorJob = ContractorJobDtoMapper.INSTANCE.contractorJobDtoToContractorJob(contractorJobDto);
         project.addContractorJob(contractorJob);
         this.projectRepository.save(project);
+        this.projectFinanceAwareObjectService.onCreate(projectId);
         LOG.debug("ContractorJob for Project with id {} created", projectId);
         ContractorJobDto createdContractorJobDto = ContractorJobDtoMapper.INSTANCE.contractorJobToContractorJobDto(
                 contractorJob, projectId);
@@ -66,9 +70,10 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         Project project = this.projectRepository.load(projectId);
         ContractorJob contractorJob = project.updateContractorJob(contractorJobId, contractorJobDto);
         this.projectRepository.save(project);
+        this.projectFinanceAwareObjectService.onUpdate(projectId);
 
         LOG.debug("ContractorJob with id {} updated on Project with id {}", contractorJobId, projectId);
-        return ContractorJobDtoMapper.INSTANCE.contractorJobToContractorJobDto(contractorJob);
+        return ContractorJobDtoMapper.INSTANCE.contractorJobToContractorJobDto(contractorJob, projectId);
     }
 
     @Override
@@ -88,6 +93,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         Project project = this.projectRepository.load(projectId);
         project.removeContractorJob(contractorJobId);
         this.projectRepository.save(project);
+        this.projectFinanceAwareObjectService.onRemove(projectId);
         LOG.debug("ContractorJob with id {} removed from Project with id {}", contractorJobId, projectId);
     }
 

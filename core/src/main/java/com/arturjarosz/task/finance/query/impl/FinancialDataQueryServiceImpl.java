@@ -5,6 +5,9 @@ import com.arturjarosz.task.finance.model.QFinancialData;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
+import com.arturjarosz.task.project.model.CooperatorJobType;
+import com.arturjarosz.task.project.model.QContractorJob;
+import com.arturjarosz.task.project.model.QCooperatorJob;
 import com.arturjarosz.task.project.model.QCost;
 import com.arturjarosz.task.project.model.QProject;
 import com.arturjarosz.task.project.model.QSupply;
@@ -19,6 +22,8 @@ import java.util.List;
 
 @Finder
 public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinancialData> implements FinancialDataQueryService {
+    private static final QCooperatorJob COOPERATOR_JOB = QCooperatorJob.cooperatorJob;
+    private static final QContractorJob CONTRACTOR_JOB = QContractorJob.contractorJob;
     private static final QCost COST = QCost.cost;
     private static final QFinancialData FINANCIAL_DATA = QFinancialData.financialData;
     private static final QProject PROJECT = QProject.project;
@@ -57,9 +62,20 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
 
     @Override
     public List<FinancialDataDto> getSuppliesFinancialData(long projectId) {
-        JPAQuery<?> suppliesFinancialDataQuery = this.query().from(PROJECT).join(PROJECT.supplies, SUPPLY)
-                .join(SUPPLY.financialData, FINANCIAL_DATA).where(PROJECT.id.eq(projectId));
+        JPAQuery<?> suppliesFinancialDataQuery = this.query().from(PROJECT)
+                .join(PROJECT.supplies, SUPPLY)
+                .join(SUPPLY.financialData, FINANCIAL_DATA)
+                .where(PROJECT.id.eq(projectId).and(SUPPLY.type.eq(CooperatorJobType.SUPPLY)));
         return this.getFinancialDataForFinancialDataAwareObjects(suppliesFinancialDataQuery);
+    }
+
+    @Override
+    public List<FinancialDataDto> getContractorsJobsFinancialData(long projectId) {
+        JPAQuery<?> contractorsJobsFinancialDataQuery = this.query().from(PROJECT)
+                .join(PROJECT.contractorJobs, CONTRACTOR_JOB)
+                .join(CONTRACTOR_JOB.financialData, FINANCIAL_DATA)
+                .where(PROJECT.id.eq(projectId).and(CONTRACTOR_JOB.type.eq(CooperatorJobType.CONTRACTOR_JOB)));
+        return this.getFinancialDataForFinancialDataAwareObjects(contractorsJobsFinancialDataQuery);
     }
 
     private List<FinancialDataDto> getFinancialDataForFinancialDataAwareObjects(JPAQuery<?> jpaQuery) {

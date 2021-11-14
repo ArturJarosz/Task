@@ -13,24 +13,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @DomainService
-public class SupplyFinancialDataServiceImpl extends AbstractPartialFinancialDataService implements PartialFinancialDataService {
+public class ContractorJobFinancialDataServiceImpl extends AbstractPartialFinancialDataService implements PartialFinancialDataService {
 
     private final FinancialDataQueryService financialDataQueryService;
 
     @Autowired
-    public SupplyFinancialDataServiceImpl(FinancialDataQueryService financialDataQueryService,
-                                          UserProperties userProperties) {
+    public ContractorJobFinancialDataServiceImpl(FinancialDataQueryService financialDataQueryService,
+                                                 UserProperties userProperties) {
         super(userProperties);
         this.financialDataQueryService = financialDataQueryService;
     }
 
     @Override
     public ProjectFinancialDataDto providePartialFinancialData(long projectId) {
-        List<FinancialDataDto> supplyFinancialData = this.financialDataQueryService.getSuppliesFinancialData(projectId);
-        FinancialValueDto suppliesFinancialValue = new FinancialValueDto();
-        suppliesFinancialValue = this.recalculateFinancialData(suppliesFinancialValue, supplyFinancialData);
+        List<FinancialDataDto> contractorsJobsFinancialData = this.financialDataQueryService.getContractorsJobsFinancialData(projectId);
+        FinancialValueDto contractorsJobsFinancialValue = new FinancialValueDto();
+        contractorsJobsFinancialValue = this.recalculateFinancialData(contractorsJobsFinancialValue, contractorsJobsFinancialData);
         ProjectFinancialDataDto projectFinancialDataDto = new ProjectFinancialDataDto();
-        projectFinancialDataDto.setSuppliesValue(suppliesFinancialValue);
+        projectFinancialDataDto.setContractorJobsValue(contractorsJobsFinancialValue);
+
         return projectFinancialDataDto;
     }
 }

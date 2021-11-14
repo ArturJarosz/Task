@@ -19,4 +19,6 @@ public interface FinancialDataQueryService {
     List<FinancialDataDto> getCostsFinancialData(long projectId);
 
     List<FinancialDataDto> getSuppliesFinancialData(long projectId);
+
+    List<FinancialDataDto> getContractorsJobsFinancialData(long projectId);
 }

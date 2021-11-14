@@ -33,7 +33,8 @@ class SupplyApplicationServiceImplTest extends Specification {
     def supplyValidator = Mock(SupplyValidator);
     def projectFinancialDataService = Mock(ProjectFinancialDataServiceImpl);
 
-    def supplyApplicationService = new SupplyApplicationServiceImpl(projectFinancialDataService, projectQueryService,
+    def supplyApplicationService = new SupplyApplicationServiceImpl(projectFinanceAwareObjectService,
+            projectQueryService,
             projectRepository,
             projectValidator, supplyValidator);
 
