@@ -1,5 +1,7 @@
 package com.arturjarosz.task.project.application.impl
 
+
+import com.arturjarosz.task.finance.application.impl.ProjectFinanceAwareObjectServiceImpl
 import com.arturjarosz.task.project.application.ContractorJobValidator
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.ContractorJobDto
@@ -28,12 +30,13 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     private static final String PROJECT_NAME = "project name";
 
     def contractorJobValidator = Mock(ContractorJobValidator);
+    def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectServiceImpl);
     def projectQueryService = Mock(ProjectQueryServiceImpl);
     def projectRepository = Mock(ProjectRepositoryImpl);
     def projectValidator = Mock(ProjectValidator);
 
     def contractorJobApplicationService = new ContractorJobApplicationServiceImpl(contractorJobValidator,
-            projectFinancialDataService,
+            projectFinanceAwareObjectService,
             projectQueryService, projectRepository, projectValidator);
 
     def "createContractorJob should call validateProjectExistence on projectValidator"() {
@@ -313,7 +316,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         ContractorJobDto contractorJobDto = this.prepareContractorJobDto();
         contractorJobDto.setId(EXISTING_CONTRACTOR_JOB_ID);
         this.projectQueryService.getContractorJobForProject(EXISTING_CONTRACTOR_JOB_ID,
-                PROJECT_WITH_CONTRACTOR_JOB_ID) >> contractorJobDto ;
+                PROJECT_WITH_CONTRACTOR_JOB_ID) >> contractorJobDto;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.arturjarosz.task.project.application.impl
 
-
+import com.arturjarosz.task.finance.application.impl.ProjectFinanceAwareObjectServiceImpl
 import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.SupplyValidator
@@ -32,6 +32,7 @@ class SupplyApplicationServiceImplTest extends Specification {
     def projectValidator = Mock(ProjectValidator);
     def supplyValidator = Mock(SupplyValidator);
     def projectFinancialDataService = Mock(ProjectFinancialDataServiceImpl);
+    def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectServiceImpl);
 
     def supplyApplicationService = new SupplyApplicationServiceImpl(projectFinanceAwareObjectService,
             projectQueryService,
@@ -81,14 +82,14 @@ class SupplyApplicationServiceImplTest extends Specification {
             })
     }
 
-    def "createSupply should trigger projectFinancialData recalculation"() {
+    def "createSupply should call onCreate on projectFinanceAwareObjectService"() {
         given:
             mockProjectRepositoryLoad();
             SupplyDto supplyDto = prepareCreateSupplyDto()
         when:
             this.supplyApplicationService.createSupply(PROJECT_ID, supplyDto);
         then:
-            1 * this.projectFinancialDataService.recalculateProjectFinancialData(PROJECT_ID);
+            1 * this.projectFinanceAwareObjectService.onCreate(PROJECT_ID);
     }
 
     def "updateSupply should validate project existence"() {
@@ -135,14 +136,14 @@ class SupplyApplicationServiceImplTest extends Specification {
             updatedSupply.getPayable() == NEW_PAYABLE;
     }
 
-    def "updateSupply should trigger projectFinancialData recalculation"() {
+    def "updateSupply should call onUpdate on projectFinanceAwareObjectService"() {
         given:
             mockProjectRepositoryLoadWithSupply();
             SupplyDto supplyDto = prepareUpdateSupplyDto()
         when:
             SupplyDto updatedSupply = this.supplyApplicationService.updateSupply(PROJECT_ID, SUPPLY_ID, supplyDto);
         then:
-            1 * this.projectFinancialDataService.recalculateProjectFinancialData(PROJECT_ID);
+            1 * this.projectFinanceAwareObjectService.onUpdate(PROJECT_ID);
     }
 
     def "getSupply should validate project existence"() {
@@ -199,13 +200,13 @@ class SupplyApplicationServiceImplTest extends Specification {
             });
     }
 
-    def "deleteSupply should trigger projectFinancialData recalculation"() {
+    def "deleteSupply should call onRemove on projectFinanceAwareObjectService"() {
         given:
             mockProjectRepositoryLoadWithSupply();
         when:
             this.supplyApplicationService.deleteSupply(PROJECT_ID, SUPPLY_ID);
         then:
-            1 * this.projectFinancialDataService.recalculateProjectFinancialData(PROJECT_ID);
+            1 * this.projectFinanceAwareObjectService.onRemove(PROJECT_ID);
     }
 
     private static SupplyDto prepareCreateSupplyDto() {
