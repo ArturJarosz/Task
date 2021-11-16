@@ -11,9 +11,9 @@ class SupplyFinancialDataServiceImplTest extends Specification {
     private static final long PROJECT_ID = 1L;
     private static final double INCOME_TAX = 0.1;
     private static final double VAT_TAX = 0.2;
-    private static final BigDecimal SUPPLY_VALUE_1 = new BigDecimal(20.0);
-    private static final BigDecimal SUPPLY_VALUE_2 = new BigDecimal(30.0);
-    private static final BigDecimal SUPPLY_VALUE_3 = new BigDecimal(40.0);
+    private static final BigDecimal SUPPLY_VALUE_1 = new BigDecimal("20.0");
+    private static final BigDecimal SUPPLY_VALUE_2 = new BigDecimal("30.0");
+    private static final BigDecimal SUPPLY_VALUE_3 = new BigDecimal("40.0");
 
     def financialDataQueryService = Mock(FinancialDataQueryServiceImpl);
 
@@ -28,10 +28,10 @@ class SupplyFinancialDataServiceImplTest extends Specification {
         when:
             def partialFinancialData = this.suppliesFinancialDataService.providePartialFinancialData(PROJECT_ID);
         then:
-            partialFinancialData.suppliesValue.getGrossValue() == new BigDecimal(90);
-            partialFinancialData.suppliesValue.getNetValue() == new BigDecimal(81.67).setScale(2, RoundingMode.HALF_UP);
-            partialFinancialData.suppliesValue.getVatTax() == new BigDecimal(8.33).setScale(2, RoundingMode.HALF_UP);
-            partialFinancialData.suppliesValue.getIncomeTax() == new BigDecimal(4.17).setScale(2, RoundingMode.HALF_UP);
+            partialFinancialData.suppliesValue.getGrossValue() == new BigDecimal("90");
+            partialFinancialData.suppliesValue.getNetValue() == new BigDecimal("81.67").setScale(2, RoundingMode.HALF_UP);
+            partialFinancialData.suppliesValue.getVatTax() == new BigDecimal("8.33").setScale(2, RoundingMode.HALF_UP);
+            partialFinancialData.suppliesValue.getIncomeTax() == new BigDecimal("4.17").setScale(2, RoundingMode.HALF_UP);
     }
 
     private void mockGetSuppliesFinancialData() {

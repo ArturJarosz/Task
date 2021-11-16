@@ -9,14 +9,12 @@ class CostFinancialDataServiceImplTest extends Specification {
     private static final long PROJECT_ID = 1L;
     private static final double INCOME_TAX = 0.1;
     private static final double VAT_TAX = 0.2;
-    private static final BigDecimal COST_VALUE_1 = new BigDecimal(10.0);
-    private static final BigDecimal COST_VALUE_2 = new BigDecimal(20.0);
-    private static final BigDecimal COST_VALUE_3 = new BigDecimal(30.0);
+    private static final BigDecimal COST_VALUE_1 = new BigDecimal("10.0");
+    private static final BigDecimal COST_VALUE_2 = new BigDecimal("20.0");
+    private static final BigDecimal COST_VALUE_3 = new BigDecimal("30.0");
 
     def financialDataQueryService = Mock(FinancialDataQueryServiceImpl);
-
     def userProperties = Mock(UserProperties);
-
     def costFinancialDataService = new CostFinancialDataServiceImpl(financialDataQueryService, userProperties);
 
     def "providePartialFinancialData should return summed up all cost related financial data for given project"() {
@@ -26,10 +24,10 @@ class CostFinancialDataServiceImplTest extends Specification {
         when:
             def partialFinancialData = this.costFinancialDataService.providePartialFinancialData(PROJECT_ID);
         then:
-            partialFinancialData.costsValue.getGrossValue() == new BigDecimal(60);
-            partialFinancialData.costsValue.getNetValue() == new BigDecimal(55);
-            partialFinancialData.costsValue.getVatTax() == new BigDecimal(5);
-            partialFinancialData.costsValue.getIncomeTax() == new BigDecimal(2.5);
+            partialFinancialData.costsValue.getGrossValue() == new BigDecimal("60");
+            partialFinancialData.costsValue.getNetValue() == new BigDecimal("55");
+            partialFinancialData.costsValue.getVatTax() == new BigDecimal("5");
+            partialFinancialData.costsValue.getIncomeTax() == new BigDecimal("2.5");
     }
 
     private void mockGetCostsFinancialData() {

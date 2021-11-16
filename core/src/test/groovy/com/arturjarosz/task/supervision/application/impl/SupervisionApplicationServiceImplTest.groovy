@@ -11,7 +11,6 @@ import com.arturjarosz.task.supervision.application.SupervisionValidator
 import com.arturjarosz.task.supervision.application.SupervisionVisitValidator
 import com.arturjarosz.task.supervision.application.dto.SupervisionDto
 import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto
-import com.arturjarosz.task.supervision.domain.impl.SupervisionCalculationServiceImpl
 import com.arturjarosz.task.supervision.infrastructure.repository.impl.SupervisionRepositoryImpl
 import com.arturjarosz.task.supervision.model.Supervision
 import com.arturjarosz.task.supervision.model.SupervisionVisit
@@ -31,12 +30,12 @@ class SupervisionApplicationServiceImplTest extends Specification {
     private static final Long SUPERVISION_FINANCIAL_DATA_ID = 500L;
     private static final int HOURS_COUNT = 10;
     private static final int UPDATED_HOURS_COUNT = 11;
-    private static final BigDecimal VISIT_NET_RATE = new BigDecimal(100);
-    private static final BigDecimal UPDATED_VISIT_NET_RATE = new BigDecimal(101);
-    private static final BigDecimal HOURLY_NET_RATE = new BigDecimal(100);
-    private static final BigDecimal UPDATED_HOURLY_NET_RATE = new BigDecimal(102);
-    private static final BigDecimal BASE_NET_RATE = new BigDecimal(100);
-    private static final BigDecimal UPDATED_BASE_NET_RATE = new BigDecimal(103);
+    private static final BigDecimal VISIT_NET_RATE = new BigDecimal("100");
+    private static final BigDecimal UPDATED_VISIT_NET_RATE = new BigDecimal("101");
+    private static final BigDecimal HOURLY_NET_RATE = new BigDecimal("100");
+    private static final BigDecimal UPDATED_HOURLY_NET_RATE = new BigDecimal("102");
+    private static final BigDecimal BASE_NET_RATE = new BigDecimal("100");
+    private static final BigDecimal UPDATED_BASE_NET_RATE = new BigDecimal("103");
     private static final LocalDate DATE_OF_VISIT = new LocalDate(2021, 01, 01);
     private static final LocalDate UPDATED_DATE_OF_VISIT = new LocalDate(2021, 01, 01);
 
@@ -45,7 +44,6 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def supervisionVisitValidator = Mock(SupervisionVisitValidator);
     def supervisionRepository = Mock(SupervisionRepositoryImpl);
     def supervisionQueryService = Mock(SupervisionQueryServiceImpl);
-    def supervisionCalculationService = Mock(SupervisionCalculationServiceImpl);
     def projectFinancialDataApplicationService = Mock(ProjectFinancialDataServiceImpl);
 
     def supervisionApplicationService = new SupervisionApplicationServiceImpl(projectValidator, supervisionValidator,

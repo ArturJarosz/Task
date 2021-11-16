@@ -9,10 +9,10 @@ class SupervisionValidatorTest extends Specification {
 
     private static final Long PROJECT_ID = 1L;
     private static final Long SUPERVISION_ID = 10L;
-    private static final BigDecimal BASE_NET_RATE = new BigDecimal(100.00D);
-    private static final BigDecimal NEGATIVE_RATE = new BigDecimal(-200.00D);
-    private static final BigDecimal HOURLY_NET_RATE = new BigDecimal(300.00D);
-    private static final BigDecimal VISIT_NET_RATE = new BigDecimal(400.00D);
+    private static final BigDecimal BASE_NET_RATE = new BigDecimal("100.00");
+    private static final BigDecimal NEGATIVE_RATE = new BigDecimal("-200.00");
+    private static final BigDecimal HOURLY_NET_RATE = new BigDecimal("300.00");
+    private static final BigDecimal VISIT_NET_RATE = new BigDecimal("400.00");
 
     def supervisionQueryService = Mock(SupervisionQueryServiceImpl);
 

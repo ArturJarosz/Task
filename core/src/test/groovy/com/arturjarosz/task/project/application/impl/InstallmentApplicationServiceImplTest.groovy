@@ -30,8 +30,8 @@ class InstallmentApplicationServiceImplTest extends Specification {
     private static final Long EXISTING_PROJECT_ID = 100L;
     private static final Long EXISTING_PROJECT_WITH_INSTALLMENT_ID = 200L;
     private static final Long NOT_EXISTING_PROJECT_ID = 999L;
-    private static final BigDecimal OLD_VALUE = new BigDecimal(100.00);
-    private static final BigDecimal NEW_VALUE = new BigDecimal(200.00);
+    private static final BigDecimal OLD_VALUE = new BigDecimal("100.00");
+    private static final BigDecimal NEW_VALUE = new BigDecimal("200.00");
     private static final String PROJECT_NAME = "project name";
 
     private FinancialData financialData = new FinancialDataBuilder().withValue(new Money(OLD_VALUE)).withHasInvoice(

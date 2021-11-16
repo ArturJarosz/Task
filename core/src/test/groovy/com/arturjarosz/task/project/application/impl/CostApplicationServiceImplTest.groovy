@@ -19,8 +19,8 @@ import java.time.LocalDate
 
 class CostApplicationServiceImplTest extends Specification {
 
-    private final static BigDecimal VALUE = new BigDecimal(100.0);
-    private final static BigDecimal NEW_VALUE = new BigDecimal(120.0);
+    private final static BigDecimal VALUE = new BigDecimal("100.0");
+    private final static BigDecimal NEW_VALUE = new BigDecimal("120.0");
     private final static Long ARCHITECT_ID = 33L;
     private final static Long CLIENT_ID = 44L;
     private final static Long COST_ID = 100L;

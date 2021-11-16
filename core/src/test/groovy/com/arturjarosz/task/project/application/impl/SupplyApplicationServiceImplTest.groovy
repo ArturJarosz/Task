@@ -20,8 +20,8 @@ class SupplyApplicationServiceImplTest extends Specification {
     private static final long PROJECT_ID = 1L;
     private static final long SUPPLIER_ID = 10L;
     private static final long SUPPLY_ID = 100L;
-    private static final BigDecimal VALUE = new BigDecimal(100.0);
-    private static final BigDecimal NEW_VALUE = new BigDecimal(200.0);
+    private static final BigDecimal VALUE = new BigDecimal("100.0");
+    private static final BigDecimal NEW_VALUE = new BigDecimal("200.0");
     private static final boolean HAS_INVOICE = true;
     private static final boolean NEW_HAS_INVOICE = false;
     private static final boolean PAYABLE = true;

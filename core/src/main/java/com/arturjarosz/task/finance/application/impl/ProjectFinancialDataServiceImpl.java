@@ -55,15 +55,17 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
                 supervisionId);
         FinancialData financialData = this.financialDataRepository.load(supervisionFinancialDataId);
 
-        BigDecimal value = new BigDecimal(0);
-        value = value.add(BigDecimal.valueOf(supervisionRatesDto.getBaseNetRate().doubleValue()));
+        BigDecimal value = new BigDecimal("0");
+        value = value.add(BigDecimal.valueOf(supervisionRatesDto.getBaseNetRate()
+                .doubleValue()));
 
         if (supervisionVisitFinancialDtos != null) {
             // Adding hours value and rate per visit
             for (SupervisionVisitFinancialDto supervisionVisit : supervisionVisitFinancialDtos) {
                 if (supervisionVisit.isPayable()) {
                     BigDecimal hoursValue = BigDecimal.valueOf(
-                            supervisionVisit.getHoursCount() * supervisionRatesDto.getHourlyNetRate().doubleValue());
+                            supervisionVisit.getHoursCount() * supervisionRatesDto.getHourlyNetRate()
+                                    .doubleValue());
                     value = value.add(hoursValue);
                     value = value.add(supervisionRatesDto.getVisitNetRate());
                 }
@@ -83,9 +85,15 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
             summedUpFinancialData.addFinancialValues(
                     partialFinancialDataService.providePartialFinancialData(projectFinancialData.getId()));
         }
+        this.recalculateTotalProjectValue(summedUpFinancialData);
         projectFinancialData.updateWithPartialData(summedUpFinancialData);
         this.projectFinancialDataRepository.save(projectFinancialData);
     }
 
-
+    private void recalculateTotalProjectValue(ProjectFinancialDataDto projectFinancialDataDto) {
+        projectFinancialDataDto.getTotalProjectValue().addValues(projectFinancialDataDto.getSuppliesValue());
+        projectFinancialDataDto.getTotalProjectValue().addValues(projectFinancialDataDto.getSupervisionValue());
+        projectFinancialDataDto.getTotalProjectValue().addValues(projectFinancialDataDto.getContractorJobsValue());
+        projectFinancialDataDto.getTotalProjectValue().subtractValues(projectFinancialDataDto.getCostsValue());
+    }
 }

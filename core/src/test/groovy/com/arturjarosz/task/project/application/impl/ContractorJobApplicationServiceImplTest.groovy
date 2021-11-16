@@ -21,8 +21,8 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     private static final PROJECT_WITH_CONTRACTOR_JOB_ID = 31L;
     private static final Long ARCHITECT_ID = 40L;
     private static final Long CLIENT_ID = 41L;
-    private static final BigDecimal VALUE = new BigDecimal(100.0);
-    private static final BigDecimal NEW_VALUE = new BigDecimal(200.0);
+    private static final BigDecimal VALUE = new BigDecimal("100.0");
+    private static final BigDecimal NEW_VALUE = new BigDecimal("200.0");
     private static final String NAME = "name";
     private static final String NEW_NAME = "newName";
     private static final String NOTE = "note";
