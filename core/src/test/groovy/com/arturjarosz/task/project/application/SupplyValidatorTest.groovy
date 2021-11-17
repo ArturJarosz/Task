@@ -49,13 +49,13 @@ class SupplyValidatorTest extends Specification {
             Exception exception = thrown();
             exception.message == exceptionMessage;
         where:
-            supply          | supplierId           | supplyName | supplyValue        || exceptionMessage
-            null            | null                 | null       | null               || "isNull.supply"
-            new SupplyDto() | null                 | null       | null               || "isNull.supply.supplier"
-            new SupplyDto() | EXISTING_SUPPLIER_ID | null       | null               || "isNull.supply.name"
-            new SupplyDto() | EXISTING_SUPPLIER_ID | ""         | null               || "isEmpty.supply.name"
-            new SupplyDto() | EXISTING_SUPPLIER_ID | "name"     | null               || "isNull.supply.value"
-            new SupplyDto() | EXISTING_SUPPLIER_ID | "name"     | new BigDecimal(-1) || "negative.supply.value"
+            supply          | supplierId           | supplyName | supplyValue          || exceptionMessage
+            null            | null                 | null       | null                 || "isNull.supply"
+            new SupplyDto() | null                 | null       | null                 || "isNull.supply.supplier"
+            new SupplyDto() | EXISTING_SUPPLIER_ID | null       | null                 || "isNull.supply.name"
+            new SupplyDto() | EXISTING_SUPPLIER_ID | ""         | null                 || "isEmpty.supply.name"
+            new SupplyDto() | EXISTING_SUPPLIER_ID | "name"     | null                 || "isNull.supply.value"
+            new SupplyDto() | EXISTING_SUPPLIER_ID | "name"     | new BigDecimal("-1") || "negative.supply.value"
     }
 
     @Unroll
@@ -72,12 +72,12 @@ class SupplyValidatorTest extends Specification {
             Exception exception = thrown();
             exception.message == exceptionMessage;
         where:
-            supply          | supplierId           | supplyName | supplyValue        || exceptionMessage
-            null            | null                 | null       | null               || "isNull.supply"
-            new SupplyDto() | EXISTING_SUPPLIER_ID | null       | null               || "isNull.supply.name"
-            new SupplyDto() | EXISTING_SUPPLIER_ID | ""         | null               || "isEmpty.supply.name"
-            new SupplyDto() | EXISTING_SUPPLIER_ID | "name"     | null               || "isNull.supply.value"
-            new SupplyDto() | EXISTING_SUPPLIER_ID | "name"     | new BigDecimal(-1) || "negative.supply.value"
+            supply          | supplierId           | supplyName | supplyValue          || exceptionMessage
+            null            | null                 | null       | null                 || "isNull.supply"
+            new SupplyDto() | EXISTING_SUPPLIER_ID | null       | null                 || "isNull.supply.name"
+            new SupplyDto() | EXISTING_SUPPLIER_ID | ""         | null                 || "isEmpty.supply.name"
+            new SupplyDto() | EXISTING_SUPPLIER_ID | "name"     | null                 || "isNull.supply.value"
+            new SupplyDto() | EXISTING_SUPPLIER_ID | "name"     | new BigDecimal("-1") || "negative.supply.value"
     }
 
     private void mockCooperatorQueryServiceSupplierWithIdExistenceDoesntExists() {

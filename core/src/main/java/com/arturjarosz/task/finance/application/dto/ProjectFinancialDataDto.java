@@ -1,6 +1,8 @@
 package com.arturjarosz.task.finance.application.dto;
 
 public class ProjectFinancialDataDto {
+
+    private FinancialValueDto baseProjectValue;
     private FinancialValueDto totalProjectValue;
     private FinancialValueDto costsValue;
     private FinancialValueDto supervisionValue;
@@ -8,6 +10,7 @@ public class ProjectFinancialDataDto {
     private FinancialValueDto contractorJobsValue;
 
     public ProjectFinancialDataDto() {
+        this.baseProjectValue = new FinancialValueDto();
         this.costsValue = new FinancialValueDto();
         this.contractorJobsValue = new FinancialValueDto();
         this.supervisionValue = new FinancialValueDto();
@@ -56,7 +59,16 @@ public class ProjectFinancialDataDto {
         this.contractorJobsValue = contractorJobsValue;
     }
 
+    public FinancialValueDto getBaseProjectValue() {
+        return this.baseProjectValue;
+    }
+
+    public void setBaseProjectValue(FinancialValueDto baseProjectValue) {
+        this.baseProjectValue = baseProjectValue;
+    }
+
     public void addFinancialValues(ProjectFinancialDataDto financialValueDto) {
+        this.baseProjectValue.addValues(financialValueDto.getBaseProjectValue());
         this.costsValue.addValues(financialValueDto.getCostsValue());
         this.contractorJobsValue.addValues(financialValueDto.getContractorJobsValue());
         this.supervisionValue.addValues(financialValueDto.getSupervisionValue());

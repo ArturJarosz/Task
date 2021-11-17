@@ -8,6 +8,7 @@ import com.arturjarosz.task.project.status.project.ProjectWorkflow;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -63,10 +64,12 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_ID", nullable = false)
+    @Where(clause = "TYPE = 'CONTRACTOR_JOB'")
     private Set<ContractorJob> contractorJobs;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_ID", nullable = false)
+    @Where(clause = "TYPE = 'SUPPLY'")
     private Set<Supply> supplies;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

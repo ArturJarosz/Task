@@ -73,7 +73,7 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
         //end date can't be before start date
         this.projectDataValidator.endDateNotBeforeStartDate(project.getStartDate(), endDate);
         project.finishProject(endDate);
-        // TODO: what does it mean to finish project ? is there a need to have action for that ?
+        // TODO TA-194: what does it mean to finish project ? is there a need to have action for that ?
         //this.projectStatusTransitionService.completeWork(project);
         return project;
     }

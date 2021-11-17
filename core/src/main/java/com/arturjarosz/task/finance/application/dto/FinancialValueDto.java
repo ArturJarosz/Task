@@ -13,10 +13,10 @@ public class FinancialValueDto {
     }
 
     private void initFinancialValue() {
-        this.netValue = new BigDecimal(0.0);
-        this.grossValue = new BigDecimal(0.0);
-        this.vatTax = new BigDecimal(0.0);
-        this.incomeTax = new BigDecimal(0.0);
+        this.netValue = new BigDecimal("0.0");
+        this.grossValue = new BigDecimal("0.0");
+        this.vatTax = new BigDecimal("0.0");
+        this.incomeTax = new BigDecimal("0.0");
 
     }
 
@@ -64,6 +64,13 @@ public class FinancialValueDto {
         this.grossValue = this.grossValue.add(financialValueDto.getGrossValue());
         this.incomeTax = this.incomeTax.add(financialValueDto.getIncomeTax());
         this.vatTax = this.vatTax.add(financialValueDto.getVatTax());
+    }
+
+    public void subtractValues(FinancialValueDto financialValueDto) {
+        this.netValue = this.netValue.subtract(financialValueDto.getNetValue());
+        this.grossValue = this.grossValue.subtract(financialValueDto.getGrossValue());
+        this.incomeTax = this.incomeTax.subtract(financialValueDto.getIncomeTax());
+        this.vatTax = this.vatTax.subtract(financialValueDto.getVatTax());
     }
 
     public void addGross(BigDecimal value) {

@@ -56,7 +56,7 @@ class ContractorJobValidatorTest extends Specification {
             new ContractorJobDto() | EXISTING_CONTRACTOR_ID | ""                | null               || "isEmpty.contractorJob.name"
             new ContractorJobDto() | EXISTING_CONTRACTOR_ID | "name"            | null               || "isNull.contractorJob.value"
             new ContractorJobDto() | EXISTING_CONTRACTOR_ID | "name"            | new BigDecimal(
-                    -1)                                                                              || "negative.contractorJob.value"
+                    "-1")                                                                              || "negative.contractorJob.value"
     }
 
     @Unroll
@@ -79,7 +79,7 @@ class ContractorJobValidatorTest extends Specification {
             new ContractorJobDto() | EXISTING_CONTRACTOR_ID | ""                | null               || "isEmpty.contractorJob.name"
             new ContractorJobDto() | EXISTING_CONTRACTOR_ID | "name"            | null               || "isNull.contractorJob.value"
             new ContractorJobDto() | EXISTING_CONTRACTOR_ID | "name"            | new BigDecimal(
-                    -1)                                                                              || "negative.contractorJob.value"
+                    "-1")                                                                              || "negative.contractorJob.value"
     }
 
     private void mockCooperatorQueryServiceContractorWithIdExistenceDoesntExists() {

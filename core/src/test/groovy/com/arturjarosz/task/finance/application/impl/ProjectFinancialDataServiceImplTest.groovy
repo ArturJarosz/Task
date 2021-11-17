@@ -21,16 +21,16 @@ class ProjectFinancialDataServiceImplTest extends Specification {
     private static final Long SUPERVISION_FINANCIAL_DATA_ID = 100L;
     private static final Long PROJECT_FINANCIAL_DATA_ID = 1000L;
     private static final BigDecimal SUPERVISION_VALUE = new BigDecimal("1200.0");
-    private static final BigDecimal BASE_NET_RATE = new BigDecimal(600.0);
+    private static final BigDecimal BASE_NET_RATE = new BigDecimal("600.0");
     private static final int HOURS_COUNT_PAYABLE_VISIT = 4;
     private static final int HOURS_COUNT_NOT_PAYABLE_VISIT = 5;
-    private static final BigDecimal HOURLY_RATE = new BigDecimal(100.0);
-    private static final BigDecimal VISIT_RATE = new BigDecimal(200.0);
+    private static final BigDecimal HOURLY_RATE = new BigDecimal("100.0");
+    private static final BigDecimal VISIT_RATE = new BigDecimal("200.0");
 
-    private static final BigDecimal COST_GROSS_VALUE = new BigDecimal(100);
-    private static final BigDecimal COST_NET_VALUE = new BigDecimal(80);
-    private static final BigDecimal COST_VAT_TAX_VALUE = new BigDecimal(15);
-    private static final BigDecimal COST_INCOME_TAX_VALUE = new BigDecimal(5);
+    private static final BigDecimal COST_GROSS_VALUE = new BigDecimal("100");
+    private static final BigDecimal COST_NET_VALUE = new BigDecimal("80");
+    private static final BigDecimal COST_VAT_TAX_VALUE = new BigDecimal("15");
+    private static final BigDecimal COST_INCOME_TAX_VALUE = new BigDecimal("5");
 
     def projectFinancialDataRepository = Mock(ProjectFinancialDataRepositoryImpl);
     def projectValidator = Mock(ProjectValidator);

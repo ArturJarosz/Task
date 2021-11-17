@@ -17,8 +17,8 @@ class InstallmentDomainServiceImplTest extends Specification {
 
     private static final String STAGE_NAME = "stage";
     private static final StageType STAGE_TYPE = StageType.AUTHORS_SUPERVISION;
-    private static final BigDecimal OLD_AMOUNT = new BigDecimal(1.00D);
-    private static final BigDecimal NEW_AMOUNT = new BigDecimal(2.00D);
+    private static final BigDecimal OLD_AMOUNT = new BigDecimal("1.00");
+    private static final BigDecimal NEW_AMOUNT = new BigDecimal("2.00");
     private static final LocalDate OLD_DATE = LocalDate.now().minusDays(10);
     private static final LocalDate NEW_DATE = LocalDate.now();
     private static final LocalDate FUTURE_DATE = LocalDate.now().plusDays(10);

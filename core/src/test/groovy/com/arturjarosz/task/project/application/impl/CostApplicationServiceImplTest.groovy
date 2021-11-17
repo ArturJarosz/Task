@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.application.impl
 
-import com.arturjarosz.task.finance.application.ProjectFinancialDataService
+
+import com.arturjarosz.task.finance.application.impl.ProjectFinanceAwareObjectServiceImpl
 import com.arturjarosz.task.project.application.CostValidator
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.CostDto
@@ -18,8 +19,8 @@ import java.time.LocalDate
 
 class CostApplicationServiceImplTest extends Specification {
 
-    private final static BigDecimal VALUE = new BigDecimal(100.0);
-    private final static BigDecimal NEW_VALUE = new BigDecimal(120.0);
+    private final static BigDecimal VALUE = new BigDecimal("100.0");
+    private final static BigDecimal NEW_VALUE = new BigDecimal("120.0");
     private final static Long ARCHITECT_ID = 33L;
     private final static Long CLIENT_ID = 44L;
     private final static Long COST_ID = 100L;
@@ -38,17 +39,13 @@ class CostApplicationServiceImplTest extends Specification {
     private final static ProjectWorkflow PROJECT_WORKFLOW = new ProjectWorkflow();
 
     def projectRepository = Mock(ProjectRepositoryImpl);
-
     def projectValidator = Mock(ProjectValidator);
-
     def projectQueryService = Mock(ProjectQueryServiceImpl);
-
     def costValidator = Mock(CostValidator);
-
-    def projectFinancialDataService = Mock(ProjectFinancialDataService);
+    def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectServiceImpl);
 
     def projectCostApplicationService = new CostApplicationServiceImpl(costValidator, projectValidator,
-            projectRepository, projectQueryService, projectFinancialDataService);
+            projectRepository, projectQueryService, projectFinanceAwareObjectService);
 
     def "createCost should run validateProjectExistence"() {
         given:
@@ -97,7 +94,7 @@ class CostApplicationServiceImplTest extends Specification {
             }) >> this.prepareProjectWithCost();
     }
 
-    def "createCost should call projectFinancialDataRecalculation"() {
+    def "createCost should call onCreate from projectFinanceAwareObjectService"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepository();
@@ -105,7 +102,7 @@ class CostApplicationServiceImplTest extends Specification {
         when:
             this.projectCostApplicationService.createCost(EXISTING_PROJECT_ID, costDto);
         then:
-            1 * this.projectFinancialDataService.recalculateProjectFinancialData(EXISTING_PROJECT_ID);
+            1 * this.projectFinanceAwareObjectService.onCreate(EXISTING_PROJECT_ID);
     }
 
     def "getCost should call validateCostExistence"() {
@@ -178,14 +175,14 @@ class CostApplicationServiceImplTest extends Specification {
             });
     }
 
-    def "deleteCost should trigger projectFinancialData recalculation"() {
+    def "deleteCost should call onRemove on projectFinanceAwareObjectService"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepositoryForProjectWithCost()
         when:
             this.projectCostApplicationService.deleteCost(PROJECT_WITH_COST_ID, COST_ID);
         then:
-            1 * this.projectFinancialDataService.recalculateProjectFinancialData(PROJECT_WITH_COST_ID);
+            1 * this.projectFinanceAwareObjectService.onRemove(PROJECT_WITH_COST_ID);
     }
 
     def "updateCost should call validateProjectExistence"() {
@@ -250,7 +247,7 @@ class CostApplicationServiceImplTest extends Specification {
             });
     }
 
-    def "update cost should trigger projectFinancialData recalculate"() {
+    def "update cost should call onUpdate on projectFinanceAwareObjectService"() {
         given:
             this.mockProjectQueryService();
             this.mockProjectRepositoryForProjectWithCost();
@@ -258,7 +255,7 @@ class CostApplicationServiceImplTest extends Specification {
         when:
             this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto);
         then:
-            1 * this.projectFinancialDataService.recalculateProjectFinancialData(PROJECT_WITH_COST_ID);
+            1 * this.projectFinanceAwareObjectService.onUpdate(PROJECT_WITH_COST_ID);
     }
 
     private CostDto prepareUpdateCostDto() {

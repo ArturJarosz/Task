@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application.impl;
 
+import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.SupplyApplicationService;
 import com.arturjarosz.task.project.application.SupplyValidator;
@@ -20,15 +21,17 @@ import javax.transaction.Transactional;
 public class SupplyApplicationServiceImpl implements SupplyApplicationService {
     private static final Logger LOG = LoggerFactory.getLogger(SupplyApplicationServiceImpl.class);
 
+    private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
     private final ProjectQueryService projectQueryService;
     private final ProjectRepository projectRepository;
     private final ProjectValidator projectValidator;
     private final SupplyValidator supplyValidator;
 
     @Autowired
-    public SupplyApplicationServiceImpl(ProjectQueryService projectQueryService,
-                                        ProjectRepository projectRepository, ProjectValidator projectValidator,
-                                        SupplyValidator supplyValidator) {
+    public SupplyApplicationServiceImpl(ProjectFinanceAwareObjectService projectFinanceAwareObjectService,
+                                        ProjectQueryService projectQueryService, ProjectRepository projectRepository,
+                                        ProjectValidator projectValidator, SupplyValidator supplyValidator) {
+        this.projectFinanceAwareObjectService = projectFinanceAwareObjectService;
         this.projectQueryService = projectQueryService;
         this.projectRepository = projectRepository;
         this.projectValidator = projectValidator;
@@ -47,6 +50,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         Supply supply = SupplyDtoMapper.INSTANCE.supplyDtoToSupply(supplyDto);
         project.addSupply(supply);
         this.projectRepository.save(project);
+        this.projectFinanceAwareObjectService.onCreate(projectId);
         LOG.debug("Supply for Project with id {} created", projectId);
         SupplyDto createdSupplyDto = SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply, projectId);
         createdSupplyDto.setId(this.getCreatedSupply(project, supply).getId());
@@ -63,6 +67,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         this.supplyValidator.validateUpdateSupplyDto(supplyDto);
         Project project = this.projectRepository.load(projectId);
         Supply supply = project.updateSupply(supplyId, supplyDto);
+        this.projectFinanceAwareObjectService.onUpdate(projectId);
 
         LOG.debug("Supply with id {} updated", supplyId);
         return SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply, projectId);
@@ -85,6 +90,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         Project project = this.projectRepository.load(projectId);
         project.removeSupply(supplyId);
         this.projectRepository.save(project);
+        this.projectFinanceAwareObjectService.onRemove(projectId);
         LOG.debug("Supply with id {} for Project with id {} removed.", supplyId, projectId);
     }
 

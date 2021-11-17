@@ -1,5 +1,7 @@
 package com.arturjarosz.task.project.application.impl
 
+import com.arturjarosz.task.finance.application.impl.ProjectFinanceAwareObjectServiceImpl
+import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.SupplyValidator
 import com.arturjarosz.task.project.application.dto.SupplyDto
@@ -18,8 +20,8 @@ class SupplyApplicationServiceImplTest extends Specification {
     private static final long PROJECT_ID = 1L;
     private static final long SUPPLIER_ID = 10L;
     private static final long SUPPLY_ID = 100L;
-    private static final BigDecimal VALUE = new BigDecimal(100.0);
-    private static final BigDecimal NEW_VALUE = new BigDecimal(200.0);
+    private static final BigDecimal VALUE = new BigDecimal("100.0");
+    private static final BigDecimal NEW_VALUE = new BigDecimal("200.0");
     private static final boolean HAS_INVOICE = true;
     private static final boolean NEW_HAS_INVOICE = false;
     private static final boolean PAYABLE = true;
@@ -29,8 +31,12 @@ class SupplyApplicationServiceImplTest extends Specification {
     def projectRepository = Mock(ProjectRepositoryImpl)
     def projectValidator = Mock(ProjectValidator);
     def supplyValidator = Mock(SupplyValidator);
+    def projectFinancialDataService = Mock(ProjectFinancialDataServiceImpl);
+    def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectServiceImpl);
 
-    def supplyApplicationService = new SupplyApplicationServiceImpl(projectQueryService, projectRepository,
+    def supplyApplicationService = new SupplyApplicationServiceImpl(projectFinanceAwareObjectService,
+            projectQueryService,
+            projectRepository,
             projectValidator, supplyValidator);
 
     def "createSupply should validate project existence"() {
@@ -76,6 +82,16 @@ class SupplyApplicationServiceImplTest extends Specification {
             })
     }
 
+    def "createSupply should call onCreate on projectFinanceAwareObjectService"() {
+        given:
+            mockProjectRepositoryLoad();
+            SupplyDto supplyDto = prepareCreateSupplyDto()
+        when:
+            this.supplyApplicationService.createSupply(PROJECT_ID, supplyDto);
+        then:
+            1 * this.projectFinanceAwareObjectService.onCreate(PROJECT_ID);
+    }
+
     def "updateSupply should validate project existence"() {
         given:
             mockProjectRepositoryLoadWithSupply();
@@ -118,6 +134,16 @@ class SupplyApplicationServiceImplTest extends Specification {
             updatedSupply.getValue() == NEW_VALUE;
             updatedSupply.getHasInvoice() == NEW_HAS_INVOICE;
             updatedSupply.getPayable() == NEW_PAYABLE;
+    }
+
+    def "updateSupply should call onUpdate on projectFinanceAwareObjectService"() {
+        given:
+            mockProjectRepositoryLoadWithSupply();
+            SupplyDto supplyDto = prepareUpdateSupplyDto()
+        when:
+            SupplyDto updatedSupply = this.supplyApplicationService.updateSupply(PROJECT_ID, SUPPLY_ID, supplyDto);
+        then:
+            1 * this.projectFinanceAwareObjectService.onUpdate(PROJECT_ID);
     }
 
     def "getSupply should validate project existence"() {
@@ -172,6 +198,15 @@ class SupplyApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.save({ Project project ->
                 project.getSupplies().size() == 0;
             });
+    }
+
+    def "deleteSupply should call onRemove on projectFinanceAwareObjectService"() {
+        given:
+            mockProjectRepositoryLoadWithSupply();
+        when:
+            this.supplyApplicationService.deleteSupply(PROJECT_ID, SUPPLY_ID);
+        then:
+            1 * this.projectFinanceAwareObjectService.onRemove(PROJECT_ID);
     }
 
     private static SupplyDto prepareCreateSupplyDto() {

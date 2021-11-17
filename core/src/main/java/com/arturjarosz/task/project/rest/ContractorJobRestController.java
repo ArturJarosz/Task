@@ -53,7 +53,7 @@ public class ContractorJobRestController {
                 HttpStatus.OK);
     }
 
-    @GetMapping("{projectId}/contractorJob/{contractorJobId}")
+    @GetMapping("{projectId}/contractorJobs/{contractorJobId}")
     public ResponseEntity<ContractorJobDto> getContractorJob(@PathVariable("projectId") Long projectId,
                                                              @PathVariable("contractorJobId") Long contractorJobId) {
         return new ResponseEntity<>(this.contractorJobApplicationService.getContractorJob(projectId, contractorJobId),
