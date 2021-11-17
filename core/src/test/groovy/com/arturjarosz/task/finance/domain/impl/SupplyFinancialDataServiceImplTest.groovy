@@ -16,7 +16,6 @@ class SupplyFinancialDataServiceImplTest extends Specification {
     private static final BigDecimal SUPPLY_VALUE_3 = new BigDecimal("40.0");
 
     def financialDataQueryService = Mock(FinancialDataQueryServiceImpl);
-
     def userProperties = Mock(UserProperties);
 
     def suppliesFinancialDataService = new SupplyFinancialDataServiceImpl(financialDataQueryService, userProperties);

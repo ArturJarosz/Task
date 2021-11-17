@@ -9,6 +9,7 @@ import com.arturjarosz.task.project.model.CooperatorJobType;
 import com.arturjarosz.task.project.model.QContractorJob;
 import com.arturjarosz.task.project.model.QCooperatorJob;
 import com.arturjarosz.task.project.model.QCost;
+import com.arturjarosz.task.project.model.QInstallment;
 import com.arturjarosz.task.project.model.QProject;
 import com.arturjarosz.task.project.model.QSupply;
 import com.arturjarosz.task.sharedkernel.annotations.Finder;
@@ -26,6 +27,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     private static final QContractorJob CONTRACTOR_JOB = QContractorJob.contractorJob;
     private static final QCost COST = QCost.cost;
     private static final QFinancialData FINANCIAL_DATA = QFinancialData.financialData;
+    private static final QInstallment INSTALLMENT = QInstallment.installment;
     private static final QProject PROJECT = QProject.project;
     private static final QSupervision SUPERVISION = QSupervision.supervision;
     private static final QSupervisionVisit SUPERVISION_VISIT = QSupervisionVisit.supervisionVisit;
@@ -102,6 +104,15 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                         FINANCIAL_DATA.paid.as(FinancialDataDto.PAID),
                         FINANCIAL_DATA.value.value.as(FinancialDataDto.VALUE)))
                 .fetchOne();
+    }
+
+    @Override
+    public List<FinancialDataDto> getInstallmentsFinancialData(long projectId) {
+        JPAQuery<?> contractorsJobsFinancialDataQuery = this.query()
+                .from(INSTALLMENT)
+                .join(INSTALLMENT.financialData, FINANCIAL_DATA)
+                .where(PROJECT.id.eq(projectId));
+        return this.getFinancialDataForFinancialDataAwareObjects(contractorsJobsFinancialDataQuery);
     }
 
     private List<FinancialDataDto> getFinancialDataForFinancialDataAwareObjects(JPAQuery<?> jpaQuery) {

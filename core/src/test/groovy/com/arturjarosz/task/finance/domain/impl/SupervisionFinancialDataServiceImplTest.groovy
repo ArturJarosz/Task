@@ -16,7 +16,7 @@ class SupervisionFinancialDataServiceImplTest extends Specification {
     def supervisionFinancialDataService = new SupervisionFinancialDataServiceImpl(financialDataQueryService,
             userProperties);
 
-    def "providePartialFinancialData should return summed up all cost related financial data for given project"() {
+    def "providePartialFinancialData should return supervision financial data for given project"() {
         given:
             this.mockGetSupervisionFinancialData();
             this.mockUserService();
