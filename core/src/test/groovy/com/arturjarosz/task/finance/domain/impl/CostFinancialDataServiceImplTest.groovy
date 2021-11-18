@@ -24,10 +24,10 @@ class CostFinancialDataServiceImplTest extends Specification {
         when:
             def partialFinancialData = this.costFinancialDataService.providePartialFinancialData(PROJECT_ID);
         then:
-            partialFinancialData.costsValue.getGrossValue() == new BigDecimal("60");
-            partialFinancialData.costsValue.getNetValue() == new BigDecimal("55");
-            partialFinancialData.costsValue.getVatTax() == new BigDecimal("5");
-            partialFinancialData.costsValue.getIncomeTax() == new BigDecimal("2.5");
+            partialFinancialData.costsValue.getGrossValue() == new BigDecimal("66");
+            partialFinancialData.costsValue.getNetValue() == new BigDecimal("60");
+            partialFinancialData.costsValue.getVatTax() == new BigDecimal("6");
+            partialFinancialData.costsValue.getIncomeTax() == new BigDecimal("3");
     }
 
     private void mockGetCostsFinancialData() {

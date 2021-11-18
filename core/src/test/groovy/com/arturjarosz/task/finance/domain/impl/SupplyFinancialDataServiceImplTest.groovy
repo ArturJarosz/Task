@@ -27,10 +27,10 @@ class SupplyFinancialDataServiceImplTest extends Specification {
         when:
             def partialFinancialData = this.suppliesFinancialDataService.providePartialFinancialData(PROJECT_ID);
         then:
-            partialFinancialData.suppliesValue.getGrossValue() == new BigDecimal("90");
-            partialFinancialData.suppliesValue.getNetValue() == new BigDecimal("81.67").setScale(2, RoundingMode.HALF_UP);
-            partialFinancialData.suppliesValue.getVatTax() == new BigDecimal("8.33").setScale(2, RoundingMode.HALF_UP);
-            partialFinancialData.suppliesValue.getIncomeTax() == new BigDecimal("4.17").setScale(2, RoundingMode.HALF_UP);
+            partialFinancialData.suppliesValue.getGrossValue() == new BigDecimal("100");
+            partialFinancialData.suppliesValue.getNetValue() == new BigDecimal("90").setScale(2, RoundingMode.HALF_UP);
+            partialFinancialData.suppliesValue.getVatTax() == new BigDecimal("10").setScale(2, RoundingMode.HALF_UP);
+            partialFinancialData.suppliesValue.getIncomeTax() == new BigDecimal("5").setScale(2, RoundingMode.HALF_UP);
     }
 
     private void mockGetSuppliesFinancialData() {

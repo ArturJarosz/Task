@@ -23,10 +23,10 @@ class SupervisionFinancialDataServiceImplTest extends Specification {
         when:
             def partialFinancialData = this.supervisionFinancialDataService.providePartialFinancialData(PROJECT_ID);
         then:
-            partialFinancialData.getSupervisionValue().getGrossValue() == new BigDecimal("10.0");
-            partialFinancialData.getSupervisionValue().getNetValue() == new BigDecimal("8.33");
-            partialFinancialData.getSupervisionValue().getVatTax() == new BigDecimal("1.67");
-            partialFinancialData.getSupervisionValue().getIncomeTax() == new BigDecimal("0.83");
+            partialFinancialData.getSupervisionValue().getGrossValue() == new BigDecimal("12");
+            partialFinancialData.getSupervisionValue().getNetValue() == new BigDecimal("10");
+            partialFinancialData.getSupervisionValue().getVatTax() == new BigDecimal("2");
+            partialFinancialData.getSupervisionValue().getIncomeTax() == new BigDecimal("1");
     }
 
     private void mockGetSupervisionFinancialData() {
