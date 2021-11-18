@@ -11,6 +11,7 @@ import com.arturjarosz.task.project.model.QCooperatorJob;
 import com.arturjarosz.task.project.model.QCost;
 import com.arturjarosz.task.project.model.QInstallment;
 import com.arturjarosz.task.project.model.QProject;
+import com.arturjarosz.task.project.model.QStage;
 import com.arturjarosz.task.project.model.QSupply;
 import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
@@ -29,6 +30,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     private static final QFinancialData FINANCIAL_DATA = QFinancialData.financialData;
     private static final QInstallment INSTALLMENT = QInstallment.installment;
     private static final QProject PROJECT = QProject.project;
+    private static final QStage STAGE = QStage.stage;
     private static final QSupervision SUPERVISION = QSupervision.supervision;
     private static final QSupervisionVisit SUPERVISION_VISIT = QSupervisionVisit.supervisionVisit;
     private static final QSupply SUPPLY = QSupply.supply;
@@ -108,11 +110,12 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
 
     @Override
     public List<FinancialDataDto> getInstallmentsFinancialData(long projectId) {
-        JPAQuery<?> contractorsJobsFinancialDataQuery = this.query()
-                .from(INSTALLMENT)
-                .join(INSTALLMENT.financialData, FINANCIAL_DATA)
-                .where(PROJECT.id.eq(projectId));
-        return this.getFinancialDataForFinancialDataAwareObjects(contractorsJobsFinancialDataQuery);
+        JPAQuery<?> installmentsFinancialDataQuery = this.query().from(PROJECT)
+                .join(PROJECT.stages, STAGE)
+                .where(PROJECT.id.eq(projectId))
+                .join(STAGE.installment, INSTALLMENT)
+                .join(INSTALLMENT.financialData, FINANCIAL_DATA);
+        return this.getFinancialDataForFinancialDataAwareObjects(installmentsFinancialDataQuery);
     }
 
     private List<FinancialDataDto> getFinancialDataForFinancialDataAwareObjects(JPAQuery<?> jpaQuery) {
