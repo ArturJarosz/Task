@@ -26,10 +26,10 @@ class InstallmentFinancialDataServiceImplTest extends Specification {
         when:
             def partialFinancialData = this.installmentFinancialDataService.providePartialFinancialData(PROJECT_ID);
         then:
-            partialFinancialData.baseProjectValue.getGrossValue() == new BigDecimal("50");
-            partialFinancialData.baseProjectValue.getNetValue() == new BigDecimal("41.67").setScale(2, RoundingMode.HALF_UP);
-            partialFinancialData.baseProjectValue.getVatTax() == new BigDecimal("8.33").setScale(2, RoundingMode.HALF_UP);
-            partialFinancialData.baseProjectValue.getIncomeTax() == new BigDecimal("4.17").setScale(2, RoundingMode.HALF_UP);
+            partialFinancialData.baseProjectValue.getGrossValue() == new BigDecimal("60");
+            partialFinancialData.baseProjectValue.getNetValue() == new BigDecimal("50").setScale(2, RoundingMode.HALF_UP);
+            partialFinancialData.baseProjectValue.getVatTax() == new BigDecimal("10").setScale(2, RoundingMode.HALF_UP);
+            partialFinancialData.baseProjectValue.getIncomeTax() == new BigDecimal("5").setScale(2, RoundingMode.HALF_UP);
     }
 
     private void mockGetInstallmentsFinancialData() {

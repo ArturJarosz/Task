@@ -22,22 +22,21 @@ public abstract class AbstractPartialFinancialDataService {
         FinancialValueDto summedUpFinancialValueDto = new FinancialValueDto();
         summedUpFinancialValueDto.copyValues(financialValueDto);
 
-        double withVatValue = 1 + this.userProperties.getVatTax();
-
         for (FinancialDataDto financialDataDto : objectsFinancialDataDtos) {
-            summedUpFinancialValueDto.addGross(financialDataDto.getValue());
+            summedUpFinancialValueDto.addNet(financialDataDto.getValue());
+            BigDecimal netValue = financialDataDto.getValue();
             if (financialDataDto.isHasInvoice()) {
-                BigDecimal netValue = financialDataDto.getValue()
-                        .divide(BigDecimal.valueOf(withVatValue), 2, RoundingMode.HALF_UP);
-                BigDecimal vatTaxValue = financialDataDto.getValue().subtract(netValue)
+                BigDecimal vatTaxValue = netValue.multiply(BigDecimal.valueOf(this.userProperties.getVatTax()))
                         .setScale(2, RoundingMode.HALF_UP);
-                BigDecimal incomeTaxValue = netValue.multiply(new BigDecimal(this.userProperties.getIncomeTax()))
+                BigDecimal grossValue = financialDataDto.getValue()
+                        .add(vatTaxValue);
+                BigDecimal incomeTaxValue = netValue.multiply(BigDecimal.valueOf(this.userProperties.getIncomeTax()))
                         .setScale(2, RoundingMode.HALF_UP);
-                summedUpFinancialValueDto.addNet(netValue);
+                summedUpFinancialValueDto.addGross(grossValue);
                 summedUpFinancialValueDto.addIncomeTax(incomeTaxValue);
                 summedUpFinancialValueDto.addVatTax(vatTaxValue);
             } else {
-                summedUpFinancialValueDto.addNet(financialDataDto.getValue());
+                summedUpFinancialValueDto.addGross(financialDataDto.getValue());
             }
         }
 

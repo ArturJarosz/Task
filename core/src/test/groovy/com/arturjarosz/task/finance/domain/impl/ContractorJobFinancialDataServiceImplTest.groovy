@@ -27,12 +27,12 @@ class ContractorJobFinancialDataServiceImplTest extends Specification {
         when:
             def partialFinancialData = this.contractorJobFinancialDataService.providePartialFinancialData(PROJECT_ID);
         then:
-            partialFinancialData.contractorJobsValue.getGrossValue() == new BigDecimal("90");
-            partialFinancialData.contractorJobsValue.getNetValue() == new BigDecimal("81.67")
+            partialFinancialData.contractorJobsValue.getGrossValue() == new BigDecimal("100");
+            partialFinancialData.contractorJobsValue.getNetValue() == new BigDecimal("90")
                     .setScale(2, RoundingMode.HALF_UP);
-            partialFinancialData.contractorJobsValue.getVatTax() == new BigDecimal("8.33")
+            partialFinancialData.contractorJobsValue.getVatTax() == new BigDecimal("10")
                     .setScale(2, RoundingMode.HALF_UP);
-            partialFinancialData.contractorJobsValue.getIncomeTax() == new BigDecimal("4.17")
+            partialFinancialData.contractorJobsValue.getIncomeTax() == new BigDecimal("5")
                     .setScale(2, RoundingMode.HALF_UP);
     }
 
