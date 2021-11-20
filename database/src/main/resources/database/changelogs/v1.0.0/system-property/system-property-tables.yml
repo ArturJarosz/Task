@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: "create-system-property-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-system-property-table.yml"
+      relativeToChangelogFile: true
