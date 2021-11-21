@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: "create-architect-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-architect-table.yml"
+      relativeToChangelogFile: true

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: "create-client-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-client-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "add-client-name-constrain.yml"
+      relativeToChangelogFile: true

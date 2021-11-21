@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquobase"
+      id: "create-project-financial-data-sequence"
+      changes:
+        - createSequence:
+            sequenceName: "project_financial_data_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1

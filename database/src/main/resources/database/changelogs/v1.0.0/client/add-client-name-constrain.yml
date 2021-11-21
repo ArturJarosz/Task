@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-client-name-constraint"
+      changes:
+        - sql:
+            dbms: "postgresql"
+            sql: "alter table CLIENT add constraint NAME_NOT_NULL
+            check
+            (
+            ((CLIENT_TYPE = 'PRIVATE') and ((FIRST_NAME is NOT NULL) AND (LAST_NAME is NOT NULL))) or
+            ((CLIENT_TYPE = 'CORPORATE') and (COMPANY_NAME is NOT NULL))
+            );"
+        - sql:
+            dbms: "h2"
+            sql: "alter table TASK_SCHEMA.CLIENT add constraint NAME_NOT_NULL
+            check
+            (
+            ((CLIENT_TYPE = 'PRIVATE') and ((FIRST_NAME is NOT NULL) AND (LAST_NAME is NOT NULL))) or
+            ((CLIENT_TYPE = 'CORPORATE') and (COMPANY_NAME is NOT NULL))
+            );"

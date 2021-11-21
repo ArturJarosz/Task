@@ -1,0 +1,69 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-project-table"
+      changes:
+        - createTable:
+            tableName: "PROJECT"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "${uuid.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NAME"
+                  type: "VARCHAR2(60 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "ARCHITECT_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CLIENT_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "PROJECT_TYPE"
+                  type: "VARCHAR2(30 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "START_DATE"
+                  type: "${date.type}"
+              - column:
+                  name: "END_DATE"
+                  type: "${date.type}"
+              - column:
+                  name: "NOTE"
+                  type: "VARCHAR2(1000 ${char.unit})"
+              - column:
+                  name: "STATUS"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "ARRANGEMENT_ID"
+                  type: "${long.type}"
+              - column:
+                  name: "SUPERVISION_ID"
+                  type: "${long.type}"
+        - addPrimaryKey:
+            tableName: "PROJECT"
+            columnNames: "ID"
+            constraintName: "PK_PROJECT"
+        - addForeignKeyConstraint:
+            baseTableName: "PROJECT"
+            baseColumnNames: "ARRANGEMENT_ID"
+            referencedTableName: "ARRANGEMENT"
+            referencedColumnNames: "ID"
+            constraintName: "FK_PROJECT_ARRANGEMENT"
+
