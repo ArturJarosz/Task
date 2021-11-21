@@ -15,7 +15,7 @@ databaseChangeLog:
       file: "installment/installment-tables.xml"
       relativeToChangelogFile: true
   - include:
-      file: "cooperator/cooperator-tables.xml"
+      file: "cooperator/cooperator-tables.yml"
       relativeToChangelogFile: true
   - include:
       file: "financial-data/financial-data-tables.xml"

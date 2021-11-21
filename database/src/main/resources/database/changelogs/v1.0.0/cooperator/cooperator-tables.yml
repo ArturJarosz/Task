@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: "create-cooperator-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-cooperator-table.yml"
+      relativeToChangelogFile: true
