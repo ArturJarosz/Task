@@ -9,7 +9,7 @@ databaseChangeLog:
       file: "project/project-tables.xml"
       relativeToChangelogFile: true
   - include:
-      file: "cost/cost-tables.xml"
+      file: "cost/cost-tables.yml"
       relativeToChangelogFile: true
   - include:
       file: "installment/installment-tables.xml"

@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: "create-cost-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-cost-table.yml"
+      relativeToChangelogFile: true
