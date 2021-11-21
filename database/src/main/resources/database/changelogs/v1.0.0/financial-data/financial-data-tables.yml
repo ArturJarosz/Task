@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: "create-financial-data-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-financial-data-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-project-financial-data-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-project-financial-data-table.yml"
+      relativeToChangelogFile: true

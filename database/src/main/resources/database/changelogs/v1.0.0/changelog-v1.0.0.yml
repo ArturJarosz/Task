@@ -18,7 +18,7 @@ databaseChangeLog:
       file: "cooperator/cooperator-tables.yml"
       relativeToChangelogFile: true
   - include:
-      file: "financial-data/financial-data-tables.xml"
+      file: "financial-data/financial-data-tables.yml"
       relativeToChangelogFile: true
   - include:
       file: "supervision/supervision-tables.xml"

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-financial-data-sequence"
+      changes:
+        - createSequence:
+            sequenceName: "financial_data_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1

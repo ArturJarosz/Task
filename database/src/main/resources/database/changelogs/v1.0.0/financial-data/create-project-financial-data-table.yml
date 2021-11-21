@@ -1,0 +1,159 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-project-financial-data-table"
+      changes:
+        - createTable:
+            tableName: "PROJECT_FINANCIAL_DATA"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "BASE_NET_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "BASE_GROSS_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "BASE_VAT_TAX"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "BASE_INCOME_TAX"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CONTRACTORS_JOBS_NET_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CONTRACTORS_JOBS_GROSS_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CONTRACTORS_JOBS_VAT_TAX"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CONTRACTORS_JOBS_INCOME_TAX"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "COSTS_NET_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "COSTS_GROSS_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "COSTS_VAT_TAX"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "COSTS_INCOME_TAX"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "SUPPLIES_NET_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "SUPPLIES_GROSS_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "SUPPLIES_VAT_TAX"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "SUPPLIES_INCOME_TAX"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TOTAL_NET_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TOTAL_GROSS_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TOTAL_VAT_TAX"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TOTAL_INCOME_TAX"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "PROJECT_FINANCIAL_DATA"
+            columnNames: "ID"
+            constraintName: "PK_PROJECT_FINANCIAL_DATA"
+        - addForeignKeyConstraint:
+            baseTableName: "PROJECT_FINANCIAL_DATA"
+            baseColumnNames: "PROJECT_ID"
+            referencedTableName: "PROJECT"
+            referencedColumnNames: "ID"
+            constraintName: "FK_PROJECT_FINANCIAL_DATA_PROJECT"
+        - createIndex:
+            indexName: "IDX_PROJECT_FINANCIAL_DATA_PROJECT"
+            tableName: "PROJECT_FINANCIAL_DATA"
+            unique: true
+            column:
+              name: "PROJECT_ID"

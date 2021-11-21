@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-financial-data-table"
+      changes:
+        - createTable:
+            tableName: "FINANCIAL_DATA"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "HAS_INVOICE"
+                  type: "${boolean.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "PAYABLE"
+                  type: "${boolean.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "PAID"
+                  type: "${boolean.type}"
+              - column:
+                  name: "PAYMENT_DATE"
+                  type: "${date.type}"
+        - sql:
+            dbms: "postgresql"
+            sql: "alter table FINANCIAL_DATA add constraint IS_PAID_NOT_NULL
+            check(
+            (PAYABLE) and (PAID is NOT NULL)
+            );"
+        - sql:
+            dbms: "h2"
+            sql: "alter table TASK_SCHEMA.FINANCIAL_DATA add constraint IS_PAID_NOT_NULL
+            check(
+            (PAYABLE) and (PAID is NOT NULL)
+            );"
+        - addPrimaryKey:
+            tableName: "FINANCIAL_DATA"
+            columnNames: "ID"
+            constraintName: "PK_FINANCIAL_DATA"
