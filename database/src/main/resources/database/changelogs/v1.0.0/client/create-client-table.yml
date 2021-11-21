@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-client-table"
+      changes:
+        - createTable:
+            tableName: "CLIENT"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "FIRST_NAME"
+                  type: "VARCHAR2(32 ${char.unit})"
+              - column:
+                  name: "LAST_NAME"
+                  type: "VARCHAR2(32 ${char.unit})"
+              - column:
+                  name: "COMPANY_NAME"
+                  type: "VARCHAR2(32 ${char.unit})"
+              - column:
+                  name: "EMAIL"
+                  type: "VARCHAR2(50 ${char.unit})"
+              - column:
+                  name: "NOTE"
+                  type: "VARCHAR2(1000 ${char.unit})"
+              - column:
+                  name: "TELEPHONE"
+                  type: "VARCHAR2(20 ${char.unit})"
+              - column:
+                  name: "PROJECTS_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+              - column:
+                  name: "CLIENT_TYPE"
+                  type: "VARCHAR2(20 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "POST_CODE"
+                  type: "VARCHAR2(8 ${char.unit})"
+              - column:
+                  name: "CITY"
+                  type: "VARCHAR2(30 ${char.unit})"
+              - column:
+                  name: "STREET"
+                  type: "VARCHAR2(30 ${char.unit})"
+              - column:
+                  name: "HOUSE_NUMBER"
+                  type: "VARCHAR2(5 ${char.unit})"
+              - column:
+                  name: "FLAT_NUMBER"
+                  type: "VARCHAR2(5 ${char.unit})"
+        - addPrimaryKey:
+            tableName: "CLIENT"
+            columnNames: "ID"
+            constraintName: "PK_CLIENT"

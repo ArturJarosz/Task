@@ -3,7 +3,7 @@ databaseChangeLog:
       file: "architect/architect-tables.yml"
       relativeToChangelogFile: true
   - include:
-      file: "client/client-tables.xml"
+      file: "client/client-tables.yml"
       relativeToChangelogFile: true
   - include:
       file: "project/project-tables.xml"
