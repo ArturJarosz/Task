@@ -4,7 +4,7 @@ databaseChangeLog:
       id: "create-cost-table"
       changes:
         - createTable:
-            tableName: COST"
+            tableName: "COST"
             columns:
               - column:
                   name: "ID"
