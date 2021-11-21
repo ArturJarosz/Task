@@ -17,7 +17,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: "ID"
+                  name: "PROJECT_ID"
                   type: "${long.type}"
                   constraints:
                     nullable: false
