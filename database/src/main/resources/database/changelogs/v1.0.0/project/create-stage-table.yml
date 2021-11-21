@@ -28,13 +28,13 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: "START_DATE"
-                  type: "${date.unit})"
+                  type: "${date.type}"
               - column:
                   name: "END_DATE"
-                  type: "${date.unit})"
+                  type: "${date.type}"
               - column:
                   name: "DEADLINE"
-                  type: "${date.unit})"
+                  type: "${date.type}"
               - column:
                   name: "NOTE"
                   type: "VARCHAR2(1000 ${char.unit})"
@@ -67,4 +67,4 @@ databaseChangeLog:
             baseColumnNames: "PROJECT_ID"
             constraintName: "FK_STAGE_PROJECT"
             referencedTableName: "PROJECT"
-            referencedColumnNames: "ID"/>
+            referencedColumnNames: "ID"

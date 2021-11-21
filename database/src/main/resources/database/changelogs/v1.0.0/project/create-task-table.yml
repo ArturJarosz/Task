@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       author: "liquibase"
-      id: "create-task-table">
+      id: "create-task-table"
       changes:
         - createTable:
             tableName: "TASK"
