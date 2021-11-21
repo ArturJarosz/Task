@@ -1,0 +1,10 @@
+databaseChangeLog:
+  # Database properties
+  - include:
+      file: "database-properties.yml"
+      relativeToChangelogFile: true
+  # Table changes
+  # Release v 1.0.0
+  - include:
+      file: "v1.0.0/changelog-v1.0.0.yml"
+      relativeToChangelogFile: true

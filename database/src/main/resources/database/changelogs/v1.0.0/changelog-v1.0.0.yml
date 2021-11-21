@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - include:
+      file: "architect/architect-tables.xml"
+      relativeToChangelogFile: true
+  - include:
+      file: "client/client-tables.xml"
+      relativeToChangelogFile: true
+  - include:
+      file: "project/project-tables.xml"
+      relativeToChangelogFile: true
+  - include:
+      file: "cost/cost-tables.xml"
+      relativeToChangelogFile: true
+  - include:
+      file: "installment/installment-tables.xml"
+      relativeToChangelogFile: true
+  - include:
+      file: "cooperator/cooperator-tables.xml"
+      relativeToChangelogFile: true
+  - include:
+      file: "financial-data/financial-data-tables.xml"
+      relativeToChangelogFile: true
+  - include:
+      file: "supervision/supervision-tables.xml"
+      relativeToChangelogFile: true
+  - changeSet:
+      author: "liquibase"
+      id: "tag-version_1.0.0"
+      changes:
+        - tagDatabase:
+            tag: "v1.0.0"

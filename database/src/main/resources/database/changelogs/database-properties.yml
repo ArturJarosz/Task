@@ -1,0 +1,62 @@
+# File responsible for holding db types properties.
+databaseChangeLog:
+  # big decimal
+  - property:
+      name: "big_decimal.type"
+      value: "numeric(19,6)"
+      dbms: "postgresql"
+  - property:
+      name: "big_decimal.type"
+      value: "DECIMAL(19,6)"
+      dbms: "h2"
+  # boolean
+  - property:
+      name: "boolean.type"
+      value: "boolean"
+      dbms: "postgresql,h2"
+  # char
+  - property:
+      name: "char.unit"
+      value: " "
+      dbms: "postgresql,h2"
+  # date
+  - property:
+      name: "date.type"
+      value: "DATE"
+      dbms: "postgresql,h2"
+  # double
+  - property:
+      name: "double.type"
+      value: "DOUBLE PRECISION"
+      dbms: "postgresql"
+  - property:
+      name: "double.type"
+      value: "DOUBLE"
+      dbms: "h2"
+  # integer
+  - property:
+      name: "integer.type"
+      value: "integer"
+      dbms: "postgresql, h2"
+  # long
+  - property:
+      name: "long.type"
+      value: "bigint"
+      dbms: "postgresql,h2"
+  # time
+  - property:
+      name: "time.type"
+      value: "TIMESTAMP(6)"
+      dbms: "postgresql"
+  - property:
+      name: "time.type"
+      value: "TIME(6)"
+      dbms: "h2"
+  # uuid
+  - property:
+      name: "uuid.type"
+      value: "UUID"
+      dbms: "postgresql,h2"
+
+
+
