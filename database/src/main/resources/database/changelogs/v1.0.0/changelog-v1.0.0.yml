@@ -12,7 +12,7 @@ databaseChangeLog:
       file: "cost/cost-tables.yml"
       relativeToChangelogFile: true
   - include:
-      file: "installment/installment-tables.xml"
+      file: "installment/installment-tables.yml"
       relativeToChangelogFile: true
   - include:
       file: "cooperator/cooperator-tables.yml"

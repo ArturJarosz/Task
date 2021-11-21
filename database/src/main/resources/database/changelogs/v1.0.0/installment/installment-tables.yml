@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: "create-installment-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-installment-table.yml"
+      relativeToChangelogFile: true
