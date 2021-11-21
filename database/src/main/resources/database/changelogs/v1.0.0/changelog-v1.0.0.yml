@@ -1,6 +1,6 @@
 databaseChangeLog:
   - include:
-      file: "architect/architect-tables.xml"
+      file: "architect/architect-tables.yml"
       relativeToChangelogFile: true
   - include:
       file: "client/client-tables.xml"

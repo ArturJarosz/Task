@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-architect-table"
+      changes:
+        - createTable:
+            tableName: "ARCHITECT"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "FIRST_NAME"
+                  type: "VARCHAR2(32 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_NAME"
+                  type: "VARCHAR2(32 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "PROJECTS_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "ARCHITECT"
+            constraintName: "PK_ARCHITECT"
+            columnNames: "ID"
+
