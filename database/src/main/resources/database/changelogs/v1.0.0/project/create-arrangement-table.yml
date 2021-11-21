@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-arrangement-table"
+      changes:
+        - createTable:
+            tableName: "ARRANGEMENT"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "OFFER_ACCEPTED"
+                  type: "${boolean.type}"
+              - column:
+                  name: "SIGNING_DATE"
+                  type: "${boolean.type}"
+              - column:
+                  name: "DEADLINE"
+                  type: "${boolean.type}"
+              - column:
+                  name: "ARRANGEMENT_TYPE"
+                  type: "VARCHAR2(35 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "${uuid.type}"
+                  constraints:
+                    nullable: false
+        - sql:
+            dbms: "postgresql"
+            sql: "alter table ARRANGEMENT add constraint OFFER_OR_CONTRACT_DATA_NOT_NULL
+            check(
+            ((ARRANGEMENT_TYPE = 'OFFER') AND (OFFER_ACCEPTED is NOT NULL)) or
+            ((ARRANGEMENT_TYPE = 'CONTRACT') AND (SIGNING_DATE is NOT NULL) AND (DEADLINE is NOT NULL))
+            )"
+        - sql:
+            dbms: "h2"
+            sql: "alter table TASK_SCHEMA.ARRANGEMENT add constraint OFFER_OR_CONTRACT_DATA_NOT_NULL
+            check(
+            ((ARRANGEMENT_TYPE = 'OFFER') AND (OFFER_ACCEPTED is NOT NULL)) or
+            ((ARRANGEMENT_TYPE = 'CONTRACT') AND (SIGNING_DATE is NOT NULL) AND (DEADLINE is NOT NULL))
+            )"
+        - addPrimaryKey:
+            tableName: "ARRANGEMENT"
+            columnNames: "ID"
+            constraintName: "PK_ARRANGEMENT"

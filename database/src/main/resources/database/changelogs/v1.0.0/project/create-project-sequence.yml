@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-project-sequence"
+      changes:
+        - createSequence:
+            sequenceName: "create-project-sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1

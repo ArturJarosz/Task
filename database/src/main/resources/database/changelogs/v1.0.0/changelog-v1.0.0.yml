@@ -6,7 +6,7 @@ databaseChangeLog:
       file: "client/client-tables.yml"
       relativeToChangelogFile: true
   - include:
-      file: "project/project-tables.xml"
+      file: "project/project-tables.yml"
       relativeToChangelogFile: true
   - include:
       file: "cost/cost-tables.yml"

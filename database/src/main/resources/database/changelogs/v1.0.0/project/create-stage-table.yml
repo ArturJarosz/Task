@@ -1,0 +1,70 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-task-table"
+      changes:
+        - createTable:
+            tableName: "STAGE"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "${uuid.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NAME"
+                  type: "VARCHAR2(60 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "STAGE_TYPE"
+                  type: "VARCHAR2(30 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "START_DATE"
+                  type: "${date.unit})"
+              - column:
+                  name: "END_DATE"
+                  type: "${date.unit})"
+              - column:
+                  name: "DEADLINE"
+                  type: "${date.unit})"
+              - column:
+                  name: "NOTE"
+                  type: "VARCHAR2(1000 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "PROJECT_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "INSTALLMENT_ID"
+                  type: "${long.type}"
+              - column:
+                  name: "STATUS"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "WORKFLOW_NAME"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "STAGE"
+            columnNames: "ID"
+            constraintName: "PK_STAGE"
+        - addForeignKeyConstraint:
+            baseTableName: "STAGE"
+            baseColumnNames: "PROJECT_ID"
+            constraintName: "FK_STAGE_PROJECT"
+            referencedTableName: "PROJECT"
+            referencedColumnNames: "ID"/>

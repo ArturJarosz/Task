@@ -1,0 +1,66 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-task-table">
+      changes:
+        - createTable:
+            tableName: "TASK"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "${uuid.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NAME"
+                  type: "VARCHAR2(60 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TASK_TYPE"
+                  type: "VARCHAR2(30 ${char.unit})"
+                  constraints:
+                    nullable: false
+              # TODO: implement with TA-62 and TA-95
+              #  <column name="WORK_TIME" type="${long.type}" defaultValueNumeric="0">
+              #               <constraints nullable="false"/>
+              #           </column>-->
+              - column:
+                  name: "START_DATE"
+                  type: "${date.type}"
+              - column:
+                  name: "END_DATE"
+                  type: "${date.type}"
+              - column:
+                  name: "NOTE"
+                  type: "VARCHAR2(1000 ${char.unit})"
+              - column:
+                  name: "STAGE_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "STATUS"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "WORKFLOW_NAME"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "TASK"
+            columnNames: "ID"
+            constraintName: "PK_TASK"
+        - addForeignKeyConstraint:
+            baseTableName: "TASK"
+            baseColumnNames: "STAGE_ID"
+            constraintName: "FK_TASK_STAGE"
+            referencedTableName: "STAGE"
+            referencedColumnNames: "ID"
