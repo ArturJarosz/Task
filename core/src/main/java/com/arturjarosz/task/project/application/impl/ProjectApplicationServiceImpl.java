@@ -21,8 +21,8 @@ import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,10 +43,8 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     public ProjectApplicationServiceImpl(ClientApplicationService clientApplicationService,
                                          ClientValidator clientValidator,
                                          ArchitectApplicationService architectApplicationService,
-                                         ArchitectValidator architectValidator,
-                                         ProjectRepository projectRepository,
-                                         ProjectDomainService projectDomainService,
-                                         ProjectValidator projectValidator,
+                                         ArchitectValidator architectValidator, ProjectRepository projectRepository,
+                                         ProjectDomainService projectDomainService, ProjectValidator projectValidator,
                                          ProjectFinancialDataService projectFinancialDataService) {
         this.clientApplicationService = clientApplicationService;
         this.clientValidator = clientValidator;
@@ -137,8 +135,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         return this.projectRepository.loadAll().stream().map(project -> {
             ClientDto clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
             ArchitectDto architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
-            return ProjectDtoMapper.INSTANCE
-                    .projectToBasicProjectDto(clientDto, architectDto, project);
+            return ProjectDtoMapper.INSTANCE.projectToBasicProjectDto(clientDto, architectDto, project);
         }).collect(Collectors.toList());
     }
 

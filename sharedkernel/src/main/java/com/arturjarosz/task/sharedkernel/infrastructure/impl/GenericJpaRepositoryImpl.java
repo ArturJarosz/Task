@@ -19,21 +19,17 @@ import java.util.List;
 
 /**
  * An implementation of generic Jpa repository.
- *
- * @param <T>
- * @param <S>
  */
 
-@Transactional(propagation = Propagation.SUPPORTS)
+@Transactional
 @Repository
-public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, S extends EntityPathBase<T>>
-        implements AbstractBaseRepository<T> {
+public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, S extends EntityPathBase<T>> implements AbstractBaseRepository<T> {
 
+    private final S qAggregateRoot;
+    private final QAbstractAggregateRoot qAbstractAggregateRoot;
     private AutowireCapableBeanFactory spring;
     @PersistenceContext
     private EntityManager entityManager;
-    private final S qAggregateRoot;
-    private final QAbstractAggregateRoot qAbstractAggregateRoot;
 
     public GenericJpaRepositoryImpl(S qAggregateRoot) {
         this.qAggregateRoot = qAggregateRoot;
@@ -47,8 +43,6 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
 
     /**
      * Returns query for aggregate root T, that can be extended.
-     *
-     * @return
      */
     @Override
     public JPAQuery<T> queryFromAggregateRoot() {
@@ -58,9 +52,6 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
 
     /**
      * Loads aggregate root T of given id.
-     *
-     * @param id
-     * @return aggregate root T.
      */
     @Override
     public T load(Long id) {
@@ -69,8 +60,6 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
 
     /**
      * Loads all objects that are aggregate root of type T.
-     *
-     * @return List of aggregate roots T.
      */
     @Override
     public List<T> loadAll() {
@@ -81,10 +70,9 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
 
     /**
      * Saves aggregate root T.
-     *
-     * @param aggregate
      */
     @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public T save(T aggregate) {
         if (!this.entityManager.contains(aggregate)) {
             this.entityManager.persist(aggregate);
@@ -97,10 +85,9 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
 
     /**
      * Saves all given aggregate root T.
-     *
-     * @param aggregates
      */
     @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public Collection<T> saveAll(Collection<T> aggregates) {
         for (T aggregate : aggregates) {
             this.save(aggregate);
@@ -111,8 +98,6 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
 
     /**
      * Removes aggregate root T if it exists.
-     *
-     * @param id
      */
     @Override
     public void remove(Long id) {

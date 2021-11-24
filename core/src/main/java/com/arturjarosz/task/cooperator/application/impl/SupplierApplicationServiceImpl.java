@@ -10,8 +10,8 @@ import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,8 +75,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     @Override
     public List<SupplierDto> getBasicSuppliers() {
         LOG.debug("Loading Suppliers list");
-        return this.cooperatorRepository.loadAll().stream()
-                .map(SupplierDtoMapper.INSTANCE::cooperatorToBasicSupplier)
+        return this.cooperatorRepository.loadAll().stream().map(SupplierDtoMapper.INSTANCE::cooperatorToBasicSupplier)
                 .collect(Collectors.toList());
     }
 }

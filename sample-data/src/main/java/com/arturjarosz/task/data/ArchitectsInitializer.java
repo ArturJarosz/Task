@@ -10,15 +10,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.List;
 
 @Component
-public class ArchitectsInitializer {
-
+public class ArchitectsInitializer implements DataInitializer {
     private static final Logger LOG = LogManager.getLogger(ArchitectsInitializer.class);
 
     private final ArchitectApplicationService architectApplicationService;
@@ -28,8 +26,8 @@ public class ArchitectsInitializer {
         this.architectApplicationService = architectApplicationService;
     }
 
-    @Transactional
-    void run() {
+    @Override
+    public void initializeData() {
         LOG.info("Starting importing architects.");
         this.importArchitectsFromFile();
         LOG.info("Architects added to the database.");

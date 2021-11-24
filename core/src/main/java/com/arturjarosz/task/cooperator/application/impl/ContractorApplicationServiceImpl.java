@@ -11,8 +11,8 @@ import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,7 +80,6 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     public List<ContractorDto> getBasicContractors() {
         LOG.debug("Loading Contractors list");
         return this.cooperatorRepository.loadAll().stream()
-                .map(ContractorDtoMapper.INSTANCE::cooperatorToBasicContractor)
-                .collect(Collectors.toList());
+                .map(ContractorDtoMapper.INSTANCE::cooperatorToBasicContractor).collect(Collectors.toList());
     }
 }
