@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
       author: "liquibase"
-      id: "create-system-property-sequence"
+      id: "create-system-parameter-sequence"
       changes:
         - createSequence:
-            sequenceName: "system_property_sequence"
+            sequenceName: "system_parameter_sequence"
             startValue: 100
             cacheSize: 10
             incrementBy: 1

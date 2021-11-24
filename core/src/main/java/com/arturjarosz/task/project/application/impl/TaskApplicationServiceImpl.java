@@ -16,8 +16,8 @@ import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -34,11 +34,9 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     private final TaskDomainService taskDomainService;
     private final TaskValidator taskValidator;
 
-    public TaskApplicationServiceImpl(ProjectQueryService projectQueryService,
-                                      ProjectRepository projectRepository, ProjectValidator projectValidator,
-                                      StageValidator stageValidator,
-                                      TaskDomainService taskDomainService,
-                                      TaskValidator taskValidator) {
+    public TaskApplicationServiceImpl(ProjectQueryService projectQueryService, ProjectRepository projectRepository,
+                                      ProjectValidator projectValidator, StageValidator stageValidator,
+                                      TaskDomainService taskDomainService, TaskValidator taskValidator) {
         this.projectQueryService = projectQueryService;
         this.projectRepository = projectRepository;
         this.projectValidator = projectValidator;
@@ -119,9 +117,12 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = this.projectRepository.load(projectId);
-        return project.getStages().stream()
-                .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
-                .flatMap(stageOnProject -> stageOnProject.getTasks().stream())
+        return project.getStages()
+                .stream()
+                .filter(stageOnProject -> stageOnProject.getId()
+                        .equals(stageId))
+                .flatMap(stageOnProject -> stageOnProject.getTasks()
+                        .stream())
                 .map(TaskDtoMapper.INSTANCE::taskToTaskBasicDto)
                 .collect(Collectors.toList());
 
@@ -154,22 +155,31 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     }
 
     private Task getNewTaskWithId(Project project, Long stageId, Task task) {
-        Predicate<Stage> stagePredicate = stage -> stage.getId().equals(stageId);
+        Predicate<Stage> stagePredicate = stage -> stage.getId()
+                .equals(stageId);
         Predicate<Task> taskPredicate = taskOnStage -> taskOnStage.equals(task);
-        return project.getStages().stream()
+        return project.getStages()
+                .stream()
                 .filter(stagePredicate)
-                .flatMap(stage -> stage.getTasks().stream())
+                .flatMap(stage -> stage.getTasks()
+                        .stream())
                 .filter(taskPredicate)
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 
     private Task getTaskById(Project project, Long stageId, Long taskId) {
-        Predicate<Stage> stagePredicate = stage -> stage.getId().equals(stageId);
-        Predicate<Task> taskPredicate = taskOnStage -> taskOnStage.getId().equals(taskId);
-        return project.getStages().stream()
+        Predicate<Stage> stagePredicate = stage -> stage.getId()
+                .equals(stageId);
+        Predicate<Task> taskPredicate = taskOnStage -> taskOnStage.getId()
+                .equals(taskId);
+        return project.getStages()
+                .stream()
                 .filter(stagePredicate)
-                .flatMap(stage -> stage.getTasks().stream())
+                .flatMap(stage -> stage.getTasks()
+                        .stream())
                 .filter(taskPredicate)
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 }

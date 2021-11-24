@@ -14,8 +14,7 @@ import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @ApplicationService
 public class SupplyApplicationServiceImpl implements SupplyApplicationService {
@@ -53,7 +52,8 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         this.projectFinanceAwareObjectService.onCreate(projectId);
         LOG.debug("Supply for Project with id {} created", projectId);
         SupplyDto createdSupplyDto = SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply, projectId);
-        createdSupplyDto.setId(this.getCreatedSupply(project, supply).getId());
+        createdSupplyDto.setId(this.getCreatedSupply(project, supply)
+                .getId());
         return createdSupplyDto;
     }
 
@@ -95,8 +95,10 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
     }
 
     private Supply getCreatedSupply(Project project, Supply supply) {
-        return project.getSupplies().stream()
-                .filter(supplyOnProject -> (supplyOnProject).equals(supply)).findFirst()
+        return project.getSupplies()
+                .stream()
+                .filter(supplyOnProject -> (supplyOnProject).equals(supply))
+                .findFirst()
                 .orElse(null);
     }
 }

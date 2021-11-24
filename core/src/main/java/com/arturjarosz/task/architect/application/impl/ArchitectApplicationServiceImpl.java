@@ -10,8 +10,10 @@ import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,11 +35,15 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
         this.architectValidator = architectValidator;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public ArchitectDto createArchitect(ArchitectBasicDto architectBasicDto) {
         LOG.debug("creating architect");
-
+        if (TransactionSynchronizationManager.isActualTransactionActive()) {
+            System.out.printf(" *** TRANSACTION %s in class %s%n",
+                    TransactionSynchronizationManager.getCurrentTransactionName(), this.getClass()
+                            .getName());
+        }
         validateBasicArchitectDto(architectBasicDto);
         Architect architect = ArchitectDtoMapper.INSTANCE.architectBasicDtoToArchitect(architectBasicDto);
         architect = this.architectRepository.save(architect);
@@ -84,7 +90,8 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
 
     @Override
     public List<ArchitectBasicDto> getBasicArchitects() {
-        return this.architectRepository.loadAll().stream()
+        return this.architectRepository.loadAll()
+                .stream()
                 .map(ArchitectDtoMapper.INSTANCE::architectToArchitectBasicDto)
                 .collect(Collectors.toList());
     }

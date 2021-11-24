@@ -1,14 +1,19 @@
 databaseChangeLog:
   - changeSet:
-      id: "create-system-property-table"
+      id: "create-system-parameter-table"
       author: "liquibase"
       changes:
         - createTable:
-            tableName: "SYSTEM_PROPERTY"
+            tableName: "SYSTEM_PARAMETER"
             columns:
               - column:
                   name: "ID"
                   type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "${uuid.type}"
                   constraints:
                     nullable: false
               - column:
@@ -35,6 +40,10 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - addPrimaryKey:
-            tableName: "SYSTEM_PROPERTY"
+            tableName: "SYSTEM_PARAMETER"
             columnNames: "ID"
-            constraintName: "PK_SYSTEM_PROPERTY"
+            constraintName: "PK_SYSTEM_PARAMETER"
+        - addUniqueConstraint:
+            tableName: "SYSTEM_PARAMETER"
+            columnNames: "NAME"
+            constraintName: "UNIQ_SYSTEM_PARAMETER_NAME"

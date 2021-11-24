@@ -1,0 +1,9 @@
+[
+  {
+    "name": "Vat tax",
+    "type": "NUMBER",
+    "value": "0.23",
+    "defaultValue": "0.23",
+    "singleValue": true
+  }
+]

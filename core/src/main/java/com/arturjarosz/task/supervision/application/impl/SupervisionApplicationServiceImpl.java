@@ -18,8 +18,7 @@ import com.arturjarosz.task.supervision.query.SupervisionQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @ApplicationService
 public class SupervisionApplicationServiceImpl implements SupervisionApplicationService {
@@ -70,8 +69,8 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionValidator.validateUpdateSupervision(supervisionDto);
         Supervision supervision = this.supervisionRepository.load(supervisionId);
         supervision.update(supervisionDto);
-        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
-                supervision.getFinancialData().getId());
+        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId, supervision.getFinancialData()
+                .getId());
         this.supervisionRepository.save(supervision);
 
         LOG.debug("Supervision with id {} updated.", supervisionId);
@@ -107,11 +106,11 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         SupervisionVisit supervisionVisit = new SupervisionVisit(supervisionVisitDto.getDateOfVisit(),
                 supervisionVisitDto.getHoursCount(), supervisionVisitDto.getPayable());
         supervision.addSupervisionVisit(supervisionVisit);
-        SupervisionVisitDto createdSupervisionVisitDto = SupervisionVisitDtoMapper.INSTANCE
-                .supervisionVisitToSupervisionVisionDto(supervisionVisit);
+        SupervisionVisitDto createdSupervisionVisitDto = SupervisionVisitDtoMapper.INSTANCE.supervisionVisitToSupervisionVisionDto(
+                supervisionVisit);
         this.updateSupervisionHoursCount(supervision);
-        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
-                supervision.getFinancialData().getId());
+        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId, supervision.getFinancialData()
+                .getId());
         this.supervisionRepository.save(supervision);
         createdSupervisionVisitDto.setId(this.getIdForCreatedSupervisionVisit(supervision, supervisionVisit));
         createdSupervisionVisitDto.setSupervisionId(supervisionId);
@@ -132,8 +131,8 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         Supervision supervision = this.supervisionRepository.load(supervisionId);
         supervision.updateSupervisionVisit(supervisionVisitId, supervisionVisitDto);
         this.updateSupervisionHoursCount(supervision);
-        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
-                supervision.getFinancialData().getId());
+        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId, supervision.getFinancialData()
+                .getId());
         this.supervisionRepository.save(supervision);
 
         LOG.debug("Supervision visit with id {} updated.", supervisionVisitId);
@@ -160,23 +159,28 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         Supervision supervision = this.supervisionRepository.load(supervisionId);
         supervision.removeSupervisionVisit(supervisionVisitId);
         this.updateSupervisionHoursCount(supervision);
-        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
-                supervision.getFinancialData().getId());
+        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId, supervision.getFinancialData()
+                .getId());
         this.supervisionRepository.save(supervision);
 
         LOG.debug("Supervision visit with id {} removed.", supervisionVisitId);
     }
 
     private void updateSupervisionHoursCount(Supervision supervision) {
-        int hoursCount = supervision.getSupervisionVisits().stream().mapToInt(SupervisionVisit::getHoursCount).sum();
+        int hoursCount = supervision.getSupervisionVisits()
+                .stream()
+                .mapToInt(SupervisionVisit::getHoursCount)
+                .sum();
         supervision.setHoursCount(hoursCount);
     }
 
 
     private Long getIdForCreatedSupervisionVisit(Supervision supervision, SupervisionVisit supervisionVisit) {
-        return supervision.getSupervisionVisits().stream()
+        return supervision.getSupervisionVisits()
+                .stream()
                 .filter(visit -> visit.equals(supervisionVisit))
                 .map(AbstractEntity::getId)
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 }

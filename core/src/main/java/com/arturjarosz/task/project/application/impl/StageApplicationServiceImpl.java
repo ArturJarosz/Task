@@ -14,8 +14,8 @@ import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @ApplicationService
@@ -29,9 +29,8 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     private final StageValidator stageValidator;
 
     @Autowired
-    public StageApplicationServiceImpl(ProjectQueryService projectQueryService,
-                                       ProjectValidator projectValidator, ProjectRepository projectRepository,
-                                       StageDomainService stageDomainService,
+    public StageApplicationServiceImpl(ProjectQueryService projectQueryService, ProjectValidator projectValidator,
+                                       ProjectRepository projectRepository, StageDomainService stageDomainService,
                                        StageValidator stageValidator) {
         this.projectQueryService = projectQueryService;
         this.projectValidator = projectValidator;
@@ -121,12 +120,19 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     }
 
     private Stage getCreatedStageWithId(Project project, Stage stage) {
-        return project.getStages().stream().filter(stageOnProject -> stageOnProject.equals(stage)).findFirst()
+        return project.getStages()
+                .stream()
+                .filter(stageOnProject -> stageOnProject.equals(stage))
+                .findFirst()
                 .orElse(null);
     }
 
     private Stage getStageById(Project project, Long stageId) {
-        return project.getStages().stream().filter(stageOnProject -> stageOnProject.getId().equals(stageId)).findFirst()
+        return project.getStages()
+                .stream()
+                .filter(stageOnProject -> stageOnProject.getId()
+                        .equals(stageId))
+                .findFirst()
                 .orElse(null);
     }
 

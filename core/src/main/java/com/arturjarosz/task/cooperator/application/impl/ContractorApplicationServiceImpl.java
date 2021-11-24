@@ -11,8 +11,8 @@ import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,8 +50,9 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
         this.contractorValidator.validateContractorExistence(contractorId);
         ContractorValidator.validateUpdateContractorDto(contractorDto);
         Cooperator cooperator = this.cooperatorRepository.load(contractorId);
-        cooperator.update(contractorDto.getName(), contractorDto.getCategory().asCooperatorCategory(),
-                contractorDto.getEmail(), contractorDto.getTelephone(), contractorDto.getNote());
+        cooperator.update(contractorDto.getName(), contractorDto.getCategory()
+                        .asCooperatorCategory(), contractorDto.getEmail(), contractorDto.getTelephone(),
+                contractorDto.getNote());
         this.cooperatorRepository.save(cooperator);
         LOG.debug("Contractor with id {} updated", contractorId);
     }
@@ -79,7 +80,8 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     @Override
     public List<ContractorDto> getBasicContractors() {
         LOG.debug("Loading Contractors list");
-        return this.cooperatorRepository.loadAll().stream()
+        return this.cooperatorRepository.loadAll()
+                .stream()
                 .map(ContractorDtoMapper.INSTANCE::cooperatorToBasicContractor)
                 .collect(Collectors.toList());
     }

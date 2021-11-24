@@ -24,10 +24,9 @@ import java.util.List;
  * @param <S>
  */
 
-@Transactional(propagation = Propagation.SUPPORTS)
+@Transactional
 @Repository
-public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, S extends EntityPathBase<T>>
-        implements AbstractBaseRepository<T> {
+public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, S extends EntityPathBase<T>> implements AbstractBaseRepository<T> {
 
     private AutowireCapableBeanFactory spring;
     @PersistenceContext
@@ -64,7 +63,9 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
      */
     @Override
     public T load(Long id) {
-        return this.queryFromAggregateRoot().where(this.qAbstractAggregateRoot.id.eq(id)).fetchOne();
+        return this.queryFromAggregateRoot()
+                .where(this.qAbstractAggregateRoot.id.eq(id))
+                .fetchOne();
     }
 
     /**
@@ -74,7 +75,8 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
      */
     @Override
     public List<T> loadAll() {
-        List<T> aggregates = this.queryFromAggregateRoot().fetch();
+        List<T> aggregates = this.queryFromAggregateRoot()
+                .fetch();
         this.autowire(aggregates);
         return aggregates;
     }
@@ -85,6 +87,7 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
      * @param aggregate
      */
     @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public T save(T aggregate) {
         if (!this.entityManager.contains(aggregate)) {
             this.entityManager.persist(aggregate);
