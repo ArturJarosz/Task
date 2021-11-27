@@ -16,7 +16,7 @@ import java.io.UncheckedIOException;
 import java.util.List;
 
 @Component
-public class ClientInitializer {
+public class ClientInitializer implements DataInitializer {
 
     private static final Logger LOG = LogManager.getLogger(ClientInitializer.class);
 
@@ -27,7 +27,8 @@ public class ClientInitializer {
         this.clientApplicationService = clientApplicationService;
     }
 
-    void run() {
+    @Override
+    public void initializeData() {
         LOG.info("Starting importing clients.");
         this.importClientsFromFile();
         LOG.info("Clients added to the database.");
@@ -41,7 +42,8 @@ public class ClientInitializer {
     private List<ClientDto> prepareClients(String filename) {
         ObjectMapper mapper = new ObjectMapper();
         BaseValidator.assertNotEmpty(filename, "File name cannot be empty.");
-        try (InputStream inputStream = ClientInitializer.class.getClassLoader().getResourceAsStream(filename)) {
+        try (InputStream inputStream = ClientInitializer.class.getClassLoader()
+                .getResourceAsStream(filename)) {
             return mapper.readValue(inputStream, new TypeReference<List<ClientDto>>() {
             });
         } catch (IOException e) {

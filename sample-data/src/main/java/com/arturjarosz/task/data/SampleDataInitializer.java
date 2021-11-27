@@ -1,33 +1,45 @@
 package com.arturjarosz.task.data;
 
+import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.transaction.Transactional;
+import java.util.List;
 
-@Component
+
+@ApplicationService
 public class SampleDataInitializer extends AbstractDataInitializer {
 
     private static final Logger LOG = LogManager.getLogger(SampleDataInitializer.class);
+    private final List<DataInitializer> dataInitializers;
+    private final TransactionHandler transactionHandler;
 
-    private final ArchitectsInitializer architectsInitializer;
-    private final ClientInitializer clientInitializer;
-
-    public SampleDataInitializer(ArchitectsInitializer architectsInitializer, ClientInitializer clientInitializer) {
-        this.architectsInitializer = architectsInitializer;
-        this.clientInitializer = clientInitializer;
+    @Autowired
+    public SampleDataInitializer(List<DataInitializer> dataInitializers, TransactionHandler transactionHandler) {
+        this.dataInitializers = dataInitializers;
+        this.transactionHandler = transactionHandler;
     }
 
     /**
      * Loading all sample data.
      */
+
     @Override
-    @Transactional
     protected void loadData() {
         LOG.info("Loading sample data.");
-        this.architectsInitializer.run();
-        this.clientInitializer.run();
+
+        for (DataInitializer dataInitializer : this.dataInitializers) {
+            try {
+                this.transactionHandler.runInTransaction(transactionStatus -> {
+                    dataInitializer.initializeData();
+                    return null;
+                });
+            } catch (Exception e) {
+                throw new RuntimeException(":(");
+            }
+        }
+
         LOG.info("All sample data loaded.");
     }
 }

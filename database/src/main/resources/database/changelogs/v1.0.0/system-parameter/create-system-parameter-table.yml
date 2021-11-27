@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: "create-system-parameter-table"
+      author: "liquibase"
+      changes:
+        - createTable:
+            tableName: "SYSTEM_PARAMETER"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "${uuid.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NAME"
+                  type: "VARCHAR2(60 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TYPE"
+                  type: "VARCHAR2(60 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "VALUE"
+                  type: "VARCHAR2(150 ${char.unit})"
+              - column:
+                  name: "DEFAULT_VALUE"
+                  type: "VARCHAR2(150 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "SINGLE_VALUE"
+                  type: "${boolean.type}"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "SYSTEM_PARAMETER"
+            columnNames: "ID"
+            constraintName: "PK_SYSTEM_PARAMETER"
+        - addUniqueConstraint:
+            tableName: "SYSTEM_PARAMETER"
+            columnNames: "NAME"
+            constraintName: "UNIQ_SYSTEM_PARAMETER_NAME"

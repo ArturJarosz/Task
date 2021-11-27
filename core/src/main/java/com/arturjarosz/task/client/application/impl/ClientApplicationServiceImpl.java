@@ -10,8 +10,8 @@ import com.arturjarosz.task.client.model.ClientType;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,8 +38,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         if (clientType.equals(ClientType.CORPORATE)) {
             client = Client.createCorporateClient(clientDto.getCompanyName());
         } else {
-            client = Client.createPrivateClient(clientDto.getFirstName(),
-                    clientDto.getLastName());
+            client = Client.createPrivateClient(clientDto.getFirstName(), clientDto.getLastName());
         }
         client = this.clientRepository.save(client);
 
@@ -86,17 +85,22 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
             client.updateCompanyName(clientDto.getCompanyName());
         }
         if (clientDto.getContact() != null) {
-            if (clientDto.getContact().getAddress() != null) {
-                client.updateAddress(
-                        ClientDtoMapper.INSTANCE.addressDtoToAddress(clientDto.getContact().getAddress()));
+            if (clientDto.getContact()
+                    .getAddress() != null) {
+                client.updateAddress(ClientDtoMapper.INSTANCE.addressDtoToAddress(clientDto.getContact()
+                        .getAddress()));
             }
-            if (clientDto.getContact().getEmail() != null) {
-                client.updateEmail(clientDto.getContact().getEmail());
+            if (clientDto.getContact()
+                    .getEmail() != null) {
+                client.updateEmail(clientDto.getContact()
+                        .getEmail());
             }
-            client.updateTelephone(clientDto.getContact().getTelephone());
+            client.updateTelephone(clientDto.getContact()
+                    .getTelephone());
         }
         if (clientDto.getAdditionalData() != null) {
-            client.updateNote(clientDto.getAdditionalData().getNote());
+            client.updateNote(clientDto.getAdditionalData()
+                    .getNote());
         }
         this.clientRepository.save(client);
 

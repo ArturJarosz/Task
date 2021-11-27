@@ -23,6 +23,9 @@ databaseChangeLog:
   - include:
       file: "supervision/supervision-tables.xml"
       relativeToChangelogFile: true
+  - include:
+      file: "system-parameter/system-parameter-tables.yml"
+      relativeToChangelogFile: true
   - changeSet:
       author: "liquibase"
       id: "tag-version_1.0.0"

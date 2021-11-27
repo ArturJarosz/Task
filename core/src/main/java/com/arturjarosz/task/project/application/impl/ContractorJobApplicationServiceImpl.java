@@ -14,8 +14,7 @@ import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @ApplicationService
 public class ContractorJobApplicationServiceImpl implements ContractorJobApplicationService {
@@ -54,7 +53,8 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         LOG.debug("ContractorJob for Project with id {} created", projectId);
         ContractorJobDto createdContractorJobDto = ContractorJobDtoMapper.INSTANCE.contractorJobToContractorJobDto(
                 contractorJob, projectId);
-        createdContractorJobDto.setId(this.getCreatedContractorJob(project, contractorJob).getId());
+        createdContractorJobDto.setId(this.getCreatedContractorJob(project, contractorJob)
+                .getId());
         return createdContractorJobDto;
     }
 
@@ -98,8 +98,10 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
     }
 
     private ContractorJob getCreatedContractorJob(Project project, ContractorJob contractorJob) {
-        return project.getContractorJobs().stream()
-                .filter(contractorJobOnProject -> contractorJobOnProject.equals(contractorJob)).findFirst()
+        return project.getContractorJobs()
+                .stream()
+                .filter(contractorJobOnProject -> contractorJobOnProject.equals(contractorJob))
+                .findFirst()
                 .orElse(null);
     }
 }

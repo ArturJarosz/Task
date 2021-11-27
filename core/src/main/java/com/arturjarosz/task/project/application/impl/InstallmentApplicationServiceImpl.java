@@ -15,8 +15,8 @@ import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -57,8 +57,8 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         project = this.projectRepository.save(project);
 
         LOG.debug("installment for stage with id {} created", stageId);
-        return InstallmentDtoMapper.INSTANCE
-                .installmentToInstallmentDto(this.getNewInstallmentWithId(project, stageId));
+        return InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(
+                this.getNewInstallmentWithId(project, stageId));
     }
 
     @Transactional
@@ -114,7 +114,8 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
 
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
-        return project.getStages().stream()
+        return project.getStages()
+                .stream()
                 .map(Stage::getInstallment)
                 .filter(Objects::nonNull)
                 .map(InstallmentDtoMapper.INSTANCE::installmentToInstallmentDto)
@@ -133,8 +134,12 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     }
 
     private Installment getNewInstallmentWithId(Project project, Long stageId) {
-        return project.getStages().stream()
-                .filter(stageOnProject -> stageOnProject.getId().equals(stageId)).map(Stage::getInstallment)
-                .findFirst().orElse(null);
+        return project.getStages()
+                .stream()
+                .filter(stageOnProject -> stageOnProject.getId()
+                        .equals(stageId))
+                .map(Stage::getInstallment)
+                .findFirst()
+                .orElse(null);
     }
 }

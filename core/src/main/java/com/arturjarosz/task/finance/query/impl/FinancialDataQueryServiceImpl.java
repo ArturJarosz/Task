@@ -7,7 +7,6 @@ import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.model.CooperatorJobType;
 import com.arturjarosz.task.project.model.QContractorJob;
-import com.arturjarosz.task.project.model.QCooperatorJob;
 import com.arturjarosz.task.project.model.QCost;
 import com.arturjarosz.task.project.model.QInstallment;
 import com.arturjarosz.task.project.model.QProject;
@@ -24,7 +23,6 @@ import java.util.List;
 
 @Finder
 public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinancialData> implements FinancialDataQueryService {
-    private static final QCooperatorJob COOPERATOR_JOB = QCooperatorJob.cooperatorJob;
     private static final QContractorJob CONTRACTOR_JOB = QContractorJob.contractorJob;
     private static final QCost COST = QCost.cost;
     private static final QFinancialData FINANCIAL_DATA = QFinancialData.financialData;

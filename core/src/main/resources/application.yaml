@@ -26,6 +26,14 @@ spring:
     banner-mode: off
   jackson:
     default-property-inclusion: non_null
+  rabbitmq:
+    port: 5672
+    password: guest
+    username: guest
+    host: localhost
+    cache:
+      connection:
+        mode: channel
 server:
   port: 8099
 task:
