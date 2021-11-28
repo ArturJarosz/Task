@@ -42,7 +42,7 @@ public class ArchitectsInitializer implements DataInitializer {
         ObjectMapper mapper = new ObjectMapper();
         BaseValidator.assertNotEmpty(filename, "File name cannot be empty.");
         try (InputStream inputStream = ArchitectsInitializer.class.getClassLoader().getResourceAsStream(filename)) {
-            return mapper.readValue(inputStream, new TypeReference<List<ArchitectBasicDto>>() {
+            return mapper.readValue(inputStream, new TypeReference<>() {
             });
         } catch (IOException e) {
             throw new UncheckedIOException(

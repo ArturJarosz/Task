@@ -4,7 +4,6 @@ import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.systemparameter.application.SystemParameterService;
 import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto;
 import com.arturjarosz.task.systemparameter.infrastructure.repository.SystemParameterRepository;
-import com.arturjarosz.task.systemparameter.model.SystemParameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,21 +21,12 @@ public class SystemParameterServiceImpl implements SystemParameterService {
 
     @Transactional
     @Override
-    public SystemParameterDto createSystemParameter(SystemParameterDto systemParameterDto,
-                                                    SystemParameter systemParameter) {
-        //TODO TA-198 - validate system parameter dto
-        //TODO TA-198 - create new system parameter
-        //TODO TA-198 - add system parameter
-        this.systemParameterRepository.save(systemParameter);
-        return null;
-    }
-
-    @Override
     public SystemParameterDto updateSystemParameter(Long systemParameterId, SystemParameterDto systemParameterDto) {
         //TODO TA-198 - implement updating system parameters - should it be possible all the time ?
         return null;
     }
 
+    @Transactional
     @Override
     public void removeSystemParameter(Long systemParameterId) {
         //TODO TA-198 - implement how to remove system parameters

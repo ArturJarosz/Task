@@ -2,6 +2,8 @@ package com.arturjarosz.task.systemparameter.query;
 
 import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto;
 
+import java.util.List;
+
 public interface SystemParameterQueryService {
 
     /**
@@ -9,6 +11,7 @@ public interface SystemParameterQueryService {
      */
     SystemParameterDto getSystemPropertyByName(String name);
 
+    List<String> getSystemParametersNames();
 }
 
 
