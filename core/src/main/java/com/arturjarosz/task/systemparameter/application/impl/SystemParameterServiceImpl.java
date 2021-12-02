@@ -26,12 +26,6 @@ public class SystemParameterServiceImpl implements SystemParameterService {
         return null;
     }
 
-    @Transactional
-    @Override
-    public void removeSystemParameter(Long systemParameterId) {
-        //TODO TA-198 - implement how to remove system parameters
-    }
-
     @Override
     public SystemParameterDto getSystemParameter(Long systemParameterId) {
         //TODO TA-198 - implement retrieving system parameter

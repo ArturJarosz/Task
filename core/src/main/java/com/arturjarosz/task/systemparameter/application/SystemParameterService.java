@@ -8,8 +8,6 @@ public interface SystemParameterService {
 
     SystemParameterDto updateSystemParameter(Long systemParameterId, SystemParameterDto systemParameterDto);
 
-    void removeSystemParameter(Long systemParameterId);
-
     SystemParameterDto getSystemParameter(Long systemParameterId);
 
     List<SystemParameterDto> getSystemParameters();

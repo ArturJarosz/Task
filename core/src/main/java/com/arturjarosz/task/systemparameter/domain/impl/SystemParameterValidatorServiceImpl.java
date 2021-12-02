@@ -4,6 +4,7 @@ import com.arturjarosz.task.sharedkernel.annotations.DomainService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.systemparameter.domain.SystemParameterExceptionCodes;
 import com.arturjarosz.task.systemparameter.domain.SystemParameterValidatorService;
+import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto;
 import com.arturjarosz.task.systemparameter.domain.validator.SystemParameterValidator;
 import com.arturjarosz.task.systemparameter.query.SystemParameterQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class SystemParameterValidatorServiceImpl implements SystemParameterValid
 
     @Autowired
     public SystemParameterValidatorServiceImpl(List<SystemParameterValidator> validators,
-                                               SystemParameterQueryService systemParameterQueryService) {
+            SystemParameterQueryService systemParameterQueryService) {
         this.systemNameToValidator = validators.stream()
                 .collect(Collectors.toMap(SystemParameterValidator::getSystemParameterName, Function.identity()));
         this.systemParameterQueryService = systemParameterQueryService;
@@ -40,5 +41,15 @@ public class SystemParameterValidatorServiceImpl implements SystemParameterValid
                             SystemParameterExceptionCodes.VALIDATOR), systemParameterName);
             validator.validate(systemParameterName);
         });
+    }
+
+    @Override
+    public void validateOnUpdate(SystemParameterDto systemParameterDto) {
+        String systemParameterName = systemParameterDto.getName();
+        SystemParameterValidator validator = this.systemNameToValidator.get(systemParameterName);
+        assertNotNull(validator,
+                createMessageCode(ExceptionCodes.NOT_EXIST, SystemParameterExceptionCodes.SYSTEM_PARAMETER,
+                        SystemParameterExceptionCodes.VALIDATOR), systemParameterName);
+        validator.validateOnUpdate(systemParameterDto);
     }
 }
