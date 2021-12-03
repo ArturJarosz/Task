@@ -16,7 +16,7 @@ import java.io.UncheckedIOException;
 import java.util.List;
 
 @Component
-public class ClientInitializer {
+public class ClientInitializer implements DataInitializer {
 
     private static final Logger LOG = LogManager.getLogger(ClientInitializer.class);
 
@@ -27,7 +27,8 @@ public class ClientInitializer {
         this.clientApplicationService = clientApplicationService;
     }
 
-    void run() {
+    @Override
+    public void initializeData() {
         LOG.info("Starting importing clients.");
         this.importClientsFromFile();
         LOG.info("Clients added to the database.");

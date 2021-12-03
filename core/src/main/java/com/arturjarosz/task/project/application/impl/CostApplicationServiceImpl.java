@@ -13,8 +13,8 @@ import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -62,9 +62,8 @@ public class CostApplicationServiceImpl implements CostApplicationService {
         this.costValidator.validateCostExistence(costId);
         this.costValidator.validateUpdateCostDto(costDto);
         Project project = this.projectRepository.load(projectId);
-        Cost cost = project
-                .updateCost(costId, costDto.getName(), costDto.getDate(), costDto.getValue(), costDto.getCategory(),
-                        costDto.getNote());
+        Cost cost = project.updateCost(costId, costDto.getName(), costDto.getDate(), costDto.getValue(),
+                costDto.getCategory(), costDto.getNote());
         this.projectRepository.save(project);
         this.projectFinanceAwareObjectService.onUpdate(projectId);
         return CostDtoMapper.INSTANCE.costToCostDto(cost);
@@ -82,10 +81,7 @@ public class CostApplicationServiceImpl implements CostApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
         Set<Cost> costs = project.getCosts();
-        return new ArrayList<>(costs.stream()
-                .map(CostDtoMapper.INSTANCE::costToCostDto)
-                .collect(Collectors.toList())
-        );
+        return new ArrayList<>(costs.stream().map(CostDtoMapper.INSTANCE::costToCostDto).collect(Collectors.toList()));
     }
 
     @Transactional
@@ -100,10 +96,8 @@ public class CostApplicationServiceImpl implements CostApplicationService {
     }
 
     private Long getIdForCreatedCost(Project project, Cost cost) {
-        return project.getCosts().stream()
-                .filter(costOnProject -> costOnProject.equals(cost))
-                .map(AbstractEntity::getId)
-                .findFirst().orElse(null);
+        return project.getCosts().stream().filter(costOnProject -> costOnProject.equals(cost))
+                .map(AbstractEntity::getId).findFirst().orElse(null);
     }
 
 }

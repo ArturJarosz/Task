@@ -18,8 +18,7 @@ import com.arturjarosz.task.supervision.query.SupervisionQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @ApplicationService
 public class SupervisionApplicationServiceImpl implements SupervisionApplicationService {
@@ -107,8 +106,8 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         SupervisionVisit supervisionVisit = new SupervisionVisit(supervisionVisitDto.getDateOfVisit(),
                 supervisionVisitDto.getHoursCount(), supervisionVisitDto.getPayable());
         supervision.addSupervisionVisit(supervisionVisit);
-        SupervisionVisitDto createdSupervisionVisitDto = SupervisionVisitDtoMapper.INSTANCE
-                .supervisionVisitToSupervisionVisionDto(supervisionVisit);
+        SupervisionVisitDto createdSupervisionVisitDto = SupervisionVisitDtoMapper.INSTANCE.supervisionVisitToSupervisionVisionDto(
+                supervisionVisit);
         this.updateSupervisionHoursCount(supervision);
         this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
                 supervision.getFinancialData().getId());
@@ -174,9 +173,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
 
 
     private Long getIdForCreatedSupervisionVisit(Supervision supervision, SupervisionVisit supervisionVisit) {
-        return supervision.getSupervisionVisits().stream()
-                .filter(visit -> visit.equals(supervisionVisit))
-                .map(AbstractEntity::getId)
-                .findFirst().orElse(null);
+        return supervision.getSupervisionVisits().stream().filter(visit -> visit.equals(supervisionVisit))
+                .map(AbstractEntity::getId).findFirst().orElse(null);
     }
 }

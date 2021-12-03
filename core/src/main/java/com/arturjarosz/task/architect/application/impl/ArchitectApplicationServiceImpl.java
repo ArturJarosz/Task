@@ -10,8 +10,8 @@ import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,7 +85,6 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     @Override
     public List<ArchitectBasicDto> getBasicArchitects() {
         return this.architectRepository.loadAll().stream()
-                .map(ArchitectDtoMapper.INSTANCE::architectToArchitectBasicDto)
-                .collect(Collectors.toList());
+                .map(ArchitectDtoMapper.INSTANCE::architectToArchitectBasicDto).collect(Collectors.toList());
     }
 }

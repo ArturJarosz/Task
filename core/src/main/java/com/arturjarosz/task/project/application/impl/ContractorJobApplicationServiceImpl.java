@@ -14,8 +14,7 @@ import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @ApplicationService
 public class ContractorJobApplicationServiceImpl implements ContractorJobApplicationService {
