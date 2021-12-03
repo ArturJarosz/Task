@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "95c62f1b-42d3-4f65-b8cb-70413c9e339d",
+		"_postman_id": "41972c0c-6fcd-46ed-a7f7-cb3ecf21a88e",
 		"name": "Task",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1760,7 +1760,7 @@
 			]
 		},
 		{
-			"name": "Contractor Copy",
+			"name": "Contractor",
 			"item": [
 				{
 					"name": "Create Contractor",
@@ -1769,7 +1769,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"X-Kom\",\n    \"category\": \"PAINT_SHOP\"\n}",
+							"raw": "{\n    \"name\": \"X-Kom\",\n    \"category\": \"GENERAL\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1777,19 +1777,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{taskAddress}}/suppliers",
+							"raw": "{{taskAddress}}/contractors",
 							"host": [
 								"{{taskAddress}}"
 							],
 							"path": [
-								"suppliers"
+								"contractors"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Update Supplier",
+					"name": "Update Contractor",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -1846,6 +1846,73 @@
 							"path": [
 								"contractors",
 								"{{contractorId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SystemParameter",
+			"item": [
+				{
+					"name": "Update System Parameter",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"vat_tax\",\n    \"value\": \"0.19\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/systemParameters/{{systemParameterId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"systemParameters",
+								"{{systemParameterId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get System Parameter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/systemParameters/{{systemParameterId}}",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"systemParameters",
+								"{{systemParameterId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get System Parameters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/systemParameters",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"systemParameters"
 							]
 						}
 					},

@@ -39,6 +39,7 @@ public class SystemParameterRestController {
         return new ResponseEntity<>(this.systemParameterService.getSystemParameter(systemParameterId), HttpStatus.OK);
     }
 
+    @GetMapping("")
     public ResponseEntity<List<SystemParameterDto>> getSystemParameters() {
         return new ResponseEntity<>(this.systemParameterService.getSystemParameters(), HttpStatus.OK);
     }
