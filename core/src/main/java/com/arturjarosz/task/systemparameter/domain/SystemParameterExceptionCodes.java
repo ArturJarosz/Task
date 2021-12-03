@@ -4,6 +4,7 @@ import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 
 public class SystemParameterExceptionCodes {
     public static final String DECIMAL_NUMBER = "decimalNumber";
+    public static final String ID = "id";
     public static final String NAME = "name";
     public static final String SYSTEM_PARAMETER = "systemParameter";
     public static final String VALUE = "value";

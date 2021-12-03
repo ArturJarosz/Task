@@ -11,7 +11,11 @@ public interface SystemParameterQueryService {
      */
     SystemParameterDto getSystemPropertyByName(String name);
 
+    SystemParameterDto getSystemParameter(long id);
+
     List<String> getSystemParametersNames();
+
+    List<SystemParameterDto> getSystemParameters();
 }
 
 

@@ -1,6 +1,7 @@
 package com.arturjarosz.task.systemparameter.model;
 
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
+import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,7 +37,7 @@ public class SystemParameter extends AbstractAggregateRoot {
     }
 
     public SystemParameter(String name, String value, String defaultValue, SystemParameterType type,
-                           boolean singleValue) {
+            boolean singleValue) {
         this.name = name;
         this.value = value;
         this.defaultValue = defaultValue;
@@ -45,4 +46,27 @@ public class SystemParameter extends AbstractAggregateRoot {
     }
 
 
+    public void update(SystemParameterDto systemParameterDto) {
+        this.value = systemParameterDto.getValue();
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public SystemParameterType getType() {
+        return this.type;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
+    public String getDefaultValue() {
+        return this.defaultValue;
+    }
+
+    public boolean isSingleValue() {
+        return this.singleValue;
+    }
 }
