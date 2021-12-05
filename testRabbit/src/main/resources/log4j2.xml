@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Properties>
+        <Property name="log-path">archive</Property>
+        <Property name="logging-pattern">[%d{ISO8601}] %5p [%t]%x - %C{1}.%M(%F:%L) - %m%n</Property>
+        <Property name="additive-logging">false</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${logging-pattern}"/>
+        </Console>
+        <File name="FileAppender" fileName="${log-path}/loggs2.log">
+            <PatternLayout pattern="${logging-pattern}"/>
+        </File>
+        <File name="LiquibaseFileAppender" fileName="${log-path}/liquibase.log">
+            <PatternLayout pattern="${logging-pattern}"/>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="liquibase" level="debug" additivity="${additive-logging}">
+            <AppenderRef ref="LiquibaseFileAppender"/>
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+        <Logger name="com.arturjarosz.task" level="info" additivity="${additive-logging}">
+            <AppenderRef ref="FileAppender"/>
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>
