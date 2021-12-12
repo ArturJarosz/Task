@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: ${test.database.url}
+    username: ${test.database.username}
+    password: ${test.database.password}
+  jpa:
+    database-platform: ${test.database.dialect}
+    database: ${test.database.type}
+  liquibase:
+    enabled: true
+    change-log: database/changelogs/changelog-master.yml
+    default-schema: public
+task:
+  language: en
+  encoding: UTF-8
