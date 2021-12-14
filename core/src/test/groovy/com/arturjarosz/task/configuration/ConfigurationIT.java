@@ -3,30 +3,24 @@ package com.arturjarosz.task.configuration;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@EnableAutoConfiguration
 @PropertySource("database.properties")
-public class Config {
+public class ConfigurationIT {
     private final String databaseUrl;
     private final String databaseDialect;
     private final String databaseType;
-    private EntityManagerFactory emf;
 
     @Autowired
-    public Config(@Value("${test.database.url}") String databaseUrl,
+    public ConfigurationIT(@Value("${test.database.url}") String databaseUrl,
             @Value("${test.database.dialect}") String databaseDialect,
             @Value("${test.database.type}") String databaseType) {
         this.databaseDialect = databaseDialect;
@@ -35,13 +29,6 @@ public class Config {
     }
 
     @Bean
-    @Lazy
-    public EntityManager entityManager() {
-        return this.emf.createEntityManager();
-    }
-
-    @Bean
-    @Lazy
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
@@ -63,5 +50,4 @@ public class Config {
         transactionManager.setEntityManagerFactory(emf.getObject());
         return transactionManager;
     }
-
 }
