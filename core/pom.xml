@@ -194,7 +194,11 @@
                         <include>**/*Test.groovy</include>
                         <include>**/*IT.groovy</include>
                         <include>**/*IT.java</include>
+                        <include>ConfigurationIT.java</include>
                     </includes>
+                    <additionalClasspathElements>
+                        <classpathElement>com.arturjarosz.task.configuration.ConfigurationIT</classpathElement>
+                    </additionalClasspathElements>
                 </configuration>
             </plugin>
         </plugins>
