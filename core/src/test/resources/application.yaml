@@ -11,6 +11,8 @@ spring:
     enabled: true
     change-log: database/changelogs/changelog-master.yml
     default-schema: public
+server:
+  port: 9565
 task:
   language: en
   encoding: UTF-8

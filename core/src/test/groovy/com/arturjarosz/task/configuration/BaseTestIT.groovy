@@ -6,15 +6,17 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.test.context.SpringBootTest
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.spock.Testcontainers
+import spock.lang.Shared
 import spock.lang.Specification
 
 @SpringBootTest(classes = DatabaseMain.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 class BaseTestIT extends Specification {
     private static final Logger LOG = LoggerFactory.getLogger(BaseTestIT.class);
+    @Shared
     private static final PostgreSQLContainer POSTGRES_CONTAINER = new PostgreSQLContainer("postgres")
             .withDatabaseName('test').withUsername(
-            'test').withPassword('test')
+            'test').withPassword('test');
 
     def setupSpec() {
         startPostgresIfNeeded()

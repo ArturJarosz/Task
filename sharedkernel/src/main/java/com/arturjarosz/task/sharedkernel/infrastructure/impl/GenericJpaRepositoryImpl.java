@@ -79,7 +79,6 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
         } else {
             this.entityManager.merge(aggregate);
         }
-        this.entityManager.flush();
         return aggregate;
     }
 
@@ -92,7 +91,6 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
         for (T aggregate : aggregates) {
             this.save(aggregate);
         }
-        this.entityManager.flush();
         return aggregates;
     }
 
@@ -104,7 +102,6 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
         T aggregate = this.load(id);
 
         this.entityManager.remove(aggregate);
-        this.entityManager.flush();
     }
 
     /**
