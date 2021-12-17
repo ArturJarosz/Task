@@ -4,6 +4,9 @@ public class ErrorMessage {
     private String message;
     private Object[] parameters;
 
+    public ErrorMessage() {
+    }
+
     public ErrorMessage(String message) {
         this.message = message;
     }

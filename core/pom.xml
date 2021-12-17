@@ -54,7 +54,6 @@
             <version>${mapstruct.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <!--LOGGING-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -97,9 +96,38 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-spring</artifactId>
+            <version>2.1-M2-groovy-3.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
             <version>${objenesis.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>spock</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.arturjarosz</groupId>
+            <artifactId>task-database</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -163,7 +191,13 @@
                         <include>**/*Test.java</include>
                         <include>**/*Spec.java</include>
                         <include>**/*Test.groovy</include>
+                        <include>**/*IT.groovy</include>
+                        <include>**/*IT.java</include>
+                        <include>ConfigurationIT.java</include>
                     </includes>
+                    <additionalClasspathElements>
+                        <classpathElement>com.arturjarosz.task.configuration.ConfigurationIT</classpathElement>
+                    </additionalClasspathElements>
                 </configuration>
             </plugin>
         </plugins>

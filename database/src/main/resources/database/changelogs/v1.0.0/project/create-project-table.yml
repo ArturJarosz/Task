@@ -51,6 +51,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: "WORKFLOW_NAME"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
                   name: "ARRANGEMENT_ID"
                   type: "${long.type}"
               - column:
