@@ -62,6 +62,7 @@ public interface ProjectDtoMapper {
     @Mapping(source = "project.signingDate", target = "signingDate", ignore = true)
     @Mapping(source = "project.startDate", target = "startDate", ignore = true)
     @Mapping(source = "project.deadline", target = "deadline", ignore = true)
+    @Mapping(source = "project.note", target = "note")
     @Mapping(source = "clientDto.id", target = "client.id", ignore = true)
     @Mapping(source = "clientDto.firstName", target = "client.firstName")
     @Mapping(source = "clientDto.lastName", target = "client.lastName")

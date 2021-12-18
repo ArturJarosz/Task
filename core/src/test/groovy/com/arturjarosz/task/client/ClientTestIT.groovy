@@ -20,17 +20,6 @@ import org.testcontainers.spock.Testcontainers
 class ClientTestIT extends BaseTestIT {
 
     private static final String CLIENTS_URI = "/clients";
-
-    private static final String FIRST_NAME = "FirstName";
-    private static final String LAST_NAME = "LastName";
-    private static final String COMPANY_NAME = "CompanyName";
-    private static final String CITY = "City";
-    private static final String POST_CODE = "12345";
-    private static final String STREET = "street";
-    private static final String HOUSE_NUMBER = "10A";
-    private static final String FLAT_NUMBER = "20B";
-    private static final String EMAIL = "email@test.pl";
-    private static final String NOTE = "note";
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final ClientDto privateClient =
@@ -49,8 +38,18 @@ class ClientTestIT extends BaseTestIT {
             MAPPER.readValue(
                     new File(
                             getClass().getClassLoader().getResource('json/client/corporateClientNotProper.json')
-                                    .getFile()),
-                    ClientDto.class);
+                                    .getFile()), ClientDto.class);
+    private final ClientDto updateClient =
+            MAPPER.readValue(
+                    new File(
+                            getClass().getClassLoader().getResource('json/client/updateClient.json')
+                                    .getFile()), ClientDto.class);
+    private final ClientDto updateClientNotProper =
+            MAPPER.readValue(
+                    new File(
+                            getClass().getClassLoader().getResource('json/client/updateClientNotProper.json')
+                                    .getFile()), ClientDto.class);
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -162,61 +161,147 @@ class ClientTestIT extends BaseTestIT {
     @Transactional
     def "Updating existing client should give coe 200 and return updated client dto"() {
         given:
-            1 == 1;
+            String requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(privateClient);
+            def createdClientResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + CLIENTS_URI))
+                            .header("Content-Type", "application/json")
+                            .content(requestBody)
+            ).andReturn().response.contentAsString;
+            ClientDto createdClient = MAPPER.readValue(createdClientResponse, ClientDto.class);
+            String updateRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateClient);
         when:
-            1 == 1;
+            def updatedClientResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .put(URI.create(HOST + ":" + port + CLIENTS_URI + "/" + createdClient.getId()))
+                            .content(updateRequestBody)
+                            .header("Content-Type", "application/json")
+            ).andReturn().response;
         then:
-            1 == 0;
+            updatedClientResponse.status == HttpStatus.OK.value();
+        and:
+            ClientDto updatedClient = MAPPER.readValue(updatedClientResponse.contentAsString, ClientDto.class);
+            updatedClient.getFirstName() == updatedClient.getFirstName();
+            updatedClient.getLastName() == updateClient.getLastName();
+            updatedClient.getContact().getAddress().getCity() == updateClient.getContact().getAddress().getCity();
+            updatedClient.getContact().getAddress().getPostCode() ==
+                    updateClient.getContact().getAddress().getPostCode();
+            updatedClient.getContact().getAddress().getStreet() == updateClient.getContact().getAddress().getStreet();
+            updatedClient.getContact().getAddress().getHouseNumber() ==
+                    updatedClient.getContact().getAddress().getHouseNumber();
+            updatedClient.getContact().getAddress().getFlatNumber() ==
+                    updateClient.getContact().getAddress().getFlatNumber();
+            updatedClient.getContact().getEmail() == updateClient.getContact().getEmail();
+            updatedClient.getContact().getTelephone() == updatedClient.getContact().getTelephone();
+            updatedClient.getNote() == updateClient.getNote();
+
     }
 
     @Transactional
     def "Updating not existing client should give code 400"() {
         given:
-            1 == 1;
+            String updateRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateClient);
         when:
-            1 == 1;
+            def updatedClientResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .put(URI.create(HOST + ":" + port + CLIENTS_URI + "/" + 2000))
+                            .content(updateRequestBody)
+                            .header("Content-Type", "application/json")
+            ).andReturn().response;
         then:
-            1 == 0;
+            updatedClientResponse.status == HttpStatus.BAD_REQUEST.value();
+            ErrorMessage errorMessage = MAPPER.readValue(updatedClientResponse.contentAsString, ErrorMessage.class);
+            errorMessage.getMessage() == "Client with id 2,000 does not exist.";
     }
 
     @Transactional
     def "Updating client with not proper client dto should give code 400 and not update client data"() {
         given:
-            1 == 1;
+            String requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(privateClient);
+            def createdClientResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + CLIENTS_URI))
+                            .header("Content-Type", "application/json")
+                            .content(requestBody)
+            ).andReturn().response.contentAsString;
+            ClientDto createdClient = MAPPER.readValue(createdClientResponse, ClientDto.class);
+            String updateRequestBody =
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateClientNotProper);
         when:
-            1 == 1;
+            def updatedClientResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .put(URI.create(HOST + ":" + port + CLIENTS_URI + "/" + createdClient.getId()))
+                            .content(updateRequestBody)
+                            .header("Content-Type", "application/json")
+            ).andReturn().response;
         then:
-            1 == 0;
+            updatedClientResponse.status == HttpStatus.BAD_REQUEST.value();
+            ErrorMessage errorMessage = MAPPER.readValue(updatedClientResponse.contentAsString, ErrorMessage.class);
+            errorMessage.getMessage() == "Client last name cannot be empty.";
     }
 
     @Transactional
     def "Getting existing client should return code 200 and dto of existing client"() {
         given:
-            1 == 1;
+            String requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(privateClient);
+            def createdClientResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + CLIENTS_URI))
+                            .header("Content-Type", "application/json")
+                            .content(requestBody)
+            ).andReturn().response.contentAsString;
+            ClientDto createdClient = MAPPER.readValue(createdClientResponse, ClientDto.class);
         when:
-            1 == 1;
+            def clientResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .get(URI.create(HOST + ":" + port + CLIENTS_URI + "/" + createdClient.getId()))
+                            .header("Content-Type", "application/json")
+            ).andReturn().response;
         then:
-            1 == 0;
+            clientResponse.status == HttpStatus.OK.value();
+        and:
+            ClientDto client = MAPPER.readValue(clientResponse.contentAsString, ClientDto.class);
+            client.getFirstName() == privateClient.getFirstName();
+            client.getLastName() == privateClient.getLastName();
     }
 
     @Transactional
     def "Getting not existing client should return code 400 and error message"() {
         given:
-            1 == 1;
         when:
-            1 == 1;
+            def clientResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .get(URI.create(HOST + ":" + port + CLIENTS_URI + "/" + 2000))
+                            .header("Content-Type", "application/json")
+            ).andReturn().response;
         then:
-            1 == 0;
+            clientResponse.status == HttpStatus.BAD_REQUEST.value();
+            ErrorMessage errorMessage = MAPPER.readValue(clientResponse.contentAsString, ErrorMessage.class);
+            errorMessage.getMessage() == "Client with id 2,000 does not exist.";
     }
 
     @Transactional
     def "Getting all clients should return list of basic client dto of all existing clients"() {
         given:
-            1 == 1;
+            String requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(privateClient);
+            this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + CLIENTS_URI))
+                            .header("Content-Type", "application/json")
+                            .content(requestBody)
+            ).andReturn().response.contentAsString;
+            String secondRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(corporateClient);
+            this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + CLIENTS_URI))
+                            .header("Content-Type", "application/json")
+                            .content(secondRequestBody)
+            ).andReturn().response;
         when:
-            1 == 1;
+            def clientsResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .get(URI.create(HOST + ":" + port + CLIENTS_URI))
+                            .header("Content-Type", "application/json")
+            ).andReturn().response;
         then:
-            1 == 0;
+            clientsResponse.status == HttpStatus.OK.value();
+            List<ClientDto> createdClients = MAPPER.readValue(clientsResponse.contentAsString, List<ClientDto>.class);
+            createdClients.size() == 2;
     }
 }
 

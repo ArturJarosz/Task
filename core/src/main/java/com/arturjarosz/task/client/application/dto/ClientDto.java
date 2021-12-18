@@ -12,7 +12,8 @@ public class ClientDto implements Serializable {
     private String lastName;
     private String companyName;
     private ContactDto contact;
-    private ClientAdditionalDataDto additionalData;
+    private String note;
+    private Double projectValue;
     private ClientType clientType;
 
     public ClientDto() {
@@ -51,14 +52,6 @@ public class ClientDto implements Serializable {
         this.contact = contact;
     }
 
-    public ClientAdditionalDataDto getAdditionalData() {
-        return this.additionalData;
-    }
-
-    public void setAdditionalData(ClientAdditionalDataDto additionalData) {
-        this.additionalData = additionalData;
-    }
-
     public ClientType getClientType() {
         return this.clientType;
     }
@@ -73,5 +66,21 @@ public class ClientDto implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getNote() {
+        return this.note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public Double getProjectValue() {
+        return this.projectValue;
+    }
+
+    public void setProjectValue(Double projectValue) {
+        this.projectValue = projectValue;
     }
 }
