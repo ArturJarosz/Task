@@ -478,7 +478,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         projectCreateDto.name = PROJECT_NAME
         projectCreateDto.architectId = ARCHITECT_ID
         projectCreateDto.clientId = CLIENT_ID
-        projectCreateDto.projectType - ProjectType.CONCEPT
+        projectCreateDto.projectType = ProjectType.CONCEPT
         return projectCreateDto
     }
 

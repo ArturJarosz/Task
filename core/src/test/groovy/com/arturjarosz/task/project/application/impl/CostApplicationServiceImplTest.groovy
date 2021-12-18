@@ -239,7 +239,7 @@ class CostApplicationServiceImplTest extends Specification {
         then:
             1 * this.projectRepository.save({
                 Project project ->
-                    Cost cost = project.costs.it().next()
+                    Cost cost = project.costs.iterator().next()
                     cost.value == NEW_VALUE
                     cost.name == NEW_NAME
                     cost.note == NEW_NOTE

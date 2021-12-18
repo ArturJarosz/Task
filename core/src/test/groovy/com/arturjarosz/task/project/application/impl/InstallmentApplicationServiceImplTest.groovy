@@ -83,7 +83,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
     def "createInstallment should throw an exception, when project with given id does not exist"() {
         given:
             InstallmentDto installmentDto = new InstallmentDto()
-            installmentDto.svalue = OLD_VALUE
+            installmentDto.value = OLD_VALUE
         when:
             this.installmentApplicationService.
                     createInstallment(NOT_EXISTING_PROJECT_ID, EXISTING_STAGE_ID, installmentDto)
