@@ -20,7 +20,7 @@ import org.testcontainers.spock.Testcontainers
 class ClientTestIT extends BaseTestIT {
 
     private static final String CLIENTS_URI = "/clients"
-    private static final long NOT_EXISTING_CLIENT_ID = 2000;
+    private static final long NOT_EXISTING_CLIENT_ID = 2000
     private static final ObjectMapper MAPPER = new ObjectMapper()
 
     private final ClientDto privateClient =

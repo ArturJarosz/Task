@@ -13,22 +13,22 @@ import spock.lang.Specification
 @SpringBootTest(classes = DatabaseMain.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 class BaseTestIT extends Specification {
-    private static final Logger LOG = LoggerFactory.getLogger(BaseTestIT.class);
-    protected static final String HOST = "http://localhost";
+    private static final Logger LOG = LoggerFactory.getLogger(BaseTestIT.class)
+    protected static final String HOST = "http://localhost"
 
     @Value('${server.port}')
-    protected String port;
+    protected String port
 
     @Shared
     private static final PostgreSQLContainer POSTGRES_CONTAINER = new PostgreSQLContainer("postgres")
             .withDatabaseName('test').withUsername(
-            'test').withPassword('test');
+            'test').withPassword('test')
 
     def setupSpec() {
         startPostgresIfNeeded()
         ['spring.datasource.url'     : 'jdbc:tc:postgresql:///test',
-         'spring.datasource.username': POSTGRES_CONTAINER.getUsername(),
-         'spring.datasource.password': POSTGRES_CONTAINER.getPassword()
+         'spring.datasource.username': POSTGRES_CONTAINER.username,
+         'spring.datasource.password': POSTGRES_CONTAINER.password
         ].each { k, v ->
             System.setProperty(k, v)
         }

@@ -7,50 +7,50 @@ import java.time.LocalDate
 
 class InstallmentValidatorTest extends Specification {
 
-    private static final String NOTE = "note";
-    private static final BigDecimal VALUE = new BigDecimal("20.0");
-    private static final LocalDate PAY_DATE = LocalDate.now();
+    private static final String NOTE = "note"
+    private static final BigDecimal VALUE = new BigDecimal("20.0")
+    private static final LocalDate PAY_DATE = LocalDate.now()
 
     def "when dto is null, validateCreateInstallmentDto should throw an exception with specific message"() {
         given:
-            InstallmentDto installmentDto = null;
+            InstallmentDto installmentDto = null
         when:
-            InstallmentValidator.validateCreateInstallmentDto(installmentDto);
+            InstallmentValidator.validateCreateInstallmentDto(installmentDto)
         then:
-            Exception exception = thrown();
+            Exception exception = thrown()
             exception.message == "isNull.installment"
     }
 
     def "when value in installment is null, validateCreateInstallmentDto should throw an exception with specific message"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto();
-            installmentDto.setValue(null);
+            InstallmentDto installmentDto = new InstallmentDto()
+            installmentDto.setValue(null)
         when:
-            InstallmentValidator.validateCreateInstallmentDto(installmentDto);
+            InstallmentValidator.validateCreateInstallmentDto(installmentDto)
         then:
-            Exception exception = thrown();
-            exception.message == "isNull.installment.value";
+            Exception exception = thrown()
+            exception.message == "isNull.installment.value"
     }
 
     def "when dto is correct, validateCreateInstallmentDto should not throw any exception"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto();
-            installmentDto.setValue(VALUE);
-            installmentDto.setNote(NOTE);
-            installmentDto.setPaymentDate(PAY_DATE);
+            InstallmentDto installmentDto = new InstallmentDto()
+            installmentDto.setValue(VALUE)
+            installmentDto.setNote(NOTE)
+            installmentDto.setPaymentDate(PAY_DATE)
         when:
-            InstallmentValidator.validateCreateInstallmentDto(installmentDto);
+            InstallmentValidator.validateCreateInstallmentDto(installmentDto)
         then:
-            noExceptionThrown();
+            noExceptionThrown()
     }
 
     def "when payDate is future, validatePayDateNotFuture should throw an exception with specific message"() {
         given:
-            LocalDate futureDate = LocalDate.now().plusDays(2);
+            LocalDate futureDate = LocalDate.now().plusDays(2)
         when:
-            InstallmentValidator.validatePayDateNotFuture(futureDate);
+            InstallmentValidator.validatePayDateNotFuture(futureDate)
         then:
-            Exception exception = thrown();
+            Exception exception = thrown()
             exception.message == "notValid.installment.payDate"
     }
 }
