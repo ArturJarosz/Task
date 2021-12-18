@@ -21,9 +21,9 @@ public interface ClientDtoMapper {
     @Mapping(target = "clientType", source = ".", qualifiedByName = "deductClientType")
     @Mapping(target = "contact.email", source = ".", qualifiedByName = "getEmailValue")
     @Mapping(source = "address", target = "contact.address")
-    @Mapping(source = "note", target = "additionalData.note")
+    @Mapping(source = "note", target = "note")
     @Mapping(source = "telephone", target = "contact.telephone")
-    @Mapping(target = "additionalData.projectValue", source = ".", qualifiedByName = "getProjectsValue")
+    @Mapping(target = "projectValue", source = ".", qualifiedByName = "getProjectsValue")
     ClientDto clientToClientDto(Client client);
 
     @Mapping(target = "clientType", source = ".", qualifiedByName = "deductClientType")

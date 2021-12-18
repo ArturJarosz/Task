@@ -3,16 +3,12 @@ package com.arturjarosz.task.architect
 import com.arturjarosz.task.DatabaseMain
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
 import com.arturjarosz.task.architect.application.dto.ArchitectDto
-import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository
-import com.arturjarosz.task.architect.rest.ArchitectRestController
 import com.arturjarosz.task.configuration.BaseTestIT
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -31,20 +27,11 @@ class ArchitectTestIT extends BaseTestIT {
     private static final String LAST_NAME = "Last Name";
     private static final String NEW_FIRST_NAME = "New Name";
     private static final String NEW_LAST_NAME = "New Last Name";
-    private static final String HOST = "http://localhost"
     private static final String ARCHITECTS_URI = "/architects"
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    @Value('${server.port}')
-    private String port;
-    @Autowired
-    private ArchitectRepository architectRepository;
-    @Autowired
-    private ArchitectRestController architectRestController;
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    Environment environment;
 
     @Transactional
     def "Creating Architect with proper DTO should return created architect and 201 code"() {

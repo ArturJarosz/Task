@@ -1,7 +1,7 @@
 package com.arturjarosz.task.client.application
 
 import com.arturjarosz.task.client.application.dto.AddressDto
-import com.arturjarosz.task.client.application.dto.ClientAdditionalDataDto
+
 import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.client.application.dto.ContactDto
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
@@ -211,15 +211,8 @@ class ClientApplicationServiceImplTest extends Specification {
         AddressDto addressDto = prepareAddressDto()
         ContactDto contactDto = prepareContactDto(addressDto)
         clientDto.setContact(contactDto);
-        ClientAdditionalDataDto additionalDataDto = prepareClientAddictionalDataDto()
-        clientDto.setAdditionalData(additionalDataDto);
+        clientDto.setNote(NEW_NOTE);
         return clientDto;
-    }
-
-    private ClientAdditionalDataDto prepareClientAddictionalDataDto() {
-        ClientAdditionalDataDto additionalDataDto = new ClientAdditionalDataDto();
-        additionalDataDto.setNote(NEW_NOTE);
-        return additionalDataDto;
     }
 
     private ContactDto prepareContactDto(AddressDto addressDto) {

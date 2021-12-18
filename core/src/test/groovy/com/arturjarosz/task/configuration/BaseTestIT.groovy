@@ -3,6 +3,7 @@ package com.arturjarosz.task.configuration
 import com.arturjarosz.task.DatabaseMain
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.spock.Testcontainers
@@ -13,6 +14,11 @@ import spock.lang.Specification
 @Testcontainers
 class BaseTestIT extends Specification {
     private static final Logger LOG = LoggerFactory.getLogger(BaseTestIT.class);
+    protected static final String HOST = "http://localhost";
+
+    @Value('${server.port}')
+    protected String port;
+
     @Shared
     private static final PostgreSQLContainer POSTGRES_CONTAINER = new PostgreSQLContainer("postgres")
             .withDatabaseName('test').withUsername(

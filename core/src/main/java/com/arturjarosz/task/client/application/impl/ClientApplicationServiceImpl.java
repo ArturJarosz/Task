@@ -93,8 +93,8 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
             }
             client.updateTelephone(clientDto.getContact().getTelephone());
         }
-        if (clientDto.getAdditionalData() != null) {
-            client.updateNote(clientDto.getAdditionalData().getNote());
+        if (clientDto.getNote() != null) {
+            client.updateNote(clientDto.getNote());
         }
         this.clientRepository.save(client);
 
