@@ -117,9 +117,9 @@ class ArchitectApplicationServiceImplTest extends Specification {
     def "getArchitects should get list of architects"() {
         given:
         when:
-            ArchitectBasicDto[] architectBasicDtos = architectApplicationService.getBasicArchitects()
+            List<ArchitectBasicDto> architectBasicDtos = architectApplicationService.getBasicArchitects()
         then:
-            architectBasicDtos.length == 2
+            architectBasicDtos.size() == 2
     }
 
     def "when updating non existing architect an exception should be thrown"() {

@@ -22,10 +22,10 @@ databaseChangeLog:
                   type: "${boolean.type}"
               - column:
                   name: "SIGNING_DATE"
-                  type: "${boolean.type}"
+                  type: "${date.type}"
               - column:
                   name: "DEADLINE"
-                  type: "${boolean.type}"
+                  type: "${date.type}"
               - column:
                   name: "ARRANGEMENT_TYPE"
                   type: "VARCHAR2(35 ${char.unit})"
