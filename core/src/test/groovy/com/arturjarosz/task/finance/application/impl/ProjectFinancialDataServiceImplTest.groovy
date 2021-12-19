@@ -125,7 +125,7 @@ class ProjectFinancialDataServiceImplTest extends Specification {
     }
 
     private void mockFinancialDataRepositoryLoad() {
-        FinancialData financialData = new FinancialData(new Money(0),true, true)
+        FinancialData financialData = new FinancialData(new Money(0), true, true)
         1 * this.financialDataRepository.load(SUPERVISION_FINANCIAL_DATA_ID) >> financialData
     }
 
@@ -142,11 +142,8 @@ class ProjectFinancialDataServiceImplTest extends Specification {
 
     private mockCostProvidePartialFinancialData() {
         ProjectFinancialDataDto projectFinancialDataDto = new ProjectFinancialDataDto()
-        FinancialValueDto costsValue = new FinancialValueDto()
-        costsValue.grossValue = COST_GROSS_VALUE
-        costsValue.netValue = COST_NET_VALUE
-        costsValue.vatTax = COST_VAT_TAX_VALUE
-        costsValue.incomeTax = COST_INCOME_TAX_VALUE
+        FinancialValueDto costsValue = new FinancialValueDto(grossValue: COST_GROSS_VALUE, netValue: COST_NET_VALUE,
+                vatTax: COST_VAT_TAX_VALUE, incomeTax: COST_INCOME_TAX_VALUE)
 
         projectFinancialDataDto.costsValue = costsValue
 

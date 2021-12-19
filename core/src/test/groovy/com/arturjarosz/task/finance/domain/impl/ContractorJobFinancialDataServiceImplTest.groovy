@@ -36,20 +36,13 @@ class ContractorJobFinancialDataServiceImplTest extends Specification {
                     .setScale(2, RoundingMode.HALF_UP)
     }
 
-
     private void mockGetContractorsJobsFinancialData() {
-        FinancialDataDto contractorJobFinancialData1 = new FinancialDataDto()
-        contractorJobFinancialData1.value = CONTRACTOR_JOB_VALUE_1
-        contractorJobFinancialData1.payable = true
-        contractorJobFinancialData1.hasInvoice = true
-        FinancialDataDto contractorJobFinancialData2 = new FinancialDataDto()
-        contractorJobFinancialData2.value = CONTRACTOR_JOB_VALUE_2
-        contractorJobFinancialData2.payable = true
-        contractorJobFinancialData2.hasInvoice = true
-        FinancialDataDto contractorJobFinancialData3 = new FinancialDataDto()
-        contractorJobFinancialData3.value = CONTRACTOR_JOB_VALUE_3
-        contractorJobFinancialData3.payable = true
-        contractorJobFinancialData3.hasInvoice = false
+        FinancialDataDto contractorJobFinancialData1 = new FinancialDataDto(value: CONTRACTOR_JOB_VALUE_1,
+                payable: true, hasInvoice: true)
+        FinancialDataDto contractorJobFinancialData2 = new FinancialDataDto(value: CONTRACTOR_JOB_VALUE_2,
+                payable: true, hasInvoice: true)
+        FinancialDataDto contractorJobFinancialData3 = new FinancialDataDto(value: CONTRACTOR_JOB_VALUE_3,
+                payable: true, hasInvoice: false)
         def financialDataDtos =
                 Arrays.asList(contractorJobFinancialData1, contractorJobFinancialData2, contractorJobFinancialData3)
         this.financialDataQueryService.getContractorsJobsFinancialData(PROJECT_ID) >> financialDataDtos

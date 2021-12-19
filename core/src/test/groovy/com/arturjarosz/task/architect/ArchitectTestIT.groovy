@@ -240,16 +240,12 @@ class ArchitectTestIT extends BaseTestIT {
 
 
     private ArchitectBasicDto prepareArchitectBasicDto(String firstName, String lastName) {
-        ArchitectBasicDto architectBasicDto = new ArchitectBasicDto()
-        architectBasicDto.firstName = firstName
-        architectBasicDto.lastName = lastName
+        ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(firstName: firstName, lastName: lastName)
         return architectBasicDto
     }
 
     private ArchitectDto prepareArchitectDto(String firstName, String lastName) {
-        ArchitectDto architectDto = new ArchitectDto()
-        architectDto.firstName = firstName
-        architectDto.lastName = lastName
+        ArchitectDto architectDto = new ArchitectDto(firstName: firstName, lastName: lastName)
         return architectDto
     }
 }

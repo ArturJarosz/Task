@@ -474,19 +474,13 @@ class ProjectApplicationServiceImplTest extends Specification {
     }
 
     private ProjectCreateDto prepareCreateProjectDto() {
-        ProjectCreateDto projectCreateDto = new ProjectCreateDto()
-        projectCreateDto.name = PROJECT_NAME
-        projectCreateDto.architectId = ARCHITECT_ID
-        projectCreateDto.clientId = CLIENT_ID
-        projectCreateDto.projectType = ProjectType.CONCEPT
+        ProjectCreateDto projectCreateDto = new ProjectCreateDto(name: PROJECT_NAME, architectId: ARCHITECT_ID,
+                clientId: CLIENT_ID, projectType: ProjectType.CONCEPT)
         return projectCreateDto
     }
 
     private ProjectDto prepareUpdateProjectDto() {
-        ProjectDto projectDto = new ProjectDto()
-        projectDto.id = EXISTING_PROJECT_ID
-        projectDto.name = NEW_PROJECT_NAME
-        projectDto.note = NEW_PROJECT_NOTE
+        ProjectDto projectDto = new ProjectDto(id: EXISTING_PROJECT_ID, name: NEW_PROJECT_NAME, note: NEW_PROJECT_NOTE)
         return projectDto
     }
 
@@ -551,23 +545,18 @@ class ProjectApplicationServiceImplTest extends Specification {
     }
 
     private ClientDto prepareClientDto() {
-        ClientDto clientDto = new ClientDto()
-        clientDto.firstName = CLIENT_FIRST_NAME
-        clientDto.lastName = CLIENT_LAST_NAME
+        ClientDto clientDto = new ClientDto(firstName: CLIENT_FIRST_NAME, lastName: CLIENT_LAST_NAME)
         return clientDto
     }
 
     private ProjectContractDto prepareProjectContractDtoForSigning() {
-        ProjectContractDto projectContractDto = new ProjectContractDto()
-        projectContractDto.deadline = PROJECT_DEADLINE
-        projectContractDto.startDate = PROJECT_START_DATE
-        projectContractDto.signingDate = PROJECT_SIGNING_DATE
+        ProjectContractDto projectContractDto = new ProjectContractDto(deadline: PROJECT_DEADLINE,
+                startDate: PROJECT_START_DATE, signingDate: PROJECT_SIGNING_DATE)
         return projectContractDto
     }
 
     private ProjectContractDto prepareProjectContractDtoForFinish() {
-        ProjectContractDto projectContractDto = new ProjectContractDto()
-        projectContractDto.endDate = PROJECT_END_DATE
+        ProjectContractDto projectContractDto = new ProjectContractDto(endDate: PROJECT_END_DATE)
         return projectContractDto
     }
 

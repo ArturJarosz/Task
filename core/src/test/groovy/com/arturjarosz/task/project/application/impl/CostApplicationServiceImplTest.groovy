@@ -259,21 +259,12 @@ class CostApplicationServiceImplTest extends Specification {
     }
 
     private CostDto prepareUpdateCostDto() {
-        CostDto updateCostDto = new CostDto()
-        updateCostDto.note = NEW_NOTE
-        updateCostDto.value = NEW_VALUE
-        updateCostDto.date = NEW_DATE
-        updateCostDto.name = NEW_NAME
+        CostDto updateCostDto = new CostDto(note: NEW_NOTE, value: NEW_VALUE, date: NEW_DATE, name: NEW_NAME)
         return updateCostDto
     }
 
     private CostDto prepareCostDto() {
-        CostDto costDto = new CostDto()
-        costDto.name = NAME
-        costDto.date = DATE
-        costDto.category = CostCategory.FUEL
-        costDto.value = VALUE
-        costDto.note = NOTE
+        CostDto costDto = new CostDto(name: NAME, date: DATE, category: CostCategory.FUEL, value: VALUE, note: NOTE)
         return costDto
     }
 

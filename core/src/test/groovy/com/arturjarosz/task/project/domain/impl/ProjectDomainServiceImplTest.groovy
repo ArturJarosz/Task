@@ -153,7 +153,8 @@ class ProjectDomainServiceImplTest extends Specification {
             1 * project.finishProject(_)
     }
 
-    @Ignore //TODO TA-194: analyze finishing project
+    @Ignore
+    //TODO TA-194: analyze finishing project
     def "finishProject should call completeWork on projectStatusTransitionService"() {
         given:
             Project project = this.prepareProjectInProgressWithStatus()
@@ -164,7 +165,8 @@ class ProjectDomainServiceImplTest extends Specification {
             1 * projectStatusTransitionService.completeWork(_ as Project)
     }
 
-    @Ignore //TODO TA-194: analyze finishing project
+    @Ignore
+    //TODO TA-194: analyze finishing project
     def "finishProject should changeProject status to Completed"() {
         given:
             Project project = this.prepareProjectInProgressWithStatus()
@@ -274,27 +276,20 @@ class ProjectDomainServiceImplTest extends Specification {
     }
 
     private ProjectCreateDto prepareCreateProjectDto() {
-        ProjectCreateDto projectCreateDto = new ProjectCreateDto()
-        projectCreateDto.name = NAME
-        projectCreateDto.architectId = ARCHITECT_ID
-        projectCreateDto.clientId = CLIENT_ID
-        projectCreateDto.projectType = ProjectType.CONCEPT
+        ProjectCreateDto projectCreateDto = new ProjectCreateDto(name: NAME, architectId: ARCHITECT_ID,
+                clientId: CLIENT_ID, projectType: ProjectType.CONCEPT)
         return projectCreateDto
     }
 
     private ProjectDto prepareUpdateProjectDto() {
-        ProjectDto projectDto = new ProjectDto()
-        projectDto.name = NEW_NAME
-        projectDto.note = NEW_NOTE
+        ProjectDto projectDto = new ProjectDto(name: NEW_NAME, note: NEW_NOTE)
         return projectDto
     }
 
     private ProjectContractDto prepareProjectContractDto() {
         LocalDate now = LocalDate.now()
-        ProjectContractDto projectContractDto = new ProjectContractDto()
-        projectContractDto.signingDate = now.minusDays(10)
-        projectContractDto.startDate = now.plusDays(10)
-        projectContractDto.deadline = now.plusDays(50)
+        ProjectContractDto projectContractDto = new ProjectContractDto(signingDate: now.minusDays(10),
+                startDate: now.plusDays(10), deadline: now.plusDays(50))
         return projectContractDto
     }
 

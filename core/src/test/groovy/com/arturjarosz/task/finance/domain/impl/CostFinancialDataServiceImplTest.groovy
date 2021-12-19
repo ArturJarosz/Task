@@ -31,18 +31,10 @@ class CostFinancialDataServiceImplTest extends Specification {
     }
 
     private void mockGetCostsFinancialData() {
-        FinancialDataDto costFinancialData1 = new FinancialDataDto()
-        costFinancialData1.value = COST_VALUE_1
-        costFinancialData1.payable = true
-        costFinancialData1.hasInvoice = true
-        FinancialDataDto costFinancialData2 = new FinancialDataDto()
-        costFinancialData2.value = COST_VALUE_2
-        costFinancialData2.payable = true
-        costFinancialData2.hasInvoice = true
-        FinancialDataDto costFinancialData3 = new FinancialDataDto()
-        costFinancialData3.value = COST_VALUE_3
-        costFinancialData3.payable = true
-        costFinancialData3.hasInvoice = false
+        FinancialDataDto costFinancialData1 = new FinancialDataDto(value: COST_VALUE_1, payable: true, hasInvoice: true)
+        FinancialDataDto costFinancialData2 = new FinancialDataDto(value: COST_VALUE_2, payable: true, hasInvoice: true)
+        FinancialDataDto costFinancialData3 = new FinancialDataDto(value: COST_VALUE_3, payable: true,
+                hasInvoice: false)
         def financialDataDtos = Arrays.asList(costFinancialData1, costFinancialData2, costFinancialData3)
         this.financialDataQueryService.getCostsFinancialData(PROJECT_ID) >> financialDataDtos
     }

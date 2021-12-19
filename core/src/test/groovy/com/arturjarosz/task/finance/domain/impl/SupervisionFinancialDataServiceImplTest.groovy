@@ -30,10 +30,8 @@ class SupervisionFinancialDataServiceImplTest extends Specification {
     }
 
     private void mockGetSupervisionFinancialData() {
-        FinancialDataDto supervisionFinancialData1 = new FinancialDataDto()
-        supervisionFinancialData1.value = SUPERVISION_VALUE_1
-        supervisionFinancialData1.payable = true
-        supervisionFinancialData1.hasInvoice = true
+        FinancialDataDto supervisionFinancialData1 = new FinancialDataDto(value: SUPERVISION_VALUE_1, payable: true,
+                hasInvoice: true)
 
         def financialDataDto = supervisionFinancialData1
         this.financialDataQueryService.getSupervisionFinancialData(PROJECT_ID) >> financialDataDto

@@ -41,11 +41,8 @@ class ClientValidatorTest extends Specification {
 
     def "Should not throw any exception when private client data provided"() {
         given:
-            ClientDto clientDto = new ClientDto()
-            clientDto.firstName = FIRST_NAME
-            clientDto.id = PRIVATE_CLIENT_ID
-            clientDto.lastName = LAST_NAME
-            clientDto.clientType = ClientType.PRIVATE
+            ClientDto clientDto = new ClientDto(firstName: FIRST_NAME, id: PRIVATE_CLIENT_ID, lastName: LAST_NAME,
+                    clientType: ClientType.PRIVATE)
         when:
             this.clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -54,10 +51,8 @@ class ClientValidatorTest extends Specification {
 
     def "Should not throw any exception when corporate client data provided"() {
         given:
-            ClientDto clientDto = new ClientDto()
-            clientDto.clientType = ClientType.CORPORATE
-            clientDto.companyName = COMPANY_NAME
-            clientDto.id = CORPORATE_CLIENT_ID
+            ClientDto clientDto = new ClientDto(clientType: ClientType.CORPORATE, companyName: COMPANY_NAME,
+                    id: CORPORATE_CLIENT_ID)
         when:
             clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -76,9 +71,7 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when client type not provided"() {
         given:
-            ClientDto clientDto = new ClientDto()
-            clientDto.id = CORPORATE_CLIENT_ID
-            clientDto.companyName = COMPANY_NAME
+            ClientDto clientDto = new ClientDto(id: CORPORATE_CLIENT_ID, companyName: COMPANY_NAME)
         when:
             clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -88,10 +81,8 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when first name is not provided for private client"() {
         given:
-            ClientDto clientDto = new ClientDto()
-            clientDto.clientType = ClientType.PRIVATE
-            clientDto.id = PRIVATE_CLIENT_ID
-            clientDto.lastName = LAST_NAME
+            ClientDto clientDto = new ClientDto(clientType: ClientType.PRIVATE, id: PRIVATE_CLIENT_ID,
+                    lastName: LAST_NAME)
         when:
             clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -101,10 +92,8 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when last name is not provided for private client"() {
         given:
-            ClientDto clientDto = new ClientDto()
-            clientDto.clientType = ClientType.PRIVATE
-            clientDto.firstName = FIRST_NAME
-            clientDto.id = PRIVATE_CLIENT_ID
+            ClientDto clientDto = new ClientDto(clientType: ClientType.PRIVATE, firstName: FIRST_NAME,
+                    id: PRIVATE_CLIENT_ID)
         when:
             clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -114,9 +103,7 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when company name is not provided for corporate client"() {
         given:
-            ClientDto clientDto = new ClientDto()
-            clientDto.clientType = ClientType.CORPORATE
-            clientDto.id = CORPORATE_CLIENT_ID
+            ClientDto clientDto = new ClientDto(clientType: ClientType.CORPORATE, id: CORPORATE_CLIENT_ID)
         when:
             clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -126,10 +113,8 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when company name is empty for corporate client"() {
         given:
-            ClientDto clientDto = new ClientDto()
-            clientDto.clientType = ClientType.CORPORATE
-            clientDto.companyName = ""
-            clientDto.id = CORPORATE_CLIENT_ID
+            ClientDto clientDto = new ClientDto(clientType: ClientType.CORPORATE, companyName: "",
+                    id: CORPORATE_CLIENT_ID)
         when:
             clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -139,12 +124,8 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when first name is empty for private client"() {
         given:
-            ClientDto clientDto = new ClientDto()
-            clientDto.clientType = ClientType.PRIVATE
-            clientDto.id = PRIVATE_CLIENT_ID
-            clientDto.firstName = ""
-            clientDto.lastName = LAST_NAME
-
+            ClientDto clientDto = new ClientDto(clientType: ClientType.PRIVATE, id: PRIVATE_CLIENT_ID, firstName: "",
+                    lastName: LAST_NAME)
         when:
             clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -154,12 +135,8 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when last name is empty for private client"() {
         given:
-            ClientDto clientDto = new ClientDto()
-            clientDto.clientType = ClientType.PRIVATE
-            clientDto.id = PRIVATE_CLIENT_ID
-            clientDto.firstName = FIRST_NAME
-            clientDto.lastName = ""
-
+            ClientDto clientDto = new ClientDto(clientType: ClientType.PRIVATE, id: PRIVATE_CLIENT_ID,
+                    firstName: FIRST_NAME, lastName: "")
         when:
             clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -218,5 +195,4 @@ class ClientValidatorTest extends Specification {
             Exception ex = thrown()
             ex.message == "notValid.client.projects"
     }
-
 }

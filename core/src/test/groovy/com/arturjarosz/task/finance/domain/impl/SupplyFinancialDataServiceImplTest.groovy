@@ -34,18 +34,12 @@ class SupplyFinancialDataServiceImplTest extends Specification {
     }
 
     private void mockGetSuppliesFinancialData() {
-        FinancialDataDto supplyFinancialData1 = new FinancialDataDto()
-        supplyFinancialData1.value = SUPPLY_VALUE_1
-        supplyFinancialData1.payable = true
-        supplyFinancialData1.hasInvoice = true
-        FinancialDataDto supplyFinancialData2 = new FinancialDataDto()
-        supplyFinancialData2.value = SUPPLY_VALUE_2
-        supplyFinancialData2.payable = true
-        supplyFinancialData2.hasInvoice = true
-        FinancialDataDto supplyFinancialData3 = new FinancialDataDto()
-        supplyFinancialData3.value = SUPPLY_VALUE_3
-        supplyFinancialData3.payable = true
-        supplyFinancialData3.hasInvoice = false
+        FinancialDataDto supplyFinancialData1 = new FinancialDataDto(value: SUPPLY_VALUE_1, payable: true,
+                hasInvoice: true)
+        FinancialDataDto supplyFinancialData2 = new FinancialDataDto(value: SUPPLY_VALUE_2, payable: true,
+                hasInvoice: true)
+        FinancialDataDto supplyFinancialData3 = new FinancialDataDto(value: SUPPLY_VALUE_3, payable: true,
+                hasInvoice: false)
         def financialDataDtos = Arrays.asList(supplyFinancialData1, supplyFinancialData2, supplyFinancialData3)
         this.financialDataQueryService.getSuppliesFinancialData(PROJECT_ID) >> financialDataDtos
     }
