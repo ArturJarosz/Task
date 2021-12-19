@@ -33,14 +33,8 @@ class InstallmentFinancialDataServiceImplTest extends Specification {
     }
 
     private void mockGetInstallmentsFinancialData() {
-        FinancialDataDto installmentFinancialData1 = new FinancialDataDto()
-        installmentFinancialData1.value = INSTALLMENT_VALUE_1
-        installmentFinancialData1.payable = true
-        installmentFinancialData1.hasInvoice = true
-        FinancialDataDto installmentFinancialData2 = new FinancialDataDto()
-        installmentFinancialData2.value = INSTALLMENT_VALUE_2
-        installmentFinancialData2.payable = true
-        installmentFinancialData2.hasInvoice = true
+        FinancialDataDto installmentFinancialData1 = new FinancialDataDto(value: INSTALLMENT_VALUE_1, payable: true, hasInvoice: true)
+        FinancialDataDto installmentFinancialData2 = new FinancialDataDto(value: INSTALLMENT_VALUE_2, payable: true, hasInvoice: true)
         def financialDataDtos = Arrays.asList(installmentFinancialData1, installmentFinancialData2)
         this.financialDataQueryService.getInstallmentsFinancialData(PROJECT_ID) >> financialDataDtos
     }

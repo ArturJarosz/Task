@@ -296,26 +296,14 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     }
 
     private ContractorJobDto prepareContractorJobDto() {
-        ContractorJobDto contractorJobDto = new ContractorJobDto()
-        contractorJobDto.name = NAME
-        contractorJobDto.note = NOTE
-        contractorJobDto.value = VALUE
-        contractorJobDto.contractorId = CONTRACTOR_ID
-        contractorJobDto.id = EXISTING_CONTRACTOR_JOB_ID
-        contractorJobDto.hasInvoice = true
-        contractorJobDto.payable = true
+        ContractorJobDto contractorJobDto = new ContractorJobDto(name: NAME, note: NOTE, value: VALUE,
+                contractorId: CONTRACTOR_ID, id: EXISTING_CONTRACTOR_JOB_ID, hasInvoice: true, payable: true)
         return contractorJobDto
     }
 
     private ContractorJobDto prepareContractorJobDtoForUpdate() {
-        ContractorJobDto contractorJobDto = new ContractorJobDto()
-        contractorJobDto.name = NEW_NAME
-        contractorJobDto.note = NEW_NOTE
-        contractorJobDto.value = NEW_VALUE
-        contractorJobDto.contractorId = CONTRACTOR_ID
-        contractorJobDto.id = EXISTING_CONTRACTOR_JOB_ID
-        contractorJobDto.hasInvoice = true
-        contractorJobDto.payable = true
+        ContractorJobDto contractorJobDto = new ContractorJobDto(name: NEW_NAME, note: NEW_NOTE, value: NEW_VALUE,
+                contractorId: CONTRACTOR_ID, id: EXISTING_CONTRACTOR_JOB_ID, hasInvoice: true, payable: true)
         return contractorJobDto
     }
 
@@ -349,5 +337,4 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         this.projectQueryService.getContractorJobForProject(EXISTING_CONTRACTOR_JOB_ID,
                 PROJECT_WITH_CONTRACTOR_JOB_ID) >> contractorJobDto
     }
-
 }

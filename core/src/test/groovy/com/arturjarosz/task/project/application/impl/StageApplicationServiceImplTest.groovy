@@ -387,11 +387,8 @@ class StageApplicationServiceImplTest extends Specification {
     }
 
     private StageDto prepareStageDtoForUpdate() {
-        StageDto stageDto = new StageDto()
-        stageDto.name = NEW_STAGE_NAME
-        stageDto.note = NEW_STAGE_NOTE
-        stageDto.stageType = NEW_STAGE_TYPE
-        stageDto.deadline = NEW_DEADLINE_DATE
+        StageDto stageDto = new StageDto(name: NEW_STAGE_NAME, note: NEW_STAGE_NOTE, stageType: NEW_STAGE_TYPE,
+                deadline: NEW_DEADLINE_DATE)
         return stageDto
     }
 

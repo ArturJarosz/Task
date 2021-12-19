@@ -1,7 +1,6 @@
 package com.arturjarosz.task.project.application.impl
 
 import com.arturjarosz.task.finance.application.impl.ProjectFinanceAwareObjectServiceImpl
-import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.SupplyValidator
 import com.arturjarosz.task.project.application.dto.SupplyDto
@@ -31,7 +30,6 @@ class SupplyApplicationServiceImplTest extends Specification {
     def projectRepository = Mock(ProjectRepositoryImpl)
     def projectValidator = Mock(ProjectValidator)
     def supplyValidator = Mock(SupplyValidator)
-    def projectFinancialDataService = Mock(ProjectFinancialDataServiceImpl)
     def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectServiceImpl)
 
     def supplyApplicationService = new SupplyApplicationServiceImpl(projectFinanceAwareObjectService,
@@ -210,22 +208,14 @@ class SupplyApplicationServiceImplTest extends Specification {
     }
 
     private static SupplyDto prepareCreateSupplyDto() {
-        SupplyDto supplyDto = new SupplyDto()
-        supplyDto.hasInvoice = HAS_INVOICE
-        supplyDto.payable = PAYABLE
-        supplyDto.supplierId = SUPPLIER_ID
-        supplyDto.value = VALUE
+        SupplyDto supplyDto = new SupplyDto(hasInvoice: HAS_INVOICE, payable: PAYABLE, supplierId: SUPPLIER_ID,
+                value: VALUE)
         return supplyDto
     }
 
     private static SupplyDto prepareUpdateSupplyDto() {
-        SupplyDto supplyDto = new SupplyDto()
-        supplyDto.hasInvoice = NEW_HAS_INVOICE
-        supplyDto.payable = NEW_PAYABLE
-        supplyDto.supplierId = SUPPLIER_ID
-        supplyDto.value = NEW_VALUE
-        supplyDto.name = NEW_NAME
-        supplyDto.note = NEW_NOTE
+        SupplyDto supplyDto = new SupplyDto(hasInvoice: NEW_HAS_INVOICE, payable: NEW_PAYABLE, supplierId: SUPPLIER_ID,
+                value: NEW_VALUE, name: NEW_NAME, note: NEW_NOTE)
         return supplyDto
     }
 

@@ -189,47 +189,31 @@ class ClientApplicationServiceImplTest extends Specification {
     }
 
     private ClientDto prepareProperPrivateClint() {
-        ClientDto clientDto = new ClientDto()
-        clientDto.lastName = FIRST_NAME
-        clientDto.firstName = LAST_NAME
-        clientDto.clientType = ClientType.PRIVATE
+        ClientDto clientDto = new ClientDto(firstName: FIRST_NAME, lastName: LAST_NAME, clientType: ClientType.PRIVATE)
         return clientDto
     }
 
     private ClientDto prepareProperCorporateClient() {
-        ClientDto clientDto = new ClientDto()
-        clientDto.companyName = COMPANY_NAME
-        clientDto.clientType = ClientType.CORPORATE
+        ClientDto clientDto = new ClientDto(companyName: COMPANY_NAME, clientType: ClientType.CORPORATE)
         return clientDto
     }
 
     private ClientDto prepareClientDtoForUpdate() {
-        ClientDto clientDto = new ClientDto()
-        clientDto.clientType = ClientType.PRIVATE
-        clientDto.firstName = NEW_FIRST_NAME
-        clientDto.lastName = NEW_LAST_NAME
         AddressDto addressDto = prepareAddressDto()
         ContactDto contactDto = prepareContactDto(addressDto)
-        clientDto.contact = contactDto
-        clientDto.note = NEW_NOTE
+        ClientDto clientDto = new ClientDto(clientType: ClientType.PRIVATE, firstName: NEW_FIRST_NAME,
+                lastName: NEW_LAST_NAME, contact: contactDto, note: NEW_NOTE)
         return clientDto
     }
 
     private ContactDto prepareContactDto(AddressDto addressDto) {
-        ContactDto contactDto = new ContactDto()
-        contactDto.setAddress(addressDto)
-        contactDto.setEmail(NEW_EMAIL)
-        contactDto.setTelephone(NEW_TELEPHONE)
+        ContactDto contactDto = new ContactDto(address: addressDto, email: NEW_EMAIL, telephone: NEW_TELEPHONE)
         return contactDto
     }
 
     private AddressDto prepareAddressDto() {
-        AddressDto addressDto = new AddressDto()
-        addressDto.setCity(NEW_CITY)
-        addressDto.setHouseNumber(NEW_HOUSE_NUMBER)
-        addressDto.setFlatNumber(NEW_FLAT_NUMBER)
-        addressDto.setPostCode(NEW_POST_CODE)
-        addressDto.setStreet(NEW_STREET)
+        AddressDto addressDto = new AddressDto(city: NEW_CITY, houseNumber: NEW_HOUSE_NUMBER,
+                flatNumber: NEW_FLAT_NUMBER, postCode: NEW_POST_CODE, street: NEW_STREET)
         return addressDto
     }
 }

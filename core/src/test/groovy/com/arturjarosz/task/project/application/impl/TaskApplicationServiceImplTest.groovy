@@ -14,7 +14,6 @@ import com.arturjarosz.task.project.model.dto.TaskInnerDto
 import com.arturjarosz.task.project.query.ProjectQueryService
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.task.TaskStatus
-import com.arturjarosz.task.project.status.task.TaskWorkflowService
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.project.utils.StageBuilder
 import com.arturjarosz.task.project.utils.TaskBuilder
@@ -36,7 +35,6 @@ class TaskApplicationServiceImplTest extends Specification {
     private projectValidator = Mock(ProjectValidator)
     private stageValidator = Mock(StageValidator)
     private taskDomainService = Mock(TaskDomainService)
-    private taskWorkflowService = Mock(TaskWorkflowService)
     private taskValidator = Mock(TaskValidator)
 
     def taskApplicationService = new TaskApplicationServiceImpl(projectQueryService, projectRepository,
@@ -427,26 +425,17 @@ class TaskApplicationServiceImplTest extends Specification {
     }
 
     private TaskDto prepareNewTaskDto() {
-        TaskDto taskDto = new TaskDto()
-        taskDto.name = TASK_NAME
-        taskDto.id = TASK_ID
-        taskDto.type = TaskType.CONCEPT
+        TaskDto taskDto = new TaskDto(name: TASK_NAME, id: TASK_ID, type: TaskType.CONCEPT)
         taskDto
     }
 
     private TaskDto prepareUpdateTaskDto() {
-        TaskDto taskDto = new TaskDto()
-        taskDto.name = NEW_TASK_NAME
-        taskDto.id = TASK_ID
-        taskDto.note = NOTE
-        taskDto.type = TaskType.CONCEPT
+        TaskDto taskDto = new TaskDto(name: NEW_TASK_NAME, id: TASK_ID, note: TaskType.CONCEPT)
         taskDto
     }
 
     private TaskDto prepareUpdateStatusTaskDto() {
-        TaskDto taskDto = new TaskDto()
-        taskDto.id = TASK_ID
-        taskDto.status = NEW_TASK_STATUS
+        TaskDto taskDto = new TaskDto(id: TASK_ID, status: NEW_TASK_STATUS)
         taskDto
     }
 
