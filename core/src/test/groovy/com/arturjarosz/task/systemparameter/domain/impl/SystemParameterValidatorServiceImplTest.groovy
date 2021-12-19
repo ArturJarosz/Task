@@ -74,7 +74,7 @@ class SystemParameterValidatorServiceImplTest extends Specification {
     def "validateOnUpdate should throw an exception when parameter has no validator"() {
         given:
             SystemParameterDto systemParameterDto = new SystemParameterDto()
-            systemParameterDto.setName(PARAMETER_NAME_3)
+            systemParameterDto.name = PARAMETER_NAME_3
             def parameterValidatorServiceImpl = new SystemParameterValidatorServiceImpl(notFullListOfValidators,
                     systemParameterQueryServiceNotFullList)
         when:
@@ -87,7 +87,7 @@ class SystemParameterValidatorServiceImplTest extends Specification {
     def "validateOnUpdate should call validate on validator for parameter"() {
         given:
             SystemParameterDto systemParameterDto = new SystemParameterDto()
-            systemParameterDto.setName(PARAMETER_NAME_1)
+            systemParameterDto.name = PARAMETER_NAME_1
         when:
             this.systemParameterValidatorService.validateOnUpdate(systemParameterDto)
         then:

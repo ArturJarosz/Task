@@ -39,9 +39,9 @@ class SupplyValidatorTest extends Specification {
         given:
             SupplyDto supplyDto = supply
             if (supplyDto != null) {
-                supplyDto.setName(supplyName)
-                supplyDto.setSupplierId(supplierId)
-                supplyDto.setValue(supplyValue)
+                supplyDto.name = supplyName
+                supplyDto.supplierId = supplierId
+                supplyDto.value = supplyValue
             }
         when:
             this.supplyValidator.validateCreateSupplyDto(supplyDto)
@@ -63,8 +63,8 @@ class SupplyValidatorTest extends Specification {
         given:
             SupplyDto supplyDto = supply
             if (supplyDto != null) {
-                supplyDto.setName(supplyName)
-                supplyDto.setValue(supplyValue)
+                supplyDto.name = supplyName
+                supplyDto.value = supplyValue
             }
         when:
             this.supplyValidator.validateUpdateSupplyDto(supplyDto)

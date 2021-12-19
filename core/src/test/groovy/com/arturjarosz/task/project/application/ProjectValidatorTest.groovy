@@ -64,7 +64,7 @@ class ProjectValidatorTest extends Specification {
     def "passing projectCreateDto with empty name to a validateProjectBasicDto should thrown an exception"() {
         given:
             ProjectCreateDto projectCreateDto = new ProjectCreateDto()
-            projectCreateDto.setName(EMPTY_PROJECT_NAME)
+            projectCreateDto.name = EMPTY_PROJECT_NAME
         when:
             this.projectValidator.validateProjectBasicDto(projectCreateDto)
         then:
@@ -75,10 +75,10 @@ class ProjectValidatorTest extends Specification {
     def "passing projectCreateDto with null as a clientId to validateProjectBasicDto should thrown an exception"() {
         given:
             ProjectCreateDto projectCreateDto = new ProjectCreateDto()
-            projectCreateDto.setName(PROJECT_NAME)
-            projectCreateDto.setArchitectId(ARCHITECT_ID)
-            projectCreateDto.setClientId(null)
-            projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT)
+            projectCreateDto.name = PROJECT_NAME
+            projectCreateDto.architectId = ARCHITECT_ID
+            projectCreateDto.clientId = null
+            projectCreateDto.projectType = PROJECT_TYPE_CONCEPT
         when:
             this.projectValidator.validateProjectBasicDto(projectCreateDto)
         then:
@@ -89,10 +89,10 @@ class ProjectValidatorTest extends Specification {
     def "passing projectCreateDto with null as a architectId to validateProjectBasicDto should thrown an exception"() {
         given:
             ProjectCreateDto projectCreateDto = new ProjectCreateDto()
-            projectCreateDto.setName(PROJECT_NAME)
-            projectCreateDto.setArchitectId(null)
-            projectCreateDto.setClientId(CLIENT_ID)
-            projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT)
+            projectCreateDto.name = PROJECT_NAME
+            projectCreateDto.architectId = null
+            projectCreateDto.clientId = CLIENT_ID
+            projectCreateDto.projectType = PROJECT_TYPE_CONCEPT
         when:
             this.projectValidator.validateProjectBasicDto(projectCreateDto)
         then:
@@ -103,10 +103,10 @@ class ProjectValidatorTest extends Specification {
     def "passing projectCreateDto with null as a projectType to validateProjectBasicDto should thrown an exception"() {
         given:
             ProjectCreateDto projectCreateDto = new ProjectCreateDto()
-            projectCreateDto.setName(PROJECT_NAME)
-            projectCreateDto.setArchitectId(ARCHITECT_ID)
-            projectCreateDto.setClientId(CLIENT_ID)
-            projectCreateDto.setProjectType(null)
+            projectCreateDto.name = PROJECT_NAME
+            projectCreateDto.architectId = ARCHITECT_ID
+            projectCreateDto.clientId = CLIENT_ID
+            projectCreateDto.projectType = null
         when:
             this.projectValidator.validateProjectBasicDto(projectCreateDto)
         then:
@@ -117,10 +117,10 @@ class ProjectValidatorTest extends Specification {
     def "passing proper projectCreateDto to validateProjectBasicDto should not throw any exception"() {
         given:
             ProjectCreateDto projectCreateDto = new ProjectCreateDto()
-            projectCreateDto.setName(PROJECT_NAME)
-            projectCreateDto.setArchitectId(ARCHITECT_ID)
-            projectCreateDto.setClientId(CLIENT_ID)
-            projectCreateDto.setProjectType(PROJECT_TYPE_CONCEPT)
+            projectCreateDto.name = PROJECT_NAME
+            projectCreateDto.architectId = ARCHITECT_ID
+            projectCreateDto.clientId = CLIENT_ID
+            projectCreateDto.projectType = PROJECT_TYPE_CONCEPT
         when:
             this.projectValidator.validateProjectBasicDto(projectCreateDto)
         then:
@@ -157,8 +157,8 @@ class ProjectValidatorTest extends Specification {
     def "when signing date not present in projectContractDto, validateProjectContractDto should throw an exception"() {
         given:
             ProjectContractDto projectContractDto = new ProjectContractDto()
-            projectContractDto.setDeadline(DEADLINE)
-            projectContractDto.setStartDate(START_DATE)
+            projectContractDto.deadline = DEADLINE
+            projectContractDto.startDate = START_DATE
         when:
             this.projectValidator.validateProjectContractDto(projectContractDto)
         then:
@@ -169,9 +169,9 @@ class ProjectValidatorTest extends Specification {
     def "when end date not present in projectContractDto, validateProjectContractDto should throw an exception"() {
         given:
             ProjectContractDto projectContractDto = new ProjectContractDto()
-            projectContractDto.setDeadline(DEADLINE)
-            projectContractDto.setSigningDate(SIGNING_DATE)
-            projectContractDto.setStartDate(null)
+            projectContractDto.deadline = DEADLINE
+            projectContractDto.signingDate = SIGNING_DATE
+            projectContractDto.startDate = null
         when:
             this.projectValidator.validateProjectContractDto(projectContractDto)
         then:
@@ -182,9 +182,9 @@ class ProjectValidatorTest extends Specification {
     def "when deadline date not present in projectContractDto, validateProjectContractDto should throw an exception"() {
         given:
             ProjectContractDto projectContractDto = new ProjectContractDto()
-            projectContractDto.setDeadline(null)
-            projectContractDto.setSigningDate(SIGNING_DATE)
-            projectContractDto.setStartDate(START_DATE)
+            projectContractDto.deadline = null
+            projectContractDto.signingDate = SIGNING_DATE
+            projectContractDto.startDate = START_DATE
         when:
             this.projectValidator.validateProjectContractDto(projectContractDto)
         then:

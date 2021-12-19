@@ -39,19 +39,19 @@ class InstallmentDomainServiceImplTest extends Specification {
                     .withFinancialData(financialData)
                     .withNote(OLD_NOTE)
                     .build()
-            stage.setInstallment(installment)
+            stage.installment = installment
             InstallmentDto installmentDto = new InstallmentDto()
-            installmentDto.setValue(NEW_AMOUNT)
-            installmentDto.setPaymentDate(OLD_DATE)
-            installmentDto.setNote(NEW_NOTE)
-            installmentDto.setHasInvoice(true)
+            installmentDto.value = NEW_AMOUNT
+            installmentDto.paymentDate = OLD_DATE
+            installmentDto.note = NEW_NOTE
+            installmentDto.hasInvoice = true
         when:
             Installment updatedInstallment = this.installmentDomainService.updateInstallment(installment,
                     installmentDto)
         then:
-            updatedInstallment.getAmount().hasSameValueAs(new Money(NEW_AMOUNT))
-            updatedInstallment.getNote() == NEW_NOTE
-            updatedInstallment.getPaymentDate() == null
+            updatedInstallment.amount.hasSameValueAs(new Money(NEW_AMOUNT))
+            updatedInstallment.note == NEW_NOTE
+            updatedInstallment.paymentDate == null
     }
 
     def "updateInstallment should update value, note and date when updating paid installment"() {
@@ -66,19 +66,19 @@ class InstallmentDomainServiceImplTest extends Specification {
                     .withNote(OLD_NOTE)
                     .withFinancialData(financialData)
                     .build()
-            stage.setInstallment(installment)
+            stage.installment = installment
             InstallmentDto installmentDto = new InstallmentDto()
-            installmentDto.setValue(NEW_AMOUNT)
-            installmentDto.setPaymentDate(NEW_DATE)
-            installmentDto.setNote(NEW_NOTE)
-            installmentDto.setHasInvoice(true)
+            installmentDto.value = NEW_AMOUNT
+            installmentDto.paymentDate = NEW_DATE
+            installmentDto.note = NEW_NOTE
+            installmentDto.hasInvoice = true
         when:
             Installment updatedInstallment = this.installmentDomainService.updateInstallment(installment,
                     installmentDto)
         then:
-            updatedInstallment.getAmount().hasSameValueAs(new Money(NEW_AMOUNT))
-            updatedInstallment.getNote() == NEW_NOTE
-            updatedInstallment.getPaymentDate() == NEW_DATE
+            updatedInstallment.amount.hasSameValueAs(new Money(NEW_AMOUNT))
+            updatedInstallment.note == NEW_NOTE
+            updatedInstallment.paymentDate == NEW_DATE
     }
 
     def "payForInstallment should throw an exception if dto date is in future"() {
@@ -92,7 +92,7 @@ class InstallmentDomainServiceImplTest extends Specification {
             Installment installment = new InstallmentBuilder()
                     .withFinancialData(financialData)
                     .build()
-            stage.setInstallment(installment)
+            stage.installment = installment
         when:
             this.installmentDomainService.payInstallment(stage, FUTURE_DATE)
         then:
@@ -111,7 +111,7 @@ class InstallmentDomainServiceImplTest extends Specification {
             Installment installment = new InstallmentBuilder()
                     .withFinancialData(financialData)
                     .build()
-            stage.setInstallment(installment)
+            stage.installment = installment
         when:
             this.installmentDomainService.payInstallment(stage, NEW_DATE)
         then:
@@ -130,13 +130,13 @@ class InstallmentDomainServiceImplTest extends Specification {
             Installment installment = new InstallmentBuilder()
                     .withFinancialData(financialData)
                     .build()
-            stage.setInstallment(installment)
+            stage.installment = installment
         when:
             Installment paidInstallment = this.installmentDomainService.payInstallment(stage, null)
         then:
             noExceptionThrown()
-            paidInstallment.getPaymentDate() == LocalDate.now()
-            paidInstallment.getPaid()
+            paidInstallment.paymentDate == LocalDate.now()
+            paidInstallment.paid
     }
 
     def "payForInstallment should set payment day for given date and set isPaid to true"() {
@@ -150,12 +150,12 @@ class InstallmentDomainServiceImplTest extends Specification {
             Installment installment = new InstallmentBuilder()
                     .withFinancialData(financialData)
                     .build()
-            stage.setInstallment(installment)
+            stage.installment = installment
         when:
             Installment paidInstallment = this.installmentDomainService.payInstallment(stage, NEW_DATE)
         then:
             noExceptionThrown()
-            paidInstallment.getPaymentDate() == NEW_DATE
-            paidInstallment.getPaid()
+            paidInstallment.paymentDate == NEW_DATE
+            paidInstallment.paid
     }
 }

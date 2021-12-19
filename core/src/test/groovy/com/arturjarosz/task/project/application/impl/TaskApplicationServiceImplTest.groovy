@@ -428,25 +428,25 @@ class TaskApplicationServiceImplTest extends Specification {
 
     private TaskDto prepareNewTaskDto() {
         TaskDto taskDto = new TaskDto()
-        taskDto.setName(TASK_NAME)
-        taskDto.setId(TASK_ID)
-        taskDto.setType(TaskType.CONCEPT)
+        taskDto.name = TASK_NAME
+        taskDto.id = TASK_ID
+        taskDto.type = TaskType.CONCEPT
         taskDto
     }
 
     private TaskDto prepareUpdateTaskDto() {
         TaskDto taskDto = new TaskDto()
-        taskDto.setName(NEW_TASK_NAME)
-        taskDto.setId(TASK_ID)
-        taskDto.setNote(NOTE)
-        taskDto.setType(TaskType.CONCEPT)
+        taskDto.name = NEW_TASK_NAME
+        taskDto.id = TASK_ID
+        taskDto.note = NOTE
+        taskDto.type = TaskType.CONCEPT
         taskDto
     }
 
     private TaskDto prepareUpdateStatusTaskDto() {
         TaskDto taskDto = new TaskDto()
-        taskDto.setId(TASK_ID)
-        taskDto.setStatus(NEW_TASK_STATUS)
+        taskDto.id = TASK_ID
+        taskDto.status = NEW_TASK_STATUS
         taskDto
     }
 

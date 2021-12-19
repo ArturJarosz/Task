@@ -34,8 +34,8 @@ class TaskValidatorTest extends Specification {
     def "when taskDto name is null, validateCreateTaskDto should throw an exception with specific error message"() {
         given:
             TaskDto taskDto = new TaskDto()
-            taskDto.setName(null)
-            taskDto.setType(TASK_TYPE)
+            taskDto.name = null
+            taskDto.type = TASK_TYPE
         when:
             this.taskValidator.validateCreateTaskDto(taskDto)
         then:
@@ -46,8 +46,8 @@ class TaskValidatorTest extends Specification {
     def "when taskDto name is empty, validateCreateTaskDto should throw an exception with specific error message"() {
         given:
             TaskDto taskDto = new TaskDto()
-            taskDto.setName("")
-            taskDto.setType(TASK_TYPE)
+            taskDto.name = ""
+            taskDto.type = TASK_TYPE
         when:
             this.taskValidator.validateCreateTaskDto(taskDto)
         then:
@@ -58,8 +58,8 @@ class TaskValidatorTest extends Specification {
     def "when taskDto type is null, validateCreateTaskDto should throw an exception with specific error message"() {
         given:
             TaskDto taskDto = new TaskDto()
-            taskDto.setName(NAME)
-            taskDto.setType(null)
+            taskDto.name = NAME
+            taskDto.type = null
         when:
             this.taskValidator.validateCreateTaskDto(taskDto)
         then:

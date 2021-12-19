@@ -78,7 +78,7 @@ class SupplyApplicationServiceImplTest extends Specification {
         then:
             1 * this.projectRepository.save({
                 Project project ->
-                    project.getSupplies().size() == 1
+                    project.supplies.size() == 1
             })
     }
 
@@ -129,11 +129,11 @@ class SupplyApplicationServiceImplTest extends Specification {
         when:
             SupplyDto updatedSupply = this.supplyApplicationService.updateSupply(PROJECT_ID, SUPPLY_ID, supplyDto)
         then:
-            updatedSupply.getNote() == NEW_NOTE
-            updatedSupply.getName() == NEW_NAME
-            updatedSupply.getValue() == NEW_VALUE
-            updatedSupply.getHasInvoice() == NEW_HAS_INVOICE
-            updatedSupply.getPayable() == NEW_PAYABLE
+            updatedSupply.note == NEW_NOTE
+            updatedSupply.name == NEW_NAME
+            updatedSupply.value == NEW_VALUE
+            updatedSupply.hasInvoice == NEW_HAS_INVOICE
+            updatedSupply.payable == NEW_PAYABLE
     }
 
     def "updateSupply should call onUpdate on projectFinanceAwareObjectService"() {
@@ -168,7 +168,7 @@ class SupplyApplicationServiceImplTest extends Specification {
         when:
             SupplyDto supply = this.supplyApplicationService.getSupply(PROJECT_ID, SUPPLY_ID)
         then:
-            supply.getId() == SUPPLY_ID
+            supply.id == SUPPLY_ID
     }
 
     def "deleteSupply should validate project existence"() {
@@ -196,7 +196,7 @@ class SupplyApplicationServiceImplTest extends Specification {
             this.supplyApplicationService.deleteSupply(PROJECT_ID, SUPPLY_ID)
         then:
             1 * this.projectRepository.save({ Project project ->
-                project.getSupplies().size() == 0
+                project.supplies.size() == 0
             })
     }
 

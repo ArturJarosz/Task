@@ -57,8 +57,8 @@ class ProjectDomainServiceImplTest extends Specification {
                 Project createdProject ->
                     TestUtils.setFieldForObject(createdProject, "status", ProjectStatus.OFFER)
             }) >> {}
-            project.getName() == projectCreateDto.getName()
-            project.getStatus() == ProjectStatus.OFFER
+            project.name == projectCreateDto.name
+            project.status == ProjectStatus.OFFER
     }
 
     def "updateProject should change data on project and return updated instance"() {
@@ -68,8 +68,8 @@ class ProjectDomainServiceImplTest extends Specification {
         when:
             Project updatedProject = this.projectDomainService.updateProject(project, projectDto)
         then:
-            updatedProject.getName() == NEW_NAME
-            updatedProject.getNote() == NEW_NOTE
+            updatedProject.name == NEW_NAME
+            updatedProject.note == NEW_NOTE
     }
 
     def "signProject should call signingDateNotInFuture from projectDataValidator"() {
@@ -106,7 +106,7 @@ class ProjectDomainServiceImplTest extends Specification {
         given:
             Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER)
             ProjectContractDto projectContractDto = this.prepareProjectContractDto()
-            TestUtils.setFieldForObject(project.getOffer(), "isAccepted", false)
+            TestUtils.setFieldForObject(project.offer, "isAccepted", false)
         when:
             Project signedProject = this.projectDomainService.signProjectContract(project,
                     projectContractDto)
@@ -131,7 +131,7 @@ class ProjectDomainServiceImplTest extends Specification {
         when:
             Project finishedProject = this.projectDomainService.finishProject(project, null)
         then:
-            finishedProject.getEndDate() == today
+            finishedProject.endDate == today
     }
 
     def "finishProject should call endDateNotBeforeStartDate on projectDataValidator"() {
@@ -176,7 +176,7 @@ class ProjectDomainServiceImplTest extends Specification {
                 Project projectToChange ->
                     TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.COMPLETED)
             })
-            finishedProject.getStatus() == ProjectStatus.COMPLETED
+            finishedProject.status == ProjectStatus.COMPLETED
     }
 
     def "rejectProject should call reject on projectStatusTransitionService"() {
@@ -198,7 +198,7 @@ class ProjectDomainServiceImplTest extends Specification {
                 Project projectToChange ->
                     TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.REJECTED)
             })
-            rejectedProject.getStatus() == ProjectStatus.REJECTED
+            rejectedProject.status == ProjectStatus.REJECTED
     }
 
     def "reopenProject should call reopen on projectStatusTransitionService"() {
@@ -214,7 +214,7 @@ class ProjectDomainServiceImplTest extends Specification {
         given:
             Project project = this.prepareProjectWithStatus(null)
             OfferDto offerDto = new OfferDto()
-            offerDto.setOfferValue(5000)
+            offerDto.offerValue = 5000
         when:
             this.projectDomainService.makeNewOffer(project, offerDto)
         then:
@@ -236,18 +236,18 @@ class ProjectDomainServiceImplTest extends Specification {
         given:
             Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER)
             OfferDto offerDto = new OfferDto()
-            offerDto.setOfferValue(OFFER_VALUE)
+            offerDto.offerValue = OFFER_VALUE
         when:
             Project updatedProject = this.projectDomainService.makeNewOffer(project, offerDto)
         then:
-            updatedProject.getOffer().getOfferValue().value.doubleValue() == OFFER_VALUE
+            updatedProject.offer.offerValue.value.doubleValue() == OFFER_VALUE
     }
 
 
     // helper methods
 
     private void mockProjectWorkflow() {
-        this.projectWorkflow.getInitialStatus() >> ProjectStatus.OFFER
+        this.projectWorkflow.initialStatus >> ProjectStatus.OFFER
     }
 
     private Project prepareProjectWithStatus(ProjectStatus status) {
@@ -275,26 +275,26 @@ class ProjectDomainServiceImplTest extends Specification {
 
     private ProjectCreateDto prepareCreateProjectDto() {
         ProjectCreateDto projectCreateDto = new ProjectCreateDto()
-        projectCreateDto.setName(NAME)
-        projectCreateDto.setArchitectId(ARCHITECT_ID)
-        projectCreateDto.setClientId(CLIENT_ID)
-        projectCreateDto.setProjectType(ProjectType.CONCEPT)
+        projectCreateDto.name = NAME
+        projectCreateDto.architectId = ARCHITECT_ID
+        projectCreateDto.clientId = CLIENT_ID
+        projectCreateDto.projectType = ProjectType.CONCEPT
         return projectCreateDto
     }
 
     private ProjectDto prepareUpdateProjectDto() {
         ProjectDto projectDto = new ProjectDto()
-        projectDto.setName(NEW_NAME)
-        projectDto.setNote(NEW_NOTE)
+        projectDto.name = NEW_NAME
+        projectDto.note = NEW_NOTE
         return projectDto
     }
 
     private ProjectContractDto prepareProjectContractDto() {
         LocalDate now = LocalDate.now()
         ProjectContractDto projectContractDto = new ProjectContractDto()
-        projectContractDto.setSigningDate(now.minusDays(10))
-        projectContractDto.setStartDate(now.plusDays(10))
-        projectContractDto.setDeadline(now.plusDays(50))
+        projectContractDto.signingDate = now.minusDays(10)
+        projectContractDto.startDate = now.plusDays(10)
+        projectContractDto.deadline = now.plusDays(50)
         return projectContractDto
     }
 

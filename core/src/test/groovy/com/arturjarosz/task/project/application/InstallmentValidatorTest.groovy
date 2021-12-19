@@ -24,7 +24,7 @@ class InstallmentValidatorTest extends Specification {
     def "when value in installment is null, validateCreateInstallmentDto should throw an exception with specific message"() {
         given:
             InstallmentDto installmentDto = new InstallmentDto()
-            installmentDto.setValue(null)
+            installmentDto.value = null
         when:
             InstallmentValidator.validateCreateInstallmentDto(installmentDto)
         then:
@@ -35,9 +35,9 @@ class InstallmentValidatorTest extends Specification {
     def "when dto is correct, validateCreateInstallmentDto should not throw any exception"() {
         given:
             InstallmentDto installmentDto = new InstallmentDto()
-            installmentDto.setValue(VALUE)
-            installmentDto.setNote(NOTE)
-            installmentDto.setPaymentDate(PAY_DATE)
+            installmentDto.value = VALUE
+            installmentDto.note = NOTE
+            installmentDto.paymentDate = PAY_DATE
         when:
             InstallmentValidator.validateCreateInstallmentDto(installmentDto)
         then:

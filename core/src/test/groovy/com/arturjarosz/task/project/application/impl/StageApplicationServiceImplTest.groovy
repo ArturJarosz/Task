@@ -135,7 +135,7 @@ class StageApplicationServiceImplTest extends Specification {
         then:
             1 * this.projectRepository.save({
                 Project project ->
-                    project.getStages().size() == 0
+                    project.stages.size() == 0
             })
     }
 
@@ -388,10 +388,10 @@ class StageApplicationServiceImplTest extends Specification {
 
     private StageDto prepareStageDtoForUpdate() {
         StageDto stageDto = new StageDto()
-        stageDto.setName(NEW_STAGE_NAME)
-        stageDto.setNote(NEW_STAGE_NOTE)
-        stageDto.setStageType(NEW_STAGE_TYPE)
-        stageDto.setDeadline(NEW_DEADLINE_DATE)
+        stageDto.name = NEW_STAGE_NAME
+        stageDto.note = NEW_STAGE_NOTE
+        stageDto.stageType = NEW_STAGE_TYPE
+        stageDto.deadline = NEW_DEADLINE_DATE
         return stageDto
     }
 

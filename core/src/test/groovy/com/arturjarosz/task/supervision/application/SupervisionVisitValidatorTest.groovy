@@ -31,10 +31,10 @@ class SupervisionVisitValidatorTest extends Specification {
     def "validateCreateSupervisionVisit throws an exception with proper exception code"() {
         given:
             SupervisionVisitDto supervisionVisitDto = new SupervisionVisitDto()
-            supervisionVisitDto.setSupervisionId(supervisionId)
-            supervisionVisitDto.setDateOfVisit(dateOfVisit)
-            supervisionVisitDto.setPayable(isPayable)
-            supervisionVisitDto.setHoursCount(hoursCount)
+            supervisionVisitDto.supervisionId = supervisionId
+            supervisionVisitDto.dateOfVisit = dateOfVisit
+            supervisionVisitDto.payable = isPayable
+            supervisionVisitDto.hoursCount = hoursCount
         when:
             this.supervisionValidatorVisit.validateCreateSupervisionVisit(supervisionVisitDto)
         then:

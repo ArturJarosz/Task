@@ -54,8 +54,8 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def "createSupervision should call validateCreateSupervision from supervisionValidator"() {
         given:
             SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.setHasInvoice(true)
-            supervisionDto.setProjectId(PROJECT_ID)
+            supervisionDto.hasInvoice = true
+            supervisionDto.projectId = PROJECT_ID
         when:
             this.supervisionApplicationService.createSupervision(supervisionDto)
         then:
@@ -65,8 +65,8 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def "createSupervision should call validateProjectExistence from projectValidator"() {
         given:
             SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.setHasInvoice(true)
-            supervisionDto.setProjectId(PROJECT_ID)
+            supervisionDto.hasInvoice = true
+            supervisionDto.projectId = PROJECT_ID
         when:
             this.supervisionApplicationService.createSupervision(supervisionDto)
         then:
@@ -88,7 +88,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         given:
             this.mockValidateProjectExistenceWithNotExistingProjectId()
             SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.setProjectId(NOT_EXISTING_PROJECT_ID)
+            supervisionDto.projectId = NOT_EXISTING_PROJECT_ID
         when:
             this.supervisionApplicationService.createSupervision(supervisionDto)
         then:
@@ -141,11 +141,11 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def "updateSupervision should recalculated supervision FinancialData"() {
         given:
             SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.setHasInvoice(true)
-            supervisionDto.setProjectId(PROJECT_ID)
-            supervisionDto.setVisitNetRate(UPDATED_VISIT_NET_RATE)
-            supervisionDto.setHourlyNetRate(UPDATED_HOURLY_NET_RATE)
-            supervisionDto.setBaseNetRate(UPDATED_BASE_NET_RATE)
+            supervisionDto.hasInvoice = true
+            supervisionDto.projectId = PROJECT_ID
+            supervisionDto.visitNetRate = UPDATED_VISIT_NET_RATE
+            supervisionDto.hourlyNetRate = UPDATED_HOURLY_NET_RATE
+            supervisionDto.baseNetRate = UPDATED_BASE_NET_RATE
             this.mockSupervisionRepositoryLoad()
         when:
             this.supervisionApplicationService.updateSupervision(SUPERVISION_ID, supervisionDto)
@@ -156,20 +156,20 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def "updateSupervision should save supervision with updated fields"() {
         given:
             SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.setHasInvoice(true)
-            supervisionDto.setProjectId(PROJECT_ID)
-            supervisionDto.setVisitNetRate(UPDATED_VISIT_NET_RATE)
-            supervisionDto.setHourlyNetRate(UPDATED_HOURLY_NET_RATE)
-            supervisionDto.setBaseNetRate(UPDATED_BASE_NET_RATE)
+            supervisionDto.hasInvoice = true
+            supervisionDto.projectId = PROJECT_ID
+            supervisionDto.visitNetRate = UPDATED_VISIT_NET_RATE
+            supervisionDto.hourlyNetRate = UPDATED_HOURLY_NET_RATE
+            supervisionDto.baseNetRate = UPDATED_BASE_NET_RATE
             this.mockSupervisionRepositoryLoad()
         when:
             this.supervisionApplicationService.updateSupervision(SUPERVISION_ID, supervisionDto)
         then:
             1 * this.supervisionRepository.save({ Supervision supervision ->
                 {
-                    supervision.getVisitNetRate() == UPDATED_VISIT_NET_RATE
-                    supervision.getHourlyNetRate() == UPDATED_HOURLY_NET_RATE
-                    supervision.getBaseNetRate() == UPDATED_BASE_NET_RATE
+                    supervision.visitNetRate == UPDATED_VISIT_NET_RATE
+                    supervision.hourlyNetRate == UPDATED_HOURLY_NET_RATE
+                    supervision.baseNetRate == UPDATED_BASE_NET_RATE
                 }
             })
     }
@@ -242,13 +242,13 @@ class SupervisionApplicationServiceImplTest extends Specification {
         then:
             1 * this.supervisionRepository.save({
                 Supervision supervision ->
-                    supervision.getSupervisionVisits().size() == 1
+                    supervision.supervisionVisits.size() == 1
                     return supervision
             } as Supervision) >> {
                 arguments ->
                     Supervision supervisionToUpdate = arguments[0] as Supervision
                     supervisionToUpdate = this.injectMockedId(supervisionToUpdate, SUPERVISION_ID)
-                    SupervisionVisit supervisionVisit = supervisionToUpdate.getSupervisionVisits().iterator().next()
+                    SupervisionVisit supervisionVisit = supervisionToUpdate.supervisionVisits.iterator().next()
                     this.injectMockedId(supervisionVisit, SUPERVISION_VISIT_ID)
                     return supervisionToUpdate
             }
@@ -320,7 +320,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
             }) >> {
                 arguments ->
                     Supervision supervisionToUpdate = arguments[0] as Supervision
-                    SupervisionVisit supervisionVisit = supervisionToUpdate.getSupervisionVisits().iterator().next()
+                    SupervisionVisit supervisionVisit = supervisionToUpdate.supervisionVisits.iterator().next()
                     this.injectMockedId(supervisionVisit, SUPERVISION_VISIT_ID)
                     return supervisionToUpdate
             }
@@ -430,30 +430,30 @@ class SupervisionApplicationServiceImplTest extends Specification {
 
     private SupervisionDto prepareProperSupervisionDto() {
         SupervisionDto supervisionDto = new SupervisionDto()
-        supervisionDto.setHasInvoice(true)
-        supervisionDto.setProjectId(PROJECT_ID)
-        supervisionDto.setHoursCount(HOURS_COUNT)
-        supervisionDto.setVisitNetRate(VISIT_NET_RATE)
-        supervisionDto.setHourlyNetRate(HOURLY_NET_RATE)
-        supervisionDto.setBaseNetRate(BASE_NET_RATE)
+        supervisionDto.hasInvoice = true
+        supervisionDto.projectId = PROJECT_ID
+        supervisionDto.hoursCount = HOURS_COUNT
+        supervisionDto.visitNetRate = VISIT_NET_RATE
+        supervisionDto.hourlyNetRate = HOURLY_NET_RATE
+        supervisionDto.baseNetRate = BASE_NET_RATE
         return supervisionDto
     }
 
     private SupervisionVisitDto prepareProperSupervisionVisitDto() {
         SupervisionVisitDto supervisionVisitDto = new SupervisionVisitDto()
-        supervisionVisitDto.setPayable(true)
-        supervisionVisitDto.setHoursCount(HOURS_COUNT)
-        supervisionVisitDto.setDateOfVisit(DATE_OF_VISIT)
-        supervisionVisitDto.setSupervisionId(SUPERVISION_ID)
+        supervisionVisitDto.payable = true
+        supervisionVisitDto.hoursCount = HOURS_COUNT
+        supervisionVisitDto.dateOfVisit = DATE_OF_VISIT
+        supervisionVisitDto.supervisionId = SUPERVISION_ID
         return supervisionVisitDto
     }
 
     private SupervisionVisitDto prepareProperSupervisionVisitDtoToUpdate() {
         SupervisionVisitDto supervisionVisitDto = new SupervisionVisitDto()
-        supervisionVisitDto.setPayable(true)
-        supervisionVisitDto.setHoursCount(UPDATED_HOURS_COUNT)
-        supervisionVisitDto.setDateOfVisit(UPDATED_DATE_OF_VISIT)
-        supervisionVisitDto.setSupervisionId(SUPERVISION_ID)
+        supervisionVisitDto.payable = true
+        supervisionVisitDto.hoursCount = UPDATED_HOURS_COUNT
+        supervisionVisitDto.dateOfVisit = UPDATED_DATE_OF_VISIT
+        supervisionVisitDto.supervisionId = SUPERVISION_ID
         return supervisionVisitDto
     }
 
@@ -461,7 +461,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         this.supervisionRepository.save(_ as Supervision) >> {
             arguments ->
                 Supervision supervisionToUpdate = arguments[0] as Supervision
-                SupervisionVisit supervisionVisit = supervisionToUpdate.getSupervisionVisits().iterator().next()
+                SupervisionVisit supervisionVisit = supervisionToUpdate.supervisionVisits.iterator().next()
                 this.injectMockedId(supervisionVisit, SUPERVISION_VISIT_ID)
                 return supervisionToUpdate
         }

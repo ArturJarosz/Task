@@ -39,9 +39,9 @@ class ContractorJobValidatorTest extends Specification {
         given:
             ContractorJobDto contractorJobDto = contractorJob
             if (contractorJobDto != null) {
-                contractorJobDto.setName(contractorJobName)
-                contractorJobDto.setContractorId(contractorJobId)
-                contractorJobDto.setValue(contractorJobValue)
+                contractorJobDto.name = contractorJobName
+                contractorJobDto.contractorId = contractorJobId
+                contractorJobDto.value = contractorJobValue
             }
         when:
             this.cooperatorValidator.validateCreateContractorJobDto(contractorJobDto)
@@ -64,8 +64,8 @@ class ContractorJobValidatorTest extends Specification {
         given:
             ContractorJobDto contractorJobDto = contractorJob
             if (contractorJobDto != null) {
-                contractorJobDto.setName(contractorJobName)
-                contractorJobDto.setValue(contractorJobValue)
+                contractorJobDto.name = contractorJobName
+                contractorJobDto.value = contractorJobValue
             }
         when:
             this.cooperatorValidator.validateUpdateContractorJobDto(contractorJobDto)
