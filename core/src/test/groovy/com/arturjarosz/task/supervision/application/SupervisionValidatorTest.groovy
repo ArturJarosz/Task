@@ -29,13 +29,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateCreateSupervision throws an exception when passed supervisionDto has no projectId"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = null
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: null, baseNetRate: BASE_NET_RATE,
+                    hasInvoice: null, hourlyNetRate: HOURLY_NET_RATE, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateCreateSupervision(supervisionDto)
         then:
@@ -45,12 +40,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateCreateSupervision throws an exception when passed supervisionDto has no hasInvoice flag"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: BASE_NET_RATE,
+                    hourlyNetRate: HOURLY_NET_RATE, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateCreateSupervision(supervisionDto)
         then:
@@ -60,13 +51,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateCreateSupervision throws an exception when passed supervision has no baseNetRate"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = null
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: null,
+                    hasInvoice: true, hourlyNetRate: HOURLY_NET_RATE, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateCreateSupervision(supervisionDto)
         then:
@@ -76,13 +62,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateCreateSupervision throws an exception when passed supervision has negative baseNetRate"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = NEGATIVE_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: NEGATIVE_RATE,
+                    hasInvoice: true, hourlyNetRate: HOURLY_NET_RATE, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateCreateSupervision(supervisionDto)
         then:
@@ -92,13 +73,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateCreateSupervision throws an exception when passed supervision has no hourlyNetRate"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = null
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: BASE_NET_RATE,
+                    hasInvoice: true, hourlyNetRate: null, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateCreateSupervision(supervisionDto)
         then:
@@ -108,13 +84,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateCreateSupervision throws an exception when passed supervision has negative hourlyNetRate"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = NEGATIVE_RATE
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: BASE_NET_RATE,
+                    hasInvoice: true, hourlyNetRate: NEGATIVE_RATE, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateCreateSupervision(supervisionDto)
         then:
@@ -124,13 +95,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateCreateSupervision throws an exception when passed supervision has no visitNetRate"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = null
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: BASE_NET_RATE,
+                    hasInvoice: true, hourlyNetRate: HOURLY_NET_RATE, visitNetRate: null, hoursCount: 0)
         when:
             this.supervisionValidator.validateCreateSupervision(supervisionDto)
         then:
@@ -140,13 +106,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateCreateSupervision throws an exception when passed supervision has negative visitNetRate"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = NEGATIVE_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: BASE_NET_RATE,
+                    hasInvoice: true, hourlyNetRate: HOURLY_NET_RATE, visitNetRate: NEGATIVE_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateCreateSupervision(supervisionDto)
         then:
@@ -156,13 +117,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateCreateSupervision will not throw an exception when supervisionDto has complete data"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: BASE_NET_RATE,
+                    hasInvoice: true, hourlyNetRate: HOURLY_NET_RATE, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateCreateSupervision(supervisionDto)
         then:
@@ -171,12 +127,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateUpdateSupervision throws an exception when passed supervisionDto has no hasInvoice flag"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: BASE_NET_RATE,
+                    hourlyNetRate: HOURLY_NET_RATE, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateUpdateSupervision(supervisionDto)
         then:
@@ -186,13 +138,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateUpdateSupervision throws an exception when passed supervision has no baseNetRate"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = null
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: null,
+                    hasInvoice: true, hourlyNetRate: HOURLY_NET_RATE, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateUpdateSupervision(supervisionDto)
         then:
@@ -202,13 +149,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateUpdateSupervision throws an exception when passed supervision has negative baseNetRate"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = NEGATIVE_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: NEGATIVE_RATE,
+                    hasInvoice: true, hourlyNetRate: HOURLY_NET_RATE, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateUpdateSupervision(supervisionDto)
         then:
@@ -218,13 +160,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateUpdateSupervision throws an exception when passed supervision has no hourlyNetRate"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = null
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: BASE_NET_RATE,
+                    hasInvoice: true, hourlyNetRate: null, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateUpdateSupervision(supervisionDto)
         then:
@@ -234,13 +171,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateUpdateSupervision throws an exception when passed supervision has negative hourlyNetRate"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = NEGATIVE_RATE
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: BASE_NET_RATE,
+                    hasInvoice: true, hourlyNetRate: NEGATIVE_RATE, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateUpdateSupervision(supervisionDto)
         then:
@@ -250,13 +182,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateUpdateSupervision throws an exception when passed supervision has no visitNetRate"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = null
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: BASE_NET_RATE,
+                    hasInvoice: true, hourlyNetRate: HOURLY_NET_RATE, visitNetRate: null, hoursCount: 0)
         when:
             this.supervisionValidator.validateUpdateSupervision(supervisionDto)
         then:
@@ -266,13 +193,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateUpdateSupervision throws an exception when passed supervision has negative visitNetRate"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = NEGATIVE_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: BASE_NET_RATE,
+                    hasInvoice: true, hourlyNetRate: HOURLY_NET_RATE, visitNetRate: NEGATIVE_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateUpdateSupervision(supervisionDto)
         then:
@@ -282,13 +204,8 @@ class SupervisionValidatorTest extends Specification {
 
     def "validateUpdateSupervision will not throw an exception when supervisionDto has complete data"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.baseNetRate = BASE_NET_RATE
-            supervisionDto.hasInvoice = true
-            supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-            supervisionDto.visitNetRate = VISIT_NET_RATE
-            supervisionDto.hoursCount = 0
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: PROJECT_ID, baseNetRate: BASE_NET_RATE,
+                    hasInvoice: true, hourlyNetRate: HOURLY_NET_RATE, visitNetRate: VISIT_NET_RATE, hoursCount: 0)
         when:
             this.supervisionValidator.validateUpdateSupervision(supervisionDto)
         then:

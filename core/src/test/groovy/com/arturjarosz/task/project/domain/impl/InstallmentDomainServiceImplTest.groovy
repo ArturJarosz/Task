@@ -40,11 +40,8 @@ class InstallmentDomainServiceImplTest extends Specification {
                     .withNote(OLD_NOTE)
                     .build()
             stage.installment = installment
-            InstallmentDto installmentDto = new InstallmentDto()
-            installmentDto.value = NEW_AMOUNT
-            installmentDto.paymentDate = OLD_DATE
-            installmentDto.note = NEW_NOTE
-            installmentDto.hasInvoice = true
+            InstallmentDto installmentDto = new InstallmentDto(value: NEW_AMOUNT, paymentDate: OLD_DATE, note: NEW_NOTE,
+                    hasInvoice: true)
         when:
             Installment updatedInstallment = this.installmentDomainService.updateInstallment(installment,
                     installmentDto)
@@ -67,11 +64,8 @@ class InstallmentDomainServiceImplTest extends Specification {
                     .withFinancialData(financialData)
                     .build()
             stage.installment = installment
-            InstallmentDto installmentDto = new InstallmentDto()
-            installmentDto.value = NEW_AMOUNT
-            installmentDto.paymentDate = NEW_DATE
-            installmentDto.note = NEW_NOTE
-            installmentDto.hasInvoice = true
+            InstallmentDto installmentDto = new InstallmentDto(value: NEW_AMOUNT, paymentDate: NEW_DATE, note: NEW_NOTE,
+                    hasInvoice: true)
         when:
             Installment updatedInstallment = this.installmentDomainService.updateInstallment(installment,
                     installmentDto)

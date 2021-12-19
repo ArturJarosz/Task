@@ -36,8 +36,8 @@ class SupervisionApplicationServiceImplTest extends Specification {
     private static final BigDecimal UPDATED_HOURLY_NET_RATE = new BigDecimal("102")
     private static final BigDecimal BASE_NET_RATE = new BigDecimal("100")
     private static final BigDecimal UPDATED_BASE_NET_RATE = new BigDecimal("103")
-    private static final LocalDate DATE_OF_VISIT = new LocalDate(2021, 01, 01)
-    private static final LocalDate UPDATED_DATE_OF_VISIT = new LocalDate(2021, 01, 01)
+    private static final LocalDate DATE_OF_VISIT = LocalDate.of(2021, 01, 01)
+    private static final LocalDate UPDATED_DATE_OF_VISIT = LocalDate.of(2021, 01, 01)
 
     def projectValidator = Mock(ProjectValidator)
     def supervisionValidator = Mock(SupervisionValidator)
@@ -53,9 +53,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
 
     def "createSupervision should call validateCreateSupervision from supervisionValidator"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.hasInvoice = true
-            supervisionDto.projectId = PROJECT_ID
+            SupervisionDto supervisionDto = new SupervisionDto(hasInvoice: true, projectId: PROJECT_ID)
         when:
             this.supervisionApplicationService.createSupervision(supervisionDto)
         then:
@@ -64,9 +62,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
 
     def "createSupervision should call validateProjectExistence from projectValidator"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.hasInvoice = true
-            supervisionDto.projectId = PROJECT_ID
+            SupervisionDto supervisionDto = new SupervisionDto(hasInvoice: true, projectId: PROJECT_ID)
         when:
             this.supervisionApplicationService.createSupervision(supervisionDto)
         then:
@@ -87,8 +83,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def "createSupervision throws throws an exception when project does not exist and supervision is not saved"() {
         given:
             this.mockValidateProjectExistenceWithNotExistingProjectId()
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.projectId = NOT_EXISTING_PROJECT_ID
+            SupervisionDto supervisionDto = new SupervisionDto(projectId: NOT_EXISTING_PROJECT_ID)
         when:
             this.supervisionApplicationService.createSupervision(supervisionDto)
         then:
@@ -140,27 +135,22 @@ class SupervisionApplicationServiceImplTest extends Specification {
 
     def "updateSupervision should recalculated supervision FinancialData"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.hasInvoice = true
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.visitNetRate = UPDATED_VISIT_NET_RATE
-            supervisionDto.hourlyNetRate = UPDATED_HOURLY_NET_RATE
-            supervisionDto.baseNetRate = UPDATED_BASE_NET_RATE
+            SupervisionDto supervisionDto = new SupervisionDto(hasInvoice: true, projectId: PROJECT_ID,
+                    visitNetRate: UPDATED_VISIT_NET_RATE, hourlyNetRate: UPDATED_HOURLY_NET_RATE,
+                    baseNetRate: UPDATED_BASE_NET_RATE)
             this.mockSupervisionRepositoryLoad()
         when:
             this.supervisionApplicationService.updateSupervision(SUPERVISION_ID, supervisionDto)
         then:
-            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID, SUPERVISION_FINANCIAL_DATA_ID)
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID,
+                    SUPERVISION_FINANCIAL_DATA_ID)
     }
 
     def "updateSupervision should save supervision with updated fields"() {
         given:
-            SupervisionDto supervisionDto = new SupervisionDto()
-            supervisionDto.hasInvoice = true
-            supervisionDto.projectId = PROJECT_ID
-            supervisionDto.visitNetRate = UPDATED_VISIT_NET_RATE
-            supervisionDto.hourlyNetRate = UPDATED_HOURLY_NET_RATE
-            supervisionDto.baseNetRate = UPDATED_BASE_NET_RATE
+            SupervisionDto supervisionDto = new SupervisionDto(hasInvoice: true, projectId: PROJECT_ID,
+                    visitNetRate: UPDATED_VISIT_NET_RATE, hourlyNetRate: UPDATED_HOURLY_NET_RATE,
+                    baseNetRate: UPDATED_BASE_NET_RATE)
             this.mockSupervisionRepositoryLoad()
         when:
             this.supervisionApplicationService.updateSupervision(SUPERVISION_ID, supervisionDto)
@@ -300,7 +290,8 @@ class SupervisionApplicationServiceImplTest extends Specification {
             this.supervisionApplicationService.updateSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID,
                     supervisionVisitDto)
         then:
-            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID, SUPERVISION_FINANCIAL_DATA_ID)
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID,
+                    SUPERVISION_FINANCIAL_DATA_ID)
     }
 
     def "updateSupervisionVisit changes data on supervisionVisit"() {
@@ -351,7 +342,8 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.deleteSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID)
         then:
-            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID, SUPERVISION_FINANCIAL_DATA_ID)
+            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID,
+                    SUPERVISION_FINANCIAL_DATA_ID)
     }
 
     def "deleteSupervisionVisit removes supervisionVisit from supervision"() {
@@ -429,31 +421,21 @@ class SupervisionApplicationServiceImplTest extends Specification {
     }
 
     private SupervisionDto prepareProperSupervisionDto() {
-        SupervisionDto supervisionDto = new SupervisionDto()
-        supervisionDto.hasInvoice = true
-        supervisionDto.projectId = PROJECT_ID
-        supervisionDto.hoursCount = HOURS_COUNT
-        supervisionDto.visitNetRate = VISIT_NET_RATE
-        supervisionDto.hourlyNetRate = HOURLY_NET_RATE
-        supervisionDto.baseNetRate = BASE_NET_RATE
+        SupervisionDto supervisionDto = new SupervisionDto(hasInvoice: true, projectId: PROJECT_ID,
+                hoursCount: HOURS_COUNT, visitNetRate: VISIT_NET_RATE, hourlyNetRate: HOURLY_NET_RATE,
+                baseNetRate: BASE_NET_RATE)
         return supervisionDto
     }
 
     private SupervisionVisitDto prepareProperSupervisionVisitDto() {
-        SupervisionVisitDto supervisionVisitDto = new SupervisionVisitDto()
-        supervisionVisitDto.payable = true
-        supervisionVisitDto.hoursCount = HOURS_COUNT
-        supervisionVisitDto.dateOfVisit = DATE_OF_VISIT
-        supervisionVisitDto.supervisionId = SUPERVISION_ID
+        SupervisionVisitDto supervisionVisitDto = new SupervisionVisitDto(payable: true, hoursCount: HOURS_COUNT,
+                dateOfVisit: DATE_OF_VISIT, supervisionId: SUPERVISION_ID)
         return supervisionVisitDto
     }
 
     private SupervisionVisitDto prepareProperSupervisionVisitDtoToUpdate() {
-        SupervisionVisitDto supervisionVisitDto = new SupervisionVisitDto()
-        supervisionVisitDto.payable = true
-        supervisionVisitDto.hoursCount = UPDATED_HOURS_COUNT
-        supervisionVisitDto.dateOfVisit = UPDATED_DATE_OF_VISIT
-        supervisionVisitDto.supervisionId = SUPERVISION_ID
+        SupervisionVisitDto supervisionVisitDto = new SupervisionVisitDto(payable: true,
+                hoursCount: UPDATED_HOURS_COUNT, dateOfVisit: UPDATED_DATE_OF_VISIT, supervisionId: SUPERVISION_ID)
         return supervisionVisitDto
     }
 
