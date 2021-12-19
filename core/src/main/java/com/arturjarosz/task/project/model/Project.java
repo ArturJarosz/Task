@@ -101,7 +101,6 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         this.updateProjectDates(startDate);
         this.arrangement = new Contract(this.arrangement.getOfferValue().getValue().doubleValue(), signingDate,
                 deadline);
-        ((Contract) this.arrangement).setSigningDate(signingDate);
     }
 
     public void updateProjectDates(LocalDate startDate) {

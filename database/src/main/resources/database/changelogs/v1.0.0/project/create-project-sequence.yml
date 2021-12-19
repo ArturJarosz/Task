@@ -4,7 +4,7 @@ databaseChangeLog:
       id: "create-project-sequence"
       changes:
         - createSequence:
-            sequenceName: "create-project-sequence"
+            sequenceName: "project_sequence"
             startValue: 100
             cacheSize: 10
             incrementBy: 1

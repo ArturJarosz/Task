@@ -73,11 +73,15 @@ public interface ProjectDtoMapper {
 
     @Named("getOfferValue")
     default double getOfferValue(Arrangement arrangement) {
-        return ((Offer) arrangement).getOfferValue().getValue().doubleValue();
+        return arrangement.getOfferValue().getValue().doubleValue();
     }
 
     @Named("isOfferAccepted")
     default boolean isOfferAccepted(Arrangement arrangement) {
-        return ((Offer) arrangement).isAccepted();
+        if (arrangement instanceof Offer) {
+            return ((Offer) arrangement).isAccepted();
+        }
+        return true;
+
     }
 }
