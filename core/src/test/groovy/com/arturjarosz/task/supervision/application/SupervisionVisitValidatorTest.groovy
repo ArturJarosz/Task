@@ -8,38 +8,38 @@ import spock.lang.Unroll
 import java.time.LocalDate
 
 class SupervisionVisitValidatorTest extends Specification {
-    private static final Long SUPERVISION_ID = 1L;
-    private static final LocalDate DATE_OF_VISIT = new LocalDate(2021, 10, 10);
-    private static final int HOURS_COUNT = 10;
-    private static final int NEGATIVE_HOURS_COUNT = -10;
+    private static final Long SUPERVISION_ID = 1L
+    private static final LocalDate DATE_OF_VISIT = new LocalDate(2021, 10, 10)
+    private static final int HOURS_COUNT = 10
+    private static final int NEGATIVE_HOURS_COUNT = -10
 
-    def supervisionQueryService = Mock(SupervisionQueryServiceImpl);
+    def supervisionQueryService = Mock(SupervisionQueryServiceImpl)
 
-    def supervisionValidatorVisit = new SupervisionVisitValidator(supervisionQueryService);
+    def supervisionValidatorVisit = new SupervisionVisitValidator(supervisionQueryService)
 
     def "validateCreateSupervisionVisit throws an exception when supervisionVisitDto is null"() {
         given:
-            SupervisionVisitDto supervisionVisitDto = null;
+            SupervisionVisitDto supervisionVisitDto = null
         when:
-            this.supervisionValidatorVisit.validateCreateSupervisionVisit(supervisionVisitDto);
+            this.supervisionValidatorVisit.validateCreateSupervisionVisit(supervisionVisitDto)
         then:
-            Exception ex = thrown();
-            ex.message == "isNull.supervisionVisit";
+            Exception ex = thrown()
+            ex.message == "isNull.supervisionVisit"
     }
 
     @Unroll
     def "validateCreateSupervisionVisit throws an exception with proper exception code"() {
         given:
-            SupervisionVisitDto supervisionVisitDto = new SupervisionVisitDto();
-            supervisionVisitDto.setSupervisionId(supervisionId);
-            supervisionVisitDto.setDateOfVisit(dateOfVisit);
-            supervisionVisitDto.setPayable(isPayable);
-            supervisionVisitDto.setHoursCount(hoursCount);
+            SupervisionVisitDto supervisionVisitDto = new SupervisionVisitDto()
+            supervisionVisitDto.supervisionId = supervisionId
+            supervisionVisitDto.dateOfVisit = dateOfVisit
+            supervisionVisitDto.payable = isPayable
+            supervisionVisitDto.hoursCount = hoursCount
         when:
-            this.supervisionValidatorVisit.validateCreateSupervisionVisit(supervisionVisitDto);
+            this.supervisionValidatorVisit.validateCreateSupervisionVisit(supervisionVisitDto)
         then:
-            Exception ex = thrown();
-            ex.message == exceptionMessage;
+            Exception ex = thrown()
+            ex.message == exceptionMessage
         where:
             supervisionId  | dateOfVisit   | isPayable | hoursCount           || exceptionMessage
             SUPERVISION_ID | DATE_OF_VISIT | null      | HOURS_COUNT          || "isNull.supervisionVisit.payableFlag"

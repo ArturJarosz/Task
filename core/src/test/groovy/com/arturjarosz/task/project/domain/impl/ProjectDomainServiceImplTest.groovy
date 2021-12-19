@@ -22,239 +22,239 @@ import spock.lang.Specification
 import java.time.LocalDate
 
 class ProjectDomainServiceImplTest extends Specification {
-    private static final String NAME = "projectName";
-    private static final String NEW_NAME = "newProjectName";
-    private static final String NEW_NOTE = "newNote";
-    private static final String STAGE_NAME = "stageName";
-    private static final Long ARCHITECT_ID = 100L;
-    private static final Long CLIENT_ID = 1000L;
-    private static final double OFFER_VALUE = 5000.0;
+    private static final String NAME = "projectName"
+    private static final String NEW_NAME = "newProjectName"
+    private static final String NEW_NOTE = "newNote"
+    private static final String STAGE_NAME = "stageName"
+    private static final Long ARCHITECT_ID = 100L
+    private static final Long CLIENT_ID = 1000L
+    private static final double OFFER_VALUE = 5000.0
 
-    def projectDataValidator = Mock(ProjectDataValidator);
-    def projectWorkflow = Mock(ProjectWorkflow);
-    def projectStatusTransitionService = Mock(ProjectStatusTransitionServiceImpl);
+    def projectDataValidator = Mock(ProjectDataValidator)
+    def projectWorkflow = Mock(ProjectWorkflow)
+    def projectStatusTransitionService = Mock(ProjectStatusTransitionServiceImpl)
 
     def projectDomainService = new ProjectDomainServiceImpl(projectDataValidator, projectWorkflow,
-            projectStatusTransitionService);
+            projectStatusTransitionService)
 
     def "createProject should call create on projectStatusTransitionService"() {
         given:
-            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
+            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
         when:
-            Project project = this.projectDomainService.createProject(projectCreateDto);
+            Project project = this.projectDomainService.createProject(projectCreateDto)
         then:
-            1 * this.projectStatusTransitionService.create(_ as Project);
+            1 * this.projectStatusTransitionService.create(_ as Project)
     }
 
     def "createProject should return newly created project with status OFFER"() {
         given:
-            this.mockProjectWorkflow();
-            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto();
+            this.mockProjectWorkflow()
+            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
         when:
-            Project project = this.projectDomainService.createProject(projectCreateDto);
+            Project project = this.projectDomainService.createProject(projectCreateDto)
         then:
             1 * this.projectStatusTransitionService.create({
                 Project createdProject ->
-                    TestUtils.setFieldForObject(createdProject, "status", ProjectStatus.OFFER);
+                    TestUtils.setFieldForObject(createdProject, "status", ProjectStatus.OFFER)
             }) >> {}
-            project.getName() == projectCreateDto.getName();
-            project.getStatus() == ProjectStatus.OFFER;
+            project.name == projectCreateDto.name
+            project.status == ProjectStatus.OFFER
     }
 
     def "updateProject should change data on project and return updated instance"() {
         given:
-            ProjectDto projectDto = this.prepareUpdateProjectDto();
-            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
+            ProjectDto projectDto = this.prepareUpdateProjectDto()
+            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER)
         when:
-            Project updatedProject = this.projectDomainService.updateProject(project, projectDto);
+            Project updatedProject = this.projectDomainService.updateProject(project, projectDto)
         then:
-            updatedProject.getName() == NEW_NAME;
-            updatedProject.getNote() == NEW_NOTE;
+            updatedProject.name == NEW_NAME
+            updatedProject.note == NEW_NOTE
     }
 
     def "signProject should call signingDateNotInFuture from projectDataValidator"() {
         given:
-            Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER);
-            ProjectContractDto projectContractDto = this.prepareProjectContractDto();
+            Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER)
+            ProjectContractDto projectContractDto = this.prepareProjectContractDto()
         when:
-            Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto);
+            Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto)
         then:
-            1 * this.projectDataValidator.signingDateNotInFuture(_);
+            1 * this.projectDataValidator.signingDateNotInFuture(_)
     }
 
     def "signProject should call startDateNotBeforeSigningDate from projectDataValidator"() {
         given:
-            Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER);
-            ProjectContractDto projectContractDto = this.prepareProjectContractDto();
+            Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER)
+            ProjectContractDto projectContractDto = this.prepareProjectContractDto()
         when:
-            Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto);
+            Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto)
         then:
-            1 * this.projectDataValidator.startDateNotBeforeSigningDate(_, _);
+            1 * this.projectDataValidator.startDateNotBeforeSigningDate(_, _)
     }
 
     def "signProject should call deadlineNotBeforeStartDate from projectDataValidator"() {
         given:
-            Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER);
-            ProjectContractDto projectContractDto = this.prepareProjectContractDto();
+            Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER)
+            ProjectContractDto projectContractDto = this.prepareProjectContractDto()
         when:
-            Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto);
+            Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto)
         then:
-            1 * this.projectDataValidator.deadlineNotBeforeStartDate(_, _);
+            1 * this.projectDataValidator.deadlineNotBeforeStartDate(_, _)
     }
 
     def "signProject should call acceptOffer for not accepted offer on projectStatusTransitionService"() {
         given:
-            Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER);
-            ProjectContractDto projectContractDto = this.prepareProjectContractDto();
-            TestUtils.setFieldForObject(project.getOffer(), "isAccepted", false);
+            Project project = this.prepareProjectWithStatusAndOffer(ProjectStatus.OFFER)
+            ProjectContractDto projectContractDto = this.prepareProjectContractDto()
+            TestUtils.setFieldForObject(project.offer, "isAccepted", false)
         when:
             Project signedProject = this.projectDomainService.signProjectContract(project,
-                    projectContractDto);
+                    projectContractDto)
         then:
-            1 * this.projectStatusTransitionService.acceptOffer(_ as Project);
+            1 * this.projectStatusTransitionService.acceptOffer(_ as Project)
     }
 
     def "signProject should call signContract on project"() {
         given:
-            Project project = Mock(Project);
-            ProjectContractDto projectContractDto = this.prepareProjectContractDto();
+            Project project = Mock(Project)
+            ProjectContractDto projectContractDto = this.prepareProjectContractDto()
         when:
-            Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto);
+            Project signedProject = this.projectDomainService.signProjectContract(project, projectContractDto)
         then:
-            1 * project.signContract(_, _, _);
+            1 * project.signContract(_, _, _)
     }
 
     def "finishProject should set endDate to today, if endDate is not provided"() {
         given:
-            Project project = this.prepareProjectWithStatus(ProjectStatus.IN_PROGRESS);
-            LocalDate today = LocalDate.now();
+            Project project = this.prepareProjectWithStatus(ProjectStatus.IN_PROGRESS)
+            LocalDate today = LocalDate.now()
         when:
             Project finishedProject = this.projectDomainService.finishProject(project, null)
         then:
-            finishedProject.getEndDate() == today;
+            finishedProject.endDate == today
     }
 
     def "finishProject should call endDateNotBeforeStartDate on projectDataValidator"() {
         given:
-            Project project = this.prepareProjectInProgressWithStatus();
-            LocalDate today = LocalDate.now();
+            Project project = this.prepareProjectInProgressWithStatus()
+            LocalDate today = LocalDate.now()
         when:
             Project finishedProject = this.projectDomainService.finishProject(project, null)
         then:
-            1 * this.projectDataValidator.endDateNotBeforeStartDate(_ as LocalDate, _ as LocalDate);
+            1 * this.projectDataValidator.endDateNotBeforeStartDate(_ as LocalDate, _ as LocalDate)
     }
 
     def "finishProject should call finishProject on project"() {
         given:
-            Project project = Mock(Project);
+            Project project = Mock(Project)
         when:
             Project finishedProject = this.projectDomainService.finishProject(project, null)
         then:
-            1 * project.finishProject(_);
+            1 * project.finishProject(_)
     }
 
     @Ignore //TODO TA-194: analyze finishing project
     def "finishProject should call completeWork on projectStatusTransitionService"() {
         given:
-            Project project = this.prepareProjectInProgressWithStatus();
-            LocalDate today = LocalDate.now();
+            Project project = this.prepareProjectInProgressWithStatus()
+            LocalDate today = LocalDate.now()
         when:
             Project finishedProject = this.projectDomainService.finishProject(project, null)
         then:
-            1 * projectStatusTransitionService.completeWork(_ as Project);
+            1 * projectStatusTransitionService.completeWork(_ as Project)
     }
 
     @Ignore //TODO TA-194: analyze finishing project
     def "finishProject should changeProject status to Completed"() {
         given:
-            Project project = this.prepareProjectInProgressWithStatus();
-            LocalDate today = LocalDate.now();
+            Project project = this.prepareProjectInProgressWithStatus()
+            LocalDate today = LocalDate.now()
         when:
             Project finishedProject = this.projectDomainService.finishProject(project, null)
         then:
             1 * projectStatusTransitionService.completeWork({
                 Project projectToChange ->
-                    TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.COMPLETED);
-            });
-            finishedProject.getStatus() == ProjectStatus.COMPLETED;
+                    TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.COMPLETED)
+            })
+            finishedProject.status == ProjectStatus.COMPLETED
     }
 
     def "rejectProject should call reject on projectStatusTransitionService"() {
         given:
-            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
+            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER)
         when:
-            Project rejectedProject = this.projectDomainService.rejectProject(project);
+            Project rejectedProject = this.projectDomainService.rejectProject(project)
         then:
-            1 * this.projectStatusTransitionService.reject(_ as Project);
+            1 * this.projectStatusTransitionService.reject(_ as Project)
     }
 
     def "rejectProject should change project status to Rejected"() {
         given:
-            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
+            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER)
         when:
-            Project rejectedProject = this.projectDomainService.rejectProject(project);
+            Project rejectedProject = this.projectDomainService.rejectProject(project)
         then:
             1 * this.projectStatusTransitionService.reject({
                 Project projectToChange ->
-                    TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.REJECTED);
-            });
-            rejectedProject.getStatus() == ProjectStatus.REJECTED;
+                    TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.REJECTED)
+            })
+            rejectedProject.status == ProjectStatus.REJECTED
     }
 
     def "reopenProject should call reopen on projectStatusTransitionService"() {
         given:
-            Project project = Mock(Project);
+            Project project = Mock(Project)
         when:
-            this.projectDomainService.reopenProject(project);
+            this.projectDomainService.reopenProject(project)
         then:
-            1 * this.projectStatusTransitionService.reopen(_ as Project);
+            1 * this.projectStatusTransitionService.reopen(_ as Project)
     }
 
     def "makeNewOffer should not call makeNewOffer on projectStatusTransitionService for project with null status"() {
         given:
-            Project project = this.prepareProjectWithStatus(null);
-            OfferDto offerDto = new OfferDto();
-            offerDto.setOfferValue(5000);
+            Project project = this.prepareProjectWithStatus(null)
+            OfferDto offerDto = new OfferDto()
+            offerDto.offerValue = 5000
         when:
-            this.projectDomainService.makeNewOffer(project, offerDto);
+            this.projectDomainService.makeNewOffer(project, offerDto)
         then:
-            0 * this.projectStatusTransitionService.makeNewOffer(_ as Project);
+            0 * this.projectStatusTransitionService.makeNewOffer(_ as Project)
     }
 
     def "makeNewOffer should call makeNewOffer on projectStatusTransitionService for project with not null status"() {
         given:
-            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
-            OfferDto offerDto = new OfferDto();
-            offerDto.setOfferValue(5000);
+            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER)
+            OfferDto offerDto = new OfferDto()
+            offerDto.setOfferValue(5000)
         when:
-            this.projectDomainService.makeNewOffer(project, offerDto);
+            this.projectDomainService.makeNewOffer(project, offerDto)
         then:
-            1 * this.projectStatusTransitionService.makeNewOffer(_ as Project);
+            1 * this.projectStatusTransitionService.makeNewOffer(_ as Project)
     }
 
     def "makeNewOffer should update project offer value"() {
         given:
-            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER);
-            OfferDto offerDto = new OfferDto();
-            offerDto.setOfferValue(OFFER_VALUE);
+            Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER)
+            OfferDto offerDto = new OfferDto()
+            offerDto.offerValue = OFFER_VALUE
         when:
-            Project updatedProject = this.projectDomainService.makeNewOffer(project, offerDto);
+            Project updatedProject = this.projectDomainService.makeNewOffer(project, offerDto)
         then:
-            updatedProject.getOffer().getOfferValue().value.doubleValue() == OFFER_VALUE;
+            updatedProject.offer.offerValue.value.doubleValue() == OFFER_VALUE
     }
 
 
     // helper methods
 
     private void mockProjectWorkflow() {
-        this.projectWorkflow.getInitialStatus() >> ProjectStatus.OFFER;
+        this.projectWorkflow.initialStatus >> ProjectStatus.OFFER
     }
 
     private Project prepareProjectWithStatus(ProjectStatus status) {
         return new ProjectBuilder()
                 .withName(NAME)
                 .withStatus(status)
-                .build();
+                .build()
     }
 
     private Project prepareProjectWithStatusAndOffer(ProjectStatus status) {
@@ -262,7 +262,7 @@ class ProjectDomainServiceImplTest extends Specification {
                 .withName(NAME)
                 .withStatus(status)
                 .withOffer(new Offer(5000))
-                .build();
+                .build()
     }
 
     private Project prepareProjectInProgressWithStatus() {
@@ -270,38 +270,38 @@ class ProjectDomainServiceImplTest extends Specification {
                 .withName(NAME)
                 .withStatus(ProjectStatus.IN_PROGRESS)
                 .withStartDate(LocalDate.now().plusDays(20))
-                .build();
+                .build()
     }
 
     private ProjectCreateDto prepareCreateProjectDto() {
-        ProjectCreateDto projectCreateDto = new ProjectCreateDto();
-        projectCreateDto.setName(NAME);
-        projectCreateDto.setArchitectId(ARCHITECT_ID);
-        projectCreateDto.setClientId(CLIENT_ID);
-        projectCreateDto.setProjectType(ProjectType.CONCEPT);
-        return projectCreateDto;
+        ProjectCreateDto projectCreateDto = new ProjectCreateDto()
+        projectCreateDto.name = NAME
+        projectCreateDto.architectId = ARCHITECT_ID
+        projectCreateDto.clientId = CLIENT_ID
+        projectCreateDto.projectType = ProjectType.CONCEPT
+        return projectCreateDto
     }
 
     private ProjectDto prepareUpdateProjectDto() {
-        ProjectDto projectDto = new ProjectDto();
-        projectDto.setName(NEW_NAME);
-        projectDto.setNote(NEW_NOTE);
-        return projectDto;
+        ProjectDto projectDto = new ProjectDto()
+        projectDto.name = NEW_NAME
+        projectDto.note = NEW_NOTE
+        return projectDto
     }
 
     private ProjectContractDto prepareProjectContractDto() {
-        LocalDate now = LocalDate.now();
-        ProjectContractDto projectContractDto = new ProjectContractDto();
-        projectContractDto.setSigningDate(now.minusDays(10));
-        projectContractDto.setStartDate(now.plusDays(10));
-        projectContractDto.setDeadline(now.plusDays(50));
-        return projectContractDto;
+        LocalDate now = LocalDate.now()
+        ProjectContractDto projectContractDto = new ProjectContractDto()
+        projectContractDto.signingDate = now.minusDays(10)
+        projectContractDto.startDate = now.plusDays(10)
+        projectContractDto.deadline = now.plusDays(50)
+        return projectContractDto
     }
 
     private Stage prepareStageWithStatus(StageStatus status) {
         return new StageBuilder()
                 .withName(STAGE_NAME)
                 .withStatus(status)
-                .build();
+                .build()
     }
 }

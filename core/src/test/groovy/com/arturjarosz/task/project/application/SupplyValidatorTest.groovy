@@ -7,47 +7,47 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class SupplyValidatorTest extends Specification {
-    private static final Long EXISTING_SUPPLIER_ID = 1L;
-    private static final Long NOT_EXISTING_SUPPLIER_ID = 9L;
+    private static final Long EXISTING_SUPPLIER_ID = 1L
+    private static final Long NOT_EXISTING_SUPPLIER_ID = 9L
 
-    def cooperatorQueryService = Mock(CooperatorQueryServiceImpl);
-    def projectQueryService = Mock(ProjectQueryServiceImpl);
+    def cooperatorQueryService = Mock(CooperatorQueryServiceImpl)
+    def projectQueryService = Mock(ProjectQueryServiceImpl)
 
-    def supplyValidator = new SupplyValidator(cooperatorQueryService, projectQueryService);
+    def supplyValidator = new SupplyValidator(cooperatorQueryService, projectQueryService)
 
     def "validateSupplierExistence throws an exception if Supplier with given id does not exist"() {
         given:
-            this.mockCooperatorQueryServiceSupplierWithIdExistenceDoesntExists();
+            this.mockCooperatorQueryServiceSupplierWithIdExistenceDoesntExists()
         when:
-            this.supplyValidator.validateSupplierExistence(NOT_EXISTING_SUPPLIER_ID);
+            this.supplyValidator.validateSupplierExistence(NOT_EXISTING_SUPPLIER_ID)
         then:
-            Exception exception = thrown();
+            Exception exception = thrown()
             exception.message == "notExist.supplier"
     }
 
     def "validateSupplierExistence throws an exception if Supplier with given id exists"() {
         given:
-            this.mockCooperatorQueryServiceSupplierWithIdExistenceExists();
+            this.mockCooperatorQueryServiceSupplierWithIdExistenceExists()
         when:
-            this.supplyValidator.validateSupplierExistence(EXISTING_SUPPLIER_ID);
+            this.supplyValidator.validateSupplierExistence(EXISTING_SUPPLIER_ID)
         then:
-            noExceptionThrown();
+            noExceptionThrown()
     }
 
     @Unroll
     def "validateCreateSupplyDto throws an exception with proper exception message"() {
         given:
-            SupplyDto supplyDto = supply;
+            SupplyDto supplyDto = supply
             if (supplyDto != null) {
-                supplyDto.setName(supplyName);
-                supplyDto.setSupplierId(supplierId);
-                supplyDto.setValue(supplyValue);
+                supplyDto.name = supplyName
+                supplyDto.supplierId = supplierId
+                supplyDto.value = supplyValue
             }
         when:
-            this.supplyValidator.validateCreateSupplyDto(supplyDto);
+            this.supplyValidator.validateCreateSupplyDto(supplyDto)
         then:
-            Exception exception = thrown();
-            exception.message == exceptionMessage;
+            Exception exception = thrown()
+            exception.message == exceptionMessage
         where:
             supply          | supplierId           | supplyName | supplyValue          || exceptionMessage
             null            | null                 | null       | null                 || "isNull.supply"
@@ -61,16 +61,16 @@ class SupplyValidatorTest extends Specification {
     @Unroll
     def "validateUpdateSupplyDto throws an exception with proper exception message"() {
         given:
-            SupplyDto supplyDto = supply;
+            SupplyDto supplyDto = supply
             if (supplyDto != null) {
-                supplyDto.setName(supplyName);
-                supplyDto.setValue(supplyValue);
+                supplyDto.name = supplyName
+                supplyDto.value = supplyValue
             }
         when:
-            this.supplyValidator.validateUpdateSupplyDto(supplyDto);
+            this.supplyValidator.validateUpdateSupplyDto(supplyDto)
         then:
-            Exception exception = thrown();
-            exception.message == exceptionMessage;
+            Exception exception = thrown()
+            exception.message == exceptionMessage
         where:
             supply          | supplierId           | supplyName | supplyValue          || exceptionMessage
             null            | null                 | null       | null                 || "isNull.supply"
@@ -81,10 +81,10 @@ class SupplyValidatorTest extends Specification {
     }
 
     private void mockCooperatorQueryServiceSupplierWithIdExistenceDoesntExists() {
-        1 * this.cooperatorQueryService.supplierWithIdExists(NOT_EXISTING_SUPPLIER_ID) >> false;
+        1 * this.cooperatorQueryService.supplierWithIdExists(NOT_EXISTING_SUPPLIER_ID) >> false
     }
 
     private void mockCooperatorQueryServiceSupplierWithIdExistenceExists() {
-        1 * this.cooperatorQueryService.supplierWithIdExists(EXISTING_SUPPLIER_ID) >> true;
+        1 * this.cooperatorQueryService.supplierWithIdExists(EXISTING_SUPPLIER_ID) >> true
     }
 }
