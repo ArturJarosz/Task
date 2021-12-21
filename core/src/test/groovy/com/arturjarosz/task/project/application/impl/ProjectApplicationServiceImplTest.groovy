@@ -259,7 +259,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             this.projectApplicationService.signProjectContract(EXISTING_PROJECT_ID, projectContractDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Project, EXISTING_PROJECT_ID)
     }
 
     def "singProjectContract should call validateProjectContractDto on projectValidator"() {
