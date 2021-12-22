@@ -99,6 +99,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     public void removeProject(Long projectId) {
         LOG.debug("Removing Project with id {}.", projectId);
         this.projectValidator.validateProjectExistence(projectId);
+        this.projectFinancialDataService.removeFinancialDataForProject(projectId);
         this.projectRepository.remove(projectId);
         LOG.debug("Project with id {} removed.", projectId);
     }

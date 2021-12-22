@@ -29,10 +29,9 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
 
     @Autowired
     public ProjectFinancialDataServiceImpl(ProjectFinancialDataRepository projectFinancialDataRepository,
-                                           ProjectValidator projectValidator,
-                                           FinancialDataQueryServiceImpl financialDataQueryService,
-                                           FinancialDataRepository financialDataRepository,
-                                           List<PartialFinancialDataService> partialFinancialDataServices) {
+            ProjectValidator projectValidator, FinancialDataQueryServiceImpl financialDataQueryService,
+            FinancialDataRepository financialDataRepository,
+            List<PartialFinancialDataService> partialFinancialDataServices) {
         this.projectFinancialDataRepository = projectFinancialDataRepository;
         this.projectValidator = projectValidator;
         this.financialDataQueryService = financialDataQueryService;
@@ -56,16 +55,14 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
         FinancialData financialData = this.financialDataRepository.load(supervisionFinancialDataId);
 
         BigDecimal value = new BigDecimal("0");
-        value = value.add(BigDecimal.valueOf(supervisionRatesDto.getBaseNetRate()
-                .doubleValue()));
+        value = value.add(BigDecimal.valueOf(supervisionRatesDto.getBaseNetRate().doubleValue()));
 
         if (supervisionVisitFinancialDtos != null) {
             // Adding hours value and rate per visit
             for (SupervisionVisitFinancialDto supervisionVisit : supervisionVisitFinancialDtos) {
                 if (supervisionVisit.isPayable()) {
                     BigDecimal hoursValue = BigDecimal.valueOf(
-                            supervisionVisit.getHoursCount() * supervisionRatesDto.getHourlyNetRate()
-                                    .doubleValue());
+                            supervisionVisit.getHoursCount() * supervisionRatesDto.getHourlyNetRate().doubleValue());
                     value = value.add(hoursValue);
                     value = value.add(supervisionRatesDto.getVisitNetRate());
                 }
@@ -88,6 +85,13 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
         this.recalculateTotalProjectValue(summedUpFinancialData);
         projectFinancialData.updateWithPartialData(summedUpFinancialData);
         this.projectFinancialDataRepository.save(projectFinancialData);
+    }
+
+    @Override
+    public void removeFinancialDataForProject(Long projectId) {
+        ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.loadProjectFinancialDataWithProjectId(
+                projectId);
+        this.projectFinancialDataRepository.remove(projectFinancialData.getId());
     }
 
     private void recalculateTotalProjectValue(ProjectFinancialDataDto projectFinancialDataDto) {

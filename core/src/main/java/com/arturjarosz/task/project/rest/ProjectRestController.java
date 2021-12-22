@@ -34,7 +34,7 @@ public class ProjectRestController {
     public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectCreateDto projectCreateDto) {
         ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto);
         HttpHeaders header = new HttpHeadersBuilder()
-                .withLocation("projects/{projectId}", createdProjectDto.getId())
+                .withLocation("/projects/{projectId}", createdProjectDto.getId())
                 .build();
         return new ResponseEntity<>(createdProjectDto, header, HttpStatus.CREATED);
     }
