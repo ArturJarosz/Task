@@ -4,14 +4,16 @@ import com.arturjarosz.task.DatabaseMain
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.spock.Testcontainers
 import spock.lang.Shared
 import spock.lang.Specification
 
-@SpringBootTest(classes = DatabaseMain.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = DatabaseMain.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Testcontainers
+@AutoConfigureMockMvc
 class BaseTestIT extends Specification {
     private static final Logger LOG = LoggerFactory.getLogger(BaseTestIT.class)
     protected static final String HOST = "http://localhost"

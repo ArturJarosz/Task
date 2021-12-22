@@ -1,22 +1,16 @@
 package com.arturjarosz.task.client
 
-import com.arturjarosz.task.DatabaseMain
+
 import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.configuration.BaseTestIT
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
-import org.testcontainers.spock.Testcontainers
 
-@SpringBootTest(classes = DatabaseMain.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@Testcontainers
-@AutoConfigureMockMvc
 class ClientTestIT extends BaseTestIT {
 
     private static final String CLIENTS_URI = "/clients"
@@ -130,7 +124,6 @@ class ClientTestIT extends BaseTestIT {
             def removedClientResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .delete(URI.create(HOST + ":" + port + CLIENTS_URI + "/" + createdClient.id))
-                            .header("Content-Type", "application/json")
             ).andReturn().response
         then:
             removedClientResponse.status == HttpStatus.OK.value()
@@ -143,7 +136,6 @@ class ClientTestIT extends BaseTestIT {
             def removedClientResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .delete(URI.create(HOST + ":" + port + CLIENTS_URI + "/" + NOT_EXISTING_CLIENT_ID))
-                            .header("Content-Type", "application/json")
             ).andReturn().response
         then:
             removedClientResponse.status == HttpStatus.BAD_REQUEST.value()
@@ -259,7 +251,6 @@ class ClientTestIT extends BaseTestIT {
             def clientResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .get(URI.create(HOST + ":" + port + CLIENTS_URI + "/" + NOT_EXISTING_CLIENT_ID))
-                            .header("Content-Type", "application/json")
             ).andReturn().response
         then:
             clientResponse.status == HttpStatus.BAD_REQUEST.value()
@@ -286,7 +277,6 @@ class ClientTestIT extends BaseTestIT {
             def clientsResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .get(URI.create(HOST + ":" + port + CLIENTS_URI))
-                            .header("Content-Type", "application/json")
             ).andReturn().response
         then:
             clientsResponse.status == HttpStatus.OK.value()

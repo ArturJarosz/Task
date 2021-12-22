@@ -19,4 +19,6 @@ public interface ProjectFinancialDataService {
     void recalculateSupervision(Long supervisionId, Long supervisionFinancialData);
 
     void recalculateProjectFinancialData(long projectId);
+
+    void removeFinancialDataForProject(Long projectId);
 }
