@@ -49,7 +49,7 @@ public class StageValidator {
                 .findFirst()
                 .orElse(null);
         assertNotNull(stage, createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
-                ProjectExceptionCodes.STAGE));
+                ProjectExceptionCodes.STAGE), stageId);
     }
 
     /**

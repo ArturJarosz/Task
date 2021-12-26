@@ -25,16 +25,16 @@ class ProjectTestIT extends BaseTestIT {
     private static final long NOT_EXISTING_PROJECT_ID = 10000l
     private static final ObjectMapper MAPPER = new ObjectMapper()
 
-    private final ClientDto privateClientJson =
+    private final ClientDto privateClientDto =
             MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/privateClient.json').file),
                     ClientDto.class)
-    private final ProjectCreateDto properProjectJson =
+    private final ProjectCreateDto properProjectDto =
             MAPPER.readValue(new File(getClass().classLoader.getResource('json/project/properProject.json').file),
                     ProjectCreateDto.class)
-    private final ProjectCreateDto notProperProjectJson =
+    private final ProjectCreateDto notProperProjectDto =
             MAPPER.readValue(new File(getClass().classLoader.getResource('json/project/notProperProject.json').file),
                     ProjectCreateDto.class)
-    private final ProjectDto updateProjectJson =
+    private final ProjectDto updateProjectDto =
             MAPPER.readValue(new File(getClass().classLoader.getResource('json/project/properUpdateProject.json').file),
                     ProjectDto.class)
 
@@ -45,12 +45,12 @@ class ProjectTestIT extends BaseTestIT {
     def "Creating project with proper data should return code 201, dto of created project and project location header"() {
         given: "Existing architect"
             ArchitectDto architectDto = this.createArchitect()
-            properProjectJson.architectId = architectDto.id
+            properProjectDto.architectId = architectDto.id
         and: "Existing client"
             ClientDto clientDto = this.createClient()
-            properProjectJson.clientId = clientDto.id
+            properProjectDto.clientId = clientDto.id
         when: "Creating project with proper data"
-            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectJson)
+            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def projectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
                             .header("Content-Type", "application/json")
@@ -68,12 +68,12 @@ class ProjectTestIT extends BaseTestIT {
     def "Creating project with not proper data should return code 400 and error message"() {
         given: "Existing architect"
             ArchitectDto architectDto = this.createArchitect()
-            properProjectJson.architectId = architectDto.id
+            properProjectDto.architectId = architectDto.id
         and: "Existing client"
             ClientDto clientDto = this.createClient()
-            properProjectJson.clientId = clientDto.id
+            properProjectDto.clientId = clientDto.id
         when: "Creating project with not proper data"
-            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(notProperProjectJson)
+            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(notProperProjectDto)
             def projectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
                             .header("Content-Type", "application/json")
@@ -90,11 +90,11 @@ class ProjectTestIT extends BaseTestIT {
     def "Creating project with not existing client should give code 400 and error message"() {
         given: "Existing architect"
             ArchitectDto architectDto = this.createArchitect()
-            properProjectJson.architectId = architectDto.id
+            properProjectDto.architectId = architectDto.id
         and: "Not existing client"
-            properProjectJson.clientId = NOT_EXISTING_CLIENT_ID
+            properProjectDto.clientId = NOT_EXISTING_CLIENT_ID
         when: "Creating project with not proper data"
-            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectJson)
+            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def projectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
                             .header("Content-Type", "application/json")
@@ -110,12 +110,12 @@ class ProjectTestIT extends BaseTestIT {
     @Transactional
     def "Creating project with not existing architect should give code 400 and error message"() {
         given: "Not existing architect"
-            properProjectJson.architectId = NOT_EXISTING_ARCHITECT_ID
+            properProjectDto.architectId = NOT_EXISTING_ARCHITECT_ID
         and: "Existing client"
             ClientDto clientDto = this.createClient()
-            properProjectJson.clientId = clientDto.id
+            properProjectDto.clientId = clientDto.id
         when: "Creating project with not proper data"
-            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectJson)
+            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def projectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
                             .header("Content-Type", "application/json")
@@ -132,7 +132,7 @@ class ProjectTestIT extends BaseTestIT {
     def "Getting not existing project should give code 400 and error message"() {
         given:
         when:
-            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectJson)
+            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def projectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .get(URI.create(HOST + ":" + port + PROJECTS_URI + "/" + NOT_EXISTING_PROJECT_ID))
@@ -148,13 +148,13 @@ class ProjectTestIT extends BaseTestIT {
     def "Getting existing project should return code 200 and dto of project"() {
         given: "Existing architect"
             ArchitectDto architectDto = this.createArchitect()
-            properProjectJson.architectId = architectDto.id
+            properProjectDto.architectId = architectDto.id
         and: "Existing client"
             ClientDto clientDto = this.createClient()
-            properProjectJson.clientId = clientDto.id
+            properProjectDto.clientId = clientDto.id
         and: "Creating project with not proper data"
             String creatingProjectRequestBody =
-                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectJson)
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def creatingProjectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
                             .header("Content-Type", "application/json")
@@ -177,7 +177,7 @@ class ProjectTestIT extends BaseTestIT {
     def "Updating not existing project should give code 400 and error message"() {
         given:
         when:
-            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectJson)
+            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def projectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .put(URI.create(HOST + ":" + port + PROJECTS_URI + "/" + NOT_EXISTING_PROJECT_ID))
@@ -195,13 +195,13 @@ class ProjectTestIT extends BaseTestIT {
     def "Updating existing project with proper data should give code 200 and dto of updated project"() {
         given: "Existing architect"
             ArchitectDto architectDto = this.createArchitect()
-            properProjectJson.architectId = architectDto.id
+            properProjectDto.architectId = architectDto.id
         and: "Existing client"
             ClientDto clientDto = this.createClient()
-            properProjectJson.clientId = clientDto.id
+            properProjectDto.clientId = clientDto.id
         and: "Creating project with not proper data"
             String creatingProjectRequestBody =
-                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectJson)
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def creatingProjectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
                             .header("Content-Type", "application/json")
@@ -209,7 +209,7 @@ class ProjectTestIT extends BaseTestIT {
             ).andReturn().response
             ProjectDto createdProject = MAPPER.readValue(creatingProjectResponse.contentAsString, ProjectDto.class)
         when:
-            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateProjectJson)
+            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateProjectDto)
             def projectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .put(URI.create(HOST + ":" + port + PROJECTS_URI + "/" + createdProject.id))
@@ -229,7 +229,7 @@ class ProjectTestIT extends BaseTestIT {
     def "Removing not existing project should give code 400 and error message"() {
         given:
         when:
-            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectJson)
+            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def projectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .delete(URI.create(HOST + ":" + port + PROJECTS_URI + "/" + NOT_EXISTING_PROJECT_ID))
@@ -245,13 +245,13 @@ class ProjectTestIT extends BaseTestIT {
     def "Removing existing project should give code 200 and remove project"() {
         given: "Existing architect"
             ArchitectDto architectDto = this.createArchitect()
-            properProjectJson.architectId = architectDto.id
+            properProjectDto.architectId = architectDto.id
         and: "Existing client"
             ClientDto clientDto = this.createClient()
-            properProjectJson.clientId = clientDto.id
+            properProjectDto.clientId = clientDto.id
         and: "Creating project with not proper data"
             String creatingProjectRequestBody =
-                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectJson)
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def creatingProjectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
                             .header("Content-Type", "application/json")
@@ -275,13 +275,13 @@ class ProjectTestIT extends BaseTestIT {
     def "Get projects should return dto list of all existing projects"() {
         given: "Existing architect"
             ArchitectDto architectDto = this.createArchitect()
-            properProjectJson.architectId = architectDto.id
+            properProjectDto.architectId = architectDto.id
         and: "Existing client"
             ClientDto clientDto = this.createClient()
-            properProjectJson.clientId = clientDto.id
+            properProjectDto.clientId = clientDto.id
         and: "Creating project with not proper data"
             String creatingProjectRequestBody =
-                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectJson)
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def creatingProjectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
                             .header("Content-Type", "application/json")
@@ -316,7 +316,7 @@ class ProjectTestIT extends BaseTestIT {
     }
 
     private ClientDto createClient() {
-        String clientRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(privateClientJson)
+        String clientRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(privateClientDto)
         def clientResponse = this.mockMvc.perform(
                 MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + CLIENTS_URI))
                         .header("Content-Type", "application/json")

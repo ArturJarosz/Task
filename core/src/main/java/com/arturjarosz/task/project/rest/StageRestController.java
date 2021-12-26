@@ -59,7 +59,7 @@ public class StageRestController {
     }
 
     @GetMapping("stages")
-    public ResponseEntity<List<StageDto>> getBasicStages(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<List<StageDto>> getStages(@PathVariable("projectId") Long projectId) {
         return new ResponseEntity<>(this.stageApplicationService.getStageListForProject(projectId), HttpStatus.OK);
     }
 

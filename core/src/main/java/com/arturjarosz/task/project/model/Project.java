@@ -185,7 +185,10 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     }
 
     public Set<Stage> getStages() {
-        return new HashSet<>(this.stages);
+        if (this.stages != null) {
+            return new HashSet<>(this.stages);
+        }
+        return new HashSet<>();
     }
 
     public void removeStage(Long stageId) {
