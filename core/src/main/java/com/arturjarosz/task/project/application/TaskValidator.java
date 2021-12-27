@@ -36,12 +36,12 @@ public class TaskValidator {
     public void validateExistenceOfTaskInStage(Long stageId, Long taskId) {
         Stage stage = this.projectQueryService.getStageById(stageId);
         assertNotNull(stage.getTasks(),
-                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TASK));
+                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TASK), stageId, taskId);
         Task task = stage.getTasks().stream()
                 .filter(taskOnStage -> taskOnStage.getId().equals(taskId))
                 .findFirst()
                 .orElse(null);
         assertNotNull(task,
-                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TASK));
+                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TASK), stageId, taskId);
     }
 }
