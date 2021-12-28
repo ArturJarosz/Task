@@ -79,6 +79,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
+        this.taskValidator.validateUpdateTaskDto(taskDto);
         Project project = this.projectRepository.load(projectId);
         TaskInnerDto taskInnerDto = TaskDtoMapper.INSTANCE.updateDtoToInnerDto(taskDto);
         Task task = this.taskDomainService.updateTask(project, stageId, taskId, taskInnerDto);

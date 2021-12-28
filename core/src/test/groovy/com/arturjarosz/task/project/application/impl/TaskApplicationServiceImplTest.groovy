@@ -153,6 +153,16 @@ class TaskApplicationServiceImplTest extends Specification {
             1 * this.taskValidator.validateExistenceOfTaskInStage(STAGE_ID, TASK_ID)
     }
 
+    def "updateTask should call validateUpdateTaskDto on taskValidator"() {
+        given:
+            TaskDto taskDto = this.prepareUpdateTaskDto()
+            this.mockProjectRepositoryLoadProjectWithStageAndTask()
+        when:
+            this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
+        then:
+            1 * this.taskValidator.validateUpdateTaskDto(_ as TaskDto)
+    }
+
     def "updateTask should load project from ProjectRepository"() {
         given:
             TaskDto taskDto = this.prepareUpdateTaskDto()
