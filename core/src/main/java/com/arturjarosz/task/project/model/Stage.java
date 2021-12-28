@@ -31,7 +31,7 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "STAGE_ID")
+    @JoinColumn(name = "STAGE_ID", nullable = false)
     private List<Task> tasks;
 
     @Column(name = "START_DATE")
@@ -47,7 +47,7 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
     private String note;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STAGE_TYPE")
+    @Column(name = "STAGE_TYPE", nullable = false)
     private StageType stageType;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
