@@ -80,6 +80,26 @@ class TaskValidatorTest extends Specification {
             noExceptionThrown()
     }
 
+    def "when taskDto name is null, validateUpdateTaskDto should throw an exception with specific error message"() {
+        given:
+            TaskDto taskDto = new TaskDto(name: null, type: TASK_TYPE)
+        when:
+            this.taskValidator.validateUpdateTaskDto(taskDto)
+        then:
+            Exception exception = thrown()
+            exception.message == "isNull.task.name"
+    }
+
+    def "when taskDto name is empty, validateUpdateTaskDto should throw an exception with specific error message"() {
+        given:
+            TaskDto taskDto = new TaskDto(name: "", type: TASK_TYPE)
+        when:
+            this.taskValidator.validateUpdateTaskDto(taskDto)
+        then:
+            Exception exception = thrown()
+            exception.message == "isEmpty.task.name"
+    }
+
     private void mockProjectQueryServiceNotTaskOnStage() {
         this.projectQueryService.getStageById(STAGE_ID) >> this.prepareStageWithNoTask()
     }
