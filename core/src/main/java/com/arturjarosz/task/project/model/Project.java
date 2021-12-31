@@ -88,13 +88,13 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     }
 
     public Project(String name, Long architectId, Long clientId, ProjectType projectType,
-                   ProjectWorkflow projectWorkflow) {
+                   ProjectWorkflow projectWorkflow, double offerValue) {
         this.name = name;
         this.architectId = architectId;
         this.clientId = clientId;
         this.projectType = projectType;
         this.workflowName = projectWorkflow.getName();
-        this.arrangement = new Offer(0);
+        this.arrangement = new Offer(offerValue);
     }
 
     public void signContract(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {

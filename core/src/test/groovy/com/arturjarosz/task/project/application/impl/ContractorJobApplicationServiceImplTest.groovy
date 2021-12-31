@@ -319,7 +319,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     private Project prepareProjectWithoutCooperatorJobs() {
         Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
-                new ProjectWorkflow())
+                new ProjectWorkflow(), 0.0d)
         return project
     }
 
