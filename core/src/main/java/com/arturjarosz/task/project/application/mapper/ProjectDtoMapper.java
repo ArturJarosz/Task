@@ -22,12 +22,6 @@ public interface ProjectDtoMapper {
     @Mapping(source = "projectCreateDto.name", target = "name")
     Project projectCreateDtoToProject(ProjectCreateDto projectCreateDto, ProjectWorkflow projectWorkflow);
 
-    @Mapping(source = "projectType", target = "projectType")
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "clientId", target = "clientId")
-    @Mapping(source = "architectId", target = "architectId")
-    ProjectCreateDto projectToProjectBasicDto(Project project);
-
     @Mapping(source = "project.projectType", target = "projectType")
     @Mapping(source = "project.name", target = "name")
     @Mapping(source = "project.signingDate", target = "signingDate")
