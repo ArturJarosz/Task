@@ -41,6 +41,7 @@ public class ProjectExceptionCodes {
 
     public static final String DONE = "done";
     public static final String REJECTED = "rejected";
+    public static final String START_PROGRESS = "startProgress";
 
     private ProjectExceptionCodes() {
         throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);

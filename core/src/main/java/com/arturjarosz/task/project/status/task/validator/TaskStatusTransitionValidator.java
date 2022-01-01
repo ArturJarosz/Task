@@ -9,11 +9,7 @@ public interface TaskStatusTransitionValidator extends StatusTransitionValidator
 
     /**
      * Validate if planner statusTransition for Task for Stage with stageId on given Project can be executed.
-     *
-     * @param project
-     * @param task
-     * @param stageId
-     * @param statusTransition
+     * If transition criteria are not met, new exception should be thrown and transition should not take place.     *
      */
     void validate(Project project, Task task, Long stageId, TaskStatusTransition statusTransition);
 
