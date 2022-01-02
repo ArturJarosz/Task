@@ -196,7 +196,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Rejecting project with signed offer should put it in REJECTED status"() {
+    def "Rejecting project with accepted offer should put it in REJECTED status"() {
         given:
             ProjectDto createProjectDto = this.createProject()
             def acceptOfferResponse = this.mockMvc.perform(
@@ -265,6 +265,63 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
             getProjectDto.status == ProjectStatus.IN_PROGRESS
     }
+
+    @Transactional
+    def "Reject only task in stage, should put that stage in COMPLETED status and put PROJECT in COMPLETED"(){
+        given: "Project with accepted offer and stages and tasks in TO DO"
+            ProjectDto createProjectDto = this.createProject()
+            StageDto createStageDto1 = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto1.id)
+            def acceptOfferResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .post(URI
+                                    .create(this.createProjectUri(createProjectDto.id) + "/acceptOffer"))
+            ).andReturn().response
+            TaskDto updateStatusDto = new TaskDto(status: TaskStatus.IN_PROGRESS)
+            String requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
+            def changeTaskStatusResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .post(URI.create(this.createTaskUri(createProjectDto.id, createStageDto1.id,
+                                    createTaskDto11.id) + "/updateStatus"))
+                            .header("Content-Type", "application/json")
+                            .content(requestBody)
+            ).andReturn().response
+            updateStatusDto = new TaskDto(status: TaskStatus.REJECTED)
+            requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
+        when: "Change one task status to IN PROGRESS"
+            changeTaskStatusResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .post(URI.create(this.createTaskUri(createProjectDto.id, createStageDto1.id,
+                                    createTaskDto11.id) + "/updateStatus"))
+                            .header("Content-Type", "application/json")
+                            .content(requestBody)
+            ).andReturn().response
+        then: "Response code is 200"
+            changeTaskStatusResponse.status == HttpStatus.OK.value()
+        and: "Task status is REJECTED"
+            def getTaskResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.get(URI.create(
+                            this.createTaskUri(createProjectDto.id, createStageDto1.id, createTaskDto11.id))
+                    )
+            ).andReturn().response
+            TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
+            getTaskDto.status == TaskStatus.REJECTED
+        and: "Stage status is COMPLETED"
+            def getStageResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.get(URI.create(this.createStageUri(createProjectDto.id, createStageDto1.id))
+                    )
+            ).andReturn().response
+            StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
+            getStageDto.status == StageStatus.COMPLETED
+        and: "Project status is COMPLETED"
+            def getProjectResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.get(URI.create(this.createProjectUri(createProjectDto.id))
+                    )
+            ).andReturn().response
+            ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
+            getProjectDto.status == ProjectStatus.COMPLETED
+    }
+
 
     private ArchitectDto createArchitect() {
         ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(firstName: ARCHITECT_FIRST_NAME,
