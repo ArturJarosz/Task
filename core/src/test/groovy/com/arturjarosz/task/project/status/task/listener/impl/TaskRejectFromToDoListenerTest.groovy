@@ -11,50 +11,54 @@ import com.arturjarosz.task.project.utils.StageBuilder
 import com.arturjarosz.task.project.utils.TaskBuilder
 import spock.lang.Specification
 
-class TaskStartProgressListenerTest extends Specification {
+class TaskRejectFromToDoListenerTest extends Specification {
     private static final long STAGE_ID = 100L
 
     def stageWorkflowService = Mock(StageWorkflowServiceImpl)
-    def taskStartProgressListener = new TaskStartProgressListener(stageWorkflowService)
+    def taskRejectFromToDoListener = new TaskRejectFromToDoListener(stageWorkflowService)
 
-    def "when the only task on stage changes its status from TO_DO to IN_PROGRESS and stage is in TO_DO, stage changes status to IN_PROGRESS"() {
+    def "rejecting only task in TO_DO status on stage in TO_DO status should not change that stage status"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
             def stage = this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.TO_DO, Arrays.asList(task))
             def project = this.createProjectWithGivenStage(stage)
         when:
-            task.changeStatus(TaskStatus.IN_PROGRESS)
-            this.taskStartProgressListener.onTaskStatusChange(project, STAGE_ID)
+            task.changeStatus(TaskStatus.REJECTED)
+            this.taskRejectFromToDoListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.IN_PROGRESS)
+            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
     }
 
-    def "when one of the tasks on stage changes its status from TO_DO to IN_PROGRESS and stage is in TO_DO, stage changes status to IN_PROGRESS"() {
+    def "rejecting one of the task in TO_DO status on stage in TO_DO status should not change that stage status"() {
         given:
-            def task = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
+            def task1 = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
             def task3 = this.createTaskOfGivenStatus(TaskStatus.REJECTED)
-            def stage = this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.TO_DO, Arrays.asList(task, task2, task3))
+            def stage =
+                    this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.TO_DO,
+                            Arrays.asList(task1, task2, task3))
             def project = this.createProjectWithGivenStage(stage)
         when:
-            task.changeStatus(TaskStatus.IN_PROGRESS)
-            this.taskStartProgressListener.onTaskStatusChange(project, STAGE_ID)
+            task1.changeStatus(TaskStatus.REJECTED)
+            this.taskRejectFromToDoListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.IN_PROGRESS)
+            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
     }
 
-    def "when one of the tasks on stage changes its status from TO_DO to IN_PROGRESS and stage is IN_PROGRESS, stage stays IN_PROGRESS"() {
+    def "rejecting task in TO_DO status, on stage in IN_PROGRESS status, when rest are only in COMPLETE and REJECTED statuses should change stage status to COMPLETED"() {
         given:
-            def task = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
-            def task2 = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
+            def task1 = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
+            def task2 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
             def task3 = this.createTaskOfGivenStatus(TaskStatus.REJECTED)
-            def stage = this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS, Arrays.asList(task, task2, task3))
+            def stage =
+                    this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS,
+                            Arrays.asList(task1, task2, task3))
             def project = this.createProjectWithGivenStage(stage)
         when:
-            task.changeStatus(TaskStatus.IN_PROGRESS)
-            this.taskStartProgressListener.onTaskStatusChange(project, STAGE_ID)
+            task1.changeStatus(TaskStatus.REJECTED)
+            this.taskRejectFromToDoListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.IN_PROGRESS)
+            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.COMPLETED)
     }
 
     private Project createProjectWithGivenStage(Stage stage) {
