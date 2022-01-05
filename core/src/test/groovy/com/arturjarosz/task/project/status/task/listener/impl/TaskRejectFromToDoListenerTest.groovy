@@ -17,7 +17,7 @@ class TaskRejectFromToDoListenerTest extends Specification {
     def stageWorkflowService = Mock(StageWorkflowServiceImpl)
     def taskRejectFromToDoListener = new TaskRejectFromToDoListener(stageWorkflowService)
 
-    def "rejecting only task in TO_DO status on stage in TO_DO status should not change that stage status"() {
+    def "Rejecting only task in TO_DO status on stage in TO_DO status should not change that stage status"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
             def stage = this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.TO_DO, Arrays.asList(task))
@@ -29,7 +29,7 @@ class TaskRejectFromToDoListenerTest extends Specification {
             0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
     }
 
-    def "rejecting one of the task in TO_DO status on stage in TO_DO status should not change that stage status"() {
+    def "Rejecting one of the task in TO_DO status on stage in TO_DO status should not change that stage status"() {
         given:
             def task1 = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
@@ -45,7 +45,7 @@ class TaskRejectFromToDoListenerTest extends Specification {
             0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
     }
 
-    def "rejecting task in TO_DO status, on stage in IN_PROGRESS status, when rest are only in COMPLETE and REJECTED statuses should change stage status to COMPLETED"() {
+    def "Rejecting task in TO_DO status, on stage in IN_PROGRESS status, when rest are only in COMPLETE and REJECTED statuses should change stage status to COMPLETED"() {
         given:
             def task1 = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)

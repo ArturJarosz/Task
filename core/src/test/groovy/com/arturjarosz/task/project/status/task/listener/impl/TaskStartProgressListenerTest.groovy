@@ -17,7 +17,7 @@ class TaskStartProgressListenerTest extends Specification {
     def stageWorkflowService = Mock(StageWorkflowServiceImpl)
     def taskStartProgressListener = new TaskStartProgressListener(stageWorkflowService)
 
-    def "when the only task on stage changes its status from TO_DO to IN_PROGRESS and stage is in TO_DO, stage changes status to IN_PROGRESS"() {
+    def "When the only task on stage changes its status from TO_DO to IN_PROGRESS and stage is in TO_DO, stage changes status to IN_PROGRESS"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
             def stage = this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.TO_DO, Arrays.asList(task))
@@ -29,12 +29,14 @@ class TaskStartProgressListenerTest extends Specification {
             1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.IN_PROGRESS)
     }
 
-    def "when one of the tasks on stage changes its status from TO_DO to IN_PROGRESS and stage is in TO_DO, stage changes status to IN_PROGRESS"() {
+    def "When one of the tasks on stage changes its status from TO_DO to IN_PROGRESS and stage is in TO_DO, stage changes status to IN_PROGRESS"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
             def task3 = this.createTaskOfGivenStatus(TaskStatus.REJECTED)
-            def stage = this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.TO_DO, Arrays.asList(task, task2, task3))
+            def stage =
+                    this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.TO_DO,
+                            Arrays.asList(task, task2, task3))
             def project = this.createProjectWithGivenStage(stage)
         when:
             task.changeStatus(TaskStatus.IN_PROGRESS)
@@ -43,12 +45,14 @@ class TaskStartProgressListenerTest extends Specification {
             1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.IN_PROGRESS)
     }
 
-    def "when one of the tasks on stage changes its status from TO_DO to IN_PROGRESS and stage is IN_PROGRESS, stage stays IN_PROGRESS"() {
+    def "When one of the tasks on stage changes its status from TO_DO to IN_PROGRESS and stage is IN_PROGRESS, stage stays IN_PROGRESS"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
             def task3 = this.createTaskOfGivenStatus(TaskStatus.REJECTED)
-            def stage = this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS, Arrays.asList(task, task2, task3))
+            def stage =
+                    this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS,
+                            Arrays.asList(task, task2, task3))
             def project = this.createProjectWithGivenStage(stage)
         when:
             task.changeStatus(TaskStatus.IN_PROGRESS)
