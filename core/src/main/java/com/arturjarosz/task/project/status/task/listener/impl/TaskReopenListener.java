@@ -27,7 +27,7 @@ public class TaskReopenListener implements TaskStatusTransitionListener {
         assert stage != null;
         if (stage.getStatus().equals(StageStatus.COMPLETED)) {
             this.stageWorkflowService
-                    .changeStageStatusOnProject(project, stageId, StageStatus.TO_DO);
+                    .changeStageStatusOnProject(project, stageId, StageStatus.IN_PROGRESS);
         }
     }
 
