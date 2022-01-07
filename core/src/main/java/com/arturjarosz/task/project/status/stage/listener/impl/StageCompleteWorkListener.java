@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class StageCompletedListener implements StageStatusTransitionListener {
+public class StageCompleteWorkListener implements StageStatusTransitionListener {
     private final StageStatusTransition transition = StageStatusTransition.COMPLETE_WORK;
     private final ProjectStatusTransitionService projectStatusTransitionService;
 
     @Autowired
-    public StageCompletedListener(ProjectStatusTransitionService projectStatusTransitionService) {
+    public StageCompleteWorkListener(ProjectStatusTransitionService projectStatusTransitionService) {
         this.projectStatusTransitionService = projectStatusTransitionService;
     }
 
