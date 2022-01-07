@@ -13,7 +13,7 @@ public enum StageStatusTransition implements StatusTransition<StageStatus> {
     BACK_TO_TO_DO(StageStatus.IN_PROGRESS, StageStatus.TO_DO),
     // from REJECTED
     REOPEN(StageStatus.REJECTED, StageStatus.TO_DO),
-    REOPEN_TO_PROGRESS(StageStatus.REJECTED, StageStatus.TO_DO),
+    REOPEN_TO_PROGRESS(StageStatus.REJECTED, StageStatus.IN_PROGRESS),
     // from DONE
     BACK_TO_IN_PROGRESS(StageStatus.COMPLETED, StageStatus.IN_PROGRESS);
 
