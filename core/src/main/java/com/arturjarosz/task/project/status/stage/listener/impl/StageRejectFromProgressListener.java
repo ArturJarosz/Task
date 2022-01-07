@@ -24,7 +24,9 @@ public class StageRejectFromProgressListener implements StageStatusTransitionLis
 
     @Override
     public void onStageStatusChange(Project project) {
-        if (this.hasStagesOnlyInRejectedAndToDoStatus(project)) {
+        if (this.hasStagesOnlyInRejected(project)) {
+            this.projectStatusTransitionService.backToToDo(project);
+        } else if (this.hasStagesOnlyInRejectedAndToDoStatus(project)) {
             this.projectStatusTransitionService.backToToDo(project);
         } else if (this.hasStagesOnlyInRejectedAndCompletedStatus(project)) {
             this.projectStatusTransitionService.completeWork(project);
@@ -34,6 +36,12 @@ public class StageRejectFromProgressListener implements StageStatusTransitionLis
     @Override
     public StageStatusTransition getStatusTransition() {
         return this.transition;
+    }
+
+    private boolean hasStagesOnlyInRejected(Project project) {
+        List<Stage> allStages = new ArrayList<>(project.getStages());
+        allStages.removeIf(stage -> stage.getStatus().equals(StageStatus.REJECTED));
+        return allStages.isEmpty();
     }
 
     private boolean hasStagesOnlyInRejectedAndToDoStatus(Project project) {
