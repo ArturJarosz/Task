@@ -65,8 +65,8 @@ class TaskRejectFromToDoListenerTest extends Specification {
         new ProjectBuilder().withStage(stage).build()
     }
 
-    private Stage createStageWithIdStatusAndGivenTasks(long stageId, StageStatus stageSta, List<Task> tasks) {
-        new StageBuilder().withId(stageId).withStatus(stageSta).withTasks(tasks).build()
+    private Stage createStageWithIdStatusAndGivenTasks(long stageId, StageStatus stageStatus, List<Task> tasks) {
+        new StageBuilder().withId(stageId).withStatus(stageStatus).withTasks(tasks).build()
     }
 
     private Task createTaskOfGivenStatus(TaskStatus taskStatus) {
