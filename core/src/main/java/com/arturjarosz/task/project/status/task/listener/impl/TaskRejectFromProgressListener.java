@@ -26,24 +26,31 @@ public class TaskRejectFromProgressListener implements TaskStatusTransitionListe
 
     @Override
     public void onTaskStatusChange(Project project, Long stageId) {
-        Stage stage = project.getStages().stream()
-                .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
+        Stage stage = project.getStages().stream().filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .findFirst().orElse(null);
         assert stage != null;
         /*
-        First we are checking for Rejected and To Do, as Stage with only Tasks in only Rejected statuses should
-        go back to To Do.
+        First we are checking for REJECTED and TO_DO, as Stage with only Tasks in only REJECTED statuses should
+        go back to TO_DO.
          */
-        if (this.hasStatusesOnlyInRejectedAndToDo(stage)) {
+        if (this.hasStatusesOnlyInRejected(stage)) {
+            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.TO_DO);
+        } else if (this.hasStatusesOnlyInRejectedAndToDo(stage)) {
             this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.TO_DO);
         } else if (this.hasStatusesOnlyInRejectedAndCompleted(stage)) {
             this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.COMPLETED);
         }
     }
 
+    private boolean hasStatusesOnlyInRejected(Stage stage) {
+        List<Task> allTasks = new ArrayList<>(stage.getTasks());
+        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.REJECTED));
+        return allTasks.isEmpty();
+    }
+
     private boolean hasStatusesOnlyInRejectedAndToDo(Stage stage) {
         List<Task> allTasks = new ArrayList<>(stage.getTasks());
-        //we are removing Task in Rejected status, because they should not be taken into account
+        //we are removing Task in REJECTED status, because they should not be taken into account
         allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.REJECTED));
         allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.TO_DO));
         return allTasks.isEmpty();
@@ -51,7 +58,7 @@ public class TaskRejectFromProgressListener implements TaskStatusTransitionListe
 
     private boolean hasStatusesOnlyInRejectedAndCompleted(Stage stage) {
         List<Task> allTasks = new ArrayList<>(stage.getTasks());
-        //we are removing Task in Rejected status, because they should not be taken into account
+        //we are removing Task in REJECTED status, because they should not be taken into account
         allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.REJECTED));
         allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.COMPLETED));
         return allTasks.isEmpty();

@@ -27,7 +27,7 @@ public class StageRejectFromToDoListener implements StageStatusTransitionListene
     public void onStageStatusChange(Project project) {
         if (project.getStatus().equals(ProjectStatus.IN_PROGRESS)
                 && this.hasStagesOnlyInRejectedAndToDoStatus(project)) {
-            this.projectStatusTransitionService.backToToDo(project);
+            this.projectStatusTransitionService.completeWork(project);
         }
     }
 
