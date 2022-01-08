@@ -12,6 +12,7 @@ import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
@@ -172,11 +173,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto = this.createStage(createProjectDto.id)
             TaskDto createTaskDto = this.createTask(createProjectDto.id, createStageDto.id)
-            def acceptOfferResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createProjectUri(createProjectDto.id) + "/acceptOffer"))
-            ).andReturn().response
+            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
             TaskDto updateStatusDto = new TaskDto(status: TaskStatus.IN_PROGRESS)
             String requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
         when:
@@ -201,11 +198,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto = this.createStage(createProjectDto.id)
             TaskDto createTaskDto = this.createTask(createProjectDto.id, createStageDto.id)
-            def acceptOfferResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createProjectUri(createProjectDto.id) + "/acceptOffer"))
-            ).andReturn().response
+            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
             TaskDto updateStatusDto = new TaskDto(status: TaskStatus.IN_PROGRESS)
             OfferDto offerDto = new OfferDto(offerValue: NEW_OFFER_VALUE)
             String offerRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(offerDto)
@@ -226,11 +219,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     def "Rejecting project with accepted offer should put it in REJECTED status"() {
         given:
             ProjectDto createProjectDto = this.createProject()
-            def acceptOfferResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createProjectUri(createProjectDto.id) + "/acceptOffer"))
-            ).andReturn().response
+            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
         when:
             def rejectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.createProjectUri(createProjectDto.id) + "/reject"))
@@ -252,43 +241,23 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto createSta0geDto2 = this.createStage(createProjectDto.id)
             TaskDto createTaskDto21 = this.createTask(createProjectDto.id, createStageDto1.id)
             TaskDto createTaskDto22 = this.createTask(createProjectDto.id, createStageDto1.id)
-            def acceptOfferResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createProjectUri(createProjectDto.id) + "/acceptOffer"))
-            ).andReturn().response
-            TaskDto updateStatusDto = new TaskDto(status: TaskStatus.IN_PROGRESS)
-            String requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
+            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
         when: "Change one task status to IN PROGRESS"
-            def changeTaskStatusResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI.create(this.createTaskUri(createProjectDto.id, createStageDto1.id,
-                                    createTaskDto11.id) + "/updateStatus"))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response
+            def changeTaskStatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto1.id, createTaskDto11.id,
+                            TaskStatus.IN_PROGRESS)
         then: "Response code is 200"
             changeTaskStatusResponse.status == HttpStatus.OK.value()
         and: "Task status is IN PROGRESS"
-            def getTaskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(
-                            this.createTaskUri(createProjectDto.id, createStageDto1.id, createTaskDto11.id))
-                    )
-            ).andReturn().response
+            def getTaskResponse = getTaskResponse(createProjectDto.id, createStageDto1.id, createTaskDto11.id)
             TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
             getTaskDto.status == TaskStatus.IN_PROGRESS
         and: "Stage status is IN PROGRESS"
-            def getStageResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createStageUri(createProjectDto.id, createStageDto1.id))
-                    )
-            ).andReturn().response
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto1.id)
             StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
             getStageDto.status == StageStatus.IN_PROGRESS
         and: "Project status is IN PROGRESS"
-            def getProjectResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createProjectUri(createProjectDto.id))
-                    )
-            ).andReturn().response
+            def getProjectResponse = this.getProjectResponse(createProjectDto.id)
             ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
             getProjectDto.status == ProjectStatus.IN_PROGRESS
     }
@@ -299,52 +268,26 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto1 = this.createStage(createProjectDto.id)
             TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto1.id)
-            def acceptOfferResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createProjectUri(createProjectDto.id) + "/acceptOffer"))
-            ).andReturn().response
-            TaskDto updateStatusDto = new TaskDto(status: TaskStatus.IN_PROGRESS)
-            String requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
-            def changeTaskStatusResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI.create(this.createTaskUri(createProjectDto.id, createStageDto1.id,
-                                    createTaskDto11.id) + "/updateStatus"))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response
-            updateStatusDto = new TaskDto(status: TaskStatus.REJECTED)
-            requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
+            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
+            def changeTaskStatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto1.id, createTaskDto11.id,
+                            TaskStatus.IN_PROGRESS)
         when: "Change one task status to IN PROGRESS"
-            changeTaskStatusResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI.create(this.createTaskUri(createProjectDto.id, createStageDto1.id,
-                                    createTaskDto11.id) + "/updateStatus"))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response
+            changeTaskStatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto1.id, createTaskDto11.id,
+                            TaskStatus.REJECTED)
         then: "Response code is 200"
             changeTaskStatusResponse.status == HttpStatus.OK.value()
         and: "Task status is REJECTED"
-            def getTaskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(
-                            this.createTaskUri(createProjectDto.id, createStageDto1.id, createTaskDto11.id))
-                    )
-            ).andReturn().response
+            def getTaskResponse = getTaskResponse(createProjectDto.id, createStageDto1.id, createTaskDto11.id)
             TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
             getTaskDto.status == TaskStatus.REJECTED
         and: "Stage status is TO_DO"
-            def getStageResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createStageUri(createProjectDto.id, createStageDto1.id))
-                    )
-            ).andReturn().response
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto1.id)
             StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
             getStageDto.status == StageStatus.TO_DO
         and: "Project status is TO_DO"
-            def getProjectResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createProjectUri(createProjectDto.id))
-                    )
-            ).andReturn().response
+            def getProjectResponse = this.getProjectResponse(createProjectDto.id)
             ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
             getProjectDto.status == ProjectStatus.TO_DO
     }
@@ -355,30 +298,14 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto1 = this.createStage(createProjectDto.id)
             TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto1.id)
-            def acceptOfferResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createProjectUri(createProjectDto.id) + "/acceptOffer"))
-            ).andReturn().response
-            TaskDto updateStatusDto = new TaskDto(status: TaskStatus.IN_PROGRESS)
-            String requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
-            def changeTaskStatusResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI.create(this.createTaskUri(createProjectDto.id, createStageDto1.id,
-                                    createTaskDto11.id) + "/updateStatus"))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response
-            updateStatusDto = new TaskDto(status: TaskStatus.COMPLETED)
-            requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
+            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
+            def changeTaskStatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto1.id, createTaskDto11.id,
+                            TaskStatus.IN_PROGRESS)
         when: "Change one task status to IN PROGRESS"
-            changeTaskStatusResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI.create(this.createTaskUri(createProjectDto.id, createStageDto1.id,
-                                    createTaskDto11.id) + "/updateStatus"))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response
+            changeTaskStatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto1.id, createTaskDto11.id,
+                            TaskStatus.COMPLETED)
         then: "Response code is 200"
             changeTaskStatusResponse.status == HttpStatus.OK.value()
         and: "Task status is COMPLETED"
@@ -390,31 +317,22 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
             getTaskDto.status == TaskStatus.COMPLETED
         and: "Stage status is COMPLETED"
-            def getStageResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createStageUri(createProjectDto.id, createStageDto1.id))
-                    )
-            ).andReturn().response
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto1.id)
             StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
             getStageDto.status == StageStatus.COMPLETED
         and: "Project status is COMPLETED"
-            def getProjectResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createProjectUri(createProjectDto.id))
-                    )
-            ).andReturn().response
+            def getProjectResponse = this.getProjectResponse(createProjectDto.id)
             ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
             getProjectDto.status == ProjectStatus.COMPLETED
     }
 
+    @Transactional
     def "Rejecting stage should put stage in REJECTED status and not change project status"() {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto1 = this.createStage(createProjectDto.id)
             TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto1.id)
-            def acceptOfferResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createProjectUri(createProjectDto.id) + "/acceptOffer"))
-            ).andReturn().response
+            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
         when:
             def rejectStageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
@@ -427,25 +345,18 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto getStageDto = mapper.readValue(rejectStageResponse.contentAsString, StageDto.class)
             getStageDto.status == StageStatus.REJECTED
         and:
-            def getProjectResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createProjectUri(createProjectDto.id))
-                    )
-            ).andReturn().response
+            def getProjectResponse = this.getProjectResponse(createProjectDto.id)
             ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
             getProjectDto.status == ProjectStatus.TO_DO
     }
 
-
+    @Transactional
     def "Creating new task on stage in TO_DO status should not change stage or project status"() {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto1 = this.createStage(createProjectDto.id)
             TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto1.id)
-            def acceptOfferResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createProjectUri(createProjectDto.id) + "/acceptOffer"))
-            ).andReturn().response
+            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
         when:
             String taskRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
             def taskResponse = this.mockMvc.perform(
@@ -458,53 +369,34 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             taskResponse.status == HttpStatus.CREATED.value()
         and: "Task status is TO_DO"
             TaskDto createdTaskDto12 = mapper.readValue(taskResponse.contentAsString, TaskDto.class)
-            def getTaskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(
-                            this.createTaskUri(createProjectDto.id, createStageDto1.id, createdTaskDto12.id))
-                    )
-            ).andReturn().response
+            def getTaskResponse = getTaskResponse(createProjectDto.id, createStageDto1.id, createdTaskDto12.id)
             TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
             getTaskDto.status == TaskStatus.TO_DO
         and: "Stage status is TO_DO"
-            def getStageResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createStageUri(createProjectDto.id, createStageDto1.id))
-                    )
-            ).andReturn().response
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto1.id)
             StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
             getStageDto.status == StageStatus.TO_DO
         and: "Project status is TO_DO"
-            def getProjectResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createProjectUri(createProjectDto.id))
-                    )
-            ).andReturn().response
+            def getProjectResponse = this.getProjectResponse(createProjectDto.id)
             ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
             getProjectDto.status == ProjectStatus.TO_DO
     }
 
+    @Transactional
     def "Creating new task on stage in IN_PROGRESS status should not change stage or project status"() {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
-            StageDto createStageDto1 = this.createStage(createProjectDto.id)
-            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto1.id)
-            def acceptOfferResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createProjectUri(createProjectDto.id) + "/acceptOffer"))
-            ).andReturn().response
-            TaskDto updateStatusDto = new TaskDto(status: TaskStatus.IN_PROGRESS)
-            String requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
-            def changeTaskStatusResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI.create(this.createTaskUri(createProjectDto.id, createStageDto1.id,
-                                    createTaskDto11.id) + "/updateStatus"))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
+            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
+            def changeTaskStatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
+                            TaskStatus.IN_PROGRESS)
         when:
             String taskRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
             def taskResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
-                            .post(URI.create(this.createStageUri(createProjectDto.id, createStageDto1.id) + "/tasks"))
+                            .post(URI.create(this.createStageUri(createProjectDto.id, createStageDto.id) + "/tasks"))
                             .header("Content-Type", "application/json")
                             .content(taskRequestBody)
             ).andReturn().response
@@ -512,92 +404,59 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             taskResponse.status == HttpStatus.CREATED.value()
         and: "Task status is TO_DO"
             TaskDto createdTaskDto12 = mapper.readValue(taskResponse.contentAsString, TaskDto.class)
-            def getTaskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(
-                            this.createTaskUri(createProjectDto.id, createStageDto1.id, createdTaskDto12.id))
-                    )
-            ).andReturn().response
+            def getTaskResponse = getTaskResponse(createProjectDto.id, createStageDto.id, createdTaskDto12.id)
             TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
             getTaskDto.status == TaskStatus.TO_DO
         and: "Stage status is IN_PROGRESS"
-            def getStageResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createStageUri(createProjectDto.id, createStageDto1.id))
-                    )
-            ).andReturn().response
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
             StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
             getStageDto.status == StageStatus.IN_PROGRESS
         and: "Project status is IN_PROGRESS"
-            def getProjectResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createProjectUri(createProjectDto.id))
-                    )
-            ).andReturn().response
+            def getProjectResponse = this.getProjectResponse(createProjectDto.id)
             ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
             getProjectDto.status == ProjectStatus.IN_PROGRESS
     }
 
+    @Transactional
     def "Creating new task on stage in REJECTED status should return code 400, error message and not create new task"() {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
-            StageDto createStageDto1 = this.createStage(createProjectDto.id)
-            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto1.id)
-            def acceptOfferResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createProjectUri(createProjectDto.id) + "/acceptOffer"))
-            ).andReturn().response
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto = this.createTask(createProjectDto.id, createStageDto.id)
+            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
             def rejectStageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .post(URI
-                                    .create(this.createStageUri(createProjectDto.id, createStageDto1.id) + "/reject"))
+                                    .create(this.createStageUri(createProjectDto.id, createStageDto.id) + "/reject"))
             ).andReturn().response
         when:
             String taskRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
             def taskResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
-                            .post(URI.create(this.createStageUri(createProjectDto.id, createStageDto1.id) + "/tasks"))
+                            .post(URI.create(this.createStageUri(createProjectDto.id, createStageDto.id) + "/tasks"))
                             .header("Content-Type", "application/json")
                             .content(taskRequestBody)
             ).andReturn().response
         then: "Response code is 400"
             taskResponse.status == HttpStatus.BAD_REQUEST.value()
-        and: "Task status is TO_DO"
-            def getTasksResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(
-                            this.createStageUri(createProjectDto.id, createStageDto1.id) + "/tasks")
-                    )
-            ).andReturn().response
-            List<TaskDto> tasks = mapper.readValue(getTasksResponse.contentAsString, List<TaskDto>.class)
-            tasks.size() == 1
+        and:
+            def errorMessage = mapper.readValue(taskResponse.contentAsString, ErrorMessage.class)
+            errorMessage.message == "You cannot change Task status for rejected Stage."
     }
 
+    @Transactional
     def "Creating new task on stage in COMPLETED status should change stage status to IN_PROGRESS and change project status to IN_PROGRESS if was COMPLETED"() {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto1 = this.createStage(createProjectDto.id)
             TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto1.id)
-            def acceptOfferResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createProjectUri(createProjectDto.id) + "/acceptOffer"))
-            ).andReturn().response
-            TaskDto updateStatusDto = new TaskDto(status: TaskStatus.IN_PROGRESS)
-            String requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
-            def changeTaskStatusResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI.create(this.createTaskUri(createProjectDto.id, createStageDto1.id,
-                                    createTaskDto11.id) + "/updateStatus"))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response
-            updateStatusDto = new TaskDto(status: TaskStatus.COMPLETED)
-            requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
-            changeTaskStatusResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI.create(this.createTaskUri(createProjectDto.id, createStageDto1.id,
-                                    createTaskDto11.id) + "/updateStatus"))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response
+            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
+            def changeTaskStatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto1.id, createTaskDto11.id,
+                            TaskStatus.IN_PROGRESS)
+            changeTaskStatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto1.id, createTaskDto11.id,
+                            TaskStatus.COMPLETED)
         when:
             String taskRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
             def taskResponse = this.mockMvc.perform(
@@ -610,29 +469,18 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             taskResponse.status == HttpStatus.CREATED.value()
         and: "Task status is TO_DO"
             TaskDto createdTaskDto12 = mapper.readValue(taskResponse.contentAsString, TaskDto.class)
-            def getTaskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(
-                            this.createTaskUri(createProjectDto.id, createStageDto1.id, createdTaskDto12.id))
-                    )
-            ).andReturn().response
+            def getTaskResponse = getTaskResponse(createProjectDto.id, createStageDto1.id, createdTaskDto12.id)
             TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
             getTaskDto.status == TaskStatus.TO_DO
         and: "Stage status is IN_PROGRESS"
-            def getStageResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createStageUri(createProjectDto.id, createStageDto1.id))
-                    )
-            ).andReturn().response
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto1.id)
             StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
             getStageDto.status == StageStatus.IN_PROGRESS
         and: "Project status is IN_PROGRESS"
-            def getProjectResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.createProjectUri(createProjectDto.id))
-                    )
-            ).andReturn().response
+            def getProjectResponse = this.getProjectResponse(createProjectDto.id)
             ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
             getProjectDto.status == ProjectStatus.IN_PROGRESS
     }
-
 
     private ArchitectDto createArchitect() {
         ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(firstName: ARCHITECT_FIRST_NAME,
@@ -700,5 +548,36 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
 
     private String createTaskUri(long projectId, long stageId, long taskId) {
         this.createStageUri(projectId, stageId) + "/tasks/" + taskId
+    }
+
+    private MockHttpServletResponse acceptProjectOffer(long projectId) {
+        return this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(
+                this.createProjectUri(projectId) + "/acceptOffer"))).andReturn().response
+    }
+
+    private MockHttpServletResponse updateTaskStatus(long projectId, long stageId, long taskId, TaskStatus status) {
+        TaskDto updateStatusDto = new TaskDto(status: status)
+        String requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
+        return this.mockMvc.perform(MockMvcRequestBuilders
+                .post(URI.create(this.createTaskUri(projectId, stageId, taskId) + "/updateStatus"))
+                .header("Content-Type", "application/json")
+                .content(requestBody)
+        ).andReturn().response
+    }
+
+    private MockHttpServletResponse getTaskResponse(long projectId, long stageId, long taskId) {
+        return this.mockMvc.perform(
+                MockMvcRequestBuilders.get(URI.create(this.createTaskUri(projectId, stageId, taskId)))
+        ).andReturn().response
+    }
+
+    private MockHttpServletResponse getStageResponse(long projectId, long stageId) {
+        return this.mockMvc.perform(MockMvcRequestBuilders.get(URI.create(this.createStageUri(projectId, stageId)))
+        ).andReturn().response
+    }
+
+    private MockHttpServletResponse getProjectResponse(long projectId) {
+        return this.mockMvc.perform(MockMvcRequestBuilders.get(URI.create(this.createProjectUri(projectId)))
+        ).andReturn().response
     }
 }
