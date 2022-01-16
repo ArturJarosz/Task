@@ -48,7 +48,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     private MockMvc mockMvc
 
     @Transactional
-    def "Creating project should return code 200 and put project in OFFER status"() {
+    def "1 Creating project should return code 200 and put project in OFFER status"() {
         given: "Existing architect"
             ArchitectDto architectDto = this.createArchitect()
             properProjectDto.architectId = architectDto.id
@@ -67,11 +67,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         then: "Returns code 201"
             projectResponse.status == HttpStatus.CREATED.value()
         and: "Project status is set to offer"
-            projectDto.status == ProjectStatus.OFFER
+            this.getProjectStatus(projectResponse) == ProjectStatus.OFFER
     }
 
     @Transactional
-    def "Rejecting new project should put it in REJECT status"() {
+    def "2 Rejecting new project should put it in REJECT status"() {
         given: "New project"
             ProjectDto createProjectDto = this.createProject()
         when: "Rejecting new project"
@@ -81,12 +81,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         then: "Response code should be 200"
             rejectResponse.status == HttpStatus.OK.value()
         and: "Project status is REJECTED"
-            ProjectDto projectDto = mapper.readValue(rejectResponse.contentAsString, ProjectDto.class)
-            projectDto.status == ProjectStatus.REJECTED
+            this.getProjectStatus(rejectResponse) == ProjectStatus.REJECTED
     }
 
     @Transactional
-    def "Making new offer for rejected project, should put that project in OFFER status and change its value"() {
+    def "3 Making new offer for rejected project, should put that project in OFFER status and change its value"() {
         given: "Create and project and reject it"
             ProjectDto createProjectDto = this.createProject()
             def rejectResponse = this.mockMvc.perform(
@@ -110,7 +109,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Making new offer for new project, should change offer value to new value"() {
+    def "4 Making new offer for new project, should change offer value to new value"() {
         given: "Create and project and reject it"
             ProjectDto createProjectDto = this.createProject()
             OfferDto offerDto = new OfferDto(offerValue: NEW_OFFER_VALUE)
@@ -129,7 +128,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Accepting an offer for Project should change project status to TO DO"() {
+    def "5 Accepting an offer for Project should change project status to TO DO"() {
         given: "Create and project and reject it"
             ProjectDto createProjectDto = this.createProject()
         when: "Making new offer for rejected project"
@@ -138,37 +137,36 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ).andReturn().response
         then: "Return code is 200"
             offerResponse.status == HttpStatus.OK.value()
-            ProjectDto projectDto = mapper.readValue(offerResponse.contentAsString, ProjectDto.class)
         and: "Project value is same as new offer value"
-            projectDto.status == ProjectStatus.TO_DO
+            this.getProjectStatus(offerResponse) == ProjectStatus.TO_DO
     }
 
     @Transactional
-    def "For project with not accepted offer, it should not be possible to start progress in work"() {
-        given:
+    def "6 For project with not accepted offer, it should not be possible to start progress in work and it should put task, stage and project in IN_PROGRESS statuses"() {
+        given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto = this.createStage(createProjectDto.id)
-            TaskDto createTaskDto = this.createTask(createProjectDto.id, createStageDto.id)
-            TaskDto updateStatusDto = new TaskDto(status: TaskStatus.IN_PROGRESS)
-            String requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
-        when:
-            def changeTaskStatusResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createTaskUri(createProjectDto.id, createStageDto.id,
-                                            createTaskDto.id) + "/updateStatus"))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response
-        then:
-            changeTaskStatusResponse.status == HttpStatus.BAD_REQUEST.value()
-        and:
-            def errorMessage = mapper.readValue(changeTaskStatusResponse.contentAsString, ErrorMessage.class)
-            errorMessage.message == "You cannot start progress for Project, for which offer was not accepted."
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
+            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
+        when: "Change one task status to IN PROGRESS"
+            def changeTaskStatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
+                            TaskStatus.IN_PROGRESS)
+        then: "Response code is 200"
+            changeTaskStatusResponse.status == HttpStatus.OK.value()
+        and: "Task status is IN PROGRESS"
+            def getTaskResponse = getTaskResponse(createProjectDto.id, createStageDto.id, createTaskDto11.id)
+            this.getTaskStatus(getTaskResponse) == TaskStatus.IN_PROGRESS
+        and: "Stage status is IN PROGRESS"
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
+            this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
+        and: "Project status is IN PROGRESS"
+            def getProjectResponse = this.getProjectResponse(createProjectDto.id)
+            this.getProjectStatus(getProjectResponse) == ProjectStatus.IN_PROGRESS
     }
 
     @Transactional
-    def "For project with accepted offer, it should be possible to start progress in work"() {
+    def "7 For project with accepted offer, it should be possible to start progress in work"() {
         given:
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto = this.createStage(createProjectDto.id)
@@ -188,12 +186,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         then:
             changeTaskStatusResponse.status == HttpStatus.OK.value()
         and:
-            def updatedTaskDto = mapper.readValue(changeTaskStatusResponse.contentAsString, TaskDto.class)
-            updatedTaskDto.status == TaskStatus.IN_PROGRESS
+            this.getTaskStatus(changeTaskStatusResponse) == TaskStatus.IN_PROGRESS
     }
 
     @Transactional
-    def "For project with accepted offer, it should not be possible to make new offer"() {
+    def "8 For project with accepted offer, it should not be possible to make new offer"() {
         given:
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto = this.createStage(createProjectDto.id)
@@ -216,7 +213,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Rejecting project with accepted offer should put it in REJECTED status"() {
+    def "9 Rejecting project with accepted offer should put it in REJECTED status"() {
         given:
             ProjectDto createProjectDto = this.createProject()
             def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
@@ -227,12 +224,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         then: "Response code should be 200"
             rejectResponse.status == HttpStatus.OK.value()
         and: "Project status is REJECTED"
-            ProjectDto projectDto = mapper.readValue(rejectResponse.contentAsString, ProjectDto.class)
-            projectDto.status == ProjectStatus.REJECTED
+            this.getProjectStatus(rejectResponse) == ProjectStatus.REJECTED
     }
 
     @Transactional
-    def "Reopening rejected project with accepted offer and stages only in TO_DO statuses should change project status to TO_DO"() {
+    def "10 Reopening rejected project with accepted offer and stages only in TO_DO statuses should change project status to TO_DO"() {
         given:
             ProjectDto createProjectDto = this.createProject()
             def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
@@ -248,12 +244,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         then: "Response code should be 200"
             reopenResponse.status == HttpStatus.OK.value()
         and: "Project status is REJECTED"
-            ProjectDto projectDto = mapper.readValue(reopenResponse.contentAsString, ProjectDto.class)
-            projectDto.status == ProjectStatus.TO_DO
+            this.getProjectStatus(reopenResponse) == ProjectStatus.TO_DO
     }
 
     @Transactional
-    def "Reopening rejected project, that was in IN_PROGRESS status, should be back to IN_PROGRES"() {
+    def "11 Reopening rejected project, that was in IN_PROGRESS status, should be back to IN_PROGRES"() {
         given:
             ProjectDto createProjectDto = this.createProject()
             def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
@@ -272,43 +267,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         then: "Response code should be 200"
             reopenResponse.status == HttpStatus.OK.value()
         and: "Project status is IN_PROGRESS"
-            ProjectDto projectDto = mapper.readValue(reopenResponse.contentAsString, ProjectDto.class)
-            projectDto.status == ProjectStatus.IN_PROGRESS
+            this.getProjectStatus(reopenResponse) == ProjectStatus.IN_PROGRESS
     }
 
     @Transactional
-    def "Starting working on one task should put task, stage and project that task belongs to in IN PROGRESS status"() {
-        given: "Project with accepted offer and stages and tasks in TO DO"
-            ProjectDto createProjectDto = this.createProject()
-            StageDto createStageDto = this.createStage(createProjectDto.id)
-            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
-            TaskDto createTaskDto12 = this.createTask(createProjectDto.id, createStageDto.id)
-            StageDto createSta0geDto2 = this.createStage(createProjectDto.id)
-            TaskDto createTaskDto21 = this.createTask(createProjectDto.id, createStageDto.id)
-            TaskDto createTaskDto22 = this.createTask(createProjectDto.id, createStageDto.id)
-            def acceptOfferResponse = this.acceptProjectOffer(createProjectDto.id)
-        when: "Change one task status to IN PROGRESS"
-            def changeTaskStatusResponse =
-                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
-                            TaskStatus.IN_PROGRESS)
-        then: "Response code is 200"
-            changeTaskStatusResponse.status == HttpStatus.OK.value()
-        and: "Task status is IN PROGRESS"
-            def getTaskResponse = getTaskResponse(createProjectDto.id, createStageDto.id, createTaskDto11.id)
-            TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
-            getTaskDto.status == TaskStatus.IN_PROGRESS
-        and: "Stage status is IN PROGRESS"
-            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
-            StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
-            getStageDto.status == StageStatus.IN_PROGRESS
-        and: "Project status is IN PROGRESS"
-            def getProjectResponse = this.getProjectResponse(createProjectDto.id)
-            ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
-            getProjectDto.status == ProjectStatus.IN_PROGRESS
-    }
-
-    @Transactional
-    def "Reject only task in stage, should put that stage in TO_DO status and put PROJECT in TO_DO"() {
+    def "12 Reject only task in stage, should put that stage in TO_DO status and put PROJECT in TO_DO"() {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto = this.createStage(createProjectDto.id)
@@ -325,20 +288,17 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             changeTaskStatusResponse.status == HttpStatus.OK.value()
         and: "Task status is REJECTED"
             def getTaskResponse = getTaskResponse(createProjectDto.id, createStageDto.id, createTaskDto11.id)
-            TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
-            getTaskDto.status == TaskStatus.REJECTED
+            this.getTaskStatus(getTaskResponse) == TaskStatus.REJECTED
         and: "Stage status is TO_DO"
             def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
-            StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
-            getStageDto.status == StageStatus.TO_DO
+            this.getStageStatus(getStageResponse) == StageStatus.TO_DO
         and: "Project status is TO_DO"
             def getProjectResponse = this.getProjectResponse(createProjectDto.id)
-            ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
-            getProjectDto.status == ProjectStatus.TO_DO
+            this.getProjectStatus(getProjectResponse) == ProjectStatus.TO_DO
     }
 
     @Transactional
-    def "Finishing work on only task in stage, should put that stage in TO_DO status and put PROJECT in TO_DO"() {
+    def "13 Finishing work on only task in stage, should put that stage in COMPLETED status and put PROJECT in COMPLETED"() {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto = this.createStage(createProjectDto.id)
@@ -354,25 +314,18 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         then: "Response code is 200"
             changeTaskStatusResponse.status == HttpStatus.OK.value()
         and: "Task status is COMPLETED"
-            def getTaskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(
-                            this.createTaskUri(createProjectDto.id, createStageDto.id, createTaskDto11.id))
-                    )
-            ).andReturn().response
-            TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
-            getTaskDto.status == TaskStatus.COMPLETED
+            def getTaskResponse = this.getTaskResponse(createProjectDto.id, createStageDto.id, createTaskDto11.id);
+            this.getTaskStatus(getTaskResponse) == TaskStatus.COMPLETED
         and: "Stage status is COMPLETED"
             def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
-            StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
-            getStageDto.status == StageStatus.COMPLETED
+            this.getStageStatus(getStageResponse) == StageStatus.COMPLETED
         and: "Project status is COMPLETED"
             def getProjectResponse = this.getProjectResponse(createProjectDto.id)
-            ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
-            getProjectDto.status == ProjectStatus.COMPLETED
+            this.getProjectStatus(getProjectResponse) == ProjectStatus.COMPLETED
     }
 
     @Transactional
-    def "Rejecting stage should put stage in REJECTED status and not change project status"() {
+    def "14 Rejecting only stage from TO_DO should put stage in REJECTED status and not change project status"() {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto = this.createStage(createProjectDto.id)
@@ -387,16 +340,14 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         then: "Response code is 200"
             rejectStageResponse.status == HttpStatus.OK.value()
         and: "Stage status is REJECTED"
-            StageDto getStageDto = mapper.readValue(rejectStageResponse.contentAsString, StageDto.class)
-            getStageDto.status == StageStatus.REJECTED
+            this.getStageStatus(rejectStageResponse) == StageStatus.REJECTED
         and:
             def getProjectResponse = this.getProjectResponse(createProjectDto.id)
-            ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
-            getProjectDto.status == ProjectStatus.TO_DO
+            this.getProjectStatus(getProjectResponse) == ProjectStatus.TO_DO
     }
 
     @Transactional
-    def "Creating new task on stage in TO_DO status should not change stage or project status"() {
+    def "15 Creating new task on stage in TO_DO status should not change stage or project status"() {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto = this.createStage(createProjectDto.id)
@@ -415,20 +366,17 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         and: "Task status is TO_DO"
             TaskDto createdTaskDto12 = mapper.readValue(taskResponse.contentAsString, TaskDto.class)
             def getTaskResponse = getTaskResponse(createProjectDto.id, createStageDto.id, createdTaskDto12.id)
-            TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
-            getTaskDto.status == TaskStatus.TO_DO
+            this.getTaskStatus(getTaskResponse) == TaskStatus.TO_DO
         and: "Stage status is TO_DO"
             def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
-            StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
-            getStageDto.status == StageStatus.TO_DO
+            this.getStageStatus(getStageResponse) == StageStatus.TO_DO
         and: "Project status is TO_DO"
             def getProjectResponse = this.getProjectResponse(createProjectDto.id)
-            ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
-            getProjectDto.status == ProjectStatus.TO_DO
+            this.getProjectStatus(getProjectResponse) == ProjectStatus.TO_DO
     }
 
     @Transactional
-    def "Creating new task on stage in IN_PROGRESS status should not change stage or project status"() {
+    def "16 Creating new task on stage in IN_PROGRESS status should not change stage or project status"() {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto = this.createStage(createProjectDto.id)
@@ -450,20 +398,17 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         and: "Task status is TO_DO"
             TaskDto createdTaskDto12 = mapper.readValue(taskResponse.contentAsString, TaskDto.class)
             def getTaskResponse = getTaskResponse(createProjectDto.id, createStageDto.id, createdTaskDto12.id)
-            TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
-            getTaskDto.status == TaskStatus.TO_DO
+            this.getTaskStatus(getTaskResponse) == TaskStatus.TO_DO
         and: "Stage status is IN_PROGRESS"
             def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
-            StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
-            getStageDto.status == StageStatus.IN_PROGRESS
+            this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
         and: "Project status is IN_PROGRESS"
             def getProjectResponse = this.getProjectResponse(createProjectDto.id)
-            ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
-            getProjectDto.status == ProjectStatus.IN_PROGRESS
+            this.getProjectStatus(getProjectResponse) == ProjectStatus.IN_PROGRESS
     }
 
     @Transactional
-    def "Creating new task on stage in REJECTED status should return code 400, error message and not create new task"() {
+    def "17 Creating new task on stage in REJECTED status should return code 400, error message and not create new task"() {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto = this.createStage(createProjectDto.id)
@@ -490,7 +435,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Creating new task on stage in COMPLETED status should change stage status to IN_PROGRESS and change project status to IN_PROGRESS if was COMPLETED"() {
+    def "18 Creating new task on stage in COMPLETED status should change stage status to IN_PROGRESS and change project status to IN_PROGRESS if was COMPLETED"() {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto createProjectDto = this.createProject()
             StageDto createStageDto = this.createStage(createProjectDto.id)
@@ -515,16 +460,105 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         and: "Task status is TO_DO"
             TaskDto createdTaskDto12 = mapper.readValue(taskResponse.contentAsString, TaskDto.class)
             def getTaskResponse = getTaskResponse(createProjectDto.id, createStageDto.id, createdTaskDto12.id)
-            TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
-            getTaskDto.status == TaskStatus.TO_DO
+            this.getTaskStatus(getTaskResponse) == TaskStatus.TO_DO
         and: "Stage status is IN_PROGRESS"
             def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
-            StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
-            getStageDto.status == StageStatus.IN_PROGRESS
+            this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
         and: "Project status is IN_PROGRESS"
             def getProjectResponse = this.getProjectResponse(createProjectDto.id)
-            ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
-            getProjectDto.status == ProjectStatus.IN_PROGRESS
+            this.getProjectStatus(getProjectResponse) == ProjectStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "19 Starting work on the only task on stage should change stage status to IN_PROGRESS"() {
+        given:
+            ProjectDto createProjectDto = this.createProject()
+            this.acceptProjectOffer(createProjectDto.id)
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto = this.createTask(createProjectDto.id, createStageDto.id)
+        when:
+            def changeTaskStatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto.id,
+                            TaskStatus.IN_PROGRESS)
+        then:
+            changeTaskStatusResponse.status == HttpStatus.OK.value()
+        and: "Stage status is TO_DO"
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
+            this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "20 Starting work on stage in TO_DO with only REJECTED tasks should change stage status to IN_PROGRESS"() {
+        given:
+            ProjectDto createProjectDto = this.createProject()
+            this.acceptProjectOffer(createProjectDto.id)
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto12 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto13 = this.createTask(createProjectDto.id, createStageDto.id)
+            def changeTask11StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
+                            TaskStatus.REJECTED)
+            def changeTask12StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto12.id,
+                            TaskStatus.REJECTED)
+        when:
+            def changeTask13StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto13.id,
+                            TaskStatus.IN_PROGRESS)
+        then:
+            changeTask13StatusResponse.status == HttpStatus.OK.value()
+        and: "Stage status is TO_DO"
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
+            this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "21 Starting work on stage in TO_DO with tasks in TO_DO and REJECTED statuses should change stage status to IN_PROGRESS"() {
+        given:
+            ProjectDto createProjectDto = this.createProject()
+            this.acceptProjectOffer(createProjectDto.id)
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto12 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto13 = this.createTask(createProjectDto.id, createStageDto.id)
+            def changeTask11StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
+                            TaskStatus.REJECTED)
+            def changeTask12StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto12.id,
+                            TaskStatus.REJECTED)
+        when:
+            def changeTask13StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto13.id,
+                            TaskStatus.IN_PROGRESS)
+        then:
+            changeTask13StatusResponse.status == HttpStatus.OK.value()
+        and: "Stage status is TO_DO"
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
+            this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "22 Starting work on stage in IN_PROGRESS status should not change stage status"() {
+        given:
+            ProjectDto createProjectDto = this.createProject()
+            this.acceptProjectOffer(createProjectDto.id)
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto12 = this.createTask(createProjectDto.id, createStageDto.id)
+            def changeTask11StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
+                            TaskStatus.IN_PROGRESS)
+        when:
+            def changeTask12StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto12.id,
+                            TaskStatus.IN_PROGRESS)
+        then:
+            changeTask12StatusResponse.status == HttpStatus.OK.value()
+        and: "Stage status is IN_PROGRESS"
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
+            this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
     }
 
     // HELPER METHODS
@@ -626,5 +660,20 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     private MockHttpServletResponse getProjectResponse(long projectId) {
         return this.mockMvc.perform(MockMvcRequestBuilders.get(URI.create(this.createProjectUri(projectId)))
         ).andReturn().response
+    }
+
+    private TaskStatus getTaskStatus(MockHttpServletResponse getTaskResponse) {
+        TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
+        return getTaskDto.status
+    }
+
+    private StageStatus getStageStatus(MockHttpServletResponse getStageResponse) {
+        StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
+        return getStageDto.status
+    }
+
+    private ProjectStatus getProjectStatus(MockHttpServletResponse getProjectResponse) {
+        ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
+        return getProjectDto.status
     }
 }
