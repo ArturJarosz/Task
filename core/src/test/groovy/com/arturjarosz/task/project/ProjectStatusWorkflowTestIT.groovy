@@ -16,7 +16,6 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
-import spock.lang.Shared
 
 class ProjectStatusWorkflowTestIT extends BaseTestIT {
     private static final String ARCHITECT_FIRST_NAME = "First Name"
@@ -41,9 +40,6 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             mapper.readValue(new File(getClass().classLoader.getResource('json/task/properTask.json').file),
                     TaskDto.class)
 
-    @Shared
-    private long projectId;
-
     @Autowired
     private MockMvc mockMvc
 
@@ -63,7 +59,6 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
                             .content(projectRequestBody)
             ).andReturn().response
             ProjectDto projectDto = mapper.readValue(projectResponse.contentAsString, ProjectDto.class)
-            projectId = projectDto.id
         then: "Returns code 201"
             projectResponse.status == HttpStatus.CREATED.value()
         and: "Project status is set to offer"
@@ -559,6 +554,190 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         and: "Stage status is IN_PROGRESS"
             def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
             this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "23 Rejecting task from TO_DO status on stage in TO_DO should not change stage status"(){
+        given:
+            ProjectDto createProjectDto = this.createProject()
+            this.acceptProjectOffer(createProjectDto.id)
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
+        when:
+            def changeTask12StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
+                            TaskStatus.REJECTED)
+        then:
+            changeTask12StatusResponse.status == HttpStatus.OK.value()
+        and: "Stage status is TO_DO"
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
+            this.getStageStatus(getStageResponse) == StageStatus.TO_DO
+    }
+
+    @Transactional
+    def "24 Rejecting task from TO_DO status on stage in IN_PROGRESS, while there are some tasks in IN_PROGRESS does not change stage status"(){
+        given:
+            ProjectDto createProjectDto = this.createProject()
+            this.acceptProjectOffer(createProjectDto.id)
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto12 = this.createTask(createProjectDto.id, createStageDto.id)
+            def changeTask11StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
+                            TaskStatus.IN_PROGRESS)
+        when:
+            def changeTask12StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto12.id,
+                            TaskStatus.REJECTED)
+        then:
+            changeTask12StatusResponse.status == HttpStatus.OK.value()
+        and: "Stage status is TO_DO"
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
+            this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
+    }
+    @Transactional
+    def "25 Rejecting task from TO_DO status on stage in IN_PROGRESS, while there are only tasks in REJECTED and COMPLETED changes stage status to COMPLETED"(){
+        given:
+            ProjectDto createProjectDto = this.createProject()
+            this.acceptProjectOffer(createProjectDto.id)
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto12 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto13 = this.createTask(createProjectDto.id, createStageDto.id)
+            def changeTask11StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
+                            TaskStatus.REJECTED)
+            def changeTask12StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto12.id,
+                            TaskStatus.IN_PROGRESS)
+            changeTask12StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto12.id,
+                            TaskStatus.COMPLETED)
+        when:
+            def changeTask13StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto13.id,
+                            TaskStatus.REJECTED)
+        then:
+            changeTask12StatusResponse.status == HttpStatus.OK.value()
+        and: "Stage status is TO_DO"
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
+            this.getStageStatus(getStageResponse) == StageStatus.COMPLETED
+    }
+
+    @Transactional
+    def "26 Rejecting task from IN_PROGRESS, with only tasks in REJECTED, should change stage status to TO_DO"(){
+        given:
+            ProjectDto createProjectDto = this.createProject()
+            this.acceptProjectOffer(createProjectDto.id)
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto12 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto13 = this.createTask(createProjectDto.id, createStageDto.id)
+            def changeTask11StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
+                            TaskStatus.REJECTED)
+            def changeTask12StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto12.id,
+                            TaskStatus.REJECTED)
+            def changeTask13StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto13.id,
+                            TaskStatus.IN_PROGRESS)
+        when:
+            changeTask13StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto13.id,
+                            TaskStatus.REJECTED)
+        then:
+            changeTask12StatusResponse.status == HttpStatus.OK.value()
+        and: "Stage status is TO_DO"
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
+            this.getStageStatus(getStageResponse) == StageStatus.TO_DO
+    }
+
+    @Transactional
+    def "27 Rejecting task from IN_PROGRESS, with some tasks in IN_PROGRESS, should not change stage status"(){
+        given:
+            ProjectDto createProjectDto = this.createProject()
+            this.acceptProjectOffer(createProjectDto.id)
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto12 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto13 = this.createTask(createProjectDto.id, createStageDto.id)
+            def changeTask11StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
+                            TaskStatus.IN_PROGRESS)
+            def changeTask12StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto12.id,
+                            TaskStatus.REJECTED)
+            def changeTask13StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto13.id,
+                            TaskStatus.IN_PROGRESS)
+        when:
+            changeTask13StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto13.id,
+                            TaskStatus.REJECTED)
+        then:
+            changeTask12StatusResponse.status == HttpStatus.OK.value()
+        and: "Stage status is IN_PROGRESS"
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
+            this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "28 Rejecting task from IN_PROGRESS, with task only in TO_DO and REJECTED, should change stage status to TO_DO"(){
+        given:
+            ProjectDto createProjectDto = this.createProject()
+            this.acceptProjectOffer(createProjectDto.id)
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto12 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto13 = this.createTask(createProjectDto.id, createStageDto.id)
+            def changeTask12StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto12.id,
+                            TaskStatus.REJECTED)
+            def changeTask13StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto13.id,
+                            TaskStatus.IN_PROGRESS)
+        when:
+            changeTask13StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto13.id,
+                            TaskStatus.REJECTED)
+        then:
+            changeTask12StatusResponse.status == HttpStatus.OK.value()
+        and: "Stage status is TO_DO"
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
+            this.getStageStatus(getStageResponse) == StageStatus.TO_DO
+    }
+
+    @Transactional
+    def "29 Rejecting task from IN_PROGRESS, with task only in COMPLETED and REJECTED, should change stage status to COMPLETED"(){
+        given:
+            ProjectDto createProjectDto = this.createProject()
+            this.acceptProjectOffer(createProjectDto.id)
+            StageDto createStageDto = this.createStage(createProjectDto.id)
+            TaskDto createTaskDto11 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto12 = this.createTask(createProjectDto.id, createStageDto.id)
+            TaskDto createTaskDto13 = this.createTask(createProjectDto.id, createStageDto.id)
+            def changeTask11StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
+                            TaskStatus.IN_PROGRESS)
+            changeTask11StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto11.id,
+                            TaskStatus.COMPLETED)
+            def changeTask12StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto12.id,
+                            TaskStatus.REJECTED)
+            def changeTask13StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto13.id,
+                            TaskStatus.IN_PROGRESS)
+        when:
+            changeTask13StatusResponse =
+                    this.updateTaskStatus(createProjectDto.id, createStageDto.id, createTaskDto13.id,
+                            TaskStatus.REJECTED)
+        then:
+            changeTask12StatusResponse.status == HttpStatus.OK.value()
+        and: "Stage status is COMPLETED"
+            def getStageResponse = this.getStageResponse(createProjectDto.id, createStageDto.id)
+            this.getStageStatus(getStageResponse) == StageStatus.COMPLETED
     }
 
     // HELPER METHODS
