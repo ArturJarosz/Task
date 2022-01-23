@@ -981,6 +981,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.getStageStatus(getStageResponse) == StageStatus.TO_DO
     }
 
+    @Transactional
     def "38 Changing status of task from IN_PROGRESS to COMPLETED on stage in IN_PROGRESS while there are some task in TO_DO, should not change stage status"() {
         given:
             ProjectDto createProjectDto = this.createProject()
@@ -1009,6 +1010,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
     }
 
+    @Transactional
     def "39 Changing status of task from IN_PROGRESS to COMPLETED on stage in IN_PROGRESS while there are some task in IN_PROGRESS, should not change stage status"() {
         given:
             ProjectDto createProjectDto = this.createProject()
@@ -1037,6 +1039,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
     }
 
+    @Transactional
     def "40 Changing status of task from IN_PROGRESS to COMPLETED on stage in IN_PROGRESS while there only tasks in REJECTED and COMPLETED, should change stage status to COMPLETED"() {
         given:
             ProjectDto createProjectDto = this.createProject()
@@ -1068,6 +1071,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.getStageStatus(getStageResponse) == StageStatus.COMPLETED
     }
 
+    @Transactional
     def "41 Changing status of task from COMPLETED to IN_PROGRESS on stage in IN_PROGRESS status, should not change stage status "() {
         given:
             ProjectDto createProjectDto = this.createProject()
@@ -1099,6 +1103,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.getStageStatus(getStageResponse) == StageStatus.IN_PROGRESS
     }
 
+    @Transactional
     def "42 Changing status of task from COMPLETED to IN_PROGRESS on stage in COMPLETED status, should change stage status to IN_PROGRESS"() {
         given:
             ProjectDto createProjectDto = this.createProject()
