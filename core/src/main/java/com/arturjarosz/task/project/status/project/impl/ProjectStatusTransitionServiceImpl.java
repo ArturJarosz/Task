@@ -121,7 +121,7 @@ public class ProjectStatusTransitionServiceImpl implements ProjectStatusTransiti
     @Override
     public void reopen(Project project) {
         this.assertProjectInRejected(project);
-        if (this.hasStagesOnlyInRejectedAndToDoStatus(project)) {
+        if (this.hasStagesOnlyInRejectedAndToDoStatusOrHasNoStages(project)) {
             this.reopenRejected(project);
         } else {
             this.resumeRejected(project);
@@ -147,7 +147,7 @@ public class ProjectStatusTransitionServiceImpl implements ProjectStatusTransiti
                         ProjectExceptionCodes.SIGN), project.getStatus());
     }
 
-    private boolean hasStagesOnlyInRejectedAndToDoStatus(Project project) {
+    private boolean hasStagesOnlyInRejectedAndToDoStatusOrHasNoStages(Project project) {
         List<Stage> allStages = new ArrayList<>(project.getStages());
         //we are removing Stages in Rejected status, because they should not be taken into account
         allStages.removeIf(stage -> stage.getStatus().equals(StageStatus.REJECTED));
