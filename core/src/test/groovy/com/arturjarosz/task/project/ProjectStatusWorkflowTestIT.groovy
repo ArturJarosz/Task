@@ -1244,6 +1244,41 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             errorMessage.message == "Cannot change stage status for project in status REJECTED."
     }
 
+    @Transactional
+    def "48 Changing stage status to IN_PROGRESS on project in status TO_DO changes project status to IN_PROGRESS"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+        when:
+            def updateTaskStatusResponse =
+                    this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+        then:
+            updateTaskStatusResponse.status == HttpStatus.OK.value()
+        and:
+            def getProjectResponse = this.getProjectResponse(projectDto.id)
+            this.getProjectStatus(getProjectResponse) == ProjectStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "49 Changing stage status to IN_PROGRESS on project in status OFFER returns code 400 and error message"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            this.rejectProject(projectDto.id)
+        when:
+            def updateTaskStatusResponse =
+                    this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+        then: "Response code is 400"
+            updateTaskStatusResponse.status == HttpStatus.BAD_REQUEST.value()
+        and:
+            def errorMessage = mapper.readValue(updateTaskStatusResponse.contentAsString, ErrorMessage.class)
+            errorMessage.message == "You cannot change Task status for rejected Project."
+    }
+
     // HELPER METHODS
 
     private ArchitectDto createArchitect() {
@@ -1319,7 +1354,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
                 this.createProjectUri(projectId) + "/acceptOffer"))).andReturn().response
     }
 
-    private MockHttpServletResponse rejectProject(long projectId){
+    private MockHttpServletResponse rejectProject(long projectId) {
         return this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(
                 this.createProjectUri(projectId) + "/reject"
         ))).andReturn().response
