@@ -1279,6 +1279,49 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             errorMessage.message == "You cannot change Task status for rejected Project."
     }
 
+    @Transactional
+    def "50 Changing stage status from IN_PROGRESS to TO_DO, while other stages are in TO_DO and REJECTED on project in IN_PROGRESS status, changes project status to TO_DO"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            this.rejectStage(projectDto.id, stageDto1.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+        when:
+            def updateTaskStatusDto = this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.TO_DO)
+        then: "Response code is 400"
+            updateTaskStatusDto.status == HttpStatus.OK.value()
+        and:
+            def getProjectResponse = this.getProjectResponse(projectDto.id)
+            this.getProjectStatus(getProjectResponse) == ProjectStatus.TO_DO
+    }
+
+    @Transactional
+    def "51 Changing stage status from IN_PROGRESS to TO_DO, while there is at least one stage in IN_PROGRESS on project in IN_PROGRESS status, changes project status to TO_DO"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            this.rejectStage(projectDto.id, stageDto1.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.IN_PROGRESS)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+        when:
+            def updateTaskStatusDto = this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.TO_DO)
+        then: "Response code is 400"
+            updateTaskStatusDto.status == HttpStatus.OK.value()
+        and:
+            def getProjectResponse = this.getProjectResponse(projectDto.id)
+            this.getProjectStatus(getProjectResponse) == ProjectStatus.IN_PROGRESS
+    }
+
     // HELPER METHODS
 
     private ArchitectDto createArchitect() {
@@ -1357,6 +1400,12 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     private MockHttpServletResponse rejectProject(long projectId) {
         return this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(
                 this.createProjectUri(projectId) + "/reject"
+        ))).andReturn().response
+    }
+
+    private MockHttpServletResponse rejectStage(long projectId, long stageId) {
+        return this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(
+                this.createStageUri(projectId, stageId) + "/reject"
         ))).andReturn().response
     }
 
