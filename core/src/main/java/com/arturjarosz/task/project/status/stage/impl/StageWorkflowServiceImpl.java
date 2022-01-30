@@ -113,7 +113,7 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
                 !projectToCheck.getStatus().equals(ProjectStatus.REJECTED)
                         && !projectToCheck.getStatus().equals(ProjectStatus.DONE);
         assertIsTrue(projectPredicate.test(project), BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
-                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TASK,
-                ProjectExceptionCodes.CREATE), project.getStatus());
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.STATUS,
+                ProjectExceptionCodes.TRANSITION), project.getStatus());
     }
 }
