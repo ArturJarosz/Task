@@ -1322,6 +1322,150 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.getProjectStatus(getProjectResponse) == ProjectStatus.IN_PROGRESS
     }
 
+    @Transactional
+    def "52 Changing stage status from IN_PROGRESS to COMPLETED on project with other IN_PROGRESS stages does not change project status"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.IN_PROGRESS)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+        expect: "In status IN_PROGRESS and at least one stage in status IN_PROGRESS"
+            this.getStageStatus(projectDto.id, stageDto1.id) == StageStatus.TO_DO
+            this.getStageStatus(projectDto.id, stageDto2.id) == StageStatus.IN_PROGRESS
+            this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.IN_PROGRESS
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+        when: "Changing stage status from IN_PROGRESS to COMPLETED"
+            def updateTaskStatusDto =
+                    this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.COMPLETED)
+        then: "Returns code 200"
+            updateTaskStatusDto.status == HttpStatus.OK.value()
+        and: "And does not change project status"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "53 Changing stage status from IN_PROGRESS to COMPLETED on project with other stages in REJECTED changes project status to COMPLETED"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.rejectStage(projectDto.id, stageDto1.id)
+            this.rejectStage(projectDto.id, stageDto2.id)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+        expect: "In status IN_PROGRESS and one stage in IN_PROGRESS and other REJECTED"
+            this.getStageStatus(projectDto.id, stageDto1.id) == StageStatus.REJECTED
+            this.getStageStatus(projectDto.id, stageDto2.id) == StageStatus.REJECTED
+            this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.IN_PROGRESS
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+        when: "Changing stage status from IN_PROGRESS to COMPLETED"
+            def updateTaskStatusDto =
+                    this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.COMPLETED)
+        then: "Returns code 200"
+            updateTaskStatusDto.status == HttpStatus.OK.value()
+        and: "And changes project status to COMPLETED"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.COMPLETED
+    }
+
+    @Transactional
+    def "54 Changing stage status from IN_PROGRESS to COMPLETED on project with other stages in COMPLETED changes project status to COMPLETED"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.COMPLETED)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.COMPLETED)
+        expect: "In status IN_PROGRESS and one stage in IN_PROGRESS and other COMPLETED"
+            this.getStageStatus(projectDto.id, stageDto1.id) == StageStatus.COMPLETED
+            this.getStageStatus(projectDto.id, stageDto2.id) == StageStatus.COMPLETED
+            this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.IN_PROGRESS
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+        when: "Changing stage status from IN_PROGRESS to COMPLETED"
+            def updateTaskStatusDto =
+                    this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.COMPLETED)
+        then: "Returns code 200"
+            updateTaskStatusDto.status == HttpStatus.OK.value()
+        and: "And changes project status to COMPLETED"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.COMPLETED
+    }
+
+    @Transactional
+    def "55 Changing stage status from COMPLETED to IN_PROGRESS on project in status in COMPLETED changes project status to IN_PROGRESS"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+            this.rejectStage(projectDto.id, stageDto1.id)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.COMPLETED)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.COMPLETED)
+        expect: "In status COMPLETED"
+            this.getStageStatus(projectDto.id, stageDto1.id) == StageStatus.REJECTED
+            this.getStageStatus(projectDto.id, stageDto2.id) == StageStatus.COMPLETED
+            this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.COMPLETED
+            this.getProjectStatus(projectDto.id) == ProjectStatus.COMPLETED
+        when: "Changing stage status from COMPLETED to IN_PROGRESS"
+            def updateTaskStatusDto =
+                    this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+        then: "Returns code 200"
+            updateTaskStatusDto.status == HttpStatus.OK.value()
+        and: "And changes project status to IN_PROGRESS"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "56 Changing stage status from COMPLETED to IN_PROGRESS on project in status in IN_PROGRESS does not change project status"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.COMPLETED)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.COMPLETED)
+        expect: "In status IN_PROGRESS"
+            this.getStageStatus(projectDto.id, stageDto1.id) == StageStatus.IN_PROGRESS
+            this.getStageStatus(projectDto.id, stageDto2.id) == StageStatus.COMPLETED
+            this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.COMPLETED
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+        when: "Changing stage status from COMPLETED to IN_PROGRESS"
+            def updateTaskStatusDto =
+                    this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+        then: "Returns code 200"
+            updateTaskStatusDto.status == HttpStatus.OK.value()
+        and: "And does not change project status"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+    }
+
     // HELPER METHODS
 
     private ArchitectDto createArchitect() {
@@ -1445,7 +1589,23 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         return getStageDto.status
     }
 
+    private StageStatus getStageStatus(long projectId, long stageId) {
+        def getStageResponse =
+                this.mockMvc.perform(MockMvcRequestBuilders.get(URI.create(this.createStageUri(projectId, stageId)))
+                ).andReturn().response
+        StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
+        return getStageDto.status
+    }
+
     private ProjectStatus getProjectStatus(MockHttpServletResponse getProjectResponse) {
+        ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
+        return getProjectDto.status
+    }
+
+    private ProjectStatus getProjectStatus(long projectId) {
+        def getProjectResponse =
+                this.mockMvc.perform(MockMvcRequestBuilders.get(URI.create(this.createProjectUri(projectId)))
+                ).andReturn().response
         ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
         return getProjectDto.status
     }
