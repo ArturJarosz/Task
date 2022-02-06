@@ -188,12 +188,9 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Spec.java</include>
-                        <include>**/*Test.groovy</include>
-                        <include>**/*IT.groovy</include>
-                        <include>**/*IT.java</include>
-                        <include>ConfigurationIT.java</include>
+                        <include>**/*Test</include>
+                        <include>**/*Spec</include>
+                        <include>**/*IT</include>
                     </includes>
                     <additionalClasspathElements>
                         <classpathElement>com.arturjarosz.task.configuration.ConfigurationIT</classpathElement>
