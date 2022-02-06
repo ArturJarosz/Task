@@ -1466,6 +1466,202 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
     }
 
+    @Transactional
+    def "57 Rejecting stage from TO_DO on project in status TO_DO does not change project status"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.rejectStage(projectDto.id, stageDto1.id)
+        expect: "In status TO_DO"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.TO_DO
+        when: "Rejecting stage from TO_DO"
+            def rejectStageDto = this.rejectStage(projectDto.id, stageDto3.id)
+        then: "Returns code 200"
+            rejectStageDto.status == HttpStatus.OK.value()
+        and: "And does not change project status"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.TO_DO
+    }
+
+    @Transactional
+    def "58 Rejecting stage from TO_DO on project in status IN_PROGRESS with other stages in COMPLETED and REJECTED changes project status to COMPLETED"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.rejectStage(projectDto.id, stageDto1.id)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.COMPLETED)
+        expect: "In status IN_PROGRESS with stages in REJECTED and COMPLETED"
+            this.getStageStatus(projectDto.id, stageDto1.id) == StageStatus.REJECTED
+            this.getStageStatus(projectDto.id, stageDto2.id) == StageStatus.COMPLETED
+            this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.TO_DO
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+        when: "Rejecting stage from TO_DO"
+            def rejectStageDto = this.rejectStage(projectDto.id, stageDto3.id)
+        then: "Returns code 200"
+            rejectStageDto.status == HttpStatus.OK.value()
+        and: "And does not change project status"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.COMPLETED
+    }
+
+    @Transactional
+    def "59 Rejecting stage from TO_DO on project in status IN_PROGRESS with at least one stage in IN_PROGRESS does not change project status"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.rejectStage(projectDto.id, stageDto1.id)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.IN_PROGRESS)
+        expect: "In status IN_PROGRESS with at least one stage in IN_PROGRESS"
+            this.getStageStatus(projectDto.id, stageDto1.id) == StageStatus.REJECTED
+            this.getStageStatus(projectDto.id, stageDto2.id) == StageStatus.IN_PROGRESS
+            this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.TO_DO
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+        when: "Rejecting stage from TO_DO"
+            def rejectStageDto = this.rejectStage(projectDto.id, stageDto3.id)
+        then: "Returns code 200"
+            rejectStageDto.status == HttpStatus.OK.value()
+        and: "And does not change project status"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "60 Rejecting the only stage from status IN_PROGRESS on project in IN_PROGRESS status changes project status to TO_DO"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+        expect: "In status IN_PROGRESS with one stage"
+            this.getStageStatus(projectDto.id, stageDto1.id) == StageStatus.IN_PROGRESS
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+        when: "Rejecting stage from IN_PROGRESS"
+            def rejectStageDto = this.rejectStage(projectDto.id, stageDto1.id)
+        then: "Returns code 200"
+            rejectStageDto.status == HttpStatus.OK.value()
+        and: "And changes project status to TO_DO"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.TO_DO
+    }
+
+    @Transactional
+    def "61 Rejecting stage from status IN_PROGRESS on project in IN_PROGRESS status with other stages in REJECTED changes project status to TO_DO"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.rejectStage(projectDto.id, stageDto1.id)
+            this.rejectStage(projectDto.id, stageDto2.id)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+        expect: "In status IN_PROGRESS with other stages in REJECTED"
+            this.getStageStatus(projectDto.id, stageDto1.id) == StageStatus.REJECTED
+            this.getStageStatus(projectDto.id, stageDto2.id) == StageStatus.REJECTED
+            this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.IN_PROGRESS
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+        when: "Rejecting stage from IN_PROGRESS"
+            def rejectStageDto = this.rejectStage(projectDto.id, stageDto3.id)
+        then: "Returns code 200"
+            rejectStageDto.status == HttpStatus.OK.value()
+        and: "And changes project status to TO_DO"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.TO_DO
+    }
+
+    @Transactional
+    def "62 Rejecting stage from status IN_PROGRESS on project in IN_PROGRESS status with other stages in TO_DO and REJECTED changes project status to TO_DO"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.rejectStage(projectDto.id, stageDto1.id)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+        expect: "In status IN_PROGRESS with other stages in REJECTED and TO_DO"
+            this.getStageStatus(projectDto.id, stageDto1.id) == StageStatus.REJECTED
+            this.getStageStatus(projectDto.id, stageDto2.id) == StageStatus.TO_DO
+            this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.IN_PROGRESS
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+        when: "Rejecting stage from IN_PROGRESS"
+            def rejectStageDto = this.rejectStage(projectDto.id, stageDto3.id)
+        then: "Returns code 200"
+            rejectStageDto.status == HttpStatus.OK.value()
+        and: "And changes project status to TO_DO"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.TO_DO
+    }
+
+    @Transactional
+    def "63 Rejecting stage from status IN_PROGRESS on project in IN_PROGRESS status with other stages in COMPLETED and REJECTED changes project status to COMPLETED"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.rejectStage(projectDto.id, stageDto1.id)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.COMPLETED)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+        expect: "In status IN_PROGRESS with other stages in REJECTED and TO_DO"
+            this.getStageStatus(projectDto.id, stageDto1.id) == StageStatus.REJECTED
+            this.getStageStatus(projectDto.id, stageDto2.id) == StageStatus.COMPLETED
+            this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.IN_PROGRESS
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+        when: "Rejecting stage from IN_PROGRESS"
+            def rejectStageDto = this.rejectStage(projectDto.id, stageDto3.id)
+        then: "Returns code 200"
+            rejectStageDto.status == HttpStatus.OK.value()
+        and: "And changes project status to COMPLETED"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.COMPLETED
+    }
+
+    @Transactional
+    def "64 Rejecting stage from status IN_PROGRESS on project in IN_PROGRESS status with at least one stage in IN_PROGRESS does not change project status"() {
+        given: "Existing project"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.rejectStage(projectDto.id, stageDto1.id)
+            this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
+        expect: "In status IN_PROGRESS with at least on other stage in IN_PROGRESS"
+            this.getStageStatus(projectDto.id, stageDto1.id) == StageStatus.REJECTED
+            this.getStageStatus(projectDto.id, stageDto2.id) == StageStatus.IN_PROGRESS
+            this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.IN_PROGRESS
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+        when: "Rejecting stage from IN_PROGRESS"
+            def rejectStageDto = this.rejectStage(projectDto.id, stageDto3.id)
+        then: "Returns code 200"
+            rejectStageDto.status == HttpStatus.OK.value()
+        and: "Does not change project status"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+    }
+
     // HELPER METHODS
 
     private ArchitectDto createArchitect() {
