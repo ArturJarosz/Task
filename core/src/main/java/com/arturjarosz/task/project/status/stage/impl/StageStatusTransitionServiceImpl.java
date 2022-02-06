@@ -80,14 +80,14 @@ public class StageStatusTransitionServiceImpl implements StageStatusTransitionSe
 
     @Override
     public void reopen(Project project, Long stageId) {
-        if (this.stageHasOnlyTasksInToDoStatus(stageId)) {
+        if (this.stageHasOnlyTasksInRejectToDoStatus(stageId)) {
             this.reopenToToDo(project, stageId);
         } else {
-            this.rejectFromInProgress(project, stageId);
+            this.reopenToInProgress(project, stageId);
         }
     }
 
-    private boolean stageHasOnlyTasksInToDoStatus(Long stageId) {
+    private boolean stageHasOnlyTasksInRejectToDoStatus(Long stageId) {
         Stage stage = this.projectQueryService.getStageById(stageId);
         List<Task> allTasks = new ArrayList<>(stage.getTasks());
         allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.REJECTED));

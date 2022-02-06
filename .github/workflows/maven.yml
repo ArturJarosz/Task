@@ -18,5 +18,6 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Run maven verify
-        run: mvn verify
+        run: mvn verify > mvn_test.txt
+      - run: $(( $(megrep "^\[INFO\] Tests run: [0-9]+, Failures: [0-9]+, Errors: [0-9]+, Skipped: [0-9]+$" | egrep -o '[0-9]+' | awk '{n += $1}; END{print n}') 0))
       - run: echo " This job's status is ${{ job.status }}."
