@@ -22,10 +22,7 @@ public abstract class BaseValidator<T> {
     }
 
     /**
-     * Creates message code.
-     *
-     * @param elements
-     * @return
+     * Creates message code of given string type elements.
      */
     public static String createMessageCode(String... elements) {
         return StringUtils.join(elements, DELIMITER);

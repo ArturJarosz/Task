@@ -12,9 +12,6 @@ public interface TaskStatusTransitionListener extends StatusTransitionListener<T
     /**
      * When there has been a change in status of Task, this method should be fired and checked whether some changes to
      * Stage is required.
-     *
-     * @param project
-     * @param stageId
      */
     void onTaskStatusChange(Project project, Long stageId);
 }
