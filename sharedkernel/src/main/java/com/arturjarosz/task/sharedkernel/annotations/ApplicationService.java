@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for Application Servies in the meaning of DDD.
+ * Annotation for Application Services in the meaning of DDD.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

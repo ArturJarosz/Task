@@ -15,9 +15,6 @@ public interface InstallmentDomainService {
 
     /**
      * Mark installment as paid and puts passed date as pay date. If payDate is null, then today is set as a pay date.
-     *
-     * @param stage
-     * @param payDate
      */
     Installment payInstallment(Stage stage, LocalDate payDate);
 }

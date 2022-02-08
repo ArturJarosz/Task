@@ -13,9 +13,6 @@ public interface ProjectApplicationService {
      * Creates {@link com.arturjarosz.task.project.model.Project} from given {@link ProjectCreateDto}.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
-     *
-     * @param projectCreateDto
-     * @return CreatedEntityDto with newly created Project id.
      */
     ProjectDto createProject(ProjectCreateDto projectCreateDto);
 
@@ -23,9 +20,6 @@ public interface ProjectApplicationService {
      * Load all {@link com.arturjarosz.task.project.model.Project} data.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
-     *
-     * @param projectId
-     * @return
      */
     ProjectDto getProject(Long projectId);
 
@@ -33,9 +27,6 @@ public interface ProjectApplicationService {
      * Updates {@link com.arturjarosz.task.project.model.Project} of given Id by ProjectDto data.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
-     *
-     * @param projectId
-     * @param projectDto
      */
     ProjectDto updateProject(Long projectId, ProjectDto projectDto);
 
@@ -43,8 +34,6 @@ public interface ProjectApplicationService {
      * Removes {@link com.arturjarosz.task.project.model.Project} of given Id.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
-     *
-     * @param projectId
      */
     void removeProject(Long projectId);
 
@@ -52,58 +41,37 @@ public interface ProjectApplicationService {
      * Changes project status to Signed and updates data on the project based on the {@link ProjectContractDto}.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
-     *
-     * @param projectId
-     * @param projectContractDto
      */
     ProjectDto signProjectContract(Long projectId, ProjectContractDto projectContractDto);
 
     /**
      * Finishes {@link com.arturjarosz.task.project.model.Project}.
-     *
-     * @param projectId
-     * @param projectContractDto
-     * @return
      */
     ProjectDto finishProject(Long projectId,
                              ProjectContractDto projectContractDto);
 
     /**
      * Loads list of all Projects Data.
-     *
-     * @return
      */
     List<ProjectDto> getProjects();
 
     /**
      * Set Project with projectId as rejected. If Project does not exist, new exception will be thrown.
-     *
-     * @param projectId
-     * @return
      */
     ProjectDto rejectProject(Long projectId);
 
     /**
      * Reopens once rejected project.
-     *
-     * @param projectId
-     * @return
      */
     ProjectDto reopenProject(Long projectId);
 
     /**
      * Make new offer to Project for value in offerDto.
-     *
-     * @param projectId
-     * @param offerDto
-     * @return
      */
     ProjectDto makeNewOffer(Long projectId, OfferDto offerDto);
 
     /**
      * Mark offer of Project with projectId as accepted and
-     *
-     * @param projectId
      */
     ProjectDto acceptOffer(Long projectId);
 }

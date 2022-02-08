@@ -12,8 +12,6 @@ public interface StageStatusTransitionListener extends StatusTransitionListener<
     /**
      * When there has been a change in status of Stage, this method should be fired and checked whether some changes to
      * Project is required.
-     *
-     * @param project
      */
     void onStageStatusChange(Project project);
 }

@@ -27,8 +27,8 @@ public class SystemParameterQueryServiceImpl extends AbstractQueryService<QSyste
     }
 
     @Override
-    public SystemParameterDto getSystemParameter(long id) {
-        return this.queryFromAggregate().where(SYSTEM_PARAMETER.id.eq(id))
+    public SystemParameterDto getSystemParameter(long systemParameterId) {
+        return this.queryFromAggregate().where(SYSTEM_PARAMETER.id.eq(systemParameterId))
                 .select(Projections.bean(SystemParameterDto.class, SYSTEM_PARAMETER.id, SYSTEM_PARAMETER.name,
                         SYSTEM_PARAMETER.type.stringValue().as("type"), SYSTEM_PARAMETER.value,
                         SYSTEM_PARAMETER.defaultValue, SYSTEM_PARAMETER.singleValue)).fetchOne();

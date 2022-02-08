@@ -11,10 +11,19 @@ public interface SystemParameterQueryService {
      */
     SystemParameterDto getSystemPropertyByName(String name);
 
-    SystemParameterDto getSystemParameter(long id);
+    /**
+     * Loads SystemParameterDto of given systemParameterId
+     */
+    SystemParameterDto getSystemParameter(long systemParameterId);
 
+    /**
+     * Loads names of all system parameters.
+     */
     List<String> getSystemParametersNames();
 
+    /**
+     * Loads all systemParameterDtos.
+     */
     List<SystemParameterDto> getSystemParameters();
 }
 

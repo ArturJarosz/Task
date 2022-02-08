@@ -10,9 +10,6 @@ public interface ClientApplicationService {
      * Creates {@link com.arturjarosz.task.client.model.Client} from given {@link ClientDto}.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
-     *
-     * @param clientDto
-     * @return
      */
     ClientDto createClient(ClientDto clientDto);
 
@@ -20,9 +17,6 @@ public interface ClientApplicationService {
      * Loads basic data for {@link com.arturjarosz.task.client.model.Client} by given Id.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
-     *
-     * @param clientId
-     * @return
      */
     ClientDto getClientBasicData(Long clientId);
 
@@ -30,8 +24,6 @@ public interface ClientApplicationService {
      * Removes {@link com.arturjarosz.task.client.model.Client} by given Id.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
-     *
-     * @param clientId
      */
     void removeClient(Long clientId);
 
@@ -39,9 +31,6 @@ public interface ClientApplicationService {
      * Loads all data for {@link com.arturjarosz.task.client.model.Client} by given Id.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
-     *
-     * @param clientId
-     * @return
      */
     ClientDto getClient(Long clientId);
 
@@ -49,16 +38,11 @@ public interface ClientApplicationService {
      * Updates {@link com.arturjarosz.task.client.model.Client} of given Id be data provided in ClientDto.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
-     *
-     * @param clientId
-     * @param clientDto
      */
     ClientDto updateClient(Long clientId, ClientDto clientDto);
 
     /**
      * Loads list of basic clients data or all existing clients.
-     *
-     * @return
      */
     List<ClientDto> getBasicClients();
 }
