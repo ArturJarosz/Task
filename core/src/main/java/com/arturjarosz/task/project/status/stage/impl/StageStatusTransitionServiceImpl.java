@@ -83,7 +83,7 @@ public class StageStatusTransitionServiceImpl implements StageStatusTransitionSe
         if (this.stageHasOnlyTasksInToDoStatus(stageId)) {
             this.reopenToToDo(project, stageId);
         } else {
-            this.rejectFromInProgress(project, stageId);
+            this.reopenToInProgress(project, stageId);
         }
     }
 
