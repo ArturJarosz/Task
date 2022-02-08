@@ -1662,6 +1662,159 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
     }
 
+    @Transactional
+    def "65 Reopening stage with tasks only in TO_DO and REJECTED status reopens stage to TO_DO status"(){
+        given: "Rejected stage with tasks only in TO_DO and REJECTED statuses"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
+            TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
+            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
+            this.rejectTask(projectDto.id, stageDto.id, taskDto11.id)
+            this.rejectStage(projectDto.id, stageDto.id)
+        expect: "Stage is in REJECTED status"
+            this.getStageStatus(projectDto.id, stageDto.id) == StageStatus.REJECTED
+        when: "Reopening stage"
+            def stageReopenResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(
+                    this.createStageUri(projectDto.id, stageDto.id) + "/reopen"
+            ))).andReturn().response
+        then: "Response code is 200"
+            stageReopenResponse.getStatus() == HttpStatus.OK.value()
+        and: "Changes stage status to TO_DO"
+            this.getStageStatus(stageReopenResponse) == StageStatus.TO_DO
+    }
+
+    @Transactional
+    def "66 Reopening stage with at least one task in IN_PROGRESS changes stage status to IN_PROGRESS"(){
+        given: "Rejected stage at least one task in IN_PROGRESS status"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
+            TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
+            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
+            this.rejectTask(projectDto.id, stageDto.id, taskDto11.id)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
+            this.rejectStage(projectDto.id, stageDto.id)
+        expect: "Stage is in REJECTED status"
+            this.getStageStatus(projectDto.id, stageDto.id) == StageStatus.REJECTED
+        when: "Reopening stage"
+            def stageReopenResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(
+                    this.createStageUri(projectDto.id, stageDto.id) + "/reopen"
+            ))).andReturn().response
+        then: "Response code is 200"
+            stageReopenResponse.getStatus() == HttpStatus.OK.value()
+        and: "Changes stage status to IN_PROGRESS"
+            this.getStageStatus(stageReopenResponse) == StageStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "67 Reopening stage with at least one task in COMPLETED changes stage status to IN_PROGRESS"(){
+        given: "Rejected stage at least one task in COMPLETED status"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
+            TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
+            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
+            this.rejectTask(projectDto.id, stageDto.id, taskDto11.id)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.COMPLETED)
+            this.rejectStage(projectDto.id, stageDto.id)
+        expect: "Stage is in REJECTED status"
+            this.getStageStatus(projectDto.id, stageDto.id) == StageStatus.REJECTED
+        when: "Reopening stage"
+            def stageReopenResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(
+                    this.createStageUri(projectDto.id, stageDto.id) + "/reopen"
+            ))).andReturn().response
+        then: "Response code is 200"
+            stageReopenResponse.getStatus() == HttpStatus.OK.value()
+        and: "Changes stage status to IN_PROGRESS"
+            this.getStageStatus(stageReopenResponse) == StageStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "68 Reopening stage to TO_DO on project in COMPLETED status changes project status to IN_PROGRESS"(){
+        given: "Existing project with stages in COMPLETED and REJECTED"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            TaskDto taskDto12 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto3.id)
+            this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.COMPLETED)
+            this.rejectStage(projectDto.id, stageDto2.id)
+            this.rejectStage(projectDto.id, stageDto3.id)
+        expect: "Project is in COMPLETED "
+            this.getProjectStatus(projectDto.id) == ProjectStatus.COMPLETED
+        when: "Reopening stage to TO_DO"
+            def stageReopenResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(
+                    this.createStageUri(projectDto.id, stageDto3.id) + "/reopen"
+            ))).andReturn().response
+        then: "Response code is 200"
+            stageReopenResponse.getStatus() == HttpStatus.OK.value()
+        and: "Changes project status to IN_PROGRESS"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "69 Reopening stage to IN_PROGRESS on project in TO_DO status changes project status to IN_PROGRESS"(){
+        given: "Existing project with stages in COMPLETED and REJECTED"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            TaskDto taskDto12 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto3.id)
+            this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.rejectStage(projectDto.id, stageDto1.id)
+            this.rejectStage(projectDto.id, stageDto2.id)
+        expect: "Project is in TO_DO "
+            this.getProjectStatus(projectDto.id) == ProjectStatus.TO_DO
+        when: "Reopening stage to IN_PROGRESS"
+            def stageReopenResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(
+                    this.createStageUri(projectDto.id, stageDto1.id) + "/reopen"
+            ))).andReturn().response
+        then: "Response code is 200"
+            stageReopenResponse.getStatus() == HttpStatus.OK.value()
+        and: "Changes project status to IN_PROGRESS"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "70 Reopening stage to IN_PROGRESS on project in COMPLETED status changes project status to IN_PROGRESS"(){
+        given: "Existing project with stages in COMPLETED and REJECTED"
+            ProjectDto projectDto = this.createProject()
+            this.acceptProjectOffer(projectDto.id)
+            StageDto stageDto1 = this.createStage(projectDto.id)
+            StageDto stageDto2 = this.createStage(projectDto.id)
+            StageDto stageDto3 = this.createStage(projectDto.id)
+            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            TaskDto taskDto12 = this.createTask(projectDto.id, stageDto2.id)
+            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto3.id)
+            this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto13.id, TaskStatus.COMPLETED)
+            this.rejectStage(projectDto.id, stageDto1.id)
+            this.rejectStage(projectDto.id, stageDto2.id)
+        expect: "Project is in COMPLETED "
+            this.getProjectStatus(projectDto.id) == ProjectStatus.COMPLETED
+        when: "Reopening stage to IN_PROGRESS"
+            def stageReopenResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(
+                    this.createStageUri(projectDto.id, stageDto3.id) + "/reopen"
+            ))).andReturn().response
+        then: "Response code is 200"
+            stageReopenResponse.getStatus() == HttpStatus.OK.value()
+        and: "Changes project status to IN_PROGRESS"
+            this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
+    }
+
     // HELPER METHODS
 
     private ArchitectDto createArchitect() {
@@ -1746,6 +1899,12 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     private MockHttpServletResponse rejectStage(long projectId, long stageId) {
         return this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(
                 this.createStageUri(projectId, stageId) + "/reject"
+        ))).andReturn().response
+    }
+
+    private MockHttpServletResponse rejectTask(long projectId, long stageId, long taskId) {
+        return this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(
+                this.createTaskUri(projectId, stageId, taskId) + "/reject"
         ))).andReturn().response
     }
 
