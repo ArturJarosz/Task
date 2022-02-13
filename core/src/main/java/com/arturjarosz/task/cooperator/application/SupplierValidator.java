@@ -39,6 +39,9 @@ public class SupplierValidator {
                 CooperatorExceptionCodes.NAME));
         assertNotEmpty(supplierDto.getName(), createMessageCode(ExceptionCodes.EMPTY, CooperatorExceptionCodes.SUPPLIER,
                 CooperatorExceptionCodes.NAME));
+        assertNotNull(supplierDto.getCategory(),
+                createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.SUPPLIER,
+                        CooperatorExceptionCodes.CATEGORY));
     }
 
     public void validateSupplierExistence(Long supplierId) {
