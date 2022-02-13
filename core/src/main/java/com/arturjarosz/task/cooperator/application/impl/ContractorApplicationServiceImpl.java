@@ -16,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.arturjarosz.task.cooperator.application.ContractorValidator.validateCreateContractorDto;
-
 @ApplicationService
 public class ContractorApplicationServiceImpl implements ContractorApplicationService {
     private static final Logger LOG = LoggerFactory.getLogger(ContractorApplicationServiceImpl.class);
@@ -36,7 +34,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     @Override
     public CreatedEntityDto createContractor(ContractorDto contractorDto) {
         LOG.debug("Creating Contractor.");
-        validateCreateContractorDto(contractorDto);
+        this.contractorValidator.validateCreateContractorDto(contractorDto);
         Cooperator cooperator = ContractorDtoMapper.INSTANCE.createContractorDtoToCooperator(contractorDto);
         this.cooperatorRepository.save(cooperator);
         LOG.debug("Contractor created.");
@@ -48,7 +46,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     public void updateContractor(Long contractorId, ContractorDto contractorDto) {
         LOG.debug("Updating Contractor with id {}", contractorId);
         this.contractorValidator.validateContractorExistence(contractorId);
-        ContractorValidator.validateUpdateContractorDto(contractorDto);
+        this.contractorValidator.validateUpdateContractorDto(contractorDto);
         Cooperator cooperator = this.cooperatorRepository.load(contractorId);
         cooperator.update(contractorDto.getName(), contractorDto.getCategory().asCooperatorCategory(),
                 contractorDto.getEmail(), contractorDto.getTelephone(), contractorDto.getNote());
