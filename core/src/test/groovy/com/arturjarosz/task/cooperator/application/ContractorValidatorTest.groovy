@@ -6,6 +6,7 @@ import com.arturjarosz.task.cooperator.model.Cooperator
 import com.arturjarosz.task.cooperator.model.CooperatorCategory
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Unroll
 
 class ContractorValidatorTest extends Specification {
     private final static Long EXISTING_CONTRACTOR_ID = 1L
@@ -22,6 +23,7 @@ class ContractorValidatorTest extends Specification {
     @Subject
     def contractorValidator = new ContractorValidator(cooperatorRepository)
 
+    @Unroll
     def "validateCreateContractorDto throws exception with proper error message"() {
         given: "ContractorDto"
             ContractorDto contractorDto = givenContractorDto
@@ -59,6 +61,7 @@ class ContractorValidatorTest extends Specification {
             noExceptionThrown()
     }
 
+    @Unroll("Runnning test for #exceptionMessage")
     def "validateUpdateContractorDto throws exception with proper error message"() {
         given: "ContractorDto"
             ContractorDto contractorDto = givenContractorDto
