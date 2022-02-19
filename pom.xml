@@ -18,7 +18,7 @@
     </parent>
     <groupId>com.arturjarosz</groupId>
     <artifactId>task-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.5.0</version>
     <name>task-parent</name>
 
     <properties>
@@ -43,6 +43,7 @@
         <gmavenplus-plugin.version>1.5</gmavenplus-plugin.version>
         <liquibase-maven-plugin.version>3.8.5</liquibase-maven-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <versions-maven-plugin.version>2.9.0</versions-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -54,4 +55,12 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>versions-maven-plugin</artifactId>
+            <version>${versions-maven-plugin.version}</version>
+        </dependency>
+    </dependencies>
 </project>
