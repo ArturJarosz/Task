@@ -43,6 +43,7 @@ while getopts n:f:h flag; do
 done
 
 if [[ -n "$NEW_VERSION" && -n "$FUTURE_VERSION" ]]; then
+    cd ..
     echo "Using $NEW_VERSION for release"
     echo "Using $FUTURE_VERSION for future develop"
 
