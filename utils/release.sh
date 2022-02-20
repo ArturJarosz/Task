@@ -64,21 +64,3 @@ if [[ -n "$NEW_VERSION" && -n "$FUTURE_VERSION" ]]; then
 
 fi
 
-
-
-
-# change version in POM
-
-# add changes to commit
-
-# commit changed version
-
-# change branch to realase branch
-
-# change version to one without snapshot
-
-# commit to release branch
-
-# merge to master ?
-
-# go back to develop branch
