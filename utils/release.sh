@@ -53,7 +53,7 @@ if [[ -n "$NEW_VERSION" && -n "$FUTURE_VERSION" ]]; then
     mvn versions:set -DnewVersion=$NEW_VERSION -DgenerateBackupPoms=false -f ../pom.xml
 
     echo "Committing new version to release branch"
-    git add "**\pom.xml"
+    git add ":**\pom.xml"
     git commit -m "Changing version to $NEW_VERSION"
 
     echo "Changing version on develop to $FUTURE_VERSION-SNAPSHOT"
