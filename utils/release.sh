@@ -51,7 +51,7 @@ if [[ -n "$NEW_VERSION" && -n "$FUTURE_VERSION" ]]; then
     git checkout -b release/release_"$NEW_VERSION"
 
     echo "Changing version in poms for release to $NEW_VERSION"
-    mvn versions:set -DnewVersion=$NEW_VERSION -DgenerateBackupPoms=false -f ../pom.xml
+    mvn versions:set -DnewVersion=$NEW_VERSION -DgenerateBackupPoms=false -f pom.xml
 
     echo "Committing new version to release branch"
     git add ":**\pom.xml"
@@ -59,7 +59,7 @@ if [[ -n "$NEW_VERSION" && -n "$FUTURE_VERSION" ]]; then
 
     echo "Changing version on develop to $FUTURE_VERSION-SNAPSHOT"
     git checkout develop
-    mvn versions:set -DnewVersion=$FUTURE_VERSION-SNAPSHOT -DgenerateBackupPoms=false -f ../pom.xml
+    mvn versions:set -DnewVersion=$FUTURE_VERSION-SNAPSHOT -DgenerateBackupPoms=false -f pom.xml
     git add ":**\pom.xml"
     git commit -m "Changing version to $FUTURE_VERSION-SNAPSHOT"
 
