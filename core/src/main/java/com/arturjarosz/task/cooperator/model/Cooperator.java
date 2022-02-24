@@ -83,6 +83,9 @@ public class Cooperator extends AbstractAggregateRoot {
     }
 
     public String getEmail() {
+        if (this.email == null) {
+            return null;
+        }
         return this.email.getValue();
     }
 
