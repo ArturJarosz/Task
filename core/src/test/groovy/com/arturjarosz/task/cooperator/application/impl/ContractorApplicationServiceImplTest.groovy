@@ -9,15 +9,15 @@ import spock.lang.Specification
 import spock.lang.Subject
 
 class ContractorApplicationServiceImplTest extends Specification {
-    private final static String NAME = "name"
-    private final static String UPDATED_NAME = "updated_name"
-    private final static CooperatorCategory.ContractorCategory CATEGORY = CooperatorCategory.ContractorCategory.ARTIST
-    private final static CooperatorCategory.ContractorCategory UPDATED_CATEGORY =
+    final static String NAME = "name"
+    final static String UPDATED_NAME = "updated_name"
+    final static CooperatorCategory.ContractorCategory CATEGORY = CooperatorCategory.ContractorCategory.ARTIST
+    final static CooperatorCategory.ContractorCategory UPDATED_CATEGORY =
             CooperatorCategory.ContractorCategory.CARPENTER
-    private final static String UPDATED_EMAIL = "email@email.com"
-    private final static String TELEPHONE = "123456789"
-    private final static String NOTE = "note"
-    private final static Long CONTRACTOR_ID = 1L
+    final static String UPDATED_EMAIL = "email@email.com"
+    final static String TELEPHONE = "123456789"
+    final static String NOTE = "note"
+    final static Long CONTRACTOR_ID = 1L
 
     def cooperatorRepository = Mock(CooperatorRepositoryImpl)
     def contractorValidator = Mock(ContractorValidator)
@@ -50,7 +50,8 @@ class ContractorApplicationServiceImplTest extends Specification {
 
     def "updateContractor should call validateContractorExistence on contractorValidator"() {
         given:
-            def updateContractorDto = new ContractorDto(name: UPDATED_NAME, category: UPDATED_CATEGORY, email: UPDATED_EMAIL,
+            def updateContractorDto = new ContractorDto(name: UPDATED_NAME, category: UPDATED_CATEGORY,
+                    email: UPDATED_EMAIL,
                     telephone: TELEPHONE, note: NOTE)
             this.mockCooperatorRepositoryLoad(CONTRACTOR_ID)
 
@@ -63,7 +64,8 @@ class ContractorApplicationServiceImplTest extends Specification {
 
     def "updateContractor should call validateUpdateContractorDto on contractorValidator"() {
         given:
-            def updateContractorDto = new ContractorDto(name: UPDATED_NAME, category: UPDATED_CATEGORY, email: UPDATED_EMAIL,
+            def updateContractorDto = new ContractorDto(name: UPDATED_NAME, category: UPDATED_CATEGORY,
+                    email: UPDATED_EMAIL,
                     telephone: TELEPHONE, note: NOTE)
             this.mockCooperatorRepositoryLoad(CONTRACTOR_ID)
 
@@ -76,7 +78,8 @@ class ContractorApplicationServiceImplTest extends Specification {
 
     def "updateContractor should update data and save changed Contractor"() {
         given:
-            def updateContractorDto = new ContractorDto(name: UPDATED_NAME, category: UPDATED_CATEGORY, email: UPDATED_EMAIL,
+            def updateContractorDto = new ContractorDto(name: UPDATED_NAME, category: UPDATED_CATEGORY,
+                    email: UPDATED_EMAIL,
                     telephone: TELEPHONE, note: NOTE)
             this.mockCooperatorRepositoryLoad(CONTRACTOR_ID)
 
