@@ -21,7 +21,7 @@ databaseChangeLog:
       file: "financial-data/financial-data-tables.yml"
       relativeToChangelogFile: true
   - include:
-      file: "supervision/supervision-tables.xml"
+      file: "supervision/supervision-tables.yml"
       relativeToChangelogFile: true
   - include:
       file: "system-parameter/system-parameter-tables.yml"
