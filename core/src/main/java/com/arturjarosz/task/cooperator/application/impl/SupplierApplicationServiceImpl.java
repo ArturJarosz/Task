@@ -32,7 +32,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     @Override
     public CreatedEntityDto createSupplier(SupplierDto supplierDto) {
         LOG.debug("Creating Supplier.");
-        SupplierValidator.validateCreateSupplierDto(supplierDto);
+        this.supplierValidator.validateCreateSupplierDto(supplierDto);
         Cooperator cooperator = SupplierDtoMapper.INSTANCE.createSupplierDtoToCooperator(supplierDto);
         this.cooperatorRepository.save(cooperator);
         LOG.debug("Supplier created.");
@@ -44,7 +44,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     public void updateSupplier(Long supplierId, SupplierDto supplierDto) {
         LOG.debug("Updating Supplier with id {}.", supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
-        SupplierValidator.validateUpdateSupplierDto(supplierDto);
+        this.supplierValidator.validateUpdateSupplierDto(supplierDto);
         Cooperator cooperator = this.cooperatorRepository.load(supplierId);
         cooperator.update(supplierDto.getName(), supplierDto.getCategory().asCooperatorCategory(),
                 supplierDto.getEmail(), supplierDto.getTelephone(), supplierDto.getNote());

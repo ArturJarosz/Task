@@ -22,7 +22,7 @@ public class SupplierValidator {
         this.cooperatorRepository = cooperatorRepository;
     }
 
-    public static void validateCreateSupplierDto(SupplierDto supplierDto) {
+    public void validateCreateSupplierDto(SupplierDto supplierDto) {
         assertNotNull(supplierDto, createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.SUPPLIER));
         assertNotNull(supplierDto.getName(), createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.SUPPLIER,
                 CooperatorExceptionCodes.NAME));
@@ -33,7 +33,7 @@ public class SupplierValidator {
                         CooperatorExceptionCodes.CATEGORY));
     }
 
-    public static void validateUpdateSupplierDto(SupplierDto supplierDto) {
+    public void validateUpdateSupplierDto(SupplierDto supplierDto) {
         assertNotNull(supplierDto, createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.SUPPLIER));
         assertNotNull(supplierDto.getName(), createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.SUPPLIER,
                 CooperatorExceptionCodes.NAME));
