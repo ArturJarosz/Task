@@ -1,8 +1,8 @@
 package com.arturjarosz.task.supplier.rest;
 
-import com.arturjarosz.task.cooperator.application.dto.SupplierDto;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import com.arturjarosz.task.supplier.application.SupplierApplicationService;
+import com.arturjarosz.task.supplier.application.dto.SupplierDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

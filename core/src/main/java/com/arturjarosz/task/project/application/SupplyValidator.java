@@ -1,33 +1,34 @@
 package com.arturjarosz.task.project.application;
 
-import com.arturjarosz.task.cooperator.domain.CooperatorExceptionCodes;
-import com.arturjarosz.task.cooperator.query.CooperatorQueryService;
 import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import com.arturjarosz.task.supplier.query.SupplierQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @Component
 public class SupplyValidator {
 
-    private final CooperatorQueryService cooperatorQueryService;
+    private final SupplierQueryService supplierQueryService;
     private final ProjectQueryService projectQueryService;
 
     @Autowired
-    public SupplyValidator(CooperatorQueryService cooperatorQueryService, ProjectQueryService projectQueryService) {
-        this.cooperatorQueryService = cooperatorQueryService;
+    public SupplyValidator(SupplierQueryService supplierQueryService, ProjectQueryService projectQueryService) {
+        this.supplierQueryService = supplierQueryService;
         this.projectQueryService = projectQueryService;
     }
 
 
     public void validateSupplierExistence(Long supplierId) {
-        assertIsTrue(this.cooperatorQueryService.supplierWithIdExists(supplierId),
-                createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.SUPPLIER), supplierId);
+        assertIsTrue(this.supplierQueryService.supplierWithIdExists(supplierId),
+                createMessageCode(ExceptionCodes.NOT_EXIST, SupplyExceptionCodes.SUPPLIER), supplierId);
     }
 
     public void validateCreateSupplyDto(SupplyDto supplyDto) {

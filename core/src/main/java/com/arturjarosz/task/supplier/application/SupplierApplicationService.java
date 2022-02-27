@@ -1,7 +1,7 @@
 package com.arturjarosz.task.supplier.application;
 
-import com.arturjarosz.task.cooperator.application.dto.SupplierDto;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import com.arturjarosz.task.supplier.application.dto.SupplierDto;
 
 import java.util.List;
 

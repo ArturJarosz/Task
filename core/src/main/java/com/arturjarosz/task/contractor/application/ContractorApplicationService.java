@@ -1,6 +1,6 @@
 package com.arturjarosz.task.contractor.application;
 
-import com.arturjarosz.task.cooperator.application.dto.ContractorDto;
+import com.arturjarosz.task.contractor.application.dto.ContractorDto;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.arturjarosz.task.contractor.rest;
 
 import com.arturjarosz.task.contractor.application.ContractorApplicationService;
-import com.arturjarosz.task.cooperator.application.dto.ContractorDto;
+import com.arturjarosz.task.contractor.application.dto.ContractorDto;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

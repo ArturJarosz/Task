@@ -1,9 +1,9 @@
 package com.arturjarosz.task.cooperator.application
 
-import com.arturjarosz.task.cooperator.application.dto.SupplierDto
-import com.arturjarosz.task.cooperator.infrastructure.impl.CooperatorRepositoryImpl
-import com.arturjarosz.task.cooperator.model.Cooperator
-import com.arturjarosz.task.cooperator.model.CooperatorCategory
+import com.arturjarosz.task.supplier.model.Supplier
+import com.arturjarosz.task.supplier.model.SupplierCategory
+import com.arturjarosz.task.supplier.application.SupplierValidator
+import com.arturjarosz.task.supplier.application.dto.SupplierDto
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -12,8 +12,7 @@ class SupplierValidatorTest extends Specification {
     private final static Long EXISTING_CONTRACTOR_ID = 5L
     private final static Long NOT_EXISTING_SUPPLIER_ID = 10L
     private final static String NAME = "name"
-    private final static CooperatorCategory.SupplierCategory SUPPLIER_CATEGORY = CooperatorCategory.SupplierCategory.PAINT_SHOP
-    private final static CooperatorCategory.ContractorCategory CONTRACTOR_CATEGORY = CooperatorCategory.ContractorCategory.ARTIST
+    private final static SupplierCategory SUPPLIER_CATEGORY = SupplierCategory.PAINT_SHOP
 
     def cooperatorRepository = Mock(CooperatorRepositoryImpl)
 
@@ -104,41 +103,6 @@ class SupplierValidatorTest extends Specification {
         then: "Exception with correct"
             Exception exception = thrown()
             exception.message == "notExist.supplier"
-    }
-
-    def "validateSupplierExistence throws an exception when Cooperator of given supplierId is not Supplier"() {
-        given: "Existing Contractor"
-            this.mockCooperatorRepositoryLoadOfContractor()
-
-        when: "Calling validateSupplierExistence with supplierId of existing Contractor"
-            this.supplierValidator.validateSupplierExistence(EXISTING_CONTRACTOR_ID)
-
-        then: "Exception with correct"
-            Exception exception = thrown()
-            exception.message == "notExist.supplier"
-    }
-
-    def "validateSupplierExistence does not throw any exception on supplierId of existing Supplier"() {
-        given: "Existing Supplier"
-            this.mockCooperatorRepositoryLoadOfExistingSupplier()
-
-        when: "Calling validateSupplierExistence with supplierId of existing Supplier"
-            this.supplierValidator.validateSupplierExistence(EXISTING_SUPPLIER_ID)
-
-        then: "Exception with correct"
-            noExceptionThrown()
-    }
-
-    private void mockCooperatorRepositoryLoadOfExistingSupplier() {
-        1 * this.cooperatorRepository.load(EXISTING_SUPPLIER_ID) >> Cooperator.createSupplier(NAME, SUPPLIER_CATEGORY)
-    }
-
-    private void mockCooperatorRepositoryLoadOfNotExistingSupplier() {
-        1 * this.cooperatorRepository.load(NOT_EXISTING_SUPPLIER_ID) >> null
-    }
-
-    private void mockCooperatorRepositoryLoadOfContractor() {
-        1 * this.cooperatorRepository.load(EXISTING_CONTRACTOR_ID) >> Cooperator.createContractor(NAME, CONTRACTOR_CATEGORY)
     }
 
 }

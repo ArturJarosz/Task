@@ -1,10 +1,10 @@
 package com.arturjarosz.task.supplier.application;
 
-import com.arturjarosz.task.cooperator.application.dto.SupplierDto;
-import com.arturjarosz.task.cooperator.infrastructure.CooperatorRepository;
-import com.arturjarosz.task.cooperator.model.Cooperator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import com.arturjarosz.task.supplier.application.dto.SupplierDto;
+import com.arturjarosz.task.supplier.intrastructure.SupplierRepository;
+import com.arturjarosz.task.supplier.model.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,12 +16,11 @@ import java.util.stream.Collectors;
 public class SupplierApplicationServiceImpl implements SupplierApplicationService {
     private static final Logger LOG = LoggerFactory.getLogger(SupplierApplicationServiceImpl.class);
 
-    private final CooperatorRepository cooperatorRepository;
+    private final SupplierRepository supplierRepository;
     private final SupplierValidator supplierValidator;
 
-    public SupplierApplicationServiceImpl(CooperatorRepository cooperatorRepository,
-                                          SupplierValidator supplierValidator) {
-        this.cooperatorRepository = cooperatorRepository;
+    public SupplierApplicationServiceImpl(SupplierRepository supplierRepository, SupplierValidator supplierValidator) {
+        this.supplierRepository = supplierRepository;
         this.supplierValidator = supplierValidator;
     }
 
@@ -29,11 +28,11 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     @Override
     public CreatedEntityDto createSupplier(SupplierDto supplierDto) {
         LOG.debug("Creating Supplier.");
-        this.supplierValidator.validateCreateSupplierDto(supplierDto);
-        Cooperator cooperator = SupplierDtoMapper.INSTANCE.createSupplierDtoToCooperator(supplierDto);
-        this.cooperatorRepository.save(cooperator);
+        SupplierValidator.validateCreateSupplierDto(supplierDto);
+        Supplier supplier = SupplierDtoMapper.INSTANCE.supplierDtoToSupplier(supplierDto);
+        this.supplierRepository.save(supplier);
         LOG.debug("Supplier created.");
-        return new CreatedEntityDto(cooperator.getId());
+        return new CreatedEntityDto(supplier.getId());
     }
 
     @Transactional
@@ -41,11 +40,11 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     public void updateSupplier(Long supplierId, SupplierDto supplierDto) {
         LOG.debug("Updating Supplier with id {}.", supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
-        this.supplierValidator.validateUpdateSupplierDto(supplierDto);
-        Cooperator cooperator = this.cooperatorRepository.load(supplierId);
-        cooperator.update(supplierDto.getName(), supplierDto.getCategory().asCooperatorCategory(),
-                supplierDto.getEmail(), supplierDto.getTelephone(), supplierDto.getNote());
-        this.cooperatorRepository.save(cooperator);
+        SupplierValidator.validateUpdateSupplierDto(supplierDto);
+        Supplier supplier = this.supplierRepository.load(supplierId);
+        supplier.update(supplierDto.getName(), supplierDto.getCategory(), supplierDto.getEmail(),
+                supplierDto.getTelephone(), supplierDto.getNote());
+        this.supplierRepository.save(supplier);
         LOG.debug("Supplier with id {} updated.", supplierId);
     }
 
@@ -55,7 +54,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
         LOG.debug("Loading Supplier with id {}", supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
         this.supplierValidator.validateSupplierHasNoSupply(supplierId);
-        this.cooperatorRepository.remove(supplierId);
+        this.supplierRepository.remove(supplierId);
         LOG.debug("Supplier with id {} deleted.", supplierId);
     }
 
@@ -63,8 +62,8 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     public SupplierDto getSupplier(Long supplierId) {
         LOG.debug("Loading Supplier with id {}", supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
-        Cooperator cooperator = this.cooperatorRepository.load(supplierId);
-        SupplierDto supplierDto = SupplierDtoMapper.INSTANCE.cooperatorToSupplierDto(cooperator);
+        Supplier supplier = this.supplierRepository.load(supplierId);
+        SupplierDto supplierDto = SupplierDtoMapper.INSTANCE.cooperatorToSupplierDto(supplier);
         LOG.debug("Supplier with id {} loaded.", supplierId);
         return supplierDto;
     }
@@ -72,7 +71,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     @Override
     public List<SupplierDto> getBasicSuppliers() {
         LOG.debug("Loading Suppliers list");
-        return this.cooperatorRepository.loadAll().stream().map(SupplierDtoMapper.INSTANCE::cooperatorToBasicSupplier)
+        return this.supplierRepository.loadAll().stream().map(SupplierDtoMapper.INSTANCE::supplierToBasicSupplier)
                 .collect(Collectors.toList());
     }
 }

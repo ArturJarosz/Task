@@ -1,14 +1,12 @@
 package com.arturjarosz.task.contractor.application;
 
-import com.arturjarosz.task.cooperator.application.dto.ContractorDto;
-import com.arturjarosz.task.cooperator.domain.CooperatorExceptionCodes;
-import com.arturjarosz.task.cooperator.infrastructure.CooperatorRepository;
-import com.arturjarosz.task.cooperator.model.Cooperator;
-import com.arturjarosz.task.cooperator.model.CooperatorType;
+import com.arturjarosz.task.contractor.application.dto.ContractorDto;
+import com.arturjarosz.task.contractor.domain.ContractorExceptionCodes;
+import com.arturjarosz.task.contractor.infrastructure.ContractorRepository;
+import com.arturjarosz.task.contractor.model.Contractor;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -16,40 +14,38 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 @Component
 public class ContractorValidator {
 
-    private final CooperatorRepository cooperatorRepository;
+    private final ContractorRepository contractorRepository;
 
-    public ContractorValidator(CooperatorRepository cooperatorRepository) {
-        this.cooperatorRepository = cooperatorRepository;
+    public ContractorValidator(ContractorRepository contractorRepository) {
+        this.contractorRepository = contractorRepository;
     }
 
     public void validateCreateContractorDto(ContractorDto contractorDto) {
-        assertNotNull(contractorDto, createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.CONTRACTOR));
+        assertNotNull(contractorDto, createMessageCode(ExceptionCodes.NULL, ContractorExceptionCodes.CONTRACTOR));
         this.validateName(contractorDto.getName());
         assertNotNull(contractorDto.getCategory(),
-                createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.CONTRACTOR,
-                        CooperatorExceptionCodes.CATEGORY));
+                createMessageCode(ExceptionCodes.NULL, ContractorExceptionCodes.CONTRACTOR,
+                        ContractorExceptionCodes.CATEGORY));
     }
 
     public void validateUpdateContractorDto(ContractorDto contractorDto) {
-        assertNotNull(contractorDto, createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.CONTRACTOR));
+        assertNotNull(contractorDto, createMessageCode(ExceptionCodes.NULL, ContractorExceptionCodes.CONTRACTOR));
         this.validateName(contractorDto.getName());
         assertNotNull(contractorDto.getCategory(),
-                createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.CONTRACTOR,
-                        CooperatorExceptionCodes.CATEGORY));
+                createMessageCode(ExceptionCodes.NULL, ContractorExceptionCodes.CONTRACTOR,
+                        ContractorExceptionCodes.CATEGORY));
     }
 
     private void validateName(String name) {
-        assertNotNull(name, createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.CONTRACTOR,
-                CooperatorExceptionCodes.NAME));
-        assertNotEmpty(name, createMessageCode(ExceptionCodes.EMPTY, CooperatorExceptionCodes.CONTRACTOR,
-                CooperatorExceptionCodes.NAME));
+        assertNotNull(name, createMessageCode(ExceptionCodes.NULL, ContractorExceptionCodes.CONTRACTOR,
+                ContractorExceptionCodes.NAME));
+        assertNotEmpty(name, createMessageCode(ExceptionCodes.EMPTY, ContractorExceptionCodes.CONTRACTOR,
+                ContractorExceptionCodes.NAME));
     }
 
     public void validateContractorExistence(Long contractorId) {
-        Cooperator cooperator = this.cooperatorRepository.load(contractorId);
-        assertNotNull(cooperator, createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.CONTRACTOR));
-        assertIsTrue(cooperator.getType().equals(CooperatorType.CONTRACTOR),
-                createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.CONTRACTOR));
+        Contractor contractor = this.contractorRepository.load(contractorId);
+        assertNotNull(contractor, createMessageCode(ExceptionCodes.NOT_EXIST, ContractorExceptionCodes.CONTRACTOR));
     }
 
     public void validateContractorHasNoJobs(Long contractorId) {

@@ -1,11 +1,11 @@
-package com.arturjarosz.task.cooperator.application.dto;
+package com.arturjarosz.task.supplier.application.dto;
 
-import com.arturjarosz.task.cooperator.model.CooperatorCategory;
+import com.arturjarosz.task.supplier.model.SupplierCategory;
 
 import java.io.Serializable;
 
-public class ContractorDto implements Serializable {
-    private static final long serialVersionUID = 1761161251042111551L;
+public class SupplierDto implements Serializable {
+    private static final long serialVersionUID = -3835889627615624342L;
 
     private Long id;
     private String name;
@@ -13,9 +13,9 @@ public class ContractorDto implements Serializable {
     private String email;
     private String telephone;
     private Double jobsValue;
-    private CooperatorCategory.ContractorCategory category;
+    private SupplierCategory category;
 
-    public ContractorDto() {
+    public SupplierDto() {
         //needed by Hibernate
     }
 
@@ -59,11 +59,11 @@ public class ContractorDto implements Serializable {
         this.jobsValue = jobsValue;
     }
 
-    public CooperatorCategory.ContractorCategory getCategory() {
+    public SupplierCategory getCategory() {
         return this.category;
     }
 
-    public void setCategory(CooperatorCategory.ContractorCategory category) {
+    public void setCategory(SupplierCategory category) {
         this.category = category;
     }
 

@@ -1,14 +1,12 @@
 package com.arturjarosz.task.supplier.application;
 
-import com.arturjarosz.task.cooperator.application.dto.SupplierDto;
-import com.arturjarosz.task.cooperator.domain.CooperatorExceptionCodes;
-import com.arturjarosz.task.cooperator.infrastructure.CooperatorRepository;
-import com.arturjarosz.task.cooperator.model.Cooperator;
-import com.arturjarosz.task.cooperator.model.CooperatorType;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import com.arturjarosz.task.supplier.application.dto.SupplierDto;
+import com.arturjarosz.task.supplier.domain.SupplierExceptionCodes;
+import com.arturjarosz.task.supplier.intrastructure.SupplierRepository;
+import com.arturjarosz.task.supplier.model.Supplier;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -16,39 +14,35 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 @Component
 public class SupplierValidator {
 
-    private final CooperatorRepository cooperatorRepository;
+    private final SupplierRepository supplierRepository;
 
-    public SupplierValidator(CooperatorRepository cooperatorRepository) {
-        this.cooperatorRepository = cooperatorRepository;
+    public SupplierValidator(SupplierRepository supplierRepository) {
+        this.supplierRepository = supplierRepository;
     }
 
-    public void validateCreateSupplierDto(SupplierDto supplierDto) {
-        assertNotNull(supplierDto, createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.SUPPLIER));
-        assertNotNull(supplierDto.getName(), createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.SUPPLIER,
-                CooperatorExceptionCodes.NAME));
-        assertNotEmpty(supplierDto.getName(), createMessageCode(ExceptionCodes.EMPTY, CooperatorExceptionCodes.SUPPLIER,
-                CooperatorExceptionCodes.NAME));
-        assertNotNull(supplierDto.getCategory(),
-                createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.SUPPLIER,
-                        CooperatorExceptionCodes.CATEGORY));
+    public static void validateCreateSupplierDto(SupplierDto supplierDto) {
+        assertNotNull(supplierDto, createMessageCode(ExceptionCodes.NULL, SupplierExceptionCodes.SUPPLIER));
+        assertNotNull(supplierDto.getName(),
+                createMessageCode(ExceptionCodes.NULL, SupplierExceptionCodes.SUPPLIER, SupplierExceptionCodes.NAME));
+        assertNotEmpty(supplierDto.getName(),
+                createMessageCode(ExceptionCodes.EMPTY, SupplierExceptionCodes.SUPPLIER, SupplierExceptionCodes.NAME));
+        assertNotNull(supplierDto.getCategory(), createMessageCode(ExceptionCodes.NULL, SupplierExceptionCodes.SUPPLIER,
+                SupplierExceptionCodes.CATEGORY));
     }
 
-    public void validateUpdateSupplierDto(SupplierDto supplierDto) {
-        assertNotNull(supplierDto, createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.SUPPLIER));
-        assertNotNull(supplierDto.getName(), createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.SUPPLIER,
-                CooperatorExceptionCodes.NAME));
-        assertNotEmpty(supplierDto.getName(), createMessageCode(ExceptionCodes.EMPTY, CooperatorExceptionCodes.SUPPLIER,
-                CooperatorExceptionCodes.NAME));
-        assertNotNull(supplierDto.getCategory(),
-                createMessageCode(ExceptionCodes.NULL, CooperatorExceptionCodes.SUPPLIER,
-                        CooperatorExceptionCodes.CATEGORY));
+    public static void validateUpdateSupplierDto(SupplierDto supplierDto) {
+        assertNotNull(supplierDto, createMessageCode(ExceptionCodes.NULL, SupplierExceptionCodes.SUPPLIER));
+        assertNotNull(supplierDto.getName(),
+                createMessageCode(ExceptionCodes.NULL, SupplierExceptionCodes.SUPPLIER, SupplierExceptionCodes.NAME));
+        assertNotEmpty(supplierDto.getName(),
+                createMessageCode(ExceptionCodes.EMPTY, SupplierExceptionCodes.SUPPLIER, SupplierExceptionCodes.NAME));
+        assertNotNull(supplierDto.getCategory(), createMessageCode(ExceptionCodes.NULL, SupplierExceptionCodes.SUPPLIER,
+                SupplierExceptionCodes.CATEGORY));
     }
 
     public void validateSupplierExistence(Long supplierId) {
-        Cooperator cooperator = this.cooperatorRepository.load(supplierId);
-        assertNotNull(cooperator, createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.SUPPLIER));
-        assertIsTrue(cooperator.getType().equals(CooperatorType.SUPPLIER),
-                createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.SUPPLIER));
+        Supplier supplier = this.supplierRepository.load(supplierId);
+        assertNotNull(supplier, createMessageCode(ExceptionCodes.NOT_EXIST, SupplierExceptionCodes.SUPPLIER));
     }
 
     public void validateSupplierHasNoSupply(Long supplierId) {
