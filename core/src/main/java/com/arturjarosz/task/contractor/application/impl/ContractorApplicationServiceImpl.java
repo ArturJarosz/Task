@@ -35,10 +35,10 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     public CreatedEntityDto createContractor(ContractorDto contractorDto) {
         LOG.debug("Creating Contractor.");
         this.contractorValidator.validateCreateContractorDto(contractorDto);
-        Contractor cooperator = ContractorDtoMapper.INSTANCE.createContractorDtoToContractor(contractorDto);
-        this.contractorRepository.save(cooperator);
+        Contractor contractor = ContractorDtoMapper.INSTANCE.createContractorDtoToContractor(contractorDto);
+        this.contractorRepository.save(contractor);
         LOG.debug("Contractor created.");
-        return new CreatedEntityDto(cooperator.getId());
+        return new CreatedEntityDto(contractor.getId());
     }
 
     @Transactional
@@ -47,10 +47,10 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
         LOG.debug("Updating Contractor with id {}", contractorId);
         this.contractorValidator.validateContractorExistence(contractorId);
         this.contractorValidator.validateUpdateContractorDto(contractorDto);
-        Contractor cooperator = this.contractorRepository.load(contractorId);
-        cooperator.update(contractorDto.getName(), contractorDto.getCategory(),
+        Contractor contractor = this.contractorRepository.load(contractorId);
+        contractor.update(contractorDto.getName(), contractorDto.getCategory(),
                 contractorDto.getEmail(), contractorDto.getTelephone(), contractorDto.getNote());
-        this.contractorRepository.save(cooperator);
+        this.contractorRepository.save(contractor);
         LOG.debug("Contractor with id {} updated", contractorId);
     }
 
@@ -68,8 +68,8 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     public ContractorDto getContractor(Long contractorId) {
         LOG.debug("Loading Contractor with id {}.", contractorId);
         this.contractorValidator.validateContractorExistence(contractorId);
-        Contractor cooperator = this.contractorRepository.load(contractorId);
-        ContractorDto contractorDto = ContractorDtoMapper.INSTANCE.contractorToContractorDto(cooperator);
+        Contractor contractor = this.contractorRepository.load(contractorId);
+        ContractorDto contractorDto = ContractorDtoMapper.INSTANCE.contractorToContractorDto(contractor);
         LOG.debug("Contractor with id {} loaded", contractorId);
         return contractorDto;
     }
@@ -78,6 +78,6 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     public List<ContractorDto> getBasicContractors() {
         LOG.debug("Loading Contractors list");
         return this.contractorRepository.loadAll().stream()
-                .map(ContractorDtoMapper.INSTANCE::cooperatorToBasicContractor).collect(Collectors.toList());
+                .map(ContractorDtoMapper.INSTANCE::contractorToBasicContractor).collect(Collectors.toList());
     }
 }

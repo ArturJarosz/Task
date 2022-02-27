@@ -3,7 +3,7 @@ package com.arturjarosz.task.supplier.application;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import com.arturjarosz.task.supplier.application.dto.SupplierDto;
-import com.arturjarosz.task.supplier.intrastructure.SupplierRepository;
+import com.arturjarosz.task.supplier.infrastructure.SupplierRepository;
 import com.arturjarosz.task.supplier.model.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     @Override
     public CreatedEntityDto createSupplier(SupplierDto supplierDto) {
         LOG.debug("Creating Supplier.");
-        SupplierValidator.validateCreateSupplierDto(supplierDto);
+        this.supplierValidator.validateCreateSupplierDto(supplierDto);
         Supplier supplier = SupplierDtoMapper.INSTANCE.supplierDtoToSupplier(supplierDto);
         this.supplierRepository.save(supplier);
         LOG.debug("Supplier created.");
@@ -40,7 +40,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     public void updateSupplier(Long supplierId, SupplierDto supplierDto) {
         LOG.debug("Updating Supplier with id {}.", supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
-        SupplierValidator.validateUpdateSupplierDto(supplierDto);
+        this.supplierValidator.validateUpdateSupplierDto(supplierDto);
         Supplier supplier = this.supplierRepository.load(supplierId);
         supplier.update(supplierDto.getName(), supplierDto.getCategory(), supplierDto.getEmail(),
                 supplierDto.getTelephone(), supplierDto.getNote());
@@ -63,7 +63,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
         LOG.debug("Loading Supplier with id {}", supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
         Supplier supplier = this.supplierRepository.load(supplierId);
-        SupplierDto supplierDto = SupplierDtoMapper.INSTANCE.cooperatorToSupplierDto(supplier);
+        SupplierDto supplierDto = SupplierDtoMapper.INSTANCE.supplierToSupplierDto(supplier);
         LOG.debug("Supplier with id {} loaded.", supplierId);
         return supplierDto;
     }

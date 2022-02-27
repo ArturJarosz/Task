@@ -3,7 +3,7 @@ package com.arturjarosz.task.supplier.application;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.supplier.application.dto.SupplierDto;
 import com.arturjarosz.task.supplier.domain.SupplierExceptionCodes;
-import com.arturjarosz.task.supplier.intrastructure.SupplierRepository;
+import com.arturjarosz.task.supplier.infrastructure.SupplierRepository;
 import com.arturjarosz.task.supplier.model.Supplier;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ public class SupplierValidator {
         this.supplierRepository = supplierRepository;
     }
 
-    public static void validateCreateSupplierDto(SupplierDto supplierDto) {
+    public void validateCreateSupplierDto(SupplierDto supplierDto) {
         assertNotNull(supplierDto, createMessageCode(ExceptionCodes.NULL, SupplierExceptionCodes.SUPPLIER));
         assertNotNull(supplierDto.getName(),
                 createMessageCode(ExceptionCodes.NULL, SupplierExceptionCodes.SUPPLIER, SupplierExceptionCodes.NAME));
@@ -30,7 +30,7 @@ public class SupplierValidator {
                 SupplierExceptionCodes.CATEGORY));
     }
 
-    public static void validateUpdateSupplierDto(SupplierDto supplierDto) {
+    public void validateUpdateSupplierDto(SupplierDto supplierDto) {
         assertNotNull(supplierDto, createMessageCode(ExceptionCodes.NULL, SupplierExceptionCodes.SUPPLIER));
         assertNotNull(supplierDto.getName(),
                 createMessageCode(ExceptionCodes.NULL, SupplierExceptionCodes.SUPPLIER, SupplierExceptionCodes.NAME));

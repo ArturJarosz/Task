@@ -18,7 +18,7 @@ public interface SupplierDtoMapper {
     @Mapping(source = "email", target = "email")
     @Mapping(source = "telephone", target = "telephone")
     @Mapping(source = "category", target = "category")
-    SupplierDto cooperatorToSupplierDto(Supplier supplier);
+    SupplierDto supplierToSupplierDto(Supplier supplier);
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "category", target = "category")

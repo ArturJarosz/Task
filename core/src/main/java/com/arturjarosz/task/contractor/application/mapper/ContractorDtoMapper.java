@@ -18,9 +18,9 @@ public interface ContractorDtoMapper {
     @Mapping(source = "email", target = "email")
     @Mapping(source = "telephone", target = "telephone")
     @Mapping(source = "category", target = "category")
-    ContractorDto contractorToContractorDto(Contractor cooperator);
+    ContractorDto contractorToContractorDto(Contractor contractor);
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "category", target = "category")
-    ContractorDto cooperatorToBasicContractor(Contractor cooperator);
+    ContractorDto contractorToBasicContractor(Contractor contractor);
 }
