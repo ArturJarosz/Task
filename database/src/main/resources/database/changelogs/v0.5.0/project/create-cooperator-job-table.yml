@@ -54,4 +54,3 @@ databaseChangeLog:
             referencedTableName: "PROJECT"
             referencedColumnNames: "ID"
             constraintName: "FK_COOPERATOR_JOB_PROJECT"
-

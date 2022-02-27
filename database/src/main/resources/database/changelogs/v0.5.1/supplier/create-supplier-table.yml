@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-supplier-table"
+      changes:
+        - createTable:
+            tableName: "SUPPLIER"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NAME"
+                  type: "VARCHAR2(60 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CATEGORY"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NOTE"
+                  type: "VARCHAR2(1000 ${char.unit})"
+              - column:
+                  name: "EMAIL"
+                  type: "VARCHAR2(50 ${char.unit})"
+              - column:
+                  name: "TELEPHONE"
+                  type: "VARCHAR2(20 ${char.unit})"
+              - column:
+                  name: "VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "SUPPLIER"
+            columnNames: "ID"
+            constraintName: "PK_SUPPLIER"

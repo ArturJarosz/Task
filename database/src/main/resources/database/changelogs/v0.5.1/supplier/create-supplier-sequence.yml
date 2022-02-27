@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
       author: "liquibase"
-      id: "create-cooperator-sequence"
+      id: "create-supplier-sequence"
       changes:
         - createSequence:
-            sequenceName: "cooperator_sequence"
+            sequenceName: "supplier_sequence"
             startValue: 100
             cacheSize: 10
             incrementBy: 1

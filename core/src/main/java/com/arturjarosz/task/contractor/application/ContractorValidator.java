@@ -1,4 +1,4 @@
-package com.arturjarosz.task.cooperator.application;
+package com.arturjarosz.task.contractor.application;
 
 import com.arturjarosz.task.cooperator.application.dto.ContractorDto;
 import com.arturjarosz.task.cooperator.domain.CooperatorExceptionCodes;

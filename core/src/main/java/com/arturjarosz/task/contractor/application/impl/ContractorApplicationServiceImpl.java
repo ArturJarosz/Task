@@ -1,9 +1,9 @@
-package com.arturjarosz.task.cooperator.application.impl;
+package com.arturjarosz.task.contractor.application.impl;
 
-import com.arturjarosz.task.cooperator.application.ContractorApplicationService;
-import com.arturjarosz.task.cooperator.application.ContractorValidator;
+import com.arturjarosz.task.contractor.application.ContractorApplicationService;
+import com.arturjarosz.task.contractor.application.ContractorValidator;
+import com.arturjarosz.task.contractor.application.mapper.ContractorDtoMapper;
 import com.arturjarosz.task.cooperator.application.dto.ContractorDto;
-import com.arturjarosz.task.cooperator.application.mapper.ContractorDtoMapper;
 import com.arturjarosz.task.cooperator.infrastructure.CooperatorRepository;
 import com.arturjarosz.task.cooperator.model.Cooperator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;

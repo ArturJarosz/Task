@@ -1,5 +1,5 @@
-package com.arturjarosz.task.cooperator.model;
-
+import com.arturjarosz.task.cooperator.model.CooperatorCategory;
+import com.arturjarosz.task.cooperator.model.CooperatorType;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Email;
 import com.arturjarosz.task.sharedkernel.model.Money;

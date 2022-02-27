@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
       author: "liquibase"
-      id: "create-cooperator-table"
+      id: "create-contractor-table"
       changes:
         - createTable:
-            tableName: "COOPERATOR"
+            tableName: "CONTRACTOR"
             columns:
               - column:
                   name: "ID"
@@ -27,11 +27,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: "TYPE"
-                  type: "VARCHAR2(50 ${char.unit})"
-                  constraints:
-                    nullable: false
-              - column:
                   name: "NOTE"
                   type: "VARCHAR2(1000 ${char.unit})"
               - column:
@@ -47,6 +42,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - addPrimaryKey:
-            tableName: "COOPERATOR"
+            tableName: "CONTRACTOR"
             columnNames: "ID"
-            constraintName: "PK_COOPERATOR"
+            constraintName: "PK_CONTRACTOR"

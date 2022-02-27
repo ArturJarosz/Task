@@ -1,4 +1,4 @@
-package com.arturjarosz.task.cooperator.application.mapper;
+package com.arturjarosz.task.supplier.application;
 
 import com.arturjarosz.task.cooperator.application.dto.SupplierDto;
 import com.arturjarosz.task.cooperator.model.Cooperator;

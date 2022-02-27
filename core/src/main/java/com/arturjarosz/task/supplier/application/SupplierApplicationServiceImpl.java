@@ -1,9 +1,6 @@
-package com.arturjarosz.task.cooperator.application.impl;
+package com.arturjarosz.task.supplier.application;
 
-import com.arturjarosz.task.cooperator.application.SupplierApplicationService;
-import com.arturjarosz.task.cooperator.application.SupplierValidator;
 import com.arturjarosz.task.cooperator.application.dto.SupplierDto;
-import com.arturjarosz.task.cooperator.application.mapper.SupplierDtoMapper;
 import com.arturjarosz.task.cooperator.infrastructure.CooperatorRepository;
 import com.arturjarosz.task.cooperator.model.Cooperator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;

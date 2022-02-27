@@ -15,9 +15,6 @@ databaseChangeLog:
       file: "installment/installment-tables.yml"
       relativeToChangelogFile: true
   - include:
-      file: "cooperator/cooperator-tables.yml"
-      relativeToChangelogFile: true
-  - include:
       file: "financial-data/financial-data-tables.yml"
       relativeToChangelogFile: true
   - include:
@@ -28,7 +25,7 @@ databaseChangeLog:
       relativeToChangelogFile: true
   - changeSet:
       author: "liquibase"
-      id: "tag-version_1.0.0"
+      id: "tag-version_0.5.0"
       changes:
         - tagDatabase:
-            tag: "v1.0.0"
+            tag: "v0.5.0"
