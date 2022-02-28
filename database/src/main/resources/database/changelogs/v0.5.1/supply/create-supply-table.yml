@@ -1,0 +1,62 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-supply-table"
+      changes:
+        - createTable:
+            tableName: "SUPPLY"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "${uuid.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NAME"
+                  type: "VARCHAR2(60 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NOTE"
+                  type: "VARCHAR2(1000 ${char.unit})"
+              - column:
+                  name: "PROJECT_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "SUPPLIER_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TYPE"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "FINANCIAL_DATA_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "SUPPLY"
+            columnNames: "ID"
+            constraintName: "PK_SUPPLY"
+        - addForeignKeyConstraint:
+            baseTableName: "SUPPLY"
+            baseColumnNames: "PROJECT_ID"
+            referencedTableName: "PROJECT"
+            referencedColumnNames: "ID"
+            constraintName: "FK_SUPPLY_PROJECT"
+        - addForeignKeyConstraint:
+            baseTableName: "SUPPLY"
+            baseColumnNames: "SUPPLIER_ID"
+            referencedTableName: "SUPPLIER"
+            referencedColumnNames: "ID"
+            constraintName: "FK_SUPPLY_SUPPLIER"

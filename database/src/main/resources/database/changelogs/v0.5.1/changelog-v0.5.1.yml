@@ -5,6 +5,12 @@ databaseChangeLog:
   - include:
       file: "supplier/supplier-tables.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "contractor-job/contractor-job-tables.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "supply/supply-tables.yml"
+      relativeToChangelogFile: true
   - changeSet:
       author: "liquibase"
       id: "tag-version_0.5.1"

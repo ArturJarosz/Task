@@ -1,0 +1,62 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-contractor-job-table"
+      changes:
+        - createTable:
+            tableName: "CONTRACTOR_JOB"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "${uuid.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NAME"
+                  type: "VARCHAR2(60 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NOTE"
+                  type: "VARCHAR2(1000 ${char.unit})"
+              - column:
+                  name: "PROJECT_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CONTRACTOR_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TYPE"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "FINANCIAL_DATA_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "CONTRACTOR_JOB"
+            columnNames: "ID"
+            constraintName: "PK_CONTRACTOR_JOB"
+        - addForeignKeyConstraint:
+            baseTableName: "CONTRACTOR_JOB"
+            baseColumnNames: "PROJECT_ID"
+            referencedTableName: "PROJECT"
+            referencedColumnNames: "ID"
+            constraintName: "FK_CONTRACTOR_JOB_PROJECT"
+        - addForeignKeyConstraint:
+            baseTableName: "CONTRACTOR_JOB"
+            baseColumnNames: "CONTRACTOR_ID"
+            referencedTableName: "CONTRACTOR"
+            referencedColumnNames: "ID"
+            constraintName: "FK_CONTRACTOR_JOB_CONTRACTOR"
