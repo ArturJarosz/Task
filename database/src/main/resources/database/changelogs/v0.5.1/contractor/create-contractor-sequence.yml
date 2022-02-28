@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-contractor-sequence"
+      changes:
+        - createSequence:
+            sequenceName: "contractor_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1
