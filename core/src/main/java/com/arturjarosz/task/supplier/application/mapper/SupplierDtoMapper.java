@@ -1,4 +1,4 @@
-package com.arturjarosz.task.supplier.application;
+package com.arturjarosz.task.supplier.application.mapper;
 
 import com.arturjarosz.task.supplier.application.dto.SupplierDto;
 import com.arturjarosz.task.supplier.model.Supplier;
