@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: "create-supplier-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-supplier-table.yml"
+      relativeToChangelogFile: true

@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: "create-supervision-visit-table"
+      author: "liquibase"
+      changes:
+        - createTable:
+            tableName: "SUPERVISION_VISIT"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "DATE_OF_VISIT"
+                  type: "${date.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "HOURS_COUNT"
+                  type: "${integer.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "PAYABLE"
+                  type: "${boolean.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "SUPERVISION_ID"
+                  type: "${long.type}"
+        - addPrimaryKey:
+            tableName: "SUPERVISION_VISIT"
+            columnNames: "ID"
+            constraintName: "PK_SUPERVISION_VISIT"
+        - addForeignKeyConstraint:
+            baseTableName: "SUPERVISION_VISIT"
+            baseColumnNames: "SUPERVISION_ID"
+            constraintName: "FK_VISIT_SUPERVISION"
+            referencedTableName: "SUPERVISION"
+            referencedColumnNames: "ID"

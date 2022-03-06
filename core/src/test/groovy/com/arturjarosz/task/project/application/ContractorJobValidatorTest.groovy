@@ -1,6 +1,6 @@
 package com.arturjarosz.task.project.application
 
-import com.arturjarosz.task.cooperator.query.impl.CooperatorQueryServiceImpl
+import com.arturjarosz.task.contractor.query.impl.ContractorQueryServiceImpl
 import com.arturjarosz.task.project.application.dto.ContractorJobDto
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import spock.lang.Specification
@@ -10,16 +10,16 @@ class ContractorJobValidatorTest extends Specification {
     private static final Long EXISTING_CONTRACTOR_ID = 1L
     private static final Long NOT_EXISTING_CONTRACTOR_ID = 9L
 
-    def cooperatorQueryService = Mock(CooperatorQueryServiceImpl)
+    def contractorQueryService = Mock(ContractorQueryServiceImpl)
     def projectQueryService = Mock(ProjectQueryServiceImpl)
 
-    def cooperatorValidator = new ContractorJobValidator(cooperatorQueryService, projectQueryService)
+    def contractorValidator = new ContractorJobValidator(contractorQueryService, projectQueryService)
 
     def 'validateContractorExistence throws an exception if Contractor with given id does not exist'() {
         given:
-            this.mockCooperatorQueryServiceContractorWithIdExistenceDoesntExists()
+            this.mockContractorQueryServiceContractorWithIdExistenceDoesntExists()
         when:
-            this.cooperatorValidator.validateContractorExistence(NOT_EXISTING_CONTRACTOR_ID)
+            this.contractorValidator.validateContractorExistence(NOT_EXISTING_CONTRACTOR_ID)
         then:
             Exception exception = thrown()
             exception.message == "notExist.contractor"
@@ -27,9 +27,9 @@ class ContractorJobValidatorTest extends Specification {
 
     def "validateContractorExistence do not throw any exception if Contractor with given id exists"() {
         given:
-            this.mockCooperatorQueryServiceContractorWithIdExistenceExists()
+            this.mockContractorQueryServiceContractorWithIdExistenceExists()
         when:
-            this.cooperatorValidator.validateContractorExistence(EXISTING_CONTRACTOR_ID)
+            this.contractorValidator.validateContractorExistence(EXISTING_CONTRACTOR_ID)
         then:
             noExceptionThrown()
     }
@@ -44,7 +44,7 @@ class ContractorJobValidatorTest extends Specification {
                 contractorJobDto.value = contractorJobValue
             }
         when:
-            this.cooperatorValidator.validateCreateContractorJobDto(contractorJobDto)
+            this.contractorValidator.validateCreateContractorJobDto(contractorJobDto)
         then:
             Exception exception = thrown()
             exception.message == exceptionMessage
@@ -68,7 +68,7 @@ class ContractorJobValidatorTest extends Specification {
                 contractorJobDto.value = contractorJobValue
             }
         when:
-            this.cooperatorValidator.validateUpdateContractorJobDto(contractorJobDto)
+            this.contractorValidator.validateUpdateContractorJobDto(contractorJobDto)
         then:
             Exception exception = thrown()
             exception.message == exceptionMessage
@@ -82,11 +82,11 @@ class ContractorJobValidatorTest extends Specification {
                     "-1")                                                                              || "negative.contractorJob.value"
     }
 
-    private void mockCooperatorQueryServiceContractorWithIdExistenceDoesntExists() {
-        1 * this.cooperatorQueryService.contractorWithIdExists(NOT_EXISTING_CONTRACTOR_ID) >> false
+    private void mockContractorQueryServiceContractorWithIdExistenceDoesntExists() {
+        1 * this.contractorQueryService.contractorWithIdExists(NOT_EXISTING_CONTRACTOR_ID) >> false
     }
 
-    private void mockCooperatorQueryServiceContractorWithIdExistenceExists() {
-        1 * this.cooperatorQueryService.contractorWithIdExists(EXISTING_CONTRACTOR_ID) >> true
+    private void mockContractorQueryServiceContractorWithIdExistenceExists() {
+        1 * this.contractorQueryService.contractorWithIdExists(EXISTING_CONTRACTOR_ID) >> true
     }
 }

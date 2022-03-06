@@ -1,8 +1,8 @@
 package com.arturjarosz.task.project.application
 
-import com.arturjarosz.task.cooperator.query.impl.CooperatorQueryServiceImpl
 import com.arturjarosz.task.project.application.dto.SupplyDto
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
+import com.arturjarosz.task.supplier.query.impl.SupplierQueryServiceImpl
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -10,14 +10,14 @@ class SupplyValidatorTest extends Specification {
     private static final Long EXISTING_SUPPLIER_ID = 1L
     private static final Long NOT_EXISTING_SUPPLIER_ID = 9L
 
-    def cooperatorQueryService = Mock(CooperatorQueryServiceImpl)
+    def supplierQueryService = Mock(SupplierQueryServiceImpl)
     def projectQueryService = Mock(ProjectQueryServiceImpl)
 
-    def supplyValidator = new SupplyValidator(cooperatorQueryService, projectQueryService)
+    def supplyValidator = new SupplyValidator(supplierQueryService, projectQueryService)
 
     def "validateSupplierExistence throws an exception if Supplier with given id does not exist"() {
         given:
-            this.mockCooperatorQueryServiceSupplierWithIdExistenceDoesntExists()
+            this.mockSupplierQueryServiceSupplierWithIdExistenceDoesntExists()
         when:
             this.supplyValidator.validateSupplierExistence(NOT_EXISTING_SUPPLIER_ID)
         then:
@@ -27,7 +27,7 @@ class SupplyValidatorTest extends Specification {
 
     def "validateSupplierExistence throws an exception if Supplier with given id exists"() {
         given:
-            this.mockCooperatorQueryServiceSupplierWithIdExistenceExists()
+            this.mockSupplierQueryServiceSupplierWithIdExistenceExists()
         when:
             this.supplyValidator.validateSupplierExistence(EXISTING_SUPPLIER_ID)
         then:
@@ -80,11 +80,11 @@ class SupplyValidatorTest extends Specification {
             new SupplyDto() | EXISTING_SUPPLIER_ID | "name"     | new BigDecimal("-1") || "negative.supply.value"
     }
 
-    private void mockCooperatorQueryServiceSupplierWithIdExistenceDoesntExists() {
-        1 * this.cooperatorQueryService.supplierWithIdExists(NOT_EXISTING_SUPPLIER_ID) >> false
+    private void mockSupplierQueryServiceSupplierWithIdExistenceDoesntExists() {
+        1 * this.supplierQueryService.supplierWithIdExists(NOT_EXISTING_SUPPLIER_ID) >> false
     }
 
-    private void mockCooperatorQueryServiceSupplierWithIdExistenceExists() {
-        1 * this.cooperatorQueryService.supplierWithIdExists(EXISTING_SUPPLIER_ID) >> true
+    private void mockSupplierQueryServiceSupplierWithIdExistenceExists() {
+        1 * this.supplierQueryService.supplierWithIdExists(EXISTING_SUPPLIER_ID) >> true
     }
 }

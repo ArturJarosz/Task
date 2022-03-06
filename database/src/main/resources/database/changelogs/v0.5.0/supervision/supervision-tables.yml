@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: "create-supervision-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-supervision-visit-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-supervision-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-supervision-visit-table.yml"
+      relativeToChangelogFile: true

@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.application;
 
-import com.arturjarosz.task.cooperator.domain.CooperatorExceptionCodes;
-import com.arturjarosz.task.cooperator.query.CooperatorQueryService;
+import com.arturjarosz.task.contractor.domain.ContractorExceptionCodes;
+import com.arturjarosz.task.contractor.query.ContractorQueryService;
 import com.arturjarosz.task.project.application.dto.ContractorJobDto;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
@@ -15,13 +15,13 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 
 @Component
 public class ContractorJobValidator {
-    private final CooperatorQueryService cooperatorQueryService;
+    private final ContractorQueryService contractorQueryService;
     private final ProjectQueryService projectQueryService;
 
     @Autowired
-    public ContractorJobValidator(CooperatorQueryService cooperatorQueryService,
+    public ContractorJobValidator(ContractorQueryService contractorQueryService,
                                   ProjectQueryService projectQueryService) {
-        this.cooperatorQueryService = cooperatorQueryService;
+        this.contractorQueryService = contractorQueryService;
         this.projectQueryService = projectQueryService;
     }
 
@@ -36,8 +36,8 @@ public class ContractorJobValidator {
     }
 
     public void validateContractorExistence(Long contractorId) {
-        assertIsTrue(this.cooperatorQueryService.contractorWithIdExists(contractorId),
-                createMessageCode(ExceptionCodes.NOT_EXIST, CooperatorExceptionCodes.CONTRACTOR), contractorId);
+        assertIsTrue(this.contractorQueryService.contractorWithIdExists(contractorId),
+                createMessageCode(ExceptionCodes.NOT_EXIST, ContractorExceptionCodes.CONTRACTOR), contractorId);
     }
 
     public void validateContractorJobOnProjectExistence(Long projectId, Long contractorJobId) {
