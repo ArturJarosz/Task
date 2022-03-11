@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-arrangement-table"
+      changes:
+        - createTable:
+            tableName: "CONTRACT"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "STATUS"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "SIGNING_DATE"
+                  type: "${date.type}"
+              - column:
+                  name: "DEADLINE"
+                  type: "${date.type}"
+              - column:
+                  name: "UUID"
+                  type: "${uuid.type}"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "CONTRACT"
+            columnNames: "ID"
+            constraintName: "PK_CONTRACT"
