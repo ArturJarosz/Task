@@ -1,4 +1,4 @@
-package com.arturjarosz.task.project.status.Contract;
+package com.arturjarosz.task.project.status.contract;
 
 import java.util.Set;
 

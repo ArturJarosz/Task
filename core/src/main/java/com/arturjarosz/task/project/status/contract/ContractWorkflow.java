@@ -1,11 +1,13 @@
-package com.arturjarosz.task.project.status.Contract;
+package com.arturjarosz.task.project.status.contract;
 
 import com.arturjarosz.task.sharedkernel.status.Workflow;
 import com.google.common.collect.Sets;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Set;
 
+@Component
 public class ContractWorkflow extends Workflow<ContractStatus> implements ProjectAwareContractWorkflow<ContractStatus> {
     private static final String CONTRACT_WORKFLOW = "ContractWorkflow";
     private static final Set<ContractStatus> STATUSES_THAT_ALLOW_WORKING = Sets.newHashSet(ContractStatus.ACCEPTED,

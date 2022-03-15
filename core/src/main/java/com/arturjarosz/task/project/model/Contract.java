@@ -1,6 +1,6 @@
 package com.arturjarosz.task.project.model;
 
-import com.arturjarosz.task.project.status.Contract.ContractStatus;
+import com.arturjarosz.task.project.status.contract.ContractStatus;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 
 import javax.persistence.Column;
