@@ -6,10 +6,13 @@ import com.arturjarosz.task.architect.application.dto.ArchitectDto;
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.ClientValidator;
 import com.arturjarosz.task.client.application.dto.ClientDto;
+import com.arturjarosz.task.contract.application.ContractService;
+import com.arturjarosz.task.contract.application.dto.ContractDto;
+import com.arturjarosz.task.contract.application.mapper.ContractDtoMapper;
+import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.ProjectValidator;
-import com.arturjarosz.task.project.application.dto.OfferDto;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
@@ -38,14 +41,13 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final ProjectDomainService projectDomainService;
     private final ProjectValidator projectValidator;
     private final ProjectFinancialDataService projectFinancialDataService;
+    private final ContractService contractService;
 
     @Autowired
-    public ProjectApplicationServiceImpl(ClientApplicationService clientApplicationService,
-                                         ClientValidator clientValidator,
-                                         ArchitectApplicationService architectApplicationService,
-                                         ArchitectValidator architectValidator, ProjectRepository projectRepository,
-                                         ProjectDomainService projectDomainService, ProjectValidator projectValidator,
-                                         ProjectFinancialDataService projectFinancialDataService) {
+    public ProjectApplicationServiceImpl(ClientApplicationService clientApplicationService, ClientValidator clientValidator,
+            ArchitectApplicationService architectApplicationService, ArchitectValidator architectValidator, ProjectRepository projectRepository,
+            ProjectDomainService projectDomainService, ProjectValidator projectValidator,
+            ProjectFinancialDataService projectFinancialDataService, ContractService contractService) {
         this.clientApplicationService = clientApplicationService;
         this.clientValidator = clientValidator;
         this.architectApplicationService = architectApplicationService;
@@ -54,6 +56,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectDomainService = projectDomainService;
         this.projectValidator = projectValidator;
         this.projectFinancialDataService = projectFinancialDataService;
+        this.contractService = contractService;
     }
 
     @Transactional
@@ -63,7 +66,9 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectValidator.validateProjectBasicDto(projectCreateDto);
         this.architectValidator.validateArchitectExistence(projectCreateDto.getArchitectId());
         this.clientValidator.validateClientExistence(projectCreateDto.getClientId());
-        Project project = this.projectDomainService.createProject(projectCreateDto);
+        ContractDto contractDto = ContractDtoMapper.INSTANCE.projectDtoToContractDto(projectCreateDto);
+        Contract contract = this.contractService.createContract(contractDto);
+        Project project = this.projectDomainService.createProject(projectCreateDto, contract.getId());
         project = this.projectRepository.save(project);
         this.projectFinancialDataService.createProjectFinancialData(project.getId());
         LOG.debug("Project created.");
@@ -125,8 +130,8 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         //TODO: TA-62 update conditions on what project can be ended
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        project = this.projectDomainService.finishProject(project, projectContractDto.getEndDate());
-        this.projectRepository.save(project);
+/*        project = this.projectDomainService.finishProject(project, projectContractDto.getEndDate());
+        this.projectRepository.save(project);*/
         LOG.debug("Project with id {} is finished.", projectId);
         return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
     }
@@ -165,11 +170,11 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
     @Transactional
     @Override
-    public ProjectDto makeNewOffer(Long projectId, OfferDto offerDto) {
+    public ProjectDto makeNewOffer(Long projectId, ContractDto contractDto) {
         LOG.debug("Submitting a new offer for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
-        project = this.projectDomainService.makeNewOffer(project, offerDto);
+        project = this.projectDomainService.makeNewOffer(project, contractDto);
         this.projectRepository.save(project);
         LOG.debug("Offer for project ");
         return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);

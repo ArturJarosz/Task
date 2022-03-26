@@ -4,6 +4,7 @@ import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
 import com.arturjarosz.task.architect.application.dto.ArchitectDto
 import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.configuration.BaseTestIT
+import com.arturjarosz.task.contract.application.dto.ContractDto
 import com.arturjarosz.task.project.application.dto.*
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.stage.StageStatus
@@ -95,7 +96,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             def rejectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/reject"))
             ).andReturn().response
-            OfferDto offerDto = new OfferDto(offerValue: NEW_OFFER_VALUE)
+            ContractDto offerDto = new ContractDto(offerValue: NEW_OFFER_VALUE)
             String offerRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(offerDto)
         when: "Making new offer for rejected project"
             def offerResponse = this.mockMvc.perform(
@@ -116,7 +117,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     def "4 Making new offer for new project, should change offer value to new value"() {
         given: "Create and project and reject it"
             ProjectDto projectDto = this.createProject()
-            OfferDto offerDto = new OfferDto(offerValue: NEW_OFFER_VALUE)
+            ContractDto offerDto = new ContractDto(offerValue: NEW_OFFER_VALUE)
             String offerRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(offerDto)
         when: "Making new offer for rejected project"
             def offerResponse = this.mockMvc.perform(
@@ -195,7 +196,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto = this.createTask(projectDto.id, stageDto.id)
             def acceptOfferResponse = this.acceptProjectOffer(projectDto.id)
             TaskDto updateStatusDto = new TaskDto(status: TaskStatus.IN_PROGRESS)
-            OfferDto offerDto = new OfferDto(offerValue: NEW_OFFER_VALUE)
+            ContractDto offerDto = new ContractDto(offerValue: NEW_OFFER_VALUE)
             String offerRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(offerDto)
         when:
             def offerResponse = this.mockMvc.perform(
@@ -226,7 +227,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
                             .header("Content-Type", "application/json")
                             .content(projectSignContractRequest)
             ).andReturn().response
-            OfferDto offerDto = new OfferDto(offerValue: NEW_OFFER_VALUE)
+            ContractDto offerDto = new ContractDto(offerValue: NEW_OFFER_VALUE)
             String offerRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(offerDto)
         when:
             def offerResponse = this.mockMvc.perform(

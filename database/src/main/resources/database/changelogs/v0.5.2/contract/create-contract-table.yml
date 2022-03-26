@@ -18,6 +18,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: "WORKFLOW_NAME"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
                   name: "STATUS"
                   type: "VARCHAR2(50 ${char.unit})"
                   constraints:
@@ -29,6 +34,12 @@ databaseChangeLog:
                   name: "DEADLINE"
                   type: "${date.type}"
               - column:
+                  name: "START_DATE"
+                  type: "${date.type}"
+              - column:
+                  name: "END_DATE"
+                  type: "${date.type}"
+              - column:
                   name: "UUID"
                   type: "${uuid.type}"
                   constraints:
@@ -37,3 +48,14 @@ databaseChangeLog:
             tableName: "CONTRACT"
             columnNames: "ID"
             constraintName: "PK_CONTRACT"
+        - dropColumn:
+            tableName: "PROJECT"
+            columnName: "ARRANGEMENT_ID"
+        - addColumn:
+            columns:
+              - column:
+                  name: "CONTRACT_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+            tableName: "PROJECT"

@@ -1,6 +1,6 @@
-package com.arturjarosz.task.project.status.contract;
+package com.arturjarosz.task.contract.application.status;
 
-import com.arturjarosz.task.project.model.Contract;
+import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.sharedkernel.status.WorkflowService;
 
 public interface ContractWorkflowService extends WorkflowService<ContractStatus, Contract> {

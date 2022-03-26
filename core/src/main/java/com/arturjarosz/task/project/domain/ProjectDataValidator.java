@@ -21,8 +21,6 @@ public class ProjectDataValidator {
     public void allDatesPresent(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
         assertNotNull(signingDate,
                 createMessageCode(ExceptionCodes.NULL, VALIDATED_OBJECT, ProjectExceptionCodes.SIGNING_DATE));
-        assertNotNull(startDate,
-                createMessageCode(ExceptionCodes.NULL, VALIDATED_OBJECT, ProjectExceptionCodes.START_DATE));
         assertNotNull(deadline,
                 createMessageCode(ExceptionCodes.NULL, VALIDATED_OBJECT, ProjectExceptionCodes.DEADLINE));
     }

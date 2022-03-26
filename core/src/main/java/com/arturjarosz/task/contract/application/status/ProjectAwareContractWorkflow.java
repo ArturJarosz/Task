@@ -1,4 +1,4 @@
-package com.arturjarosz.task.project.status.contract;
+package com.arturjarosz.task.contract.application.status;
 
 import java.util.Set;
 
@@ -14,7 +14,7 @@ public interface ProjectAwareContractWorkflow<TContractStatus extends ContractSt
     Set<TContractStatus> getStatusesThatAllowWorking();
 
     /**
-     * Returs all Contract statuses, that allows for creating new Project objects, such as Tasks or Stages.
+     * Returns all Contract statuses, that allows for creating new Project objects, such as Tasks or Stages.
      */
     Set<TContractStatus> getStatusesThatAllowCreatingProjectObjects();
 }

@@ -5,16 +5,15 @@ import com.arturjarosz.task.architect.application.impl.ArchitectApplicationServi
 import com.arturjarosz.task.client.application.ClientValidator
 import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
+import com.arturjarosz.task.contract.application.dto.ContractDto
+import com.arturjarosz.task.contract.model.Contract
 import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
-import com.arturjarosz.task.project.application.dto.OfferDto
 import com.arturjarosz.task.project.application.dto.ProjectContractDto
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
 import com.arturjarosz.task.project.application.dto.ProjectDto
 import com.arturjarosz.task.project.domain.impl.ProjectDomainServiceImpl
 import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
-import com.arturjarosz.task.project.model.Contract
-import com.arturjarosz.task.project.model.Offer
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.status.project.ProjectStatus
@@ -51,7 +50,7 @@ class ProjectApplicationServiceImplTest extends Specification {
 
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator,
-            projectFinancialDataApplicationService)
+            projectFinancialDataApplicationService, contractService, contractDtoMapper)
 
     def "createProject should call validateProjectBasicDto on projectValidator"() {
         given:
@@ -395,7 +394,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def "makeNewOffer should call validateProjectExistence on projectValidator"() {
         given:
             this.mockProjectRepositoryLoad()
-            OfferDto offerDto = new OfferDto()
+            ContractDto offerDto = new ContractDto()
             offerDto.offerValue = PROJECT_VALUE
         when:
             this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto)
@@ -406,7 +405,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def "makeNewOffer should load project from projectRepository"() {
         given:
             this.mockProjectRepositoryLoad()
-            OfferDto offerDto = new OfferDto()
+            ContractDto offerDto = new ContractDto()
             offerDto.offerValue = PROJECT_VALUE
         when:
             this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto)
@@ -417,7 +416,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def "makeNewOffer should call makeNewOffer from projectDomainService"() {
         given:
             this.mockProjectRepositoryLoad()
-            OfferDto offerDto = new OfferDto()
+            ContractDto offerDto = new ContractDto()
             offerDto.offerValue = PROJECT_VALUE
         when:
             this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto)
@@ -429,7 +428,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoad()
             this.mockProjectDomainServiceMakeNewOffer()
-            OfferDto offerDto = new OfferDto()
+            ContractDto offerDto = new ContractDto()
             offerDto.offerValue = PROJECT_VALUE
         when:
             this.projectApplicationService.makeNewOffer(EXISTING_PROJECT_ID, offerDto)
@@ -491,7 +490,7 @@ class ProjectApplicationServiceImplTest extends Specification {
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
                 .withStatus(ProjectStatus.OFFER)
-                .withOffer(new Offer(PROJECT_VALUE))
+            //    .withOffer(new Offer(PROJECT_VALUE))
                 .build()
     }
 
@@ -502,7 +501,7 @@ class ProjectApplicationServiceImplTest extends Specification {
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
                 .withStatus(ProjectStatus.OFFER)
-                .withOffer(new Offer(PROJECT_VALUE))
+        //        .withOffer(new Offer(PROJECT_VALUE))
                 .build()
     }
 
@@ -514,7 +513,7 @@ class ProjectApplicationServiceImplTest extends Specification {
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
                 .withStatus(ProjectStatus.OFFER)
-                .withOffer(new Offer(PROJECT_VALUE))
+       //         .withOffer(new Offer(PROJECT_VALUE))
                 .build()
     }
 
@@ -540,7 +539,7 @@ class ProjectApplicationServiceImplTest extends Specification {
                 .withClientId(CLIENT_ID)
                 .withArchitectId(ARCHITECT_ID)
                 .withStatus(ProjectStatus.OFFER)
-                .withOffer(new Offer(PROJECT_VALUE))
+         //       .withOffer(new Offer(PROJECT_VALUE))
                 .build()
     }
 
@@ -590,7 +589,7 @@ class ProjectApplicationServiceImplTest extends Specification {
 
     private void mockProjectDomainServiceMakeNewOffer() {
         Project project = this.prepareExistingProject()
-        this.projectDomainService.makeNewOffer(_ as Project, _ as OfferDto) >> project
+        this.projectDomainService.makeNewOffer(_ as Project, _ as ContractDto) >> project
     }
 
     private void mockProjectRepositorySaveNewProject() {
@@ -598,6 +597,8 @@ class ProjectApplicationServiceImplTest extends Specification {
     }
 
     private Project prepareNewlyCreatedProject() {
-        return new ProjectBuilder().withId(NEW_PROJECT_ID).withOffer(new Offer(0)).build()
+        return new ProjectBuilder().withId(NEW_PROJECT_ID)
+                //.withOffer(new Offer(0))
+                .build()
     }
 }

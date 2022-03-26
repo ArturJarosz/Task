@@ -1,11 +1,10 @@
 package com.arturjarosz.task.project.domain.impl
 
-import com.arturjarosz.task.project.application.dto.OfferDto
+import com.arturjarosz.task.contract.application.dto.ContractDto
 import com.arturjarosz.task.project.application.dto.ProjectContractDto
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
 import com.arturjarosz.task.project.application.dto.ProjectDto
 import com.arturjarosz.task.project.domain.ProjectDataValidator
-import com.arturjarosz.task.project.model.Offer
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.model.Stage
@@ -41,7 +40,7 @@ class ProjectDomainServiceImplTest extends Specification {
         given:
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
         when:
-            Project project = this.projectDomainService.createProject(projectCreateDto)
+            Project project = this.projectDomainService.createProject(projectCreateDto, contract)
         then:
             1 * this.projectStatusTransitionService.create(_ as Project)
     }
@@ -51,7 +50,7 @@ class ProjectDomainServiceImplTest extends Specification {
             this.mockProjectWorkflow()
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
         when:
-            Project project = this.projectDomainService.createProject(projectCreateDto)
+            Project project = this.projectDomainService.createProject(projectCreateDto, contract)
         then:
             1 * this.projectStatusTransitionService.create({
                 Project createdProject ->
@@ -215,7 +214,7 @@ class ProjectDomainServiceImplTest extends Specification {
     def "makeNewOffer should not call makeNewOffer on projectStatusTransitionService for project with null status"() {
         given:
             Project project = this.prepareProjectWithStatus(null)
-            OfferDto offerDto = new OfferDto()
+            ContractDto offerDto = new ContractDto()
             offerDto.offerValue = 5000
         when:
             this.projectDomainService.makeNewOffer(project, offerDto)
@@ -226,7 +225,7 @@ class ProjectDomainServiceImplTest extends Specification {
     def "makeNewOffer should call makeNewOffer on projectStatusTransitionService for project with not null status"() {
         given:
             Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER)
-            OfferDto offerDto = new OfferDto()
+            ContractDto offerDto = new ContractDto()
             offerDto.setOfferValue(5000)
         when:
             this.projectDomainService.makeNewOffer(project, offerDto)
@@ -237,7 +236,7 @@ class ProjectDomainServiceImplTest extends Specification {
     def "makeNewOffer should update project offer value"() {
         given:
             Project project = this.prepareProjectWithStatus(ProjectStatus.OFFER)
-            OfferDto offerDto = new OfferDto()
+            ContractDto offerDto = new ContractDto()
             offerDto.offerValue = OFFER_VALUE
         when:
             Project updatedProject = this.projectDomainService.makeNewOffer(project, offerDto)
@@ -263,7 +262,7 @@ class ProjectDomainServiceImplTest extends Specification {
         return new ProjectBuilder()
                 .withName(NAME)
                 .withStatus(status)
-                .withOffer(new Offer(5000))
+             //   .withOffer(new Offer(5000))
                 .build()
     }
 

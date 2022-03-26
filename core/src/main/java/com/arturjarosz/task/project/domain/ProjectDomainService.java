@@ -1,6 +1,6 @@
 package com.arturjarosz.task.project.domain;
 
-import com.arturjarosz.task.project.application.dto.OfferDto;
+import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
@@ -12,7 +12,7 @@ public interface ProjectDomainService {
     /**
      * Creates new Project.
      */
-    Project createProject(ProjectCreateDto projectCreateDto);
+    Project createProject(ProjectCreateDto projectCreateDto, Long contractId);
 
     /**
      * Update project with data provided in projectDto.
@@ -43,7 +43,7 @@ public interface ProjectDomainService {
     /**
      * Make a new offer for Project with value provided in OfferDto.
      */
-    Project makeNewOffer(Project project, OfferDto offerDto);
+    Project makeNewOffer(Project project, ContractDto contractDto);
 
     /**
      * Accept offer for project. This allows to start work on Project.

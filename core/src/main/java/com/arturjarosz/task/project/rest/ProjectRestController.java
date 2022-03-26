@@ -1,11 +1,12 @@
 package com.arturjarosz.task.project.rest;
 
+import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
-import com.arturjarosz.task.project.application.dto.OfferDto;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ public class ProjectRestController {
 
     private final ProjectApplicationService projectApplicationService;
 
+    @Autowired
     public ProjectRestController(ProjectApplicationService projectApplicationService) {
         this.projectApplicationService = projectApplicationService;
     }
@@ -92,7 +94,7 @@ public class ProjectRestController {
 
     @PostMapping("{projectId}/newOffer")
     public ResponseEntity<ProjectDto> makeNewOffer(@PathVariable("projectId") Long projectId,
-                                                   @RequestBody OfferDto offerDto) {
-        return new ResponseEntity<>(this.projectApplicationService.makeNewOffer(projectId, offerDto), HttpStatus.OK);
+                                                   @RequestBody ContractDto contractDto) {
+        return new ResponseEntity<>(this.projectApplicationService.makeNewOffer(projectId, contractDto), HttpStatus.OK);
     }
 }

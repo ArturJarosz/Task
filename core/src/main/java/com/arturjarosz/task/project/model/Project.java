@@ -18,7 +18,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.math.BigDecimal;
@@ -72,9 +71,8 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @Where(clause = "TYPE = 'SUPPLY'")
     private Set<Supply> supplies;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "ARRANGEMENT_ID")
-    private Arrangement arrangement;
+    @Column(name = "CONTRACT_ID", nullable = false)
+    private long contractId;
 
     @Column(name = "STATUS", nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -88,19 +86,19 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     }
 
     public Project(String name, Long architectId, Long clientId, ProjectType projectType,
-                   ProjectWorkflow projectWorkflow, double offerValue) {
+                   ProjectWorkflow projectWorkflow, long contractId) {
         this.name = name;
         this.architectId = architectId;
         this.clientId = clientId;
         this.projectType = projectType;
         this.workflowName = projectWorkflow.getName();
-        this.arrangement = new Offer(offerValue);
+        this.contractId = contractId;
     }
 
     public void signContract(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
         this.updateProjectDates(startDate);
-        this.arrangement = new Contract(this.arrangement.getOfferValue().getValue().doubleValue(), signingDate,
-                deadline);
+        // this.arrangement = new Contract(this.arrangement.getOfferValue().getValue().doubleValue(), signingDate,
+        //        deadline);
     }
 
     public void updateProjectDates(LocalDate startDate) {
@@ -137,9 +135,9 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     }
 
     public LocalDate getSigningDate() {
-        if (this.arrangement instanceof Contract) {
+/*        if (this.arrangement instanceof Contract) {
             return ((Contract) this.arrangement).getSigningDate();
-        }
+        }*/
         return null;
     }
 
@@ -152,9 +150,9 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     }
 
     public LocalDate getDeadline() {
-        if (this.arrangement instanceof Contract) {
+/*        if (this.arrangement instanceof Contract) {
             return ((Contract) this.arrangement).getDeadline();
-        }
+        }*/
         return null;
     }
 
@@ -294,34 +292,36 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     }
 
     public void makeNewOffer(double offerValue) {
-        this.arrangement = new Offer(offerValue);
+        //this.arrangement = new Offer(offerValue);
     }
 
     public void acceptOffer() {
-        ((Offer) this.arrangement).acceptOffer();
+        //((Offer) this.arrangement).acceptOffer();
     }
 
-    public Offer getOffer() {
-        return ((Offer) this.arrangement);
-    }
+/*    public Offer getOffer() {
+        //return ((Offer) this.arrangement);
+        return null;
+    }*/
 
     public boolean isContractSigned() {
-        return (this.arrangement instanceof Contract);
+        // return (this.arrangement instanceof Contract);
+        return false;
     }
 
     public boolean isOfferAccepted() {
-        if (this.arrangement == null) {
+/*        if (this.arrangement == null) {
             return false;
         }
         if (this.arrangement instanceof Offer) {
             return ((Offer) this.arrangement).isAccepted();
-        }
+        }*/
         return true;
     }
 
-    public Arrangement getArrangement() {
+/*    public Arrangement getArrangement() {
         return this.arrangement;
-    }
+    }*/
 
     public void removeSupply(Long supplyId) {
         this.supplies.removeIf(supply -> supply.getId().equals(supplyId));

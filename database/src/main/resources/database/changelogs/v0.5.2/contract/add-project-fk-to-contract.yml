@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-project-fk-to-contract"
+      changes:
+        - addColumn:
+            tableName: "PROJECT"
+            columns:
+              - column:
+                  name: "CONTRACT_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            constraintName: "FK_PROJECT_CONTRACT"
+            baseTableName: "PROJECT"
+            baseColumnNames: "CONTRACT_ID"
+            referencedTableName: "CONTRACT"
+            referencedColumnNames: "ID"

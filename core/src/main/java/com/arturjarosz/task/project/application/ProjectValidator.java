@@ -63,7 +63,7 @@ public class ProjectValidator {
     }
 
     public void validateProjectContractDto(ProjectContractDto projectContractDto) {
-        assertNotNull(projectContractDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACT));
+/*      assertNotNull(projectContractDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACT));
         assertNotNull(projectContractDto.getSigningDate(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
                         ProjectExceptionCodes.SIGNING_DATE));
@@ -71,7 +71,7 @@ public class ProjectValidator {
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
                         ProjectExceptionCodes.START_DATE));
         assertNotNull(projectContractDto.getDeadline(),
-                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.DEADLINE));
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.DEADLINE));*/
     }
 
     public void validateUpdateProjectDto(ProjectDto projectDto) {

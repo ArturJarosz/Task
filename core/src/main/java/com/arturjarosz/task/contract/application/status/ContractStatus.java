@@ -1,4 +1,4 @@
-package com.arturjarosz.task.project.status.contract;
+package com.arturjarosz.task.contract.application.status;
 
 import com.arturjarosz.task.sharedkernel.status.Status;
 

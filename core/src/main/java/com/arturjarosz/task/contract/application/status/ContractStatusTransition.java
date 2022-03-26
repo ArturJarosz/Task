@@ -1,4 +1,4 @@
-package com.arturjarosz.task.project.status.contract;
+package com.arturjarosz.task.contract.application.status;
 
 import com.arturjarosz.task.sharedkernel.status.StatusTransition;
 
@@ -12,6 +12,7 @@ public enum ContractStatusTransition implements StatusTransition<ContractStatus>
     MAKE_NEW_OFFER(ContractStatus.REJECTED, ContractStatus.OFFER),
     // from ACCEPTED
     SIGN_CONTRACT(ContractStatus.ACCEPTED, ContractStatus.SIGNED),
+    REJECT_ACCEPTED(ContractStatus.ACCEPTED, ContractStatus.REJECTED),
     // from SIGNED
     TERMINATE_CONTRACT(ContractStatus.SIGNED, ContractStatus.TERMINATED),
     COMPLETED_CONTRACT(ContractStatus.SIGNED, ContractStatus.COMPLETED),

@@ -1,6 +1,6 @@
 package com.arturjarosz.task.project.domain.impl;
 
-import com.arturjarosz.task.project.application.dto.OfferDto;
+import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
@@ -32,8 +32,8 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
     }
 
     @Override
-    public Project createProject(ProjectCreateDto projectCreateDto) {
-        Project project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto, this.projectWorkflow);
+    public Project createProject(ProjectCreateDto projectCreateDto, Long contractId) {
+        Project project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto, contractId, this.projectWorkflow);
         this.projectStatusTransitionService.create(project);
         return project;
     }
@@ -48,9 +48,8 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
     @Override
     public Project signProjectContract(Project project, ProjectContractDto projectContractDto) {
         LocalDate signingDate = projectContractDto.getSigningDate();
-        LocalDate startDate = projectContractDto.getStartDate();
         LocalDate deadline = projectContractDto.getDeadline();
-        this.projectDataValidator.allDatesPresent(signingDate, startDate, deadline);
+/*        this.projectDataValidator.allDatesPresent(signingDate, startDate, deadline);
         //signing date can't be future date
         this.projectDataValidator.signingDateNotInFuture(signingDate);
         //start date can't be before signing date
@@ -60,7 +59,7 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
         if (!project.isOfferAccepted()) {
             project = this.acceptOffer(project);
         }
-        project.signContract(signingDate, startDate, deadline);
+        project.signContract(signingDate, startDate, deadline);*/
         return project;
     }
 
@@ -91,11 +90,11 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
     }
 
     @Override
-    public Project makeNewOffer(Project project, OfferDto offerDto) {
+    public Project makeNewOffer(Project project, ContractDto contractDto) {
         if (project.getStatus() != null) {
             this.projectStatusTransitionService.makeNewOffer(project);
         }
-        project.makeNewOffer(offerDto.getOfferValue());
+        project.makeNewOffer(contractDto.getOfferValue());
         return project;
     }
 
