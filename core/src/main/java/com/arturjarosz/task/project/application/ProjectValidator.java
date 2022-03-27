@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.application;
 
-import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
@@ -60,18 +59,6 @@ public class ProjectValidator {
     public void validateProjectExistence(Long projectId) {
         Project project = this.projectRepository.load(projectId);
         this.validateProjectExistence(project, projectId);
-    }
-
-    public void validateProjectContractDto(ProjectContractDto projectContractDto) {
-/*      assertNotNull(projectContractDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACT));
-        assertNotNull(projectContractDto.getSigningDate(),
-                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.SIGNING_DATE));
-        assertNotNull(projectContractDto.getStartDate(),
-                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.START_DATE));
-        assertNotNull(projectContractDto.getDeadline(),
-                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.DEADLINE));*/
     }
 
     public void validateUpdateProjectDto(ProjectDto projectDto) {

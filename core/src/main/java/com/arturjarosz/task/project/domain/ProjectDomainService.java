@@ -1,7 +1,6 @@
 package com.arturjarosz.task.project.domain;
 
 import com.arturjarosz.task.contract.application.dto.ContractDto;
-import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.model.Project;
@@ -18,11 +17,6 @@ public interface ProjectDomainService {
      * Update project with data provided in projectDto.
      */
     Project updateProject(Project project, ProjectDto projectDto);
-
-    /**
-     * Accepts offer for client, fills all dates on Project and moves Project to 'To Do'.
-     */
-    Project signProjectContract(Project project, ProjectContractDto projectContractDto);
 
     /**
      * Finish Project and mark it as Completed.

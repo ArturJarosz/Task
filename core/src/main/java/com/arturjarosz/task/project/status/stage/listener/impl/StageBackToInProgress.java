@@ -20,7 +20,7 @@ public class StageBackToInProgress implements StageStatusTransitionListener {
 
     @Override
     public void onStageStatusChange(Project project) {
-        if (project.getStatus().equals(ProjectStatus.COMPLETED)) {
+        if (project.getStatus().equals(ProjectStatus.DONE)) {
             this.projectStatusTransitionService.backToProgress(project);
         }
     }

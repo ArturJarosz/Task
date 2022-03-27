@@ -1,10 +1,10 @@
-package com.arturjarosz.task.contract.application.status.impl;
+package com.arturjarosz.task.contract.status.impl;
 
-import com.arturjarosz.task.contract.application.status.ContractStatus;
-import com.arturjarosz.task.contract.application.status.ContractStatusTransition;
-import com.arturjarosz.task.contract.application.status.ContractWorkflowService;
-import com.arturjarosz.task.contract.application.status.validator.ContractStatusTransitionValidator;
 import com.arturjarosz.task.contract.model.Contract;
+import com.arturjarosz.task.contract.status.ContractStatus;
+import com.arturjarosz.task.contract.status.ContractStatusTransition;
+import com.arturjarosz.task.contract.status.ContractWorkflowService;
+import com.arturjarosz.task.contract.status.validator.ContractStatusTransitionValidator;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;

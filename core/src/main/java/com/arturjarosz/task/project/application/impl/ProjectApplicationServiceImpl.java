@@ -111,20 +111,6 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
     @Transactional
     @Override
-    public ProjectDto signProjectContract(Long projectId, ProjectContractDto projectContractDto) {
-        LOG.debug("Signing Project with id {}", projectId);
-        Project project = this.projectRepository.load(projectId);
-        this.projectValidator.validateProjectExistence(project, projectId);
-        this.projectValidator.validateProjectContractDto(projectContractDto);
-        this.projectValidator.validateProjectNotSigned(project);
-        project = this.projectDomainService.signProjectContract(project, projectContractDto);
-        project = this.projectRepository.save(project);
-        LOG.debug("Project with id {} signed.", projectId);
-        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
-    }
-
-    @Transactional
-    @Override
     public ProjectDto finishProject(Long projectId, ProjectContractDto projectContractDto) {
         LOG.debug("Finishing Project with id {}.", projectId);
         //TODO: TA-62 update conditions on what project can be ended

@@ -1,7 +1,6 @@
 package com.arturjarosz.task.project.domain.impl;
 
 import com.arturjarosz.task.contract.application.dto.ContractDto;
-import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.application.mapper.ProjectDtoMapper;
@@ -42,24 +41,6 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
     public Project updateProject(Project project, ProjectDto projectDto) {
         //TODO: to think what data should be updatable on project
         project.updateProjectData(projectDto.getName(), projectDto.getNote());
-        return project;
-    }
-
-    @Override
-    public Project signProjectContract(Project project, ProjectContractDto projectContractDto) {
-        LocalDate signingDate = projectContractDto.getSigningDate();
-        LocalDate deadline = projectContractDto.getDeadline();
-/*        this.projectDataValidator.allDatesPresent(signingDate, startDate, deadline);
-        //signing date can't be future date
-        this.projectDataValidator.signingDateNotInFuture(signingDate);
-        //start date can't be before signing date
-        this.projectDataValidator.startDateNotBeforeSigningDate(startDate, signingDate);
-        //deadline can't be before start date
-        this.projectDataValidator.deadlineNotBeforeStartDate(startDate, deadline);
-        if (!project.isOfferAccepted()) {
-            project = this.acceptOffer(project);
-        }
-        project.signContract(signingDate, startDate, deadline);*/
         return project;
     }
 

@@ -20,7 +20,7 @@ public class StageReopenToInProgressListener implements StageStatusTransitionLis
 
     @Override
     public void onStageStatusChange(Project project) {
-        if (project.getStatus().equals(ProjectStatus.COMPLETED)) {
+        if (project.getStatus().equals(ProjectStatus.DONE)) {
             this.projectStatusTransitionService.backToProgress(project);
         }
         if (project.getStatus().equals(ProjectStatus.TO_DO)) {

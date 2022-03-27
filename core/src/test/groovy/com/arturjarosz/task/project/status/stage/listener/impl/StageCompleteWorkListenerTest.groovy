@@ -23,7 +23,7 @@ class StageCompleteWorkListenerTest extends Specification {
             stage.changeStatus(StageStatus.COMPLETED)
             this.stageCompleteWorkListener.onStageStatusChange(project)
         then:
-            1 * projectStatusTransitionService.completeWork(project)
+            1 * projectStatusTransitionService.finishWork(project)
     }
 
     def "Complete work on stage, where rest of the stages are in the REJECTED or COMPLETE, should complete work on the project"() {
@@ -36,7 +36,7 @@ class StageCompleteWorkListenerTest extends Specification {
             stage.changeStatus(StageStatus.COMPLETED)
             this.stageCompleteWorkListener.onStageStatusChange(project)
         then:
-            1 * projectStatusTransitionService.completeWork(project)
+            1 * projectStatusTransitionService.finishWork(project)
     }
 
     def "Complete work on stage, where there is at least one stage in IN_PROGRESS, status od the project should not change"() {

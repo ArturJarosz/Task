@@ -29,23 +29,17 @@ public class ProjectStatusTransitionServiceImpl implements ProjectStatusTransiti
 
     @Override
     public void create(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.OFFER);
-    }
-
-    @Override
-    public void rejectOffer(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.REJECTED);
-    }
-
-    @Override
-    public void acceptOffer(Project project) {
-        this.assertProjectInOfferBeforeSigning(project);
         this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.TO_DO);
     }
 
     @Override
-    public void makeNewOffer(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.OFFER);
+    public void rejectNotStarted(Project project) {
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.REJECTED);
+    }
+
+    @Override
+    public void startProgress(Project project) {
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.IN_PROGRESS);
     }
 
     @Override
@@ -55,16 +49,6 @@ public class ProjectStatusTransitionServiceImpl implements ProjectStatusTransiti
 
     @Override
     public void resumeRejected(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.IN_PROGRESS);
-    }
-
-    @Override
-    public void rejectFromSigned(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.REJECTED);
-    }
-
-    @Override
-    public void startProgress(Project project) {
         this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.IN_PROGRESS);
     }
 
@@ -79,8 +63,8 @@ public class ProjectStatusTransitionServiceImpl implements ProjectStatusTransiti
     }
 
     @Override
-    public void completeWork(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.COMPLETED);
+    public void finishWork(Project project) {
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.DONE);
     }
 
     @Override
@@ -89,24 +73,16 @@ public class ProjectStatusTransitionServiceImpl implements ProjectStatusTransiti
     }
 
     @Override
-    public void projectPaid(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.DONE);
-    }
-
-    @Override
-    public void reopenCompleted(Project project) {
-        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.IN_PROGRESS);
+    public void complete(Project project) {
+        this.projectWorkflowService.changeProjectStatus(project, ProjectStatus.COMPLETED);
     }
 
     @Override
     public void reject(Project project) {
         ProjectStatus status = project.getStatus();
         switch (status) {
-            case OFFER:
-                this.rejectOffer(project);
-                break;
             case TO_DO:
-                this.rejectFromSigned(project);
+                this.rejectNotStarted(project);
                 break;
             case IN_PROGRESS:
                 this.rejectFromProgress(project);
@@ -128,23 +104,11 @@ public class ProjectStatusTransitionServiceImpl implements ProjectStatusTransiti
         }
     }
 
-    @Override
-    public void makeOffer(Project project) {
-        this.assertProjectInRejected(project);
-    }
-
     private void assertProjectInRejected(Project project) {
         BaseValidator.assertIsTrue(project.getStatus().equals(ProjectStatus.REJECTED),
                 createMessageCode(ExceptionCodes.NOT_VALID,
                         ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS,
                         ProjectExceptionCodes.REOPEN), project.getStatus());
-    }
-
-    private void assertProjectInOfferBeforeSigning(Project project) {
-        BaseValidator.assertIsTrue(project.getStatus().equals(ProjectStatus.OFFER),
-                createMessageCode(ExceptionCodes.NOT_VALID,
-                        ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS,
-                        ProjectExceptionCodes.SIGN), project.getStatus());
     }
 
     private boolean hasStagesOnlyInRejectedAndToDoStatusOrHasNoStages(Project project) {

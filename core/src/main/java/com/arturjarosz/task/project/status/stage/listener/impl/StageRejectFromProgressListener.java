@@ -29,7 +29,7 @@ public class StageRejectFromProgressListener implements StageStatusTransitionLis
         } else if (this.hasStagesOnlyInRejectedAndToDoStatus(project)) {
             this.projectStatusTransitionService.backToToDo(project);
         } else if (this.hasStagesOnlyInRejectedAndCompletedStatus(project)) {
-            this.projectStatusTransitionService.completeWork(project);
+            this.projectStatusTransitionService.finishWork(project);
         }
     }
 

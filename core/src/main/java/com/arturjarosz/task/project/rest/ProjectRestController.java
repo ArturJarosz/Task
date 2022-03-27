@@ -58,13 +58,6 @@ public class ProjectRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("{projectId}/sign")
-    public ResponseEntity<ProjectDto> signProjectContract(@PathVariable("projectId") Long projectId, @RequestBody
-            ProjectContractDto projectContractDto) {
-        return new ResponseEntity<>(this.projectApplicationService.signProjectContract(projectId, projectContractDto),
-                HttpStatus.OK);
-    }
-
     @PostMapping("{projectId}/finish")
     public ResponseEntity<ProjectDto> finishProject(@PathVariable("projectId") Long projectId, @RequestBody
             ProjectContractDto projectContractDto) {

@@ -1,8 +1,8 @@
 package com.arturjarosz.task.contract.model;
 
 import com.arturjarosz.task.contract.application.dto.ContractDto;
-import com.arturjarosz.task.contract.application.status.ContractStatus;
-import com.arturjarosz.task.contract.application.status.ContractWorkflow;
+import com.arturjarosz.task.contract.status.ContractStatus;
+import com.arturjarosz.task.contract.status.ContractWorkflow;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;

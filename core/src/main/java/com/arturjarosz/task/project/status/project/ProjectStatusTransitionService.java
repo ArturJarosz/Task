@@ -9,36 +9,26 @@ public interface ProjectStatusTransitionService {
 
     void create(Project project);
 
-    void rejectOffer(Project project);
+    void rejectNotStarted(Project project);
 
-    void acceptOffer(Project project);
-
-    void makeNewOffer(Project project);
+    void startProgress(Project project);
 
     void reopenRejected(Project project);
 
     void resumeRejected(Project project);
 
-    void rejectFromSigned(Project project);
-
-    void startProgress(Project project);
-
     void backToToDo(Project project);
 
     void rejectFromProgress(Project project);
 
-    void completeWork(Project project);
+    void finishWork(Project project);
 
     void backToProgress(Project project);
 
-    void projectPaid(Project project);
-
-    void reopenCompleted(Project project);
+    void complete(Project project);
 
     void reject(Project project);
 
     void reopen(Project project);
-
-    void makeOffer(Project project);
 
 }

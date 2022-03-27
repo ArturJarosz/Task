@@ -161,7 +161,7 @@ class ProjectDomainServiceImplTest extends Specification {
         when:
             Project finishedProject = this.projectDomainService.finishProject(project, null)
         then:
-            1 * projectStatusTransitionService.completeWork(_ as Project)
+            1 * projectStatusTransitionService.finishWork(_ as Project)
     }
 
     @Ignore
@@ -173,7 +173,7 @@ class ProjectDomainServiceImplTest extends Specification {
         when:
             Project finishedProject = this.projectDomainService.finishProject(project, null)
         then:
-            1 * projectStatusTransitionService.completeWork({
+            1 * projectStatusTransitionService.finishWork({
                 Project projectToChange ->
                     TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.COMPLETED)
             })

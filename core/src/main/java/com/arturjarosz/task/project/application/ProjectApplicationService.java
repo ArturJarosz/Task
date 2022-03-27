@@ -38,13 +38,6 @@ public interface ProjectApplicationService {
     void removeProject(Long projectId);
 
     /**
-     * Changes project status to Signed and updates data on the project based on the {@link ProjectContractDto}.
-     * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
-     * is thrown.
-     */
-    ProjectDto signProjectContract(Long projectId, ProjectContractDto projectContractDto);
-
-    /**
      * Finishes {@link com.arturjarosz.task.project.model.Project}.
      */
     ProjectDto finishProject(Long projectId, ProjectContractDto projectContractDto);

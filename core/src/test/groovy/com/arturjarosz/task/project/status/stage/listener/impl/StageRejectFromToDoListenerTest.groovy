@@ -63,7 +63,7 @@ class StageRejectFromToDoListenerTest extends Specification {
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromToDoListener.onStageStatusChange(project)
         then:
-            1 * projectStatusTransitionService.completeWork(project)
+            1 * projectStatusTransitionService.finishWork(project)
     }
 
     private Stage createStageWithStatus(StageStatus stageStatus) {

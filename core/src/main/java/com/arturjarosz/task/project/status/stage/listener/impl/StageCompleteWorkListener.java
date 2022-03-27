@@ -25,7 +25,7 @@ public class StageCompleteWorkListener implements StageStatusTransitionListener 
     @Override
     public void onStageStatusChange(Project project) {
         if (this.hasStagesOnlyInRejectedAndCompletedStatus(project)) {
-            this.projectStatusTransitionService.completeWork(project);
+            this.projectStatusTransitionService.finishWork(project);
         }
     }
 

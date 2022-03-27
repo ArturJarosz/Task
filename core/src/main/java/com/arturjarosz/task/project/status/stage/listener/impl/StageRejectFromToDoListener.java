@@ -26,8 +26,8 @@ public class StageRejectFromToDoListener implements StageStatusTransitionListene
     @Override
     public void onStageStatusChange(Project project) {
         if (project.getStatus().equals(ProjectStatus.IN_PROGRESS)
-                && this.hasStagesOnlyInRejectedAndToDoStatus(project)) {
-            this.projectStatusTransitionService.completeWork(project);
+                && this.hasStagesOnlyInRejectedAndCompletedStatus(project)) {
+            this.projectStatusTransitionService.finishWork(project);
         }
     }
 
@@ -36,7 +36,7 @@ public class StageRejectFromToDoListener implements StageStatusTransitionListene
         return this.transition;
     }
 
-    private boolean hasStagesOnlyInRejectedAndToDoStatus(Project project) {
+    private boolean hasStagesOnlyInRejectedAndCompletedStatus(Project project) {
         List<Stage> allStages = new ArrayList<>(project.getStages());
         //we are removing Stages in Rejected status, because they should not be taken into account
         allStages.removeIf(stage -> stage.getStatus().equals(StageStatus.REJECTED));

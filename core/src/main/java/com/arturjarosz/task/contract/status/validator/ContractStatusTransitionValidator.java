@@ -1,7 +1,7 @@
-package com.arturjarosz.task.contract.application.status.validator;
+package com.arturjarosz.task.contract.status.validator;
 
 import com.arturjarosz.task.contract.model.Contract;
-import com.arturjarosz.task.contract.application.status.ContractStatusTransition;
+import com.arturjarosz.task.contract.status.ContractStatusTransition;
 import com.arturjarosz.task.sharedkernel.status.StatusTransitionValidator;
 
 public interface ContractStatusTransitionValidator extends StatusTransitionValidator<ContractStatusTransition> {

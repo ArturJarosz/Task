@@ -1,6 +1,6 @@
 package com.arturjarosz.task.contract.application.dto;
 
-import com.arturjarosz.task.contract.application.status.ContractStatus;
+import com.arturjarosz.task.contract.status.ContractStatus;
 
 import java.io.Serializable;
 import java.time.LocalDate;
