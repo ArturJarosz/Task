@@ -1,5 +1,6 @@
-package com.arturjarosz.task.project.status.task.validator.img;
+package com.arturjarosz.task.project.status.task.validator.impl;
 
+import com.arturjarosz.task.contract.application.ContractWorkflowValidator;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Task;
@@ -7,6 +8,7 @@ import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.task.TaskStatusTransition;
 import com.arturjarosz.task.project.status.task.validator.TaskStatusTransitionValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
@@ -14,11 +16,16 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 
 @Component
 public class TaskStartProgressValidator implements TaskStatusTransitionValidator {
+    private final ContractWorkflowValidator contractWorkflowValidator;
+
+    @Autowired
+    public TaskStartProgressValidator(ContractWorkflowValidator contractWorkflowValidator) {
+        this.contractWorkflowValidator = contractWorkflowValidator;
+    }
+
     @Override
     public void validate(Project project, Task task, Long stageId, TaskStatusTransition statusTransition) {
-        assertIsTrue(project.isOfferAccepted(),
-                createMessageCode(ExceptionCodes.NEGATIVE, ProjectExceptionCodes.CONTRACT, ProjectExceptionCodes.SIGN,
-                        ProjectExceptionCodes.START_PROGRESS));
+        this.contractWorkflowValidator.validateContractAllowsWorking(project.getId());
 
         ProjectStatus status = project.getStatus();
         assertIsTrue(status != ProjectStatus.REJECTED,

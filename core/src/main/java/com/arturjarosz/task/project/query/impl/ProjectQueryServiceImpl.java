@@ -1,5 +1,7 @@
 package com.arturjarosz.task.project.query.impl;
 
+import com.arturjarosz.task.contract.model.QContract;
+import com.arturjarosz.task.contract.status.ContractStatus;
 import com.arturjarosz.task.project.application.dto.ContractorJobDto;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.SupplyDto;
@@ -8,7 +10,6 @@ import com.arturjarosz.task.project.model.CooperatorJobType;
 import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.QContractorJob;
-import com.arturjarosz.task.project.model.QCooperatorJob;
 import com.arturjarosz.task.project.model.QCost;
 import com.arturjarosz.task.project.model.QProject;
 import com.arturjarosz.task.project.model.QStage;
@@ -28,7 +29,7 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
 
     private static final QProject PROJECT = QProject.project;
 
-    private static final QCooperatorJob COOPERATOR_JOB = QCooperatorJob.cooperatorJob;
+    private static final QContract CONTRACT = QContract.contract;
     private static final QContractorJob CONTRACTOR_JOB = QContractorJob.contractorJob;
     private static final QSupply SUPPLY = QSupply.supply;
     private static final QCost COST = QCost.cost;
@@ -41,45 +42,27 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
 
     @Override
     public Cost getCostById(Long costId) {
-        return this.query()
-                .from(COST)
-                .select(COST)
-                .where(COST.id.eq(costId))
-                .fetchOne();
+        return this.query().from(COST).select(COST).where(COST.id.eq(costId)).fetchOne();
     }
 
     @Override
     public Stage getStageById(Long stageId) {
-        return this.query()
-                .from(STAGE)
-                .select(STAGE)
-                .where(STAGE.id.eq(stageId))
-                .fetchOne();
+        return this.query().from(STAGE).select(STAGE).where(STAGE.id.eq(stageId)).fetchOne();
     }
 
     @Override
     public List<Project> getProjectsForClientId(Long clientId) {
-        return this.query()
-                .from(PROJECT)
-                .select(PROJECT)
-                .where(PROJECT.clientId.eq(clientId))
-                .fetch();
+        return this.query().from(PROJECT).select(PROJECT).where(PROJECT.clientId.eq(clientId)).fetch();
     }
 
     @Override
     public List<Project> getProjectsForArchitect(Long architectId) {
-        return this.query()
-                .from(PROJECT)
-                .select(PROJECT)
-                .where(PROJECT.architectId.eq(architectId))
-                .fetch();
+        return this.query().from(PROJECT).select(PROJECT).where(PROJECT.architectId.eq(architectId)).fetch();
     }
 
     @Override
     public TaskDto getTaskByTaskId(Long taskId) {
-        return this.query()
-                .from(TASK)
-                .where(TASK.id.eq(taskId))
+        return this.query().from(TASK).where(TASK.id.eq(taskId))
                 .select(Projections.bean(TaskDto.class, TASK.id.as(TaskDto.ID), TASK.status.as(TaskDto.STATUS),
                         TASK.name.as(TaskDto.NAME), TASK.startDate.as(TaskDto.START_DATE),
                         TASK.endDate.as(TaskDto.END_DATE), TASK.note.as(TaskDto.NOTE), TASK.type.as(TaskDto.TASK_TYPE)))
@@ -88,42 +71,37 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
 
     @Override
     public List<StageDto> getStagesForProjectById(Long projectId) {
-        return this.query()
-                .from(PROJECT)
-                .leftJoin(PROJECT.stages, STAGE)
-                .where(PROJECT.id.eq(projectId))
+        return this.query().from(PROJECT).leftJoin(PROJECT.stages, STAGE).where(PROJECT.id.eq(projectId))
                 .select(Projections.bean(StageDto.class, STAGE.id.as(StageDto.ID), STAGE.name.as(StageDto.NAME),
                         STAGE.deadline.as(StageDto.DEADLINE), STAGE.stageType.as(StageDto.STAGE_TYPE),
-                        STAGE.status.as(StageDto.STATUS)))
-                .fetch();
+                        STAGE.status.as(StageDto.STATUS))).fetch();
     }
 
     @Override
     public SupplyDto getSupplyForProject(long supplyId, long projectId) {
-        return this.query()
-                .from(SUPPLY)
-                .where(SUPPLY.id.eq(supplyId)
-                        .and(SUPPLY.type.eq(CooperatorJobType.SUPPLY)))
+        return this.query().from(SUPPLY).where(SUPPLY.id.eq(supplyId).and(SUPPLY.type.eq(CooperatorJobType.SUPPLY)))
                 .select(Projections.bean(SupplyDto.class, SUPPLY.id, SUPPLY.name, SUPPLY.financialData.value.value,
                         SUPPLY.cooperatorId.as("supplierId"), SUPPLY.note, SUPPLY.financialData.hasInvoice,
-                        SUPPLY.financialData.payable, SUPPLY.financialData.paid, Expressions.asNumber(projectId)
-                                .as("projectId")))
-                .fetchOne();
+                        SUPPLY.financialData.payable, SUPPLY.financialData.paid,
+                        Expressions.asNumber(projectId).as("projectId"))).fetchOne();
     }
 
     @Override
     public ContractorJobDto getContractorJobForProject(long contractorJobId, long projectId) {
-        return this.query()
-                .from(CONTRACTOR_JOB)
-                .where(CONTRACTOR_JOB.id.eq(contractorJobId)
+        return this.query().from(CONTRACTOR_JOB).where(CONTRACTOR_JOB.id.eq(contractorJobId)
                         .and(CONTRACTOR_JOB.type.eq(CooperatorJobType.CONTRACTOR_JOB)))
                 .select(Projections.bean(ContractorJobDto.class, CONTRACTOR_JOB.id, CONTRACTOR_JOB.name,
                         CONTRACTOR_JOB.financialData.value.value, CONTRACTOR_JOB.cooperatorId.as("contractorId"),
                         CONTRACTOR_JOB.note, CONTRACTOR_JOB.financialData.hasInvoice,
                         CONTRACTOR_JOB.financialData.payable, CONTRACTOR_JOB.financialData.paid,
-                        Expressions.asNumber(projectId)
-                                .as("projectId")))
+                        Expressions.asNumber(projectId).as("projectId"))).fetchOne();
+    }
+
+    @Override
+    public ContractStatus getContractStatusForProject(long projectId) {
+        return this.query().from(PROJECT).join(CONTRACT).where(PROJECT.id.eq(projectId)).select(CONTRACT.status)
                 .fetchOne();
+
     }
 
 }

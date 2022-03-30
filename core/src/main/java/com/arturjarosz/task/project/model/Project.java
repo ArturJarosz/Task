@@ -95,16 +95,6 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         this.contractId = contractId;
     }
 
-    public void signContract(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
-        this.updateProjectDates(startDate);
-        // this.arrangement = new Contract(this.arrangement.getOfferValue().getValue().doubleValue(), signingDate,
-        //        deadline);
-    }
-
-    public void updateProjectDates(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
     public void finishProject(LocalDate endDate) {
         this.endDate = endDate;
     }
@@ -134,26 +124,12 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         return this.projectType;
     }
 
-    public LocalDate getSigningDate() {
-/*        if (this.arrangement instanceof Contract) {
-            return ((Contract) this.arrangement).getSigningDate();
-        }*/
-        return null;
-    }
-
     public LocalDate getStartDate() {
         return this.startDate;
     }
 
     public LocalDate getEndDate() {
         return this.endDate;
-    }
-
-    public LocalDate getDeadline() {
-/*        if (this.arrangement instanceof Contract) {
-            return ((Contract) this.arrangement).getDeadline();
-        }*/
-        return null;
     }
 
     public String getNote() {
@@ -290,38 +266,6 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     public void changeStatus(ProjectStatus status) {
         this.status = status;
     }
-
-    public void makeNewOffer(double offerValue) {
-        //this.arrangement = new Offer(offerValue);
-    }
-
-    public void acceptOffer() {
-        //((Offer) this.arrangement).acceptOffer();
-    }
-
-/*    public Offer getOffer() {
-        //return ((Offer) this.arrangement);
-        return null;
-    }*/
-
-    public boolean isContractSigned() {
-        // return (this.arrangement instanceof Contract);
-        return false;
-    }
-
-    public boolean isOfferAccepted() {
-/*        if (this.arrangement == null) {
-            return false;
-        }
-        if (this.arrangement instanceof Offer) {
-            return ((Offer) this.arrangement).isAccepted();
-        }*/
-        return true;
-    }
-
-/*    public Arrangement getArrangement() {
-        return this.arrangement;
-    }*/
 
     public void removeSupply(Long supplyId) {
         this.supplies.removeIf(supply -> supply.getId().equals(supplyId));

@@ -5,15 +5,19 @@ import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @Component
 public class TaskValidator {
 
     private final ProjectQueryService projectQueryService;
 
+    @Autowired
     public TaskValidator(ProjectQueryService projectQueryService) {
         this.projectQueryService = projectQueryService;
     }

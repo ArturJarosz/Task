@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.query;
 
+import com.arturjarosz.task.contract.status.ContractStatus;
 import com.arturjarosz.task.project.application.dto.ContractorJobDto;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.SupplyDto;
@@ -51,4 +52,9 @@ public interface ProjectQueryService {
      * Returns ContractorJob with contractorJobId for Project with projectId.
      */
     ContractorJobDto getContractorJobForProject(long contractorJobId, long projectId);
+
+    /**
+     * Get contract status for Project with given projectId.
+     */
+    ContractStatus getContractStatusForProject(long projectId);
 }

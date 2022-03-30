@@ -54,7 +54,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "1 Creating project should return code 200 and put project in OFFER status"() {
+    def "1 Creating project should return code 200 and put project in TO_DO status"() {
         given: "Existing architect"
             ArchitectDto architectDto = this.createArchitect()
             properProjectDto.architectId = architectDto.id
@@ -71,8 +71,8 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto projectDto = mapper.readValue(projectResponse.contentAsString, ProjectDto.class)
         then: "Returns code 201"
             projectResponse.status == HttpStatus.CREATED.value()
-        and: "Project status is set to offer"
-            this.getProjectStatus(projectResponse) == ProjectStatus.OFFER
+        and: "Project status is set to TO_DO"
+            this.getProjectStatus(projectResponse) == ProjectStatus.TO_DO
     }
 
     @Transactional

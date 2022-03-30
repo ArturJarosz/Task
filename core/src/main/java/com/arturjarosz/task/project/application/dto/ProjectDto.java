@@ -23,7 +23,6 @@ public class ProjectDto implements Serializable {
     private String note;
     private ProjectStatus status;
     private Double projectValue;
-    private Boolean isOfferAccepted;
 
     public ProjectDto() {
         //needed by Hibernate
@@ -123,13 +122,5 @@ public class ProjectDto implements Serializable {
 
     public void setProjectValue(Double projectValue) {
         this.projectValue = projectValue;
-    }
-
-    public Boolean getOfferAccepted() {
-        return this.isOfferAccepted;
-    }
-
-    public void setOfferAccepted(Boolean offerAccepted) {
-        this.isOfferAccepted = offerAccepted;
     }
 }

@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.rest;
 
-import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
@@ -65,11 +64,6 @@ public class ProjectRestController {
                 HttpStatus.OK);
     }
 
-    @PostMapping("{projectId}/acceptOffer")
-    public ResponseEntity<ProjectDto> acceptOffer(@PathVariable("projectId") Long projectId) {
-        return new ResponseEntity<>(this.projectApplicationService.acceptOffer(projectId), HttpStatus.OK);
-    }
-
     @GetMapping("")
     public ResponseEntity<List<ProjectDto>> getProjects() {
         return new ResponseEntity<>(this.projectApplicationService.getProjects(), HttpStatus.OK);
@@ -83,11 +77,5 @@ public class ProjectRestController {
     @PostMapping("{projectId}/reopen")
     public ResponseEntity<ProjectDto> reopenProject(@PathVariable("projectId") Long projectId) {
         return new ResponseEntity<>(this.projectApplicationService.reopenProject(projectId), HttpStatus.OK);
-    }
-
-    @PostMapping("{projectId}/newOffer")
-    public ResponseEntity<ProjectDto> makeNewOffer(@PathVariable("projectId") Long projectId,
-                                                   @RequestBody ContractDto contractDto) {
-        return new ResponseEntity<>(this.projectApplicationService.makeNewOffer(projectId, contractDto), HttpStatus.OK);
     }
 }

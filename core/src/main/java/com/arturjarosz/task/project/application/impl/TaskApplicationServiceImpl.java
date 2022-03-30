@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application.impl;
 
+import com.arturjarosz.task.contract.application.ContractWorkflowValidator;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageValidator;
 import com.arturjarosz.task.project.application.TaskApplicationService;
@@ -33,16 +34,18 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     private final StageValidator stageValidator;
     private final TaskDomainService taskDomainService;
     private final TaskValidator taskValidator;
+    private final ContractWorkflowValidator contractWorkflowValidator;
 
     public TaskApplicationServiceImpl(ProjectQueryService projectQueryService, ProjectRepository projectRepository,
-                                      ProjectValidator projectValidator, StageValidator stageValidator,
-                                      TaskDomainService taskDomainService, TaskValidator taskValidator) {
+            ProjectValidator projectValidator, StageValidator stageValidator, TaskDomainService taskDomainService,
+            TaskValidator taskValidator, ContractWorkflowValidator contractWorkflowValidator) {
         this.projectQueryService = projectQueryService;
         this.projectRepository = projectRepository;
         this.projectValidator = projectValidator;
         this.stageValidator = stageValidator;
         this.taskDomainService = taskDomainService;
         this.taskValidator = taskValidator;
+        this.contractWorkflowValidator = contractWorkflowValidator;
     }
 
     @Transactional
@@ -52,6 +55,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateCreateTaskDto(taskDto);
+        this.contractWorkflowValidator.validateContractAllowsForWorkObjectsCreation(projectId);
         Project project = this.projectRepository.load(projectId);
         Task task = this.taskDomainService.createTask(project, stageId, taskDto);
         project = this.projectRepository.save(project);

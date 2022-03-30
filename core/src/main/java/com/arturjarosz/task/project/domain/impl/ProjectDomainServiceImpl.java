@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.domain.impl;
 
-import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.application.mapper.ProjectDtoMapper;
@@ -39,7 +38,6 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
 
     @Override
     public Project updateProject(Project project, ProjectDto projectDto) {
-        //TODO: to think what data should be updatable on project
         project.updateProjectData(projectDto.getName(), projectDto.getNote());
         return project;
     }
@@ -54,7 +52,7 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
         this.projectDataValidator.endDateNotBeforeStartDate(project.getStartDate(), endDate);
         project.finishProject(endDate);
         // TODO TA-194: what does it mean to finish project ? is there a need to have action for that ?
-        //this.projectStatusTransitionService.completeWork(project);
+        this.projectStatusTransitionService.complete(project);
         return project;
     }
 
@@ -67,22 +65,6 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
     @Override
     public Project reopenProject(Project project) {
         this.projectStatusTransitionService.reopen(project);
-        return project;
-    }
-
-    @Override
-    public Project makeNewOffer(Project project, ContractDto contractDto) {
-        if (project.getStatus() != null) {
-            this.projectStatusTransitionService.makeNewOffer(project);
-        }
-        project.makeNewOffer(contractDto.getOfferValue());
-        return project;
-    }
-
-    @Override
-    public Project acceptOffer(Project project) {
-        project.acceptOffer();
-        this.projectStatusTransitionService.acceptOffer(project);
         return project;
     }
 }

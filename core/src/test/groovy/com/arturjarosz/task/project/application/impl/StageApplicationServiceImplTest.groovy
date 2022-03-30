@@ -36,7 +36,7 @@ class StageApplicationServiceImplTest extends Specification {
     def stageDomainService = Mock(StageDomainService)
 
     def stageApplicationService = new StageApplicationServiceImpl(projectQueryService, projectValidator,
-            projectRepository, stageDomainService, stageValidator)
+            projectRepository, stageDomainService, stageValidator, contractWorkflowValidator)
 
     def "createStage should call validateProjectExistence on projectValidator"() {
         given:

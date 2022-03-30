@@ -10,7 +10,6 @@ import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -65,12 +64,6 @@ public class ProjectValidator {
         assertNotNull(projectDto,
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.UPDATE));
         validateProjectName(projectDto.getName());
-    }
-
-    public void validateProjectNotSigned(Project project) {
-        assertIsTrue(!project.isContractSigned(),
-                createMessageCode(ExceptionCodes.ALREADY_SET, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.SIGN));
     }
 
 }

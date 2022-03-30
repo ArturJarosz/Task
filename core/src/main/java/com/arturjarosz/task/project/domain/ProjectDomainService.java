@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.domain;
 
-import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.model.Project;
@@ -33,14 +32,4 @@ public interface ProjectDomainService {
      * Reopen rejected Project to continue or plan work on it.
      */
     Project reopenProject(Project project);
-
-    /**
-     * Make a new offer for Project with value provided in OfferDto.
-     */
-    Project makeNewOffer(Project project, ContractDto contractDto);
-
-    /**
-     * Accept offer for project. This allows to start work on Project.
-     */
-    Project acceptOffer(Project project);
 }
