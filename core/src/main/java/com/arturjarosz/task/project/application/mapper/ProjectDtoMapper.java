@@ -38,6 +38,14 @@ public interface ProjectDtoMapper {
     @Mapping(source = "project.startDate", target = "startDate")
     @Mapping(source = "project.note", target = "note")
     @Mapping(source = "project.id", target = "id")
+    @Mapping(source = "contractId", target = "contractId")
+    ProjectDto projectToProjectDto(Project project, Long contractId);
+
+    @Mapping(source = "project.projectType", target = "projectType")
+    @Mapping(source = "project.name", target = "name")
+    @Mapping(source = "project.startDate", target = "startDate")
+    @Mapping(source = "project.note", target = "note")
+    @Mapping(source = "project.id", target = "id")
     ProjectDto projectToProjectDto(Project project);
 
     @Mapping(source = "project.projectType", target = "projectType")

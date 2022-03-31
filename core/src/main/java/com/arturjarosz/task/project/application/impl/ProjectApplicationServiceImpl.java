@@ -13,7 +13,6 @@ import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.ProjectValidator;
-import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.application.mapper.ProjectDtoMapper;
@@ -72,7 +71,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectRepository.save(project);
         this.projectFinancialDataService.createProjectFinancialData(project.getId());
         LOG.debug("Project created.");
-        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
+        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project, contract.getId());
     }
 
     @Override
@@ -111,13 +110,13 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
     @Transactional
     @Override
-    public ProjectDto finishProject(Long projectId, ProjectContractDto projectContractDto) {
+    public ProjectDto finishProject(Long projectId, ProjectDto projectContractDto) {
         LOG.debug("Finishing Project with id {}.", projectId);
         //TODO: TA-62 update conditions on what project can be ended
         Project project = this.projectRepository.load(projectId);
         this.projectValidator.validateProjectExistence(projectId);
-/*        project = this.projectDomainService.finishProject(project, projectContractDto.getEndDate());
-        this.projectRepository.save(project);*/
+        project = this.projectDomainService.finishProject(project, projectContractDto.getEndDate());
+        this.projectRepository.save(project);
         LOG.debug("Project with id {} is finished.", projectId);
         return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
     }

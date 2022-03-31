@@ -1,7 +1,6 @@
 package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.project.application.ProjectApplicationService;
-import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
@@ -59,8 +58,8 @@ public class ProjectRestController {
 
     @PostMapping("{projectId}/finish")
     public ResponseEntity<ProjectDto> finishProject(@PathVariable("projectId") Long projectId, @RequestBody
-            ProjectContractDto projectContractDto) {
-        return new ResponseEntity<>(this.projectApplicationService.finishProject(projectId, projectContractDto),
+            ProjectDto projectDto) {
+        return new ResponseEntity<>(this.projectApplicationService.finishProject(projectId, projectDto),
                 HttpStatus.OK);
     }
 

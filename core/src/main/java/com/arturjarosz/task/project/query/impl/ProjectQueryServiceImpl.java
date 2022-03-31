@@ -99,7 +99,9 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
 
     @Override
     public ContractStatus getContractStatusForProject(long projectId) {
-        return this.query().from(PROJECT).join(CONTRACT).where(PROJECT.id.eq(projectId)).select(CONTRACT.status)
+        return this.query().from(PROJECT)
+                .join(CONTRACT).on(PROJECT.contractId.eq(CONTRACT.id))
+                .where(PROJECT.id.eq(projectId)).select(CONTRACT.status)
                 .fetchOne();
 
     }

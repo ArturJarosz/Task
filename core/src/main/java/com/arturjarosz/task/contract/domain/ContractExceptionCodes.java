@@ -17,6 +17,9 @@ public class ContractExceptionCodes {
 
     public static final String CREATE = "create";
     public static final String CHANGE = "change";
+    public static final String OBJECT = "object";
+    public static final String TRANSITION = "transition";
+    public static final String WORK = "work";
 
 
     private ContractExceptionCodes() {

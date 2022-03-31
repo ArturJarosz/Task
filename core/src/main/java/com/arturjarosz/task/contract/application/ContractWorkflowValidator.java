@@ -26,13 +26,15 @@ public class ContractWorkflowValidator {
         ContractStatus contractStatus = this.projectQueryService.getContractStatusForProject(projectId);
         assertIsTrue(this.contractWorkflow.getStatusesThatAllowCreatingProjectObjects().contains(contractStatus),
                 createMessageCode(ExceptionCodes.NOT_VALID, ContractExceptionCodes.CONTRACT,
-                        ContractExceptionCodes.STATUS, ContractExceptionCodes.CREATE));
+                        ContractExceptionCodes.STATUS, ContractExceptionCodes.OBJECT, ContractExceptionCodes.CREATE),
+                contractStatus.getStatusName());
     }
 
-    public void validateContractAllowsWorking(Long projectId){
+    public void validateContractAllowsWorking(Long projectId) {
         ContractStatus contractStatus = this.projectQueryService.getContractStatusForProject(projectId);
         assertIsTrue(this.contractWorkflow.getStatusesThatAllowWorking().contains(contractStatus),
                 createMessageCode(ExceptionCodes.NOT_VALID, ContractExceptionCodes.CONTRACT,
-                        ContractExceptionCodes.STATUS, ContractExceptionCodes.CHANGE));
+                        ContractExceptionCodes.STATUS, ContractExceptionCodes.WORK,
+                        ContractExceptionCodes.TRANSITION), contractStatus.getStatusName());
     }
 }

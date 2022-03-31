@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.application;
 
-import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 
@@ -39,7 +38,7 @@ public interface ProjectApplicationService {
     /**
      * Finishes {@link com.arturjarosz.task.project.model.Project}.
      */
-    ProjectDto finishProject(Long projectId, ProjectContractDto projectContractDto);
+    ProjectDto finishProject(Long projectId, ProjectDto projectContractDto);
 
     /**
      * Loads list of all Projects Data.
