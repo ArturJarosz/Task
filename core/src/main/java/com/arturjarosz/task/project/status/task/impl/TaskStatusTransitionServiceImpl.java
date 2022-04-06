@@ -33,7 +33,7 @@ public class TaskStatusTransitionServiceImpl implements TaskStatusTransitionServ
 
     @Override
     public void completeWork(Project project, Long stageId, Long taskId) {
-        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.COMPLETED);
+        this.taskWorkflowService.changeTaskStatusOnProject(project, stageId, taskId, TaskStatus.DONE);
     }
 
     @Override

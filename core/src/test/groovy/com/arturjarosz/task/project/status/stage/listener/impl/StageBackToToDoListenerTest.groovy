@@ -64,10 +64,10 @@ class StageBackToToDoListenerTest extends Specification {
             0 * projectStatusTransitionService._
     }
 
-    def "Changing stage status from IN_PROGRESS to TO_DO when there are stages in COMPLETED should not change project status"() {
+    def "Changing stage status from IN_PROGRESS to TO_DO when there are stages in DONE should not change project status"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.IN_PROGRESS)
-            def stage2 = this.createStageWithStatus(StageStatus.COMPLETED)
+            def stage2 = this.createStageWithStatus(StageStatus.DONE)
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Sets.newHashSet(stage, stage2, stage3))
         when:

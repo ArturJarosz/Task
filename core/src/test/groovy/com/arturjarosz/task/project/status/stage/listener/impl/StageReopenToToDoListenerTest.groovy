@@ -59,7 +59,7 @@ class StageReopenToToDoListenerTest extends Specification {
     def "Reopening stage to TO_DO on project in DONE status with stages in IN_PROGRESS should change project status to IN_PROGRESS"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.REJECTED)
-            def stage2 = this.createStageWithStatus(StageStatus.COMPLETED)
+            def stage2 = this.createStageWithStatus(StageStatus.DONE)
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.DONE,

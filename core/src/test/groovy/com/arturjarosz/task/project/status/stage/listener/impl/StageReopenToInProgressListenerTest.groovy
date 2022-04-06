@@ -56,10 +56,10 @@ class StageReopenToInProgressListenerTest extends Specification {
             0 * projectStatusTransitionService._
     }
 
-    def "Reopening stage to COMPLETED on project in DONE with stages with statuses in COMPLETED and REJECTED should change project status to IN_PROGRESS"() {
+    def "Reopening stage to DONE on project in DONE with stages with statuses in DONE and REJECTED should change project status to IN_PROGRESS"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.REJECTED)
-            def stage2 = this.createStageWithStatus(StageStatus.COMPLETED)
+            def stage2 = this.createStageWithStatus(StageStatus.DONE)
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.DONE,

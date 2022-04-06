@@ -40,10 +40,10 @@ class StageRejectFromToDoListenerTest extends Specification {
             0 * projectStatusTransitionService._
     }
 
-    def "Rejecting stage from status TO_DO on the project in IN_PROGRESS with other stages in COMPLETED and REJECTED statuses should make project COMPLETED"() {
+    def "Rejecting stage from status TO_DO on the project in IN_PROGRESS with other stages in DONE and REJECTED statuses should make project DONE"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.TO_DO)
-            def stage2 = this.createStageWithStatus(StageStatus.COMPLETED)
+            def stage2 = this.createStageWithStatus(StageStatus.DONE)
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,

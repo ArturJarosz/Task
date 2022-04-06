@@ -17,9 +17,9 @@ class TaskBackToInProgressListenerTest extends Specification {
     def stageWorkflowService = Mock(StageWorkflowServiceImpl)
     def taskBackToInProgressListener = new TaskBackToInProgressListener(stageWorkflowService)
 
-    def "Changing task status from COMPLETED to IN_PROGRESS in stage in IN_PROGRESS status should not change that stage status"() {
+    def "Changing task status from DONE to IN_PROGRESS in stage in IN_PROGRESS status should not change that stage status"() {
         given:
-            def task = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
             def task3 = this.createTaskOfGivenStatus(TaskStatus.REJECTED)
             def stage =
@@ -33,13 +33,13 @@ class TaskBackToInProgressListenerTest extends Specification {
             0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
     }
 
-    def "Changing task status from COMPLETED to IN_PROGRESS in stage in COMPLETED status should change that stage status to IN_PROGRESS"() {
+    def "Changing task status from DONE to IN_PROGRESS in stage in DONE status should change that stage status to IN_PROGRESS"() {
         given:
-            def task = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
-            def task2 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task = this.createTaskOfGivenStatus(TaskStatus.DONE)
+            def task2 = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def task3 = this.createTaskOfGivenStatus(TaskStatus.REJECTED)
             def stage =
-                    this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.COMPLETED,
+                    this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.DONE,
                             Arrays.asList(task, task2, task3))
             def project = this.createProjectWithGivenStage(stage)
         when:

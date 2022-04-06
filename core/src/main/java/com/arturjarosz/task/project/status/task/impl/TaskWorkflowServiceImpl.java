@@ -5,6 +5,7 @@ import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
+import com.arturjarosz.task.project.status.project.validator.ProjectWorkflowValidator;
 import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.project.status.task.TaskStatusTransition;
@@ -29,13 +30,15 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 
 @DomainService
 public class TaskWorkflowServiceImpl implements TaskWorkflowService {
+    private final ProjectWorkflowValidator projectWorkflowValidator;
 
     private Map<String, List<TaskStatusTransitionValidator>> mapNameToStatusTransitionValidators;
     private Map<String, List<TaskStatusTransitionListener>> mapNameToStatusTransitionListeners;
 
     @Autowired
-    public TaskWorkflowServiceImpl(List<TaskStatusTransitionListener> taskStatusTransitionListenerList,
-                                   List<TaskStatusTransitionValidator> transitionValidatorList) {
+    public TaskWorkflowServiceImpl(ProjectWorkflowValidator projectWorkflowValidator, List<TaskStatusTransitionListener> taskStatusTransitionListenerList,
+            List<TaskStatusTransitionValidator> transitionValidatorList) {
+        this.projectWorkflowValidator = projectWorkflowValidator;
         this.mapNameToStatusTransitionValidators = new HashMap<>();
         this.mapNameToStatusTransitionValidators = transitionValidatorList.stream()
                 .collect(Collectors.groupingBy(
@@ -55,8 +58,7 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
 
     @Override
     public void changeTaskStatusOnProject(Project project, Long stageId, Long taskId, TaskStatus newStatus) {
-        this.assertProjectNotInRejected(project);
-        this.assertProjectNotInDone(project);
+        this.projectWorkflowValidator.validateProjectAllowsForWorking(project);
         this.assertStageNotInRejected(project, stageId);
         Task task = this.getTask(project, stageId, taskId);
         TaskStatus oldStatus = task.getStatus();
@@ -126,11 +128,11 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
                 ProjectExceptionCodes.TASK, ProjectExceptionCodes.CHANGE, ProjectExceptionCodes.STATUS));
     }
 
-    private void assertProjectNotInDone(Project project) {
+    private void assertProjectNotInCompleted(Project project) {
         Predicate<Project> projectPredicate = projectToCheck ->
-                projectToCheck.getStatus() != (ProjectStatus.DONE);
+                projectToCheck.getStatus() != (ProjectStatus.COMPLETED);
         assertIsTrue(projectPredicate.test(project), createMessageCode(ExceptionCodes.NOT_VALID,
-                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.DONE,
+                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.COMPLETED,
                 ProjectExceptionCodes.TASK, ProjectExceptionCodes.CHANGE, ProjectExceptionCodes.STATUS));
     }
 

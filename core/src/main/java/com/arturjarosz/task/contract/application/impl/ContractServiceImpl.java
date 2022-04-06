@@ -7,7 +7,7 @@ import com.arturjarosz.task.contract.application.mapper.ContractDtoMapper;
 import com.arturjarosz.task.contract.intrastructure.ContractRepository;
 import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.contract.status.ContractStatusTransitionService;
-import com.arturjarosz.task.contract.status.ContractWorkflow;
+import com.arturjarosz.task.contract.status.StatusWorkflow;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +20,13 @@ public class ContractServiceImpl implements ContractService {
     private static final Logger LOG = LoggerFactory.getLogger(ContractServiceImpl.class);
 
     private final ContractStatusTransitionService contractStatusTransitionService;
-    private final ContractWorkflow contractWorkflow;
+    private final StatusWorkflow contractWorkflow;
     private final ContractValidator contractValidator;
     private final ContractRepository contractRepository;
 
     @Autowired
     public ContractServiceImpl(ContractStatusTransitionService contractStatusTransitionService,
-            ContractWorkflow contractWorkflow, ContractValidator contractValidator,
+            StatusWorkflow contractWorkflow, ContractValidator contractValidator,
             ContractRepository contractRepository) {
         this.contractStatusTransitionService = contractStatusTransitionService;
         this.contractWorkflow = contractWorkflow;

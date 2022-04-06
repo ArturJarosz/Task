@@ -1,8 +1,8 @@
-package com.arturjarosz.task.contract.application;
+package com.arturjarosz.task.contract.status.validator;
 
 import com.arturjarosz.task.contract.domain.ContractExceptionCodes;
 import com.arturjarosz.task.contract.status.ContractStatus;
-import com.arturjarosz.task.contract.status.ContractWorkflow;
+import com.arturjarosz.task.contract.status.StatusWorkflow;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +14,17 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 @Component
 public class ContractWorkflowValidator {
     private final ProjectQueryService projectQueryService;
-    private final ContractWorkflow contractWorkflow;
+    private final StatusWorkflow contractWorkflow;
 
     @Autowired
-    public ContractWorkflowValidator(ProjectQueryService projectQueryService, ContractWorkflow contractWorkflow) {
+    public ContractWorkflowValidator(ProjectQueryService projectQueryService, StatusWorkflow contractWorkflow) {
         this.projectQueryService = projectQueryService;
         this.contractWorkflow = contractWorkflow;
     }
 
     public void validateContractAllowsForWorkObjectsCreation(Long projectId) {
         ContractStatus contractStatus = this.projectQueryService.getContractStatusForProject(projectId);
-        assertIsTrue(this.contractWorkflow.getStatusesThatAllowCreatingProjectObjects().contains(contractStatus),
+        assertIsTrue(this.contractWorkflow.getStatusesThatAllowCreatingWorkObjects().contains(contractStatus),
                 createMessageCode(ExceptionCodes.NOT_VALID, ContractExceptionCodes.CONTRACT,
                         ContractExceptionCodes.STATUS, ContractExceptionCodes.OBJECT, ContractExceptionCodes.CREATE),
                 contractStatus.getStatusName());

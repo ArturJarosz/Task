@@ -110,7 +110,7 @@ class ProjectDomainServiceImplTest extends Specification {
     }
 
     //TODO TA-194: analyze finishing project
-    def "finishProject should changeProject status to Completed"() {
+    def "finishProject should changeProject status to COMPLETED"() {
         given:
             Project project = this.prepareProjectInProgressWithStatus()
             LocalDate today = LocalDate.now()

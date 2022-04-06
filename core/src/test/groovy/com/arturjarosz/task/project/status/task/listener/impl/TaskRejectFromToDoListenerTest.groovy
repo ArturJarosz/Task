@@ -45,10 +45,10 @@ class TaskRejectFromToDoListenerTest extends Specification {
             0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
     }
 
-    def "Rejecting task in TO_DO status, on stage in IN_PROGRESS status, when rest are only in COMPLETE and REJECTED statuses should change stage status to COMPLETED"() {
+    def "Rejecting task in TO_DO status, on stage in IN_PROGRESS status, when rest are only in DONE and REJECTED statuses should change stage status to DONE"() {
         given:
             def task1 = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
-            def task2 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task2 = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def task3 = this.createTaskOfGivenStatus(TaskStatus.REJECTED)
             def stage =
                     this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS,
@@ -58,7 +58,7 @@ class TaskRejectFromToDoListenerTest extends Specification {
             task1.changeStatus(TaskStatus.REJECTED)
             this.taskRejectFromToDoListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.COMPLETED)
+            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.DONE)
     }
 
     private Project createProjectWithGivenStage(Stage stage) {

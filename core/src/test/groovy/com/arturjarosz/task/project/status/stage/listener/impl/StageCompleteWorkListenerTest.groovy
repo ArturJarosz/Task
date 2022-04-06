@@ -20,7 +20,7 @@ class StageCompleteWorkListenerTest extends Specification {
             def stage = this.createStageWithStatus(StageStatus.IN_PROGRESS)
             def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Sets.newHashSet(stage))
         when:
-            stage.changeStatus(StageStatus.COMPLETED)
+            stage.changeStatus(StageStatus.DONE)
             this.stageCompleteWorkListener.onStageStatusChange(project)
         then:
             1 * projectStatusTransitionService.finishWork(project)
@@ -29,11 +29,11 @@ class StageCompleteWorkListenerTest extends Specification {
     def "Complete work on stage, where rest of the stages are in the REJECTED or COMPLETE, should complete work on the project"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.IN_PROGRESS)
-            def stage2 = this.createStageWithStatus(StageStatus.COMPLETED)
+            def stage2 = this.createStageWithStatus(StageStatus.DONE)
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Sets.newHashSet(stage, stage2, stage3))
         when:
-            stage.changeStatus(StageStatus.COMPLETED)
+            stage.changeStatus(StageStatus.DONE)
             this.stageCompleteWorkListener.onStageStatusChange(project)
         then:
             1 * projectStatusTransitionService.finishWork(project)
@@ -42,11 +42,11 @@ class StageCompleteWorkListenerTest extends Specification {
     def "Complete work on stage, where there is at least one stage in IN_PROGRESS, status od the project should not change"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.IN_PROGRESS)
-            def stage2 = this.createStageWithStatus(StageStatus.COMPLETED)
+            def stage2 = this.createStageWithStatus(StageStatus.DONE)
             def stage3 = this.createStageWithStatus(StageStatus.IN_PROGRESS)
             def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Sets.newHashSet(stage, stage2, stage3))
         when:
-            stage.changeStatus(StageStatus.COMPLETED)
+            stage.changeStatus(StageStatus.DONE)
             this.stageCompleteWorkListener.onStageStatusChange(project)
         then:
             0 * projectStatusTransitionService._

@@ -1,6 +1,6 @@
 package com.arturjarosz.task.project.status.task.validator.impl;
 
-import com.arturjarosz.task.contract.application.ContractWorkflowValidator;
+import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.status.task.TaskStatusTransition;

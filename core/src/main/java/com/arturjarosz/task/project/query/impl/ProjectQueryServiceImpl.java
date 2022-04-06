@@ -6,6 +6,8 @@ import com.arturjarosz.task.project.application.dto.ContractorJobDto;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
+import com.arturjarosz.task.project.domain.dto.ProjectStatusData;
+import com.arturjarosz.task.project.domain.dto.StageStatusData;
 import com.arturjarosz.task.project.model.CooperatorJobType;
 import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
@@ -99,11 +101,22 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
 
     @Override
     public ContractStatus getContractStatusForProject(long projectId) {
-        return this.query().from(PROJECT)
-                .join(CONTRACT).on(PROJECT.contractId.eq(CONTRACT.id))
-                .where(PROJECT.id.eq(projectId)).select(CONTRACT.status)
-                .fetchOne();
+        return this.query().from(PROJECT).join(CONTRACT).on(PROJECT.contractId.eq(CONTRACT.id))
+                .where(PROJECT.id.eq(projectId)).select(CONTRACT.status).fetchOne();
 
     }
 
+    @Override
+    public ProjectStatusData getProjectStatusData(long projectId) {
+        return this.query().from(PROJECT).where(PROJECT.id.eq(projectId))
+                .select(Projections.constructor(ProjectStatusData.class, PROJECT.status, PROJECT.workflowName))
+                .fetchOne();
+    }
+
+    @Override
+    public StageStatusData getStageStatusData(long stageId) {
+        return this.query().from(STAGE).where(STAGE.id.eq(stageId))
+                .select(Projections.constructor(StageStatusData.class, STAGE.status, STAGE.workflowName)).fetchOne();
+
+    }
 }

@@ -5,6 +5,8 @@ import com.arturjarosz.task.project.application.dto.ContractorJobDto;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.SupplyDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
+import com.arturjarosz.task.project.domain.dto.ProjectStatusData;
+import com.arturjarosz.task.project.domain.dto.StageStatusData;
 import com.arturjarosz.task.project.model.Cost;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
@@ -57,4 +59,8 @@ public interface ProjectQueryService {
      * Get contract status for Project with given projectId.
      */
     ContractStatus getContractStatusForProject(long projectId);
+
+    ProjectStatusData getProjectStatusData(long projectId);
+
+    StageStatusData getStageStatusData(long stageId);
 }

@@ -31,8 +31,8 @@ public class TaskWorkCompleteListener implements TaskStatusTransitionListener {
                 .findFirst().orElse(null);
         assert stage != null;
         if (stage.getStatus().equals(StageStatus.IN_PROGRESS) && this
-                .hasTasksOnlyInRejectedAndCompletedStatuses(stage)) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.COMPLETED);
+                .hasTasksOnlyInRejectedAndDoneStatuses(stage)) {
+            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.DONE);
         }
     }
 
@@ -41,10 +41,10 @@ public class TaskWorkCompleteListener implements TaskStatusTransitionListener {
         return this.transition;
     }
 
-    private boolean hasTasksOnlyInRejectedAndCompletedStatuses(Stage stage) {
+    private boolean hasTasksOnlyInRejectedAndDoneStatuses(Stage stage) {
         List<Task> allTasks = new ArrayList<>(stage.getTasks());
         allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.REJECTED));
-        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.COMPLETED));
+        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.DONE));
         return allTasks.isEmpty();
     }
 }

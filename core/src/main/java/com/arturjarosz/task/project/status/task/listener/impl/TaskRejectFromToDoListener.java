@@ -30,8 +30,8 @@ public class TaskRejectFromToDoListener implements TaskStatusTransitionListener 
                 .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .findFirst().orElse(null);
         assert stage != null;
-        if (stage.getStatus().equals(StageStatus.IN_PROGRESS) && (this.allTasksInCompletedOrRejected(stage))) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.COMPLETED);
+        if (stage.getStatus().equals(StageStatus.IN_PROGRESS) && (this.allTasksInDoneOrRejected(stage))) {
+            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.DONE);
         }
     }
 
@@ -40,11 +40,11 @@ public class TaskRejectFromToDoListener implements TaskStatusTransitionListener 
         return this.transition;
     }
 
-    private boolean allTasksInCompletedOrRejected(Stage stage) {
+    private boolean allTasksInDoneOrRejected(Stage stage) {
         List<Task> allTasks = new ArrayList<>(stage.getTasks());
         //we are removing Task in Rejected status, because they should not be taken into account
         allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.REJECTED));
-        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.COMPLETED));
+        allTasks.removeIf(task -> task.getStatus().equals(TaskStatus.DONE));
         return allTasks.isEmpty();
     }
 

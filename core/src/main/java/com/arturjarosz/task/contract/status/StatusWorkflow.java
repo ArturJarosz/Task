@@ -1,5 +1,6 @@
 package com.arturjarosz.task.contract.status;
 
+import com.arturjarosz.task.sharedkernel.status.WorkAwareStatusWorkflow;
 import com.arturjarosz.task.sharedkernel.status.Workflow;
 import com.google.common.collect.Sets;
 import org.springframework.stereotype.Component;
@@ -8,14 +9,14 @@ import java.util.Arrays;
 import java.util.Set;
 
 @Component
-public class ContractWorkflow extends Workflow<ContractStatus> implements ProjectAwareContractWorkflow<ContractStatus> {
+public class StatusWorkflow extends Workflow<ContractStatus> implements WorkAwareStatusWorkflow<ContractStatus> {
     private static final String CONTRACT_WORKFLOW = "ContractWorkflow";
     private static final Set<ContractStatus> STATUSES_THAT_ALLOW_WORKING = Sets.newHashSet(ContractStatus.ACCEPTED,
             ContractStatus.SIGNED);
     private static final Set<ContractStatus> STATUSES_THAT_ALLOW_CREATING = Sets.newHashSet(ContractStatus.OFFER,
             ContractStatus.ACCEPTED, ContractStatus.SIGNED);
 
-    public ContractWorkflow() {
+    public StatusWorkflow() {
         super(CONTRACT_WORKFLOW, ContractStatus.OFFER, Arrays.asList(ContractStatus.values()));
     }
 
@@ -25,7 +26,7 @@ public class ContractWorkflow extends Workflow<ContractStatus> implements Projec
     }
 
     @Override
-    public Set<ContractStatus> getStatusesThatAllowCreatingProjectObjects() {
+    public Set<ContractStatus> getStatusesThatAllowCreatingWorkObjects() {
         return STATUSES_THAT_ALLOW_CREATING;
     }
 

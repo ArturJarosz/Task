@@ -7,7 +7,7 @@ import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
 import com.arturjarosz.task.contract.application.dto.ContractDto
 import com.arturjarosz.task.contract.application.impl.ContractServiceImpl
 import com.arturjarosz.task.contract.model.Contract
-import com.arturjarosz.task.contract.status.ContractWorkflow
+import com.arturjarosz.task.contract.status.StatusWorkflow
 import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
@@ -46,7 +46,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def projectValidator = Mock(ProjectValidator)
     def projectFinancialDataApplicationService = Mock(ProjectFinancialDataServiceImpl)
     def contractService = Mock(ContractServiceImpl)
-    def contractWorkflow = Mock(ContractWorkflow)
+    def contractWorkflow = Mock(StatusWorkflow)
 
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator,

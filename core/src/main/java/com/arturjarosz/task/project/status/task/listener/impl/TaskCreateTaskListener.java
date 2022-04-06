@@ -26,7 +26,7 @@ public class TaskCreateTaskListener implements TaskStatusTransitionListener {
                 .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .findFirst().orElse(null);
         assert stage != null;
-        if (stage.getStatus() == StageStatus.COMPLETED) {
+        if (stage.getStatus() == StageStatus.DONE) {
             this.stageWorkflowService
                     .changeStageStatusOnProject(project, stageId, StageStatus.IN_PROGRESS);
         }
