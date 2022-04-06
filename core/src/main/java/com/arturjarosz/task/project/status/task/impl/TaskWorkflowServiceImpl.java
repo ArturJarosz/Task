@@ -4,9 +4,8 @@ import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
-import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.validator.ProjectWorkflowValidator;
-import com.arturjarosz.task.project.status.stage.StageStatus;
+import com.arturjarosz.task.project.status.stage.validator.StageWorkflowValidator;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.project.status.task.TaskStatusTransition;
 import com.arturjarosz.task.project.status.task.TaskWorkflowService;
@@ -22,33 +21,32 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @DomainService
 public class TaskWorkflowServiceImpl implements TaskWorkflowService {
     private final ProjectWorkflowValidator projectWorkflowValidator;
+    private final StageWorkflowValidator stageWorkflowValidator;
 
     private Map<String, List<TaskStatusTransitionValidator>> mapNameToStatusTransitionValidators;
     private Map<String, List<TaskStatusTransitionListener>> mapNameToStatusTransitionListeners;
 
     @Autowired
-    public TaskWorkflowServiceImpl(ProjectWorkflowValidator projectWorkflowValidator, List<TaskStatusTransitionListener> taskStatusTransitionListenerList,
+    public TaskWorkflowServiceImpl(ProjectWorkflowValidator projectWorkflowValidator,
+            StageWorkflowValidator stageWorkflowValidator,
+            List<TaskStatusTransitionListener> taskStatusTransitionListenerList,
             List<TaskStatusTransitionValidator> transitionValidatorList) {
         this.projectWorkflowValidator = projectWorkflowValidator;
+        this.stageWorkflowValidator = stageWorkflowValidator;
         this.mapNameToStatusTransitionValidators = new HashMap<>();
-        this.mapNameToStatusTransitionValidators = transitionValidatorList.stream()
-                .collect(Collectors.groupingBy(
-                        taskStatusTransitionValidator -> taskStatusTransitionValidator.getStatusTransition()
-                                .getName()));
+        this.mapNameToStatusTransitionValidators = transitionValidatorList.stream().collect(Collectors.groupingBy(
+                taskStatusTransitionValidator -> taskStatusTransitionValidator.getStatusTransition().getName()));
         this.mapNameToStatusTransitionListeners = new HashMap<>();
-        this.mapNameToStatusTransitionListeners = taskStatusTransitionListenerList.stream()
-                .collect(Collectors.groupingBy(
-                        taskStatusTransitionListener -> taskStatusTransitionListener.getStatusTransition().getName()
-                ));
+        this.mapNameToStatusTransitionListeners = taskStatusTransitionListenerList.stream().collect(
+                Collectors.groupingBy(
+                        taskStatusTransitionListener -> taskStatusTransitionListener.getStatusTransition().getName()));
     }
 
     @Override
@@ -59,12 +57,14 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
     @Override
     public void changeTaskStatusOnProject(Project project, Long stageId, Long taskId, TaskStatus newStatus) {
         this.projectWorkflowValidator.validateProjectAllowsForWorking(project);
-        this.assertStageNotInRejected(project, stageId);
+        this.stageWorkflowValidator.stageStatusAllowsForWorking(Objects.requireNonNull(
+                project.getStages().stream().filter(stage -> stage.getId().equals(stageId)).findFirst().orElse(null)));
         Task task = this.getTask(project, stageId, taskId);
         TaskStatus oldStatus = task.getStatus();
         TaskStatusTransition taskStatusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
-        BaseValidator.assertNotNull(taskStatusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
-                ProjectExceptionCodes.TASK, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION),
+        BaseValidator.assertNotNull(taskStatusTransition,
+                BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.TASK,
+                        ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION),
                 oldStatus != null ? oldStatus.getStatusName() : "null", newStatus.getStatusName());
         this.beforeStatusChange(project, task, stageId, taskStatusTransition);
         this.changeStatus(task, newStatus);
@@ -85,8 +85,8 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
     }
 
     private List<TaskStatusTransitionListener> getStatusTransitionListeners(TaskStatusTransition statusTransition) {
-        List<TaskStatusTransitionListener> listeners = this.mapNameToStatusTransitionListeners
-                .get(statusTransition.getName());
+        List<TaskStatusTransitionListener> listeners = this.mapNameToStatusTransitionListeners.get(
+                statusTransition.getName());
         if (listeners == null) {
             return Collections.emptyList();
         }
@@ -94,8 +94,8 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
     }
 
     private List<TaskStatusTransitionValidator> getStatusTransitionValidators(TaskStatusTransition statusTransition) {
-        List<TaskStatusTransitionValidator> validators = this.mapNameToStatusTransitionValidators
-                .get(statusTransition.getName());
+        List<TaskStatusTransitionValidator> validators = this.mapNameToStatusTransitionValidators.get(
+                statusTransition.getName());
         if (validators == null) {
             return Collections.emptyList();
         }
@@ -104,46 +104,16 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
 
     private TaskStatusTransition getTransitionForStatuses(TaskStatus oldStatus, TaskStatus newStatus) {
         return Arrays.stream(TaskStatusTransition.values())
-                .filter(transition -> transition.getCurrentStatus() == oldStatus
-                        && transition.getNextStatus() == newStatus).findFirst().orElse(null);
+                .filter(transition -> transition.getCurrentStatus() == oldStatus && transition.getNextStatus() == newStatus)
+                .findFirst().orElse(null);
     }
 
     private Task getTask(Project project, Long stageId, Long taskId) {
         Predicate<Stage> stagePredicate = stage -> stage.getId().equals(stageId);
         //Newly created Task do not have assigned id yet.
-        Predicate<Task> taskPredicate = taskId != null ? task -> task.getId().equals(taskId) : task -> task
-                .getId() == null;
-        return project.getStages().stream()
-                .filter(stagePredicate)
-                .flatMap(stage -> stage.getTasks().stream())
-                .filter(taskPredicate)
-                .findFirst().orElse(null);
-    }
-
-    private void assertProjectNotInRejected(Project project) {
-        Predicate<Project> projectPredicate = projectToCheck ->
-                projectToCheck.getStatus() != (ProjectStatus.REJECTED);
-        assertIsTrue(projectPredicate.test(project), BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
-                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.REJECTED,
-                ProjectExceptionCodes.TASK, ProjectExceptionCodes.CHANGE, ProjectExceptionCodes.STATUS));
-    }
-
-    private void assertProjectNotInCompleted(Project project) {
-        Predicate<Project> projectPredicate = projectToCheck ->
-                projectToCheck.getStatus() != (ProjectStatus.COMPLETED);
-        assertIsTrue(projectPredicate.test(project), createMessageCode(ExceptionCodes.NOT_VALID,
-                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.COMPLETED,
-                ProjectExceptionCodes.TASK, ProjectExceptionCodes.CHANGE, ProjectExceptionCodes.STATUS));
-    }
-
-    private void assertStageNotInRejected(Project project, Long stageId) {
-        Predicate<Stage> stagePredicate = stageToCheck -> stageToCheck.getStatus() != StageStatus.REJECTED;
-        Stage stage = project.getStages().stream().filter(stageOnProject -> stageOnProject.getId().equals(stageId))
-                .findFirst()
-                .orElse(null);
-        assertIsTrue(stagePredicate.test(stage),
-                createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.STATUS,
-                        ProjectExceptionCodes.REJECTED, ProjectExceptionCodes.TASK, ProjectExceptionCodes.CHANGE,
-                        ProjectExceptionCodes.STATUS));
+        Predicate<Task> taskPredicate = taskId != null ? task -> task.getId()
+                .equals(taskId) : task -> task.getId() == null;
+        return project.getStages().stream().filter(stagePredicate).flatMap(stage -> stage.getTasks().stream())
+                .filter(taskPredicate).findFirst().orElse(null);
     }
 }

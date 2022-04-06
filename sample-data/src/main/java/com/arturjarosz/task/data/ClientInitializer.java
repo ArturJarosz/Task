@@ -43,7 +43,7 @@ public class ClientInitializer implements DataInitializer {
         ObjectMapper mapper = new ObjectMapper();
         BaseValidator.assertNotEmpty(filename, "File name cannot be empty.");
         try (InputStream inputStream = ClientInitializer.class.getClassLoader().getResourceAsStream(filename)) {
-            return mapper.readValue(inputStream, new TypeReference<List<ClientDto>>() {
+            return mapper.readValue(inputStream, new TypeReference<>() {
             });
         } catch (IOException e) {
             throw new UncheckedIOException(

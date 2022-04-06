@@ -21,7 +21,7 @@ public interface StageApplicationService {
 
     /**
      * Updates stage with given stageId on project with projectId according to data provided with StageDto.
-     * If project or stage doesn not exist, then new
+     * If project or stage does not exist, then new
      * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
      */
     StageDto updateStage(Long projectId, Long stageId, StageDto stageDto);

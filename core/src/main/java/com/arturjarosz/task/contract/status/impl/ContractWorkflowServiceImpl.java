@@ -60,9 +60,9 @@ public class ContractWorkflowServiceImpl implements ContractWorkflowService {
         contract.changeStatus(status);
     }
 
-    private ContractStatusTransition getContractStatusTransition(ContractStatus oldStaus, ContractStatus newStatus) {
+    private ContractStatusTransition getContractStatusTransition(ContractStatus oldStatus, ContractStatus newStatus) {
         return Arrays.stream(ContractStatusTransition.values())
-                .filter(statusTransition -> statusTransition.getCurrentStatus() == oldStaus && statusTransition.getNextStatus() == newStatus)
+                .filter(statusTransition -> statusTransition.getCurrentStatus() == oldStatus && statusTransition.getNextStatus() == newStatus)
                 .findFirst().orElse(null);
     }
 

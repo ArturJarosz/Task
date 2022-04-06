@@ -20,6 +20,7 @@ import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "stage_sequence", allocationSize = 1)
@@ -109,9 +110,9 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
     }
 
     public Task updateTask(Long taskId, TaskInnerDto taskInnerDto) {
-        Task taskToUpdate = this.tasks.stream()
+        Task taskToUpdate = Objects.requireNonNull(this.tasks.stream()
                 .filter(task -> task.getId().equals(taskId))
-                .findFirst().orElse(null);
+                .findFirst().orElse(null));
         taskToUpdate.update(taskInnerDto);
         return taskToUpdate;
     }

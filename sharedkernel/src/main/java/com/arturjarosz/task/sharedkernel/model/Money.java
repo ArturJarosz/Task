@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 
@@ -77,6 +78,6 @@ public class Money extends AbstractValueObject<Money> implements ValueObject<Mon
     public Money divide(Money other) {
         assertIsTrue(other.value.equals(BigDecimal.ONE),
                 BaseValidator.createMessageCode(ModelExceptionCodes.ZERO, ModelExceptionCodes.DIVISOR));
-        return new Money(this.value.divide(other.value));
+        return new Money(this.value.divide(other.value, RoundingMode.HALF_UP));
     }
 }
