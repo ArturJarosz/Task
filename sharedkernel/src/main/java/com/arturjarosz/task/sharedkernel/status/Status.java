@@ -10,8 +10,6 @@ import java.util.Collection;
 public interface Status<TStatus extends Status> {
     /**
      * Collection of possible Statuses, that current status can transition to.
-     *
-     * @return
      */
     Collection<TStatus> getPossibleStatusTransitions();
 

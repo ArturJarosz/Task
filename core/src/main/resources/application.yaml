@@ -27,7 +27,7 @@ spring:
   jackson:
     default-property-inclusion: non_null
 server:
-  port: 8099
+  port: 8100
 task:
   language: en
   encoding: UTF-8

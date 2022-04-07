@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.application.dto;
 import com.arturjarosz.task.project.model.ProjectType;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 public class ProjectCreateDto implements Serializable {
     private static final long serialVersionUID = -7596108006634813082L;
@@ -13,6 +14,7 @@ public class ProjectCreateDto implements Serializable {
     private Long clientId;
     private ProjectType projectType;
     private Double offerValue;
+    private LocalDate deadline;
 
     public ProjectCreateDto() {
         //needed by Hibernate
@@ -64,5 +66,13 @@ public class ProjectCreateDto implements Serializable {
 
     public void setOfferValue(Double offerValue) {
         this.offerValue = offerValue;
+    }
+
+    public LocalDate getDeadline() {
+        return this.deadline;
+    }
+
+    public void setDeadline(LocalDate deadline) {
+        this.deadline = deadline;
     }
 }

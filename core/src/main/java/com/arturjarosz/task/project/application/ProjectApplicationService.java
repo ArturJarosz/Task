@@ -1,7 +1,5 @@
 package com.arturjarosz.task.project.application;
 
-import com.arturjarosz.task.project.application.dto.OfferDto;
-import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 
@@ -10,8 +8,8 @@ import java.util.List;
 public interface ProjectApplicationService {
 
     /**
-     * Creates {@link com.arturjarosz.task.project.model.Project} from given {@link ProjectCreateDto}.
-     * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
+     * Creates {@link com.arturjarosz.task.project.model.Project} from given {@link ProjectCreateDto}, and creates
+     * Contract connected to that Project. When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
      */
     ProjectDto createProject(ProjectCreateDto projectCreateDto);
@@ -38,17 +36,9 @@ public interface ProjectApplicationService {
     void removeProject(Long projectId);
 
     /**
-     * Changes project status to Signed and updates data on the project based on the {@link ProjectContractDto}.
-     * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
-     * is thrown.
-     */
-    ProjectDto signProjectContract(Long projectId, ProjectContractDto projectContractDto);
-
-    /**
      * Finishes {@link com.arturjarosz.task.project.model.Project}.
      */
-    ProjectDto finishProject(Long projectId,
-                             ProjectContractDto projectContractDto);
+    ProjectDto finishProject(Long projectId, ProjectDto projectContractDto);
 
     /**
      * Loads list of all Projects Data.
@@ -65,13 +55,4 @@ public interface ProjectApplicationService {
      */
     ProjectDto reopenProject(Long projectId);
 
-    /**
-     * Make new offer to Project for value in offerDto.
-     */
-    ProjectDto makeNewOffer(Long projectId, OfferDto offerDto);
-
-    /**
-     * Mark offer of Project with projectId as accepted and
-     */
-    ProjectDto acceptOffer(Long projectId);
 }

@@ -15,17 +15,6 @@ class StageRejectFromToDoListenerTest extends Specification {
     def projectStatusTransitionService = Mock(ProjectStatusTransitionServiceImpl)
     def stageRejectFromToDoListener = new StageRejectFromToDoListener(projectStatusTransitionService)
 
-    def "Rejecting the only stage from status TO_DO on the project in OFFER status should not change project status"() {
-        given:
-            def stage = this.createStageWithStatus(StageStatus.TO_DO)
-            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.OFFER, Sets.newHashSet(stage))
-        when:
-            stage.changeStatus(StageStatus.REJECTED)
-            this.stageRejectFromToDoListener.onStageStatusChange(project)
-        then:
-            0 * projectStatusTransitionService._
-    }
-
     def "Rejecting the only stage from status TO_DO on the project in TO_DO status should not change project status"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.TO_DO)
@@ -51,10 +40,10 @@ class StageRejectFromToDoListenerTest extends Specification {
             0 * projectStatusTransitionService._
     }
 
-    def "Rejecting stage from status TO_DO on the project in IN_PROGRESS with other stages in COMPLETED and REJECTED statuses should make project COMPLETED"() {
+    def "Rejecting stage from status TO_DO on the project in IN_PROGRESS with other stages in DONE and REJECTED statuses should make project DONE"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.TO_DO)
-            def stage2 = this.createStageWithStatus(StageStatus.COMPLETED)
+            def stage2 = this.createStageWithStatus(StageStatus.DONE)
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,
@@ -63,7 +52,7 @@ class StageRejectFromToDoListenerTest extends Specification {
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromToDoListener.onStageStatusChange(project)
         then:
-            1 * projectStatusTransitionService.completeWork(project)
+            1 * projectStatusTransitionService.finishWork(project)
     }
 
     private Stage createStageWithStatus(StageStatus stageStatus) {

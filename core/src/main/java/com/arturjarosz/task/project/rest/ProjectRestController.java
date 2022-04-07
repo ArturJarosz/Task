@@ -1,11 +1,10 @@
 package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.project.application.ProjectApplicationService;
-import com.arturjarosz.task.project.application.dto.OfferDto;
-import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +25,7 @@ public class ProjectRestController {
 
     private final ProjectApplicationService projectApplicationService;
 
+    @Autowired
     public ProjectRestController(ProjectApplicationService projectApplicationService) {
         this.projectApplicationService = projectApplicationService;
     }
@@ -56,23 +56,11 @@ public class ProjectRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("{projectId}/sign")
-    public ResponseEntity<ProjectDto> signProjectContract(@PathVariable("projectId") Long projectId, @RequestBody
-            ProjectContractDto projectContractDto) {
-        return new ResponseEntity<>(this.projectApplicationService.signProjectContract(projectId, projectContractDto),
-                HttpStatus.OK);
-    }
-
     @PostMapping("{projectId}/finish")
     public ResponseEntity<ProjectDto> finishProject(@PathVariable("projectId") Long projectId, @RequestBody
-            ProjectContractDto projectContractDto) {
-        return new ResponseEntity<>(this.projectApplicationService.finishProject(projectId, projectContractDto),
+            ProjectDto projectDto) {
+        return new ResponseEntity<>(this.projectApplicationService.finishProject(projectId, projectDto),
                 HttpStatus.OK);
-    }
-
-    @PostMapping("{projectId}/acceptOffer")
-    public ResponseEntity<ProjectDto> acceptOffer(@PathVariable("projectId") Long projectId) {
-        return new ResponseEntity<>(this.projectApplicationService.acceptOffer(projectId), HttpStatus.OK);
     }
 
     @GetMapping("")
@@ -88,11 +76,5 @@ public class ProjectRestController {
     @PostMapping("{projectId}/reopen")
     public ResponseEntity<ProjectDto> reopenProject(@PathVariable("projectId") Long projectId) {
         return new ResponseEntity<>(this.projectApplicationService.reopenProject(projectId), HttpStatus.OK);
-    }
-
-    @PostMapping("{projectId}/newOffer")
-    public ResponseEntity<ProjectDto> makeNewOffer(@PathVariable("projectId") Long projectId,
-                                                   @RequestBody OfferDto offerDto) {
-        return new ResponseEntity<>(this.projectApplicationService.makeNewOffer(projectId, offerDto), HttpStatus.OK);
     }
 }

@@ -9,13 +9,13 @@ public enum TaskStatusTransition implements StatusTransition<TaskStatus> {
     START_PROGRESS(TaskStatus.TO_DO, TaskStatus.IN_PROGRESS),
     REJECT_FROM_TO_DO(TaskStatus.TO_DO, TaskStatus.REJECTED),
     // from IN_PROGRESS
-    COMPLETE_WORK(TaskStatus.IN_PROGRESS, TaskStatus.COMPLETED),
+    COMPLETE_WORK(TaskStatus.IN_PROGRESS, TaskStatus.DONE),
     REJECT_FROM_IN_PROGRESS(TaskStatus.IN_PROGRESS, TaskStatus.REJECTED),
     BACK_TO_TO_DO(TaskStatus.IN_PROGRESS, TaskStatus.TO_DO),
     // from REJECTED
     REOPEN(TaskStatus.REJECTED, TaskStatus.TO_DO),
-    // from COMPLETED
-    BACK_TO_IN_PROGRESS(TaskStatus.COMPLETED, TaskStatus.IN_PROGRESS);
+    // from DONE
+    BACK_TO_IN_PROGRESS(TaskStatus.DONE, TaskStatus.IN_PROGRESS);
 
     private final TaskStatus currentStatus;
     private final TaskStatus nextStatus;

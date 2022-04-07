@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-contract-sequence"
+      changes:
+        - createSequence:
+            sequenceName: "contract_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1

@@ -8,9 +8,6 @@ public interface ProjectStatusTransitionValidator extends StatusTransitionValida
 
     /**
      * Validate if planned statusTransition for Project can be executed.
-     *
-     * @param project
-     * @param statusTransition
      */
     void validate(Project project, ProjectStatusTransition statusTransition);
 }

@@ -78,10 +78,10 @@ class TaskBackToToDoListenerTest extends Specification {
             1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.TO_DO)
     }
 
-    def "Changing status of task from IN_PROGRESS to TO_DO on stage, where at least on the tasks is in COMPLETED, should not change stage status"(){
+    def "Changing status of task from IN_PROGRESS to TO_DO on stage, where at least on the tasks is in DONE, should not change stage status"(){
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
-            def task2 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task2 = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def task3 = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
             def stage =
                     this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS,

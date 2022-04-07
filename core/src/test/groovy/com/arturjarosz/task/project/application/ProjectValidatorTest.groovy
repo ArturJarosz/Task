@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.application
 
-import com.arturjarosz.task.project.application.dto.ProjectContractDto
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
 import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
 import com.arturjarosz.task.project.model.Project
@@ -10,17 +9,11 @@ import com.arturjarosz.task.project.utils.ProjectBuilder
 import spock.lang.Shared
 import spock.lang.Specification
 
-import java.time.LocalDate
-
 class ProjectValidatorTest extends Specification {
     private static final Long ARCHITECT_ID = 1L
     private static final Long CLIENT_ID = 2L
     private static final Long EXISTING_PROJECT_ID = 10L
     private static final Long NOT_EXISTING_PROJECT_ID = 19L
-
-    private static final LocalDate SIGNING_DATE = LocalDate.now()
-    private static final LocalDate START_DATE = LocalDate.now()
-    private static final LocalDate DEADLINE = LocalDate.now()
 
     private static final String EMPTY_PROJECT_NAME = ""
     private static final String PROJECT_NAME = "name"
@@ -128,47 +121,5 @@ class ProjectValidatorTest extends Specification {
             this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID)
         then:
             noExceptionThrown()
-    }
-
-    def "when passing null as projectContractDto validateProjectContractDto should throw an exception"() {
-        given:
-            ProjectContractDto projectContractDto = null
-        when:
-            this.projectValidator.validateProjectContractDto(projectContractDto)
-        then:
-            Exception ex = thrown()
-            ex.message == "isNull.contract"
-    }
-
-    def "when signing date not present in projectContractDto, validateProjectContractDto should throw an exception"() {
-        given:
-            ProjectContractDto projectContractDto = new ProjectContractDto(deadline: DEADLINE, startDate: START_DATE)
-        when:
-            this.projectValidator.validateProjectContractDto(projectContractDto)
-        then:
-            Exception ex = thrown()
-            ex.message == "isNull.project.signingDate"
-    }
-
-    def "when end date not present in projectContractDto, validateProjectContractDto should throw an exception"() {
-        given:
-            ProjectContractDto projectContractDto = new ProjectContractDto(deadline: DEADLINE,
-                    signingDate: SIGNING_DATE, startDate: null)
-        when:
-            this.projectValidator.validateProjectContractDto(projectContractDto)
-        then:
-            Exception ex = thrown()
-            ex.message == "isNull.project.startDate"
-    }
-
-    def "when deadline date not present in projectContractDto, validateProjectContractDto should throw an exception"() {
-        given:
-            ProjectContractDto projectContractDto = new ProjectContractDto(deadline: null, signingDate: SIGNING_DATE,
-                    startDate: START_DATE)
-        when:
-            this.projectValidator.validateProjectContractDto(projectContractDto)
-        then:
-            Exception ex = thrown()
-            ex.message == "isNull.project.deadline"
     }
 }

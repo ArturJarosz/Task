@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.application;
 
-import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
@@ -11,7 +10,6 @@ import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -62,28 +60,10 @@ public class ProjectValidator {
         this.validateProjectExistence(project, projectId);
     }
 
-    public void validateProjectContractDto(ProjectContractDto projectContractDto) {
-        assertNotNull(projectContractDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.CONTRACT));
-        assertNotNull(projectContractDto.getSigningDate(),
-                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.SIGNING_DATE));
-        assertNotNull(projectContractDto.getStartDate(),
-                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.START_DATE));
-        assertNotNull(projectContractDto.getDeadline(),
-                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.DEADLINE));
-    }
-
     public void validateUpdateProjectDto(ProjectDto projectDto) {
         assertNotNull(projectDto,
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.UPDATE));
         validateProjectName(projectDto.getName());
-    }
-
-    public void validateProjectNotSigned(Project project) {
-        assertIsTrue(!project.isContractSigned(),
-                createMessageCode(ExceptionCodes.ALREADY_SET, ProjectExceptionCodes.PROJECT,
-                        ProjectExceptionCodes.SIGN));
     }
 
 }

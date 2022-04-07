@@ -18,7 +18,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.math.BigDecimal;
@@ -72,9 +71,8 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @Where(clause = "TYPE = 'SUPPLY'")
     private Set<Supply> supplies;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "ARRANGEMENT_ID")
-    private Arrangement arrangement;
+    @Column(name = "CONTRACT_ID", nullable = false)
+    private long contractId;
 
     @Column(name = "STATUS", nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -88,23 +86,13 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     }
 
     public Project(String name, Long architectId, Long clientId, ProjectType projectType,
-                   ProjectWorkflow projectWorkflow, double offerValue) {
+                   ProjectWorkflow projectWorkflow, long contractId) {
         this.name = name;
         this.architectId = architectId;
         this.clientId = clientId;
         this.projectType = projectType;
         this.workflowName = projectWorkflow.getName();
-        this.arrangement = new Offer(offerValue);
-    }
-
-    public void signContract(LocalDate signingDate, LocalDate startDate, LocalDate deadline) {
-        this.updateProjectDates(startDate);
-        this.arrangement = new Contract(this.arrangement.getOfferValue().getValue().doubleValue(), signingDate,
-                deadline);
-    }
-
-    public void updateProjectDates(LocalDate startDate) {
-        this.startDate = startDate;
+        this.contractId = contractId;
     }
 
     public void finishProject(LocalDate endDate) {
@@ -136,26 +124,12 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         return this.projectType;
     }
 
-    public LocalDate getSigningDate() {
-        if (this.arrangement instanceof Contract) {
-            return ((Contract) this.arrangement).getSigningDate();
-        }
-        return null;
-    }
-
     public LocalDate getStartDate() {
         return this.startDate;
     }
 
     public LocalDate getEndDate() {
         return this.endDate;
-    }
-
-    public LocalDate getDeadline() {
-        if (this.arrangement instanceof Contract) {
-            return ((Contract) this.arrangement).getDeadline();
-        }
-        return null;
     }
 
     public String getNote() {
@@ -291,36 +265,6 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @Override
     public void changeStatus(ProjectStatus status) {
         this.status = status;
-    }
-
-    public void makeNewOffer(double offerValue) {
-        this.arrangement = new Offer(offerValue);
-    }
-
-    public void acceptOffer() {
-        ((Offer) this.arrangement).acceptOffer();
-    }
-
-    public Offer getOffer() {
-        return ((Offer) this.arrangement);
-    }
-
-    public boolean isContractSigned() {
-        return (this.arrangement instanceof Contract);
-    }
-
-    public boolean isOfferAccepted() {
-        if (this.arrangement == null) {
-            return false;
-        }
-        if (this.arrangement instanceof Offer) {
-            return ((Offer) this.arrangement).isAccepted();
-        }
-        return true;
-    }
-
-    public Arrangement getArrangement() {
-        return this.arrangement;
     }
 
     public void removeSupply(Long supplyId) {

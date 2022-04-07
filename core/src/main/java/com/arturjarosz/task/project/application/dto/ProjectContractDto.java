@@ -8,9 +8,7 @@ public class ProjectContractDto implements Serializable {
 
     private Long id;
     private LocalDate signingDate;
-    private LocalDate startDate;
     private LocalDate deadline;
-    private LocalDate endDate;
     //TODO: TA-34 add project value when signing contract
 
     public ProjectContractDto() {
@@ -33,13 +31,6 @@ public class ProjectContractDto implements Serializable {
         this.signingDate = signingDate;
     }
 
-    public LocalDate getStartDate() {
-        return this.startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
 
     public LocalDate getDeadline() {
         return this.deadline;
@@ -49,11 +40,4 @@ public class ProjectContractDto implements Serializable {
         this.deadline = deadline;
     }
 
-    public LocalDate getEndDate() {
-        return this.endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
 }

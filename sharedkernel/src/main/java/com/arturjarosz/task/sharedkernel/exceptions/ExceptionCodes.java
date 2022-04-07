@@ -6,6 +6,7 @@ public class ExceptionCodes {
 
     public static final String ALREADY_SET = "alreadySet";
     public static final String EMPTY = "isEmpty";
+    public static final String FORBIDDEN = "forbidden";
     public static final String NEGATIVE = "negative";
     public static final String NULL = "isNull";
     public static final String NOT_EXIST = "notExist";

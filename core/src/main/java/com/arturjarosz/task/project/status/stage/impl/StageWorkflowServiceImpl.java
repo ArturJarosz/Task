@@ -3,7 +3,7 @@ package com.arturjarosz.task.project.status.stage.impl;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
-import com.arturjarosz.task.project.status.project.ProjectStatus;
+import com.arturjarosz.task.project.status.project.validator.ProjectWorkflowValidator;
 import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.project.status.stage.StageStatusTransition;
 import com.arturjarosz.task.project.status.stage.StageWorkflowService;
@@ -22,17 +22,17 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
-
 @ApplicationService
 public class StageWorkflowServiceImpl implements StageWorkflowService {
+    private final ProjectWorkflowValidator projectWorkflowValidator;
 
     private Map<String, List<StageStatusTransitionValidator>> mapNameToStatusTransitionValidators;
     private Map<String, List<StageStatusTransitionListener>> mapNameToStatusTransitionListeners;
 
     @Autowired
-    public StageWorkflowServiceImpl(List<StageStatusTransitionListener> stageStatusTransitionListenerList,
-                                    List<StageStatusTransitionValidator> transitionValidatorList) {
+    public StageWorkflowServiceImpl(ProjectWorkflowValidator projectWorkflowValidator, List<StageStatusTransitionListener> stageStatusTransitionListenerList,
+            List<StageStatusTransitionValidator> transitionValidatorList) {
+        this.projectWorkflowValidator = projectWorkflowValidator;
         this.mapNameToStatusTransitionListeners = new HashMap<>();
         this.mapNameToStatusTransitionListeners = stageStatusTransitionListenerList.stream()
                 .collect(Collectors.groupingBy(
@@ -52,7 +52,7 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
 
     @Override
     public void changeStageStatusOnProject(Project project, Long stageId, StageStatus newStatus) {
-        this.assertProjectNotInRejected(project);
+        this.projectWorkflowValidator.validateProjectAllowsForWorking(project);
         Stage stage = this.getStage(project, stageId);
         StageStatus oldStatus = stage.getStatus();
         StageStatusTransition statusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
@@ -106,14 +106,5 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
         return project.getStages().stream()
                 .filter(stagePredicate)
                 .findFirst().orElse(null);
-    }
-
-    private void assertProjectNotInRejected(Project project) {
-        Predicate<Project> projectPredicate = projectToCheck ->
-                !projectToCheck.getStatus().equals(ProjectStatus.REJECTED)
-                        && !projectToCheck.getStatus().equals(ProjectStatus.DONE);
-        assertIsTrue(projectPredicate.test(project), BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
-                ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.STATUS,
-                ProjectExceptionCodes.TRANSITION), project.getStatus());
     }
 }

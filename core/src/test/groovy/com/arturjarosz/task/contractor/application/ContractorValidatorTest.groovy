@@ -57,7 +57,7 @@ class ContractorValidatorTest extends Specification {
             noExceptionThrown()
     }
 
-    @Unroll("Runnning test for #exceptionMessage")
+    @Unroll("Running test for #exceptionMessage")
     def "validateUpdateContractorDto throws exception with proper error message"() {
         given: "ContractorDto"
             ContractorDto contractorDto = givenContractorDto

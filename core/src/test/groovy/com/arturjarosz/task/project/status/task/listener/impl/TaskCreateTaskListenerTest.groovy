@@ -49,7 +49,7 @@ class TaskCreateTaskListenerTest extends Specification {
     def "Creating new task on stage in IN_PROGRESS status, should not change stage status"(){
         given:
             def task = this.createTaskOfGivenStatus(null)
-            def task2 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task2 = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def task3 = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
             def stage =
                     this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS, Arrays.asList(task, task2, task3))
@@ -61,10 +61,10 @@ class TaskCreateTaskListenerTest extends Specification {
             0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
     }
 
-    def "Creating new task on stage in COMPLETED status, should change stage status to IN_PROGRESS"(){
+    def "Creating new task on stage in DONE status, should change stage status to IN_PROGRESS"(){
         given:
             def task = this.createTaskOfGivenStatus(null)
-            def task2 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task2 = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def task3 = this.createTaskOfGivenStatus(TaskStatus.REJECTED)
             def stage =
                     this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS, Arrays.asList(task, task2, task3))

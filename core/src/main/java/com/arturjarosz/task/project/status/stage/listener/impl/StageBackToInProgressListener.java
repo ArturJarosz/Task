@@ -9,18 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StageBackToInProgress implements StageStatusTransitionListener {
+public class StageBackToInProgressListener implements StageStatusTransitionListener {
     private final StageStatusTransition transition = StageStatusTransition.BACK_TO_IN_PROGRESS;
     private final ProjectStatusTransitionService projectStatusTransitionService;
 
     @Autowired
-    public StageBackToInProgress(ProjectStatusTransitionService projectStatusTransitionService) {
+    public StageBackToInProgressListener(ProjectStatusTransitionService projectStatusTransitionService) {
         this.projectStatusTransitionService = projectStatusTransitionService;
     }
 
     @Override
     public void onStageStatusChange(Project project) {
-        if (project.getStatus().equals(ProjectStatus.COMPLETED)) {
+        if (project.getStatus().equals(ProjectStatus.DONE)) {
             this.projectStatusTransitionService.backToProgress(project);
         }
     }

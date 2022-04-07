@@ -18,6 +18,7 @@ public class BaseConfiguration {
             "classpath:/i18n/architect/architect",
             "classpath:/i18n/base/base",
             "classpath:/i18n/client/client",
+            "classpath:/i18n/contract/contract",
             "classpath:/i18n/contractor/contractor",
             "classpath:/i18n/project/contractorJob",
             "classpath:/i18n/project/project",

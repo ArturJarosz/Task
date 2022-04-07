@@ -14,6 +14,7 @@ public class ProjectExceptionCodes {
     public static final String PROJECT = "project";
     public static final String STAGE = "stage";
     public static final String TASK = "task";
+    public static final String WORKFLOW = "workflow";
 
     //Fields
     public static final String CATEGORY = "category";
@@ -42,6 +43,10 @@ public class ProjectExceptionCodes {
     public static final String DONE = "done";
     public static final String REJECTED = "rejected";
     public static final String START_PROGRESS = "startProgress";
+    public static final String OFFER = "value";
+    public static final String COMPLETED = "completed";
+    public static final String WORK = "work";
+
 
     private ProjectExceptionCodes() {
         throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
