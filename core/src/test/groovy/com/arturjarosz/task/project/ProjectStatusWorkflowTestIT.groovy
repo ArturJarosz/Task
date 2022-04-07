@@ -462,7 +462,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             taskResponse.status == HttpStatus.BAD_REQUEST.value()
         and:
             def errorMessage = mapper.readValue(taskResponse.contentAsString, ErrorMessage.class)
-            errorMessage.message == "You cannot change Task status for rejected Stage."
+            errorMessage.message == "Stage status REJECTED does not allow to make any work on the stage."
     }
 
     @Transactional

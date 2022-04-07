@@ -72,7 +72,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         given:
             ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(firstName: FIRST_NAME, lastName: LAST_NAME)
         when:
-            ArchitectDto architectDto = architectApplicationService.createArchitect(architectBasicDto)
+            architectApplicationService.createArchitect(architectBasicDto)
         then:
             noExceptionThrown()
             1 * architectRepository.save(_)
