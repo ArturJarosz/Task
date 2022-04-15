@@ -2,7 +2,7 @@ package com.arturjarosz.task.contract.status.validator;
 
 import com.arturjarosz.task.contract.domain.ContractExceptionCodes;
 import com.arturjarosz.task.contract.status.ContractStatus;
-import com.arturjarosz.task.contract.status.StatusWorkflow;
+import com.arturjarosz.task.contract.status.ContractStatusWorkflow;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +14,10 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 @Component
 public class ContractWorkflowValidator {
     private final ProjectQueryService projectQueryService;
-    private final StatusWorkflow contractWorkflow;
+    private final ContractStatusWorkflow contractWorkflow;
 
     @Autowired
-    public ContractWorkflowValidator(ProjectQueryService projectQueryService, StatusWorkflow contractWorkflow) {
+    public ContractWorkflowValidator(ProjectQueryService projectQueryService, ContractStatusWorkflow contractWorkflow) {
         this.projectQueryService = projectQueryService;
         this.contractWorkflow = contractWorkflow;
     }

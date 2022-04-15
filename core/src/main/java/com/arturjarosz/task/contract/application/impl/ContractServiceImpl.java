@@ -7,7 +7,7 @@ import com.arturjarosz.task.contract.application.mapper.ContractDtoMapper;
 import com.arturjarosz.task.contract.intrastructure.ContractRepository;
 import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.contract.status.ContractStatusTransitionService;
-import com.arturjarosz.task.contract.status.StatusWorkflow;
+import com.arturjarosz.task.contract.status.ContractStatusWorkflow;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +20,13 @@ public class ContractServiceImpl implements ContractService {
     private static final Logger LOG = LoggerFactory.getLogger(ContractServiceImpl.class);
 
     private final ContractStatusTransitionService contractStatusTransitionService;
-    private final StatusWorkflow contractWorkflow;
+    private final ContractStatusWorkflow contractWorkflow;
     private final ContractValidator contractValidator;
     private final ContractRepository contractRepository;
 
     @Autowired
     public ContractServiceImpl(ContractStatusTransitionService contractStatusTransitionService,
-            StatusWorkflow contractWorkflow, ContractValidator contractValidator,
+            ContractStatusWorkflow contractWorkflow, ContractValidator contractValidator,
             ContractRepository contractRepository) {
         this.contractStatusTransitionService = contractStatusTransitionService;
         this.contractWorkflow = contractWorkflow;
@@ -41,7 +41,7 @@ public class ContractServiceImpl implements ContractService {
         this.contractValidator.validateOffer(contractDto);
         Contract contract = new Contract(contractDto.getOfferValue(), contractDto.getDeadline(), this.contractWorkflow);
         this.contractStatusTransitionService.createOffer(contract);
-        this.contractRepository.save(contract);
+        contract = this.contractRepository.save(contract);
         LOG.debug("Contract with id {} created", contract.getId());
         return contract;
     }
@@ -101,7 +101,7 @@ public class ContractServiceImpl implements ContractService {
         Contract contract = this.contractRepository.load(contractId);
         this.contractValidator.validateContractExistence(contract, contractId);
         this.contractValidator.validateTerminateContractDto(contractDto);
-        contract.updateEnd(contractDto);
+        contract.terminate(contractDto);
         this.contractStatusTransitionService.terminateContract(contract);
         LOG.debug("Contract with id {} terminated.", contractId);
         return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
@@ -126,7 +126,7 @@ public class ContractServiceImpl implements ContractService {
         Contract contract = this.contractRepository.load(contractId);
         this.contractValidator.validateContractExistence(contract, contractId);
         this.contractValidator.validateCompleteContractDto(contractDto);
-        contract.updateEnd(contractDto);
+        contract.complete(contractDto);
         this.contractStatusTransitionService.completeContract(contract);
         LOG.debug("Contract with id {} has been completed.", contractId);
         return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
