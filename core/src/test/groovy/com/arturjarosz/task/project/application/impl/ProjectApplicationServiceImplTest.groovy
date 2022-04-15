@@ -7,7 +7,8 @@ import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
 import com.arturjarosz.task.contract.application.dto.ContractDto
 import com.arturjarosz.task.contract.application.impl.ContractServiceImpl
 import com.arturjarosz.task.contract.model.Contract
-import com.arturjarosz.task.contract.status.StatusWorkflow
+import com.arturjarosz.task.contract.status.ContractStatusWorkflow
+import com.arturjarosz.task.contract.utils.ContractBuilder
 import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
@@ -17,7 +18,6 @@ import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectReposit
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.status.project.ProjectStatus
-import com.arturjarosz.task.project.utils.ContractBuilder
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import spock.lang.Specification
 
@@ -46,7 +46,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def projectValidator = Mock(ProjectValidator)
     def projectFinancialDataApplicationService = Mock(ProjectFinancialDataServiceImpl)
     def contractService = Mock(ContractServiceImpl)
-    def contractWorkflow = Mock(StatusWorkflow)
+    def contractWorkflow = Mock(ContractStatusWorkflow)
 
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator,

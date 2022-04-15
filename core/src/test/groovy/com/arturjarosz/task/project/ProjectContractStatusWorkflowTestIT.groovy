@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
 import spock.lang.Shared
 
-class ProjectStatusWorkflowTestIT extends BaseTestIT {
+class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
     private static final String ARCHITECT_FIRST_NAME = "First Name"
     private static final String ARCHITECT_LAST_NAME = "Last Name"
     private static final String ARCHITECTS_URI = "/architects"
