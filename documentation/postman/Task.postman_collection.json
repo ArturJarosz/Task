@@ -1417,251 +1417,181 @@
 					]
 				},
 				{
-					"name": "create project",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Lublin 01\",\n    \"architectId\": \"100\",\n    \"clientId\": \"100\",\n    \"projectType\": \"INTERIOR_HOUSE\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+					"name": "Project",
+					"item": [
+						{
+							"name": "create project",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Lublin 01\",\n    \"architectId\": \"100\",\n    \"clientId\": \"100\",\n    \"projectType\": \"INTERIOR_HOUSE\",\n    \"offerValue\": 200.00\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{taskAddress}}/projects",
-							"host": [
-								"{{taskAddress}}"
-							],
-							"path": [
-								"projects"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "update project",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"Lublin 02\",\n    \"note\": \"note about project\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+						{
+							"name": "get project",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{taskAddress}}/projects/{{projectId}}",
-							"host": [
-								"{{taskAddress}}"
-							],
-							"path": [
-								"projects",
-								"{{projectId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "remove project",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{taskAddress}}/projects/{{projectId}}",
-							"host": [
-								"{{taskAddress}}"
-							],
-							"path": [
-								"projects",
-								"{{projectId}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "sign project",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"signingDate\": \"2020-10-01\",\n    \"startDate\": \"2020-11-12\",\n    \"deadline\": \"2021-02-15\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+						{
+							"name": "update project",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Lublin 02\",\n    \"note\": \"note about project\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{taskAddress}}/projects/{{projectId}}/sign",
-							"host": [
-								"{{taskAddress}}"
-							],
-							"path": [
-								"projects",
-								"{{projectId}}",
-								"sign"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "finish project",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"endDate\": \"2020-12-01\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+						{
+							"name": "remove project",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{taskAddress}}/projects/{{projectId}}/finish",
-							"host": [
-								"{{taskAddress}}"
-							],
-							"path": [
-								"projects",
-								"{{projectId}}",
-								"finish"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "reject Project",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{taskAddress}}/projects/{{projectId}}/reject",
-							"host": [
-								"{{taskAddress}}"
-							],
-							"path": [
-								"projects",
-								"{{projectId}}",
-								"reject"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "reopen Project",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{taskAddress}}/projects/{{projectId}}/reopen",
-							"host": [
-								"{{taskAddress}}"
-							],
-							"path": [
-								"projects",
-								"{{projectId}}",
-								"reopen"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "make new offer",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"offerValue\": 5000.00\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+						{
+							"name": "finish project",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"endDate\": \"2020-12-01\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/finish",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"finish"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{taskAddress}}/projects/{{projectId}}/newOffer",
-							"host": [
-								"{{taskAddress}}"
-							],
-							"path": [
-								"projects",
-								"{{projectId}}",
-								"newOffer"
-							]
+						{
+							"name": "get projects",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "reject Project",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/reject",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"reject"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "reopen Project",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{taskAddress}}/projects/{{projectId}}/reopen",
+									"host": [
+										"{{taskAddress}}"
+									],
+									"path": [
+										"projects",
+										"{{projectId}}",
+										"reopen"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "accept offer",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{taskAddress}}/projects/{{projectId}}/acceptOffer",
-							"host": [
-								"{{taskAddress}}"
-							],
-							"path": [
-								"projects",
-								"{{projectId}}",
-								"acceptOffer"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get projects",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{taskAddress}}/projects",
-							"host": [
-								"{{taskAddress}}"
-							],
-							"path": [
-								"projects"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get project",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{taskAddress}}/projects/{{projectId}}",
-							"host": [
-								"{{taskAddress}}"
-							],
-							"path": [
-								"projects",
-								"{{projectId}}"
-							]
-						}
-					},
-					"response": []
+					]
 				}
 			]
 		},
@@ -1919,6 +1849,152 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Contract",
+			"item": [
+				{
+					"name": "Reject",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/contracts/{{contractId}}/reject",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"contracts",
+								"{{contractId}}",
+								"reject"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Terminate",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"endDate\": \"2022-10-10\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/contracts/{{contractId}}/terminate",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"contracts",
+								"{{contractId}}",
+								"terminate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Make new offer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"offerValue\": 1000.00,\n    \"deadline\": \"2022-10-10\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/contracts/{{contractId}}/newOffer",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"contracts",
+								"{{contractId}}",
+								"newOffer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accept offer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/contracts/{{contractId}}/acceptOffer",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"contracts",
+								"{{contractId}}",
+								"acceptOffer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Resume",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{taskAddress}}/contracts/{{contractId}}/resume",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"contracts",
+								"{{contractId}}",
+								"resume"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign contract",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"offerValue\": 1000.00,\n    \"deadline\": \"2022-10-10\",\n    \"signingDate\": \"2022-04-10\",\n    \"startDate\": \"2022-04-11\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taskAddress}}/contracts/{{contractId}}/sign",
+							"host": [
+								"{{taskAddress}}"
+							],
+							"path": [
+								"contracts",
+								"{{contractId}}",
+								"sign"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [
@@ -1949,6 +2025,10 @@
 		{
 			"key": "projectId",
 			"value": "100"
+		},
+		{
+			"key": "contractId",
+			"value": "110"
 		}
 	]
 }
