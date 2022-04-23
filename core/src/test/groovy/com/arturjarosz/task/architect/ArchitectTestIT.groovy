@@ -1,6 +1,5 @@
 package com.arturjarosz.task.architect
 
-
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
 import com.arturjarosz.task.architect.application.dto.ArchitectDto
 import com.arturjarosz.task.configuration.BaseTestIT
@@ -147,7 +146,8 @@ class ArchitectTestIT extends BaseTestIT {
     def "Updating existing Architect with proper data should update Architect and return updated ArchitectDto"() {
         given:
             ArchitectBasicDto architectBasicDto = this.prepareArchitectBasicDto(FIRST_NAME, LAST_NAME)
-            String requestBodyCreate = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
+            String requestBodyCreate =
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
             def createdArchitectString = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
                             .header("Content-Type", "application/json")
@@ -155,7 +155,8 @@ class ArchitectTestIT extends BaseTestIT {
             ).andReturn().response.contentAsString
             ArchitectDto createdArchitectDto = MAPPER.readValue(createdArchitectString, ArchitectDto.class)
             ArchitectDto updateArchitectDto = this.prepareArchitectDto(NEW_FIRST_NAME, NEW_LAST_NAME)
-            String requestBodyUpdate = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateArchitectDto)
+            String requestBodyUpdate =
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateArchitectDto)
         when:
             def updatedArchitectString = this.mockMvc.perform(
                     MockMvcRequestBuilders
@@ -175,7 +176,8 @@ class ArchitectTestIT extends BaseTestIT {
     def "Updating existing Architect with not proper data should not update Architect and return error message"() {
         given:
             ArchitectBasicDto architectBasicDto = this.prepareArchitectBasicDto(FIRST_NAME, LAST_NAME)
-            String requestBodyCreate = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
+            String requestBodyCreate =
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
             def createdArchitectString = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
                             .header("Content-Type", "application/json")
@@ -183,7 +185,8 @@ class ArchitectTestIT extends BaseTestIT {
             ).andReturn().response.contentAsString
             ArchitectDto createdArchitectDto = MAPPER.readValue(createdArchitectString, ArchitectDto.class)
             ArchitectDto updateArchitectDto = this.prepareArchitectDto("", NEW_LAST_NAME)
-            String requestBodyUpdate = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateArchitectDto)
+            String requestBodyUpdate =
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateArchitectDto)
         when:
             def response = this.mockMvc.perform(
                     MockMvcRequestBuilders
@@ -202,7 +205,8 @@ class ArchitectTestIT extends BaseTestIT {
     def "Updating not existing Architect should return error message"() {
         given:
             ArchitectDto updateArchitectDto = this.prepareArchitectDto("", NEW_LAST_NAME)
-            String requestBodyUpdate = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateArchitectDto)
+            String requestBodyUpdate =
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateArchitectDto)
         when:
             def response = this.mockMvc.perform(
                     MockMvcRequestBuilders

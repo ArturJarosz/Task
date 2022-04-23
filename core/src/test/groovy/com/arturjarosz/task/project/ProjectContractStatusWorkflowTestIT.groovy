@@ -12,6 +12,7 @@ import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.project.status.task.TaskStatus
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
+import com.arturjarosz.task.utils.TestsHelper
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -19,31 +20,28 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
-import spock.lang.Shared
 
 class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
-    private static final String ARCHITECT_FIRST_NAME = "First Name"
-    private static final String ARCHITECT_LAST_NAME = "Last Name"
     private static final String ARCHITECTS_URI = "/architects"
     private static final String CLIENTS_URI = "/clients"
     private static final String CONTRACTS_URI = "/contracts"
     private static final String PROJECTS_URI = "/projects"
-    private static final Double NEW_OFFER_VALUE = 10000.00D;
+    private static final ObjectMapper MAPPER = new ObjectMapper()
 
-    @Shared
-    private final ObjectMapper mapper = new ObjectMapper()
-
+    private final ArchitectBasicDto architect =
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/architect/architect.json').file),
+                    ArchitectBasicDto.class)
     private final ClientDto privateClientDto =
-            mapper.readValue(new File(getClass().classLoader.getResource('json/client/privateClient.json').file),
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/privateClient.json').file),
                     ClientDto.class)
     private final ProjectCreateDto properProjectDto =
-            mapper.readValue(new File(getClass().classLoader.getResource('json/project/properProject.json').file),
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/project/properProject.json').file),
                     ProjectCreateDto.class)
     private final StageDto stageDto =
-            mapper.readValue(new File(getClass().classLoader.getResource('json/stage/properStage.json').file),
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/stage/properStage.json').file),
                     StageDto.class)
     private final TaskDto taskDto =
-            mapper.readValue(new File(getClass().classLoader.getResource('json/task/properTask.json').file),
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/task/properTask.json').file),
                     TaskDto.class)
 
     @Autowired
@@ -51,25 +49,26 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
 
     @Override
     def setupSpec() {
-        mapper.findAndRegisterModules()
+        MAPPER.findAndRegisterModules()
     }
 
     @Transactional
     def "1 Creating project should return code 200 and put project in TO_DO status"() {
         given: "Existing architect"
-            ArchitectDto architectDto = this.createArchitect()
+            ArchitectDto architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
             properProjectDto.architectId = architectDto.id
         and: "Existing client"
-            ClientDto clientDto = this.createClient()
+            ClientDto clientDto = TestsHelper.createClient(this.privateClientDto, this.createBasicClientUri(), this.mockMvc)
             properProjectDto.clientId = clientDto.id
         when: "Creating project with proper data"
-            String projectRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
+            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def projectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
                             .header("Content-Type", "application/json")
                             .content(projectRequestBody)
             ).andReturn().response
-            ProjectDto projectDto = mapper.readValue(projectResponse.contentAsString, ProjectDto.class)
+            ProjectDto projectDto = MAPPER.readValue(projectResponse.contentAsString, ProjectDto.class)
         then: "Returns code 201"
             projectResponse.status == HttpStatus.CREATED.value()
         and: "Project status is set to TO_DO"
@@ -155,11 +154,10 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
         when: "Change one task status to IN PROGRESS"
             def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
         then: "Response code is 400"
             changeTaskStatusResponse.status == HttpStatus.BAD_REQUEST.value()
-            def message = mapper.readValue(changeTaskStatusResponse.contentAsString, ErrorMessage.class)
+            def message = MAPPER.readValue(changeTaskStatusResponse.contentAsString, ErrorMessage.class)
             message.getMessage() == "Contract in status OFFER does not allow for work on the project."
         and: "Task status is TO_DO"
             def getTaskResponse = getTaskResponse(projectDto.id, stageDto.id, taskDto11.id)
@@ -181,8 +179,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             def acceptOfferResponse = this.acceptContractOffer(projectDto.contractId)
         when:
             def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto.id, TaskStatus.IN_PROGRESS)
         then:
             changeTaskStatusResponse.status == HttpStatus.OK.value()
         and:
@@ -286,8 +283,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto = this.createTask(projectDto.id, stageDto.id)
             def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto.id, TaskStatus.IN_PROGRESS)
             def rejectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/reject"))
             ).andReturn().response
@@ -309,12 +305,10 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             def acceptOfferResponse = this.acceptContractOffer(projectDto.contractId)
             def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
         when: "Change one task status to IN PROGRESS"
             changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
         then: "Response code is 200"
             changeTaskStatusResponse.status == HttpStatus.OK.value()
         and: "Task status is REJECTED"
@@ -336,12 +330,10 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             def acceptOfferResponse = this.acceptContractOffer(projectDto.contractId)
             def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
         when: "Change one task status to IN PROGRESS"
             changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.DONE)
         then: "Response code is 200"
             changeTaskStatusResponse.status == HttpStatus.OK.value()
         and: "Task status is DONE"
@@ -363,10 +355,9 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             def acceptOfferResponse = this.acceptContractOffer(projectDto.contractId)
         when:
-            def rejectStageResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createStageUri(projectDto.id, stageDto.id) + "/reject"))
+            def rejectStageResponse = this.mockMvc.perform(MockMvcRequestBuilders
+                    .post(URI
+                            .create(this.createStageUri(projectDto.id, stageDto.id) + "/reject"))
             ).andReturn().response
         then: "Response code is 200"
             rejectStageResponse.status == HttpStatus.OK.value()
@@ -385,7 +376,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             def acceptOfferResponse = this.acceptContractOffer(projectDto.contractId)
         when:
-            String taskRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
+            String taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
             def taskResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .post(URI.create(this.createStageUri(projectDto.id, stageDto.id) + "/tasks"))
@@ -395,7 +386,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
         then: "Response code is 201"
             taskResponse.status == HttpStatus.CREATED.value()
         and: "Task status is TO_DO"
-            TaskDto createdTaskDto12 = mapper.readValue(taskResponse.contentAsString, TaskDto.class)
+            TaskDto createdTaskDto12 = MAPPER.readValue(taskResponse.contentAsString, TaskDto.class)
             def getTaskResponse = getTaskResponse(projectDto.id, stageDto.id, createdTaskDto12.id)
             this.getTaskStatus(getTaskResponse) == TaskStatus.TO_DO
         and: "Stage status is TO_DO"
@@ -414,10 +405,9 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             def acceptOfferResponse = this.acceptContractOffer(projectDto.contractId)
             def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
         when:
-            String taskRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
+            String taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
             def taskResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .post(URI.create(this.createStageUri(projectDto.id, stageDto.id) + "/tasks"))
@@ -427,7 +417,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
         then: "Response code is 201"
             taskResponse.status == HttpStatus.CREATED.value()
         and: "Task status is TO_DO"
-            TaskDto createdTaskDto12 = mapper.readValue(taskResponse.contentAsString, TaskDto.class)
+            TaskDto createdTaskDto12 = MAPPER.readValue(taskResponse.contentAsString, TaskDto.class)
             def getTaskResponse = getTaskResponse(projectDto.id, stageDto.id, createdTaskDto12.id)
             this.getTaskStatus(getTaskResponse) == TaskStatus.TO_DO
         and: "Stage status is IN_PROGRESS"
@@ -451,7 +441,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
                                     .create(this.createStageUri(projectDto.id, stageDto.id) + "/reject"))
             ).andReturn().response
         when:
-            String taskRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
+            String taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
             def taskResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .post(URI.create(this.createStageUri(projectDto.id, stageDto.id) + "/tasks"))
@@ -461,7 +451,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
         then: "Response code is 400"
             taskResponse.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = mapper.readValue(taskResponse.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(taskResponse.contentAsString, ErrorMessage.class)
             errorMessage.message == "Stage status REJECTED does not allow to make any work on the stage."
     }
 
@@ -473,13 +463,10 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             def acceptOfferResponse = this.acceptContractOffer(projectDto.contractId)
             def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.IN_PROGRESS)
-            changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            changeTaskStatusResponse = this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.DONE)
         when:
-            String taskRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
+            String taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
             def taskResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .post(URI.create(this.createStageUri(projectDto.id, stageDto.id) + "/tasks"))
@@ -489,7 +476,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
         then: "Response code is 201"
             taskResponse.status == HttpStatus.CREATED.value()
         and: "Task status is TO_DO"
-            TaskDto createdTaskDto12 = mapper.readValue(taskResponse.contentAsString, TaskDto.class)
+            TaskDto createdTaskDto12 = MAPPER.readValue(taskResponse.contentAsString, TaskDto.class)
             def getTaskResponse = getTaskResponse(projectDto.id, stageDto.id, createdTaskDto12.id)
             this.getTaskStatus(getTaskResponse) == TaskStatus.TO_DO
         and: "Stage status is IN_PROGRESS"
@@ -509,8 +496,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto = this.createTask(projectDto.id, stageDto.id)
         when:
             def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto.id, TaskStatus.IN_PROGRESS)
         then:
             changeTaskStatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is TO_DO"
@@ -528,15 +514,12 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
         when:
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is TO_DO"
@@ -554,15 +537,12 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
         when:
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is TO_DO"
@@ -579,12 +559,10 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
         when:
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
         then:
             changeTask12StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is IN_PROGRESS"
@@ -601,8 +579,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
         when:
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
         then:
             changeTask12StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is TO_DO"
@@ -619,12 +596,10 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
         when:
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
         then:
             changeTask12StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is TO_DO"
@@ -642,18 +617,14 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
             changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
         when:
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.REJECTED)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is TO_DO"
@@ -671,18 +642,14 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.REJECTED)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is TO_DO"
@@ -700,18 +667,14 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.REJECTED)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is IN_PROGRESS"
@@ -729,15 +692,12 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.REJECTED)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is TO_DO"
@@ -755,21 +715,16 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
             changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.DONE)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.REJECTED)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is DONE"
@@ -812,11 +767,9 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
         when:
             def reopenTask11 = this.mockMvc.perform(MockMvcRequestBuilders
                     .post(URI
@@ -840,20 +793,15 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
             changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
         when:
             def reopenTask11 = this.mockMvc.perform(MockMvcRequestBuilders
                     .post(URI
@@ -877,18 +825,14 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.TO_DO)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.TO_DO)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is IN_PROGRESS"
@@ -906,21 +850,16 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
             changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.TO_DO)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.TO_DO)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is IN_PROGRESS"
@@ -938,15 +877,12 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.TO_DO)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.TO_DO)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is TO_DO"
@@ -964,18 +900,14 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.TO_DO)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.TO_DO)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is TO_DO"
@@ -993,18 +925,14 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is IN_PROGRESS"
@@ -1022,18 +950,14 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is IN_PROGRESS"
@@ -1051,21 +975,16 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
             changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is DONE"
@@ -1083,21 +1002,16 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is IN_PROGRESS"
@@ -1115,24 +1029,18 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
             def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
             def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
             changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
             def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.DONE)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
         when:
             changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id,
-                            TaskStatus.IN_PROGRESS)
+                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
         and: "Stage status is IN_PROGRESS"
@@ -1147,7 +1055,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto1 = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
         when:
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
                             .header("Content-Type", "application/json")
@@ -1170,7 +1078,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
             this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.DONE)
         when:
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
                             .header("Content-Type", "application/json")
@@ -1191,7 +1099,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto1 = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
         when:
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
                             .header("Content-Type", "application/json")
@@ -1213,7 +1121,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
             this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
         when:
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
                             .header("Content-Type", "application/json")
@@ -1233,7 +1141,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             this.acceptContractOffer(projectDto.contractId)
             this.rejectProject(projectDto.id)
         when:
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
                             .header("Content-Type", "application/json")
@@ -1242,7 +1150,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
         then: "Response code is 400"
             stageResponse.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = mapper.readValue(stageResponse.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage.class)
             errorMessage.message == "Project status REJECTED does not allow to make any work on the project."
     }
 
@@ -1277,7 +1185,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
         then: "Response code is 400"
             updateTaskStatusResponse.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = mapper.readValue(updateTaskStatusResponse.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(updateTaskStatusResponse.contentAsString, ErrorMessage.class)
             errorMessage.message == "Project status REJECTED does not allow to make any work on the project."
     }
 
@@ -1342,8 +1250,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.IN_PROGRESS
             this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
         when: "Changing stage status from IN_PROGRESS to DONE"
-            def updateTaskStatusDto =
-                    this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.DONE)
+            def updateTaskStatusDto = this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.DONE)
         then: "Returns code 200"
             updateTaskStatusDto.status == HttpStatus.OK.value()
         and: "And does not change project status"
@@ -1369,8 +1276,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.IN_PROGRESS
             this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
         when: "Changing stage status from IN_PROGRESS to DONE"
-            def updateTaskStatusDto =
-                    this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.DONE)
+            def updateTaskStatusDto = this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.DONE)
         then: "Returns code 200"
             updateTaskStatusDto.status == HttpStatus.OK.value()
         and: "And changes project status to DONE"
@@ -1399,8 +1305,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
             this.getStageStatus(projectDto.id, stageDto3.id) == StageStatus.IN_PROGRESS
             this.getProjectStatus(projectDto.id) == ProjectStatus.IN_PROGRESS
         when: "Changing stage status from IN_PROGRESS to DONE"
-            def updateTaskStatusDto =
-                    this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.DONE)
+            def updateTaskStatusDto = this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.DONE)
         then: "Returns code 200"
             updateTaskStatusDto.status == HttpStatus.OK.value()
         and: "And changes project status to DONE"
@@ -1819,60 +1724,32 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
 
     // HELPER METHODS
 
-    private ArchitectDto createArchitect() {
-        ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(firstName: ARCHITECT_FIRST_NAME,
-                lastName: ARCHITECT_LAST_NAME)
-        String architectRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
-        def architectResponse = this.mockMvc.perform(
-                MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
-                        .header("Content-Type", "application/json")
-                        .content(architectRequestBody)
-        ).andReturn().response.contentAsString
-        return mapper.readValue(architectResponse, ArchitectDto.class)
-    }
-
-    private ClientDto createClient() {
-        String clientRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(privateClientDto)
-        def clientResponse = this.mockMvc.perform(
-                MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + CLIENTS_URI))
-                        .header("Content-Type", "application/json")
-                        .content(clientRequestBody)
-        ).andReturn().response.contentAsString
-        return mapper.readValue(clientResponse, ClientDto.class)
-    }
-
     private ProjectDto createProject() {
-        ArchitectDto architectDto = this.createArchitect()
+        ArchitectDto architectDto = TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
         properProjectDto.architectId = architectDto.id
-        ClientDto clientDto = this.createClient()
+        ClientDto clientDto = TestsHelper.createClient(this.privateClientDto, this.createBasicClientUri(), this.mockMvc)
         properProjectDto.clientId = clientDto.id
-        String projectRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
-        def projectResponse = this.mockMvc.perform(
-                MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
-                        .header("Content-Type", "application/json")
-                        .content(projectRequestBody)
-        ).andReturn().response
-        return mapper.readValue(projectResponse.contentAsString, ProjectDto.class)
+        return TestsHelper.createProject(this.properProjectDto, this.createBasicProjectUri(), this.mockMvc)
     }
 
     private StageDto createStage(long projectId) {
-        String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
+        String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         def stageResponse = this.mockMvc.perform(
                 MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectId) + "/stages"))
                         .header("Content-Type", "application/json")
                         .content(stageRequestBody)
         ).andReturn().response
-        return mapper.readValue(stageResponse.contentAsString, StageDto.class)
+        return MAPPER.readValue(stageResponse.contentAsString, StageDto.class)
     }
 
     private TaskDto createTask(long projectId, long stageId) {
-        String taskRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
+        String taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
         def taskResponse = this.mockMvc.perform(
                 MockMvcRequestBuilders.post(URI.create(this.createStageUri(projectId, stageId) + "/tasks"))
                         .header("Content-Type", "application/json")
                         .content(taskRequestBody)
         ).andReturn().response
-        return mapper.readValue(taskResponse.contentAsString, TaskDto.class)
+        return MAPPER.readValue(taskResponse.contentAsString, TaskDto.class)
     }
 
     private String createProjectUri(long projectId) {
@@ -1916,7 +1793,7 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
 
     private MockHttpServletResponse updateTaskStatus(long projectId, long stageId, long taskId, TaskStatus status) {
         TaskDto updateStatusDto = new TaskDto(status: status)
-        String requestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
+        String requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
         return this.mockMvc.perform(MockMvcRequestBuilders
                 .post(URI.create(this.createTaskUri(projectId, stageId, taskId) + "/updateStatus"))
                 .header("Content-Type", "application/json")
@@ -1941,12 +1818,12 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
     }
 
     private TaskStatus getTaskStatus(MockHttpServletResponse getTaskResponse) {
-        TaskDto getTaskDto = mapper.readValue(getTaskResponse.contentAsString, TaskDto.class)
+        TaskDto getTaskDto = MAPPER.readValue(getTaskResponse.contentAsString, TaskDto.class)
         return getTaskDto.status
     }
 
     private StageStatus getStageStatus(MockHttpServletResponse getStageResponse) {
-        StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
+        StageDto getStageDto = MAPPER.readValue(getStageResponse.contentAsString, StageDto.class)
         return getStageDto.status
     }
 
@@ -1954,12 +1831,12 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
         def getStageResponse =
                 this.mockMvc.perform(MockMvcRequestBuilders.get(URI.create(this.createStageUri(projectId, stageId)))
                 ).andReturn().response
-        StageDto getStageDto = mapper.readValue(getStageResponse.contentAsString, StageDto.class)
+        StageDto getStageDto = MAPPER.readValue(getStageResponse.contentAsString, StageDto.class)
         return getStageDto.status
     }
 
     private ProjectStatus getProjectStatus(MockHttpServletResponse getProjectResponse) {
-        ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
+        ProjectDto getProjectDto = MAPPER.readValue(getProjectResponse.contentAsString, ProjectDto.class)
         return getProjectDto.status
     }
 
@@ -1967,7 +1844,19 @@ class ProjectContractStatusWorkflowTestIT extends BaseTestIT {
         def getProjectResponse =
                 this.mockMvc.perform(MockMvcRequestBuilders.get(URI.create(this.createProjectUri(projectId)))
                 ).andReturn().response
-        ProjectDto getProjectDto = mapper.readValue(getProjectResponse.contentAsString, ProjectDto.class)
+        ProjectDto getProjectDto = MAPPER.readValue(getProjectResponse.contentAsString, ProjectDto.class)
         return getProjectDto.status
+    }
+
+    private String createBasicArchitectUri() {
+        return HOST + ":" + port + ARCHITECTS_URI
+    }
+
+    private String createBasicClientUri() {
+        return HOST + ":" + port + CLIENTS_URI
+    }
+
+    private String createBasicProjectUri(){
+        return HOST + ":" + port + PROJECTS_URI
     }
 }

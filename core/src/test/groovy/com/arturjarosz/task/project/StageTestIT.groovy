@@ -9,44 +9,43 @@ import com.arturjarosz.task.project.application.dto.ProjectDto
 import com.arturjarosz.task.project.application.dto.StageDto
 import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
+import com.arturjarosz.task.utils.TestsHelper
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
-import spock.lang.Shared
 
 class StageTestIT extends BaseTestIT {
-    private static final String ARCHITECT_FIRST_NAME = "First Name"
-    private static final String ARCHITECT_LAST_NAME = "Last Name"
     private static final String ARCHITECTS_URI = "/architects"
     private static final String CLIENTS_URI = "/clients"
     private static final String PROJECTS_URI = "/projects"
     private static final String STAGES_URI = "/stages"
     private static final long NOT_EXISTING_PROJECT_ID = 10000l
     private static final long NOT_EXISTING_STAGE_ID = 10000l
+    private static final ObjectMapper MAPPER = new ObjectMapper()
 
-    @Shared
-    private final ObjectMapper mapper = new ObjectMapper()
-
+    private final ArchitectBasicDto architect =
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/architect/architect.json').file),
+                    ArchitectBasicDto.class)
     private final ClientDto privateClientDto =
-            mapper.readValue(new File(getClass().classLoader.getResource('json/client/privateClient.json').file),
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/privateClient.json').file),
                     ClientDto.class)
     private final ProjectCreateDto projectDto =
-            mapper.readValue(new File(getClass().classLoader.getResource('json/project/properProject.json').file),
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/project/properProject.json').file),
                     ProjectCreateDto.class)
     private final StageDto properStageDto =
-            mapper.readValue(new File(getClass().classLoader.getResource('json/stage/properStage.json').file),
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/stage/properStage.json').file),
                     StageDto.class)
     private final StageDto notProperStageDto =
-            mapper.readValue(new File(getClass().classLoader.getResource('json/stage/notProperStage.json').file),
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/stage/notProperStage.json').file),
                     StageDto.class)
     private final StageDto properStageUpdateDto =
-            mapper.readValue(new File(getClass().classLoader.getResource('json/stage/properStageUpdate.json').file),
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/stage/properStageUpdate.json').file),
                     StageDto.class)
     private final StageDto notProperStageUpdateDto =
-            mapper.readValue(new File(getClass().classLoader.getResource('json/stage/notProperStageUpdate.json').file),
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/stage/notProperStageUpdate.json').file),
                     StageDto.class)
 
     @Autowired
@@ -54,13 +53,13 @@ class StageTestIT extends BaseTestIT {
 
     @Override
     def setupSpec() {
-        mapper.findAndRegisterModules()
+        MAPPER.findAndRegisterModules()
     }
 
     @Transactional
     def "Creating stage for not existing project should return code 400 and error message about not existing project"() {
         given:
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
         when:
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(NOT_EXISTING_PROJECT_ID)))
@@ -70,7 +69,7 @@ class StageTestIT extends BaseTestIT {
         then: "Returns code 400"
             stageResponse.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def message = mapper.readValue(stageResponse.contentAsString, ErrorMessage.class)
+            def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage.class)
             message.getMessage() == "Project with id 10,000 does not exist."
     }
 
@@ -78,7 +77,7 @@ class StageTestIT extends BaseTestIT {
     def "Creating stage with not proper data should return code 400 and error message about problem with data"() {
         given:
             ProjectDto createdProject = this.createProject()
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(notProperStageDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(notProperStageDto)
         when:
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
@@ -88,7 +87,7 @@ class StageTestIT extends BaseTestIT {
         then: "Returns code 400"
             stageResponse.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def message = mapper.readValue(stageResponse.contentAsString, ErrorMessage.class)
+            def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage.class)
             message.getMessage() == "Stage name cannot be empty."
     }
 
@@ -96,7 +95,7 @@ class StageTestIT extends BaseTestIT {
     def "Creating stage for existing project, with proper data should return code 201, created stage dto and location header"() {
         given:
             ProjectDto createdProject = this.createProject()
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
         when:
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
@@ -106,7 +105,7 @@ class StageTestIT extends BaseTestIT {
         then:
             stageResponse.status == HttpStatus.CREATED.value()
         and:
-            StageDto stageDto = mapper.readValue(stageResponse.contentAsString, StageDto.class)
+            StageDto stageDto = MAPPER.readValue(stageResponse.contentAsString, StageDto.class)
             stageDto.name == properStageDto.name
             stageDto.id != null
             stageDto.status == StageStatus.TO_DO
@@ -125,7 +124,7 @@ class StageTestIT extends BaseTestIT {
         then: "Returns code 400"
             stageResponse.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def message = mapper.readValue(stageResponse.contentAsString, ErrorMessage.class)
+            def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage.class)
             message.getMessage() == "Stage with id 10,000 does not exist."
     }
 
@@ -133,13 +132,13 @@ class StageTestIT extends BaseTestIT {
     def "Removing existing stage should return code 200 and remove stage"() {
         given:
             ProjectDto createdProject = this.createProject()
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
             def createdStageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
                             .header("Content-Type", "application/json")
                             .content(stageRequestBody)
             ).andReturn().response
-            StageDto stageDto = mapper.readValue(createdStageResponse.contentAsString, StageDto.class)
+            StageDto stageDto = MAPPER.readValue(createdStageResponse.contentAsString, StageDto.class)
         when:
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
@@ -155,7 +154,7 @@ class StageTestIT extends BaseTestIT {
                             .content(stageRequestBody)
             ).andReturn().response
             removedStageResponse.status == HttpStatus.BAD_REQUEST.value()
-            def message = mapper.readValue(removedStageResponse.contentAsString, ErrorMessage.class)
+            def message = MAPPER.readValue(removedStageResponse.contentAsString, ErrorMessage.class)
             message.getMessage() == "Stage with id " + stageDto.id + " does not exist."
     }
 
@@ -163,7 +162,7 @@ class StageTestIT extends BaseTestIT {
     def "Updating not existing stage should return code 400 and error message"() {
         given:
             ProjectDto createdProject = this.createProject()
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(properStageUpdateDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageUpdateDto)
         when:
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
@@ -175,7 +174,7 @@ class StageTestIT extends BaseTestIT {
         then: "Returns code 400"
             stageResponse.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def message = mapper.readValue(stageResponse.contentAsString, ErrorMessage.class)
+            def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage.class)
             message.getMessage() == "Stage with id 10,000 does not exist."
     }
 
@@ -183,14 +182,15 @@ class StageTestIT extends BaseTestIT {
     def "Updating existing stage with not proper date should return 400 and error message"() {
         given:
             ProjectDto createdProject = this.createProject()
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
             def createdStageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
                             .header("Content-Type", "application/json")
                             .content(stageRequestBody)
             ).andReturn().response
-            StageDto stageDto = mapper.readValue(createdStageResponse.contentAsString, StageDto.class)
-            String stageUpdateRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(notProperStageUpdateDto)
+            StageDto stageDto = MAPPER.readValue(createdStageResponse.contentAsString, StageDto.class)
+            String stageUpdateRequestBody =
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(notProperStageUpdateDto)
         when:
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
@@ -201,7 +201,7 @@ class StageTestIT extends BaseTestIT {
         then: "Returns code 400"
             stageResponse.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def message = mapper.readValue(stageResponse.contentAsString, ErrorMessage.class)
+            def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage.class)
             message.getMessage() == "Stage name cannot be empty."
     }
 
@@ -209,14 +209,15 @@ class StageTestIT extends BaseTestIT {
     def "Updating existing stage should return code 200 and dto of updated stage"() {
         given:
             ProjectDto createdProject = this.createProject()
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
             def createdStageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
                             .header("Content-Type", "application/json")
                             .content(stageRequestBody)
             ).andReturn().response
-            StageDto stageDto = mapper.readValue(createdStageResponse.contentAsString, StageDto.class)
-            String stageUpdateRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(properStageUpdateDto)
+            StageDto stageDto = MAPPER.readValue(createdStageResponse.contentAsString, StageDto.class)
+            String stageUpdateRequestBody =
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageUpdateDto)
         when:
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
@@ -227,7 +228,7 @@ class StageTestIT extends BaseTestIT {
         then: "Returns code 200"
             stageResponse.status == HttpStatus.OK.value()
         and: "Getting stage with removed stage id returns code 400 and error message."
-            StageDto stageUpdateDto = mapper.readValue(stageResponse.contentAsString, StageDto.class)
+            StageDto stageUpdateDto = MAPPER.readValue(stageResponse.contentAsString, StageDto.class)
             stageUpdateDto.name == properStageUpdateDto.name
             stageUpdateDto.note == properStageUpdateDto.note
             stageUpdateDto.stageType == properStageUpdateDto.stageType
@@ -247,7 +248,7 @@ class StageTestIT extends BaseTestIT {
         then: "Returns code 400"
             stageResponse.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def message = mapper.readValue(stageResponse.contentAsString, ErrorMessage.class)
+            def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage.class)
             message.getMessage() == "Stage with id 10,000 does not exist."
     }
 
@@ -255,13 +256,13 @@ class StageTestIT extends BaseTestIT {
     def "Getting stages should return list of all stages"() {
         given:
             ProjectDto createdProject = this.createProject()
-            String stageRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
             def createdStageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
                             .header("Content-Type", "application/json")
                             .content(stageRequestBody)
             ).andReturn().response
-            StageDto stageDto = mapper.readValue(createdStageResponse.contentAsString, StageDto.class)
+            StageDto stageDto = MAPPER.readValue(createdStageResponse.contentAsString, StageDto.class)
         when:
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
@@ -270,45 +271,21 @@ class StageTestIT extends BaseTestIT {
         then: "Returns code 200."
             stageResponse.status == HttpStatus.OK.value()
         and: "Returns data of proper stage."
-            StageDto stageUpdateDto = mapper.readValue(stageResponse.contentAsString, StageDto.class)
+            StageDto stageUpdateDto = MAPPER.readValue(stageResponse.contentAsString, StageDto.class)
             stageUpdateDto.name == properStageDto.name
 
     }
 
     private ProjectDto createProject() {
-        ArchitectDto architectDto = this.createArchitect()
+        ArchitectDto architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
         this.projectDto.architectId = architectDto.id
-        ClientDto clientDto = this.createClient()
+        ClientDto clientDto = TestsHelper.createClient(this.privateClientDto, this.createClientUri(), this.mockMvc)
         this.projectDto.clientId = clientDto.id
-        String projectRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(projectDto)
-        def projectResponse = this.mockMvc.perform(
-                MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
-                        .header("Content-Type", "application/json")
-                        .content(projectRequestBody)
-        ).andReturn().response
-        return mapper.readValue(projectResponse.contentAsString, ProjectDto.class)
+        return TestsHelper.createProject(this.projectDto, this.createBasicProjectUri(), this.mockMvc)
     }
 
-    private ArchitectDto createArchitect() {
-        ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(firstName: ARCHITECT_FIRST_NAME,
-                lastName: ARCHITECT_LAST_NAME)
-        String architectRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
-        def architectResponse = this.mockMvc.perform(
-                MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
-                        .header("Content-Type", "application/json")
-                        .content(architectRequestBody)
-        ).andReturn().response.contentAsString
-        return mapper.readValue(architectResponse, ArchitectDto.class)
-    }
-
-    private ClientDto createClient() {
-        String clientRequestBody = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(privateClientDto)
-        def clientResponse = this.mockMvc.perform(
-                MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + CLIENTS_URI))
-                        .header("Content-Type", "application/json")
-                        .content(clientRequestBody)
-        ).andReturn().response.contentAsString
-        return mapper.readValue(clientResponse, ClientDto.class)
+    private String createArchitectUrl() {
+        return HOST + ":" + port + ARCHITECTS_URI
     }
 
     private String stageUrlBuilder(long projectId) {
@@ -317,6 +294,14 @@ class StageTestIT extends BaseTestIT {
 
     private String stagePartialUriBuilder(long projectId) {
         return PROJECTS_URI + "/" + projectId + STAGES_URI
+    }
+
+    private String createClientUri() {
+        return HOST + ":" + port + CLIENTS_URI
+    }
+
+    private String createBasicProjectUri(){
+        return HOST + ":" + port + PROJECTS_URI
     }
 
 }
