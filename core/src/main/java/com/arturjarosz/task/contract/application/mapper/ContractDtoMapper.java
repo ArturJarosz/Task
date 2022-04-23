@@ -21,6 +21,8 @@ public interface ContractDtoMapper {
     @Mapping(source = "deadline", target = "deadline")
     @Mapping(source = "status", target = "status")
     @Mapping(target = "offerValue", source = "offerValue", qualifiedByName = "moneyToDouble")
+    @Mapping(source = "startDate", target = "startDate")
+    @Mapping(source = "endDate", target = "endDate")
     ContractDto contractToContractDto(Contract contract);
 
     @Named("moneyToDouble")

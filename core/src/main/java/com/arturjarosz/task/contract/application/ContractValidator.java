@@ -53,15 +53,15 @@ public class ContractValidator {
                         ContractExceptionCodes.SIGNING_DATE));
         assertNotNull(contractDto.getDeadline(), createMessageCode(ExceptionCodes.NULL, ContractExceptionCodes.CONTRACT,
                 ContractExceptionCodes.DEADLINE));
+        assertIsTrue(contractDto.getDeadline().isAfter(LocalDate.now()),
+                createMessageCode(ExceptionCodes.NOT_VALID, ContractExceptionCodes.CONTRACT,
+                        ContractExceptionCodes.DEADLINE));
         assertNotNull(contractDto.getStartDate(),
                 createMessageCode(ExceptionCodes.NULL, ContractExceptionCodes.CONTRACT,
                         ContractExceptionCodes.START_DATE));
         assertIsTrue(!contractDto.getStartDate().isBefore(contractDto.getSigningDate()),
                 createMessageCode(ExceptionCodes.NOT_VALID, ContractExceptionCodes.CONTRACT,
                         ContractExceptionCodes.START_DATE));
-        assertIsTrue(!contractDto.getDeadline().isBefore(contractDto.getStartDate()),
-                createMessageCode(ExceptionCodes.NOT_VALID, ContractExceptionCodes.CONTRACT,
-                        ContractExceptionCodes.DEADLINE));
     }
 
     public void validateTerminateContractDto(ContractDto contractDto) {

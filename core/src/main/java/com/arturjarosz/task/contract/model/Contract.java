@@ -2,7 +2,7 @@ package com.arturjarosz.task.contract.model;
 
 import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.contract.status.ContractStatus;
-import com.arturjarosz.task.contract.status.StatusWorkflow;
+import com.arturjarosz.task.contract.status.ContractStatusWorkflow;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
@@ -48,7 +48,7 @@ public class Contract extends AbstractAggregateRoot implements WorkflowAware<Con
         //needed by Hibernate
     }
 
-    public Contract(double offerValue, LocalDate deadline, StatusWorkflow contractWorkflow) {
+    public Contract(double offerValue, LocalDate deadline, ContractStatusWorkflow contractWorkflow) {
         this.offerValue = new Money(offerValue);
         this.workflowName = contractWorkflow.getName();
         this.deadline = deadline;
@@ -60,6 +60,14 @@ public class Contract extends AbstractAggregateRoot implements WorkflowAware<Con
 
     public LocalDate getDeadline() {
         return this.deadline;
+    }
+
+    public LocalDate getStartDate() {
+        return this.startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return this.endDate;
     }
 
     @Override
@@ -99,5 +107,13 @@ public class Contract extends AbstractAggregateRoot implements WorkflowAware<Con
 
     public void resume() {
         this.endDate = null;
+    }
+
+    public void terminate(ContractDto contractDto) {
+        this.updateEnd(contractDto);
+    }
+
+    public void complete(ContractDto contractDto) {
+        this.updateEnd(contractDto);
     }
 }

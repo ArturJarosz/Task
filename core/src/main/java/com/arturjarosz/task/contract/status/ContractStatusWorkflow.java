@@ -9,14 +9,14 @@ import java.util.Arrays;
 import java.util.Set;
 
 @Component
-public class StatusWorkflow extends Workflow<ContractStatus> implements WorkAwareStatusWorkflow<ContractStatus> {
+public class ContractStatusWorkflow extends Workflow<ContractStatus> implements WorkAwareStatusWorkflow<ContractStatus> {
     private static final String CONTRACT_WORKFLOW = "ContractWorkflow";
     private static final Set<ContractStatus> STATUSES_THAT_ALLOW_WORKING = Sets.newHashSet(ContractStatus.ACCEPTED,
             ContractStatus.SIGNED);
     private static final Set<ContractStatus> STATUSES_THAT_ALLOW_CREATING = Sets.newHashSet(ContractStatus.OFFER,
             ContractStatus.ACCEPTED, ContractStatus.SIGNED);
 
-    public StatusWorkflow() {
+    public ContractStatusWorkflow() {
         super(CONTRACT_WORKFLOW, ContractStatus.OFFER, Arrays.asList(ContractStatus.values()));
     }
 
