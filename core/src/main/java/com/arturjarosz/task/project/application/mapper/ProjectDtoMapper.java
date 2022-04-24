@@ -2,12 +2,15 @@ package com.arturjarosz.task.project.application.mapper;
 
 import com.arturjarosz.task.architect.application.dto.ArchitectDto;
 import com.arturjarosz.task.client.application.dto.ClientDto;
+import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
+import com.arturjarosz.task.sharedkernel.model.Money;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -18,7 +21,8 @@ public interface ProjectDtoMapper {
     @Mapping(target = "projectWorkflow", source = "projectWorkflow")
     @Mapping(source = "projectCreateDto.name", target = "name")
     @Mapping(source = "contractId", target = "contractId")
-    Project projectCreateDtoToProject(ProjectCreateDto projectCreateDto, Long contractId, ProjectWorkflow projectWorkflow);
+    Project projectCreateDtoToProject(ProjectCreateDto projectCreateDto, Long contractId,
+            ProjectWorkflow projectWorkflow);
 
     @Mapping(source = "project.projectType", target = "projectType")
     @Mapping(source = "project.name", target = "name")
@@ -38,8 +42,12 @@ public interface ProjectDtoMapper {
     @Mapping(source = "project.startDate", target = "startDate")
     @Mapping(source = "project.note", target = "note")
     @Mapping(source = "project.id", target = "id")
-    @Mapping(source = "contractId", target = "contractId")
-    ProjectDto projectToProjectDto(Project project, Long contractId);
+    @Mapping(source = "contract.id", target = "contractDto.id")
+    @Mapping(source = "contract.status", target = "contractDto.contractStatus")
+    @Mapping(source = "project.status", target = "status")
+    @Mapping(source = "project.endDate", target = "endDate")
+    @Mapping(source = "contract.offerValue", target = "contractDto.projectValue", qualifiedByName = "moneyToDouble")
+    ProjectDto projectToProjectDto(Project project, Contract contract);
 
     @Mapping(source = "project.projectType", target = "projectType")
     @Mapping(source = "project.name", target = "name")
@@ -61,4 +69,8 @@ public interface ProjectDtoMapper {
     @Mapping(source = "architectDto", target = "architect")
     ProjectDto projectToBasicProjectDto(ClientDto clientDto, ArchitectDto architectDto, Project project);
 
+    @Named("moneyToDouble")
+    default Double moneyToDouble(Money value){
+        return value.getValue().doubleValue();
+    }
 }

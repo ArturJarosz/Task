@@ -1,6 +1,5 @@
 package com.arturjarosz.task.client
 
-
 import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.configuration.BaseTestIT
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
@@ -24,18 +23,19 @@ class ClientTestIT extends BaseTestIT {
             MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/corporateClient.json').file),
                     ClientDto.class)
     private final ClientDto privateClientNotProper =
-            MAPPER.readValue(
-                    new File(getClass().classLoader.getResource('json/client/privateClientNotProper.json').file),
+            MAPPER.readValue(new File(
+                    getClass().classLoader.getResource('json/client/privateClientNotProper.json').file),
                     ClientDto.class)
     private final ClientDto corporateClientNotProper =
-            MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/corporateClientNotProper.json')
-                    .file), ClientDto.class)
+            MAPPER.readValue(new File(
+                    getClass().classLoader.getResource('json/client/corporateClientNotProper.json').file),
+                    ClientDto.class)
     private final ClientDto updateClient =
-            MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/updateClient.json')
-                    .file), ClientDto.class)
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/updateClient.json').file),
+                    ClientDto.class)
     private final ClientDto updateClientNotProper =
-            MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/updateClientNotProper.json')
-                    .file), ClientDto.class)
+            MAPPER.readValue(new File(
+                    getClass().classLoader.getResource('json/client/updateClientNotProper.json').file), ClientDto.class)
 
     @Autowired
     private MockMvc mockMvc
@@ -205,8 +205,7 @@ class ClientTestIT extends BaseTestIT {
                             .content(requestBody)
             ).andReturn().response.contentAsString
             ClientDto createdClient = MAPPER.readValue(createdClientResponse, ClientDto.class)
-            String updateRequestBody =
-                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateClientNotProper)
+            String updateRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateClientNotProper)
         when:
             def updatedClientResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders

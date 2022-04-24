@@ -12,7 +12,6 @@ public class ProjectDto implements Serializable {
     private static final long serialVersionUID = 8501354213746117568L;
 
     private Long id;
-    private Long contractId;
     private ClientDto client;
     private ArchitectBasicDto architect;
     private String name;
@@ -23,7 +22,7 @@ public class ProjectDto implements Serializable {
     private LocalDate deadline;
     private String note;
     private ProjectStatus status;
-    private Double projectValue;
+    private ContractDto contractDto;
 
     public ProjectDto() {
         //needed by Hibernate
@@ -117,19 +116,11 @@ public class ProjectDto implements Serializable {
         this.id = id;
     }
 
-    public Double getProjectValue() {
-        return this.projectValue;
+    public ContractDto getContractDto() {
+        return this.contractDto;
     }
 
-    public void setProjectValue(Double projectValue) {
-        this.projectValue = projectValue;
-    }
-
-    public Long getContractId() {
-        return this.contractId;
-    }
-
-    public void setContractId(Long contractId) {
-        this.contractId = contractId;
+    public void setContractDto(ContractDto contractDto) {
+        this.contractDto = contractDto;
     }
 }

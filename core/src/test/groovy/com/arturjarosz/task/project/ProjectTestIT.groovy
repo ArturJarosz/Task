@@ -7,6 +7,7 @@ import com.arturjarosz.task.configuration.BaseTestIT
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
 import com.arturjarosz.task.project.application.dto.ProjectDto
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
+import com.arturjarosz.task.utils.TestsHelper
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -15,8 +16,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
 
 class ProjectTestIT extends BaseTestIT {
-    private static final String ARCHITECT_FIRST_NAME = "First Name"
-    private static final String ARCHITECT_LAST_NAME = "Last Name"
     private static final String ARCHITECTS_URI = "/architects"
     private static final String CLIENTS_URI = "/clients"
     private static final String PROJECTS_URI = "/projects"
@@ -25,6 +24,9 @@ class ProjectTestIT extends BaseTestIT {
     private static final long NOT_EXISTING_PROJECT_ID = 10000l
     private static final ObjectMapper MAPPER = new ObjectMapper()
 
+    private final ArchitectBasicDto architect =
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/architect/architect.json').file),
+                    ArchitectBasicDto.class)
     private final ClientDto privateClientDto =
             MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/privateClient.json').file),
                     ClientDto.class)
@@ -44,10 +46,10 @@ class ProjectTestIT extends BaseTestIT {
     @Transactional
     def "Creating project with proper data should return code 201, dto of created project and project location header"() {
         given: "Existing architect"
-            ArchitectDto architectDto = this.createArchitect()
+            ArchitectDto architectDto = TestsHelper.createArchitect(architect, this.createArchitectUri(), this.mockMvc)
             properProjectDto.architectId = architectDto.id
         and: "Existing client"
-            ClientDto clientDto = this.createClient()
+            ClientDto clientDto = TestsHelper.createClient(this.privateClientDto, this.createClientUri(), this.mockMvc)
             properProjectDto.clientId = clientDto.id
         when: "Creating project with proper data"
             String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
@@ -67,10 +69,10 @@ class ProjectTestIT extends BaseTestIT {
     @Transactional
     def "Creating project with not proper data should return code 400 and error message"() {
         given: "Existing architect"
-            ArchitectDto architectDto = this.createArchitect()
+            ArchitectDto architectDto = TestsHelper.createArchitect(architect, this.createArchitectUri(), this.mockMvc)
             properProjectDto.architectId = architectDto.id
         and: "Existing client"
-            ClientDto clientDto = this.createClient()
+            ClientDto clientDto = TestsHelper.createClient(this.privateClientDto, this.createClientUri(), this.mockMvc)
             properProjectDto.clientId = clientDto.id
         when: "Creating project with not proper data"
             String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(notProperProjectDto)
@@ -89,7 +91,7 @@ class ProjectTestIT extends BaseTestIT {
     @Transactional
     def "Creating project with not existing client should give code 400 and error message"() {
         given: "Existing architect"
-            ArchitectDto architectDto = this.createArchitect()
+            ArchitectDto architectDto = TestsHelper.createArchitect(architect, this.createArchitectUri(), this.mockMvc)
             properProjectDto.architectId = architectDto.id
         and: "Not existing client"
             properProjectDto.clientId = NOT_EXISTING_CLIENT_ID
@@ -112,7 +114,7 @@ class ProjectTestIT extends BaseTestIT {
         given: "Not existing architect"
             properProjectDto.architectId = NOT_EXISTING_ARCHITECT_ID
         and: "Existing client"
-            ClientDto clientDto = this.createClient()
+            ClientDto clientDto = TestsHelper.createClient(this.privateClientDto, this.createClientUri(), this.mockMvc)
             properProjectDto.clientId = clientDto.id
         when: "Creating project with not proper data"
             String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
@@ -147,18 +149,17 @@ class ProjectTestIT extends BaseTestIT {
     @Transactional
     def "Getting existing project should return code 200 and dto of project"() {
         given: "Existing architect"
-            ArchitectDto architectDto = this.createArchitect()
+            ArchitectDto architectDto = TestsHelper.createArchitect(architect, this.createArchitectUri(), this.mockMvc)
             properProjectDto.architectId = architectDto.id
         and: "Existing client"
-            ClientDto clientDto = this.createClient()
+            ClientDto clientDto = TestsHelper.createClient(this.privateClientDto, this.createClientUri(), this.mockMvc)
             properProjectDto.clientId = clientDto.id
         and: "Creating project with not proper data"
-            String creatingProjectRequestBody =
-                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
+            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def creatingProjectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
                             .header("Content-Type", "application/json")
-                            .content(creatingProjectRequestBody)
+                            .content(projectRequestBody)
             ).andReturn().response
             ProjectDto createdProject = MAPPER.readValue(creatingProjectResponse.contentAsString, ProjectDto.class)
         when:
@@ -194,10 +195,10 @@ class ProjectTestIT extends BaseTestIT {
     @Transactional
     def "Updating existing project with proper data should give code 200 and dto of updated project"() {
         given: "Existing architect"
-            ArchitectDto architectDto = this.createArchitect()
+            ArchitectDto architectDto = TestsHelper.createArchitect(architect, this.createArchitectUri(), this.mockMvc)
             properProjectDto.architectId = architectDto.id
         and: "Existing client"
-            ClientDto clientDto = this.createClient()
+            ClientDto clientDto = TestsHelper.createClient(this.privateClientDto, this.createClientUri(), this.mockMvc)
             properProjectDto.clientId = clientDto.id
         and: "Creating project with not proper data"
             String creatingProjectRequestBody =
@@ -244,10 +245,10 @@ class ProjectTestIT extends BaseTestIT {
     @Transactional
     def "Removing existing project should give code 200 and remove project"() {
         given: "Existing architect"
-            ArchitectDto architectDto = this.createArchitect()
+            ArchitectDto architectDto = TestsHelper.createArchitect(architect, this.createArchitectUri(), this.mockMvc)
             properProjectDto.architectId = architectDto.id
         and: "Existing client"
-            ClientDto clientDto = this.createClient()
+            ClientDto clientDto = TestsHelper.createClient(this.privateClientDto, this.createClientUri(), this.mockMvc)
             properProjectDto.clientId = clientDto.id
         and: "Creating project with not proper data"
             String creatingProjectRequestBody =
@@ -274,10 +275,10 @@ class ProjectTestIT extends BaseTestIT {
     @Transactional
     def "Get projects should return dto list of all existing projects"() {
         given: "Existing architect"
-            ArchitectDto architectDto = this.createArchitect()
+            ArchitectDto architectDto = TestsHelper.createArchitect(architect, this.createArchitectUri(), this.mockMvc)
             properProjectDto.architectId = architectDto.id
         and: "Existing client"
-            ClientDto clientDto = this.createClient()
+            ClientDto clientDto = TestsHelper.createClient(this.privateClientDto, this.createClientUri(), this.mockMvc)
             properProjectDto.clientId = clientDto.id
         and: "Creating project with not proper data"
             String creatingProjectRequestBody =
@@ -299,30 +300,16 @@ class ProjectTestIT extends BaseTestIT {
         then:
             projectsListResponse.status == HttpStatus.OK.value()
         and:
-            List<ProjectDto> projects = MAPPER.readValue(projectsListResponse.contentAsString, List<ProjectDto>.class)
+            List<ProjectDto> projects =
+                    MAPPER.readValue(projectsListResponse.contentAsString, List<ProjectDto>.class)
             projects.size() == 2
     }
 
-    private ArchitectDto createArchitect() {
-        ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(firstName: ARCHITECT_FIRST_NAME,
-                lastName: ARCHITECT_LAST_NAME)
-        String architectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
-        def architectResponse = this.mockMvc.perform(
-                MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
-                        .header("Content-Type", "application/json")
-                        .content(architectRequestBody)
-        ).andReturn().response.contentAsString
-        return MAPPER.readValue(architectResponse, ArchitectDto.class)
+    private String createArchitectUri() {
+        return HOST + ":" + port + ARCHITECTS_URI
     }
 
-    private ClientDto createClient() {
-        String clientRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(privateClientDto)
-        def clientResponse = this.mockMvc.perform(
-                MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + CLIENTS_URI))
-                        .header("Content-Type", "application/json")
-                        .content(clientRequestBody)
-        ).andReturn().response.contentAsString
-        return MAPPER.readValue(clientResponse, ClientDto.class)
+    private String createClientUri() {
+        return HOST + ":" + port + CLIENTS_URI
     }
-
 }

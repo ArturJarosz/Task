@@ -71,7 +71,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectRepository.save(project);
         this.projectFinancialDataService.createProjectFinancialData(project.getId());
         LOG.debug("Project created.");
-        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project, contract.getId());
+        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project, contract);
     }
 
     @Override
