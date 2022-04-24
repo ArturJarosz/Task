@@ -3,8 +3,8 @@ package com.arturjarosz.task.architect.application.dto;
 import java.io.Serializable;
 
 public class ArchitectBasicDto implements Serializable {
-
     private static final long serialVersionUID = -3213904554343745120L;
+
     private Long id;
     private String firstName;
     private String lastName;

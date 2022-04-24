@@ -2,6 +2,7 @@ package com.arturjarosz.task.finance.application.impl
 
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto
 import com.arturjarosz.task.finance.application.dto.ProjectFinancialDataDto
+import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialDataDto
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService
 import com.arturjarosz.task.finance.infrastructure.impl.FinancialDataRepositoryImpl
 import com.arturjarosz.task.finance.infrastructure.impl.ProjectFinancialDataRepositoryImpl
@@ -11,12 +12,14 @@ import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto
 import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
+import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.Money
 import com.arturjarosz.task.sharedkernel.utils.TestUtils
 import spock.lang.Specification
 
 class ProjectFinancialDataServiceImplTest extends Specification {
     private static final Long PROJECT_ID = 1L
+    private static final Long NOT_EXISTING_PROJECT_ID = 2L
     private static final Long SUPERVISION_ID = 10L
     private static final Long SUPERVISION_FINANCIAL_DATA_ID = 100L
     private static final Long PROJECT_FINANCIAL_DATA_ID = 1000L
@@ -98,6 +101,27 @@ class ProjectFinancialDataServiceImplTest extends Specification {
             })
     }
 
+    def "getTotalProjectFinancialData does not return project financial data for not existing project"() {
+        given:
+            this.mockValidateProjectExistenceOnNotExistingProject()
+        when:
+            TotalProjectFinancialDataDto projectFinancialDataDto =
+                    this.projectFinancialDataService.getTotalProjectFinancialData(NOT_EXISTING_PROJECT_ID)
+        then:
+            Exception exception = thrown()
+            projectFinancialDataDto == null
+    }
+
+    def "getTotalProjectFinancialData returns project financial data for existing project"() {
+        given:
+            this.mockLoadTotalProjectFinancialData()
+        when:
+            TotalProjectFinancialDataDto projectFinancialDataDto =
+                    this.projectFinancialDataService.getTotalProjectFinancialData(PROJECT_ID)
+        then:
+            projectFinancialDataDto != null
+    }
+
     private void mockProjectFinancialDataRepositorySave() {
         ProjectFinancialData projectFinancialData = new ProjectFinancialData(PROJECT_ID)
         1 * this.projectFinancialDataRepository.save(_ as ProjectFinancialData) >> projectFinancialData
@@ -140,13 +164,20 @@ class ProjectFinancialDataServiceImplTest extends Specification {
         return projectFinancialData
     }
 
-    private mockCostProvidePartialFinancialData() {
+    private void mockCostProvidePartialFinancialData() {
         ProjectFinancialDataDto projectFinancialDataDto = new ProjectFinancialDataDto()
         FinancialValueDto costsValue = new FinancialValueDto(grossValue: COST_GROSS_VALUE, netValue: COST_NET_VALUE,
                 vatTax: COST_VAT_TAX_VALUE, incomeTax: COST_INCOME_TAX_VALUE)
-
         projectFinancialDataDto.costsValue = costsValue
-
         partialFinancialDataService.providePartialFinancialData(PROJECT_FINANCIAL_DATA_ID) >> projectFinancialDataDto
+    }
+
+    private void mockValidateProjectExistenceOnNotExistingProject() {
+        this.projectValidator.validateProjectExistence(
+                NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }
+    }
+
+    private void mockLoadTotalProjectFinancialData(){
+        this.financialDataQueryService.getTotalProjectFinancialData(PROJECT_ID) >> new TotalProjectFinancialDataDto()
     }
 }

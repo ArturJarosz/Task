@@ -1,7 +1,9 @@
 package com.arturjarosz.task.finance.query.impl;
 
+import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialDataDto;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
 import com.arturjarosz.task.finance.model.QFinancialData;
+import com.arturjarosz.task.finance.model.QProjectFinancialData;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
@@ -32,6 +34,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     private static final QSupervision SUPERVISION = QSupervision.supervision;
     private static final QSupervisionVisit SUPERVISION_VISIT = QSupervisionVisit.supervisionVisit;
     private static final QSupply SUPPLY = QSupply.supply;
+    private static final QProjectFinancialData PROJECT_FINANCIAL_DATA = QProjectFinancialData.projectFinancialData;
 
     public FinancialDataQueryServiceImpl() {
         super(FINANCIAL_DATA);
@@ -39,91 +42,79 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
 
     @Override
     public SupervisionRatesDto getSupervisionRatesDto(long supervisionId) {
-        return this.query()
-                .from(SUPERVISION)
-                .where(SUPERVISION.id.eq(supervisionId))
+        return this.query().from(SUPERVISION).where(SUPERVISION.id.eq(supervisionId))
                 .select(Projections.bean(SupervisionRatesDto.class,
                         SUPERVISION.baseNetRate.value.as(SupervisionRatesDto.BASE_NET_RATE),
                         SUPERVISION.hourlyNetRate.value.as(SupervisionRatesDto.HOURLY_NET_RATE),
-                        SUPERVISION.visitNetRate.value.as(SupervisionRatesDto.VISIT_NET_RATE)))
-                .fetchOne();
+                        SUPERVISION.visitNetRate.value.as(SupervisionRatesDto.VISIT_NET_RATE))).fetchOne();
     }
 
     @Override
     public List<SupervisionVisitFinancialDto> getVisitsFinancialDto(Long supervisionId) {
-        return this.query()
-                .from(SUPERVISION)
-                .where(SUPERVISION.id.eq(supervisionId))
+        return this.query().from(SUPERVISION).where(SUPERVISION.id.eq(supervisionId))
                 .join(SUPERVISION.supervisionVisits, SUPERVISION_VISIT)
                 .select(Projections.bean(SupervisionVisitFinancialDto.class,
                         SUPERVISION_VISIT.payable.as(SupervisionVisitFinancialDto.PAYABLE),
-                        SUPERVISION_VISIT.hoursCount.as(SupervisionVisitFinancialDto.HOURS_COUNT)))
-                .fetch();
+                        SUPERVISION_VISIT.hoursCount.as(SupervisionVisitFinancialDto.HOURS_COUNT))).fetch();
     }
 
     @Override
     public List<FinancialDataDto> getCostsFinancialData(long projectId) {
-        JPAQuery<?> costsFinancialDataQuery = this.query()
-                .from(PROJECT)
-                .join(PROJECT.costs, COST)
-                .join(COST.financialData, FINANCIAL_DATA)
-                .where(PROJECT.id.eq(projectId));
+        JPAQuery<?> costsFinancialDataQuery = this.query().from(PROJECT).join(PROJECT.costs, COST)
+                .join(COST.financialData, FINANCIAL_DATA).where(PROJECT.id.eq(projectId));
         return this.getFinancialDataForFinancialDataAwareObjects(costsFinancialDataQuery);
     }
 
     @Override
     public List<FinancialDataDto> getSuppliesFinancialData(long projectId) {
-        JPAQuery<?> suppliesFinancialDataQuery = this.query()
-                .from(PROJECT)
-                .join(PROJECT.supplies, SUPPLY)
+        JPAQuery<?> suppliesFinancialDataQuery = this.query().from(PROJECT).join(PROJECT.supplies, SUPPLY)
                 .join(SUPPLY.financialData, FINANCIAL_DATA)
-                .where(PROJECT.id.eq(projectId)
-                        .and(SUPPLY.type.eq(CooperatorJobType.SUPPLY)));
+                .where(PROJECT.id.eq(projectId).and(SUPPLY.type.eq(CooperatorJobType.SUPPLY)));
         return this.getFinancialDataForFinancialDataAwareObjects(suppliesFinancialDataQuery);
     }
 
     @Override
     public List<FinancialDataDto> getContractorsJobsFinancialData(long projectId) {
-        JPAQuery<?> contractorsJobsFinancialDataQuery = this.query()
-                .from(PROJECT)
-                .join(PROJECT.contractorJobs, CONTRACTOR_JOB)
-                .join(CONTRACTOR_JOB.financialData, FINANCIAL_DATA)
-                .where(PROJECT.id.eq(projectId)
-                        .and(CONTRACTOR_JOB.type.eq(CooperatorJobType.CONTRACTOR_JOB)));
+        JPAQuery<?> contractorsJobsFinancialDataQuery = this.query().from(PROJECT)
+                .join(PROJECT.contractorJobs, CONTRACTOR_JOB).join(CONTRACTOR_JOB.financialData, FINANCIAL_DATA)
+                .where(PROJECT.id.eq(projectId).and(CONTRACTOR_JOB.type.eq(CooperatorJobType.CONTRACTOR_JOB)));
         return this.getFinancialDataForFinancialDataAwareObjects(contractorsJobsFinancialDataQuery);
     }
 
     @Override
     public FinancialDataDto getSupervisionFinancialData(long projectId) {
-        return this.query()
-                .from(SUPERVISION)
-                .join(SUPERVISION.financialData, FINANCIAL_DATA)
+        return this.query().from(SUPERVISION).join(SUPERVISION.financialData, FINANCIAL_DATA)
                 .where(SUPERVISION.projectId.eq(projectId))
                 .select(Projections.bean(FinancialDataDto.class, FINANCIAL_DATA.payable.as(FinancialDataDto.PAYABLE),
                         FINANCIAL_DATA.hasInvoice.as(FinancialDataDto.HAS_INVOICE),
                         FINANCIAL_DATA.paid.as(FinancialDataDto.PAID),
-                        FINANCIAL_DATA.value.value.as(FinancialDataDto.VALUE)))
-                .fetchOne();
+                        FINANCIAL_DATA.value.value.as(FinancialDataDto.VALUE))).fetchOne();
     }
 
     @Override
     public List<FinancialDataDto> getInstallmentsFinancialData(long projectId) {
-        JPAQuery<?> installmentsFinancialDataQuery = this.query().from(PROJECT)
-                .join(PROJECT.stages, STAGE)
-                .where(PROJECT.id.eq(projectId))
-                .join(STAGE.installment, INSTALLMENT)
+        JPAQuery<?> installmentsFinancialDataQuery = this.query().from(PROJECT).join(PROJECT.stages, STAGE)
+                .where(PROJECT.id.eq(projectId)).join(STAGE.installment, INSTALLMENT)
                 .join(INSTALLMENT.financialData, FINANCIAL_DATA);
         return this.getFinancialDataForFinancialDataAwareObjects(installmentsFinancialDataQuery);
     }
 
-    private List<FinancialDataDto> getFinancialDataForFinancialDataAwareObjects(JPAQuery<?> jpaQuery) {
-        return jpaQuery.select(
-                        Projections.bean(FinancialDataDto.class, FINANCIAL_DATA.payable.as(FinancialDataDto.PAYABLE),
-                                FINANCIAL_DATA.hasInvoice.as(FinancialDataDto.HAS_INVOICE),
-                                FINANCIAL_DATA.paid.as(FinancialDataDto.PAID),
-                                FINANCIAL_DATA.value.value.as(FinancialDataDto.VALUE)))
-                .fetch();
+    @Override
+    public TotalProjectFinancialDataDto getTotalProjectFinancialData(long projectId) {
+        return this.query().from(PROJECT_FINANCIAL_DATA).where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
+                .select(Projections.constructor(TotalProjectFinancialDataDto.class,
+                        PROJECT_FINANCIAL_DATA.totalGrossValue.value.doubleValue(),
+                        PROJECT_FINANCIAL_DATA.totalNetValue.value.doubleValue(),
+                        PROJECT_FINANCIAL_DATA.totalVatTax.value.doubleValue(),
+                        PROJECT_FINANCIAL_DATA.totalIncomeTax.value.doubleValue())).fetchOne();
     }
 
+    private List<FinancialDataDto> getFinancialDataForFinancialDataAwareObjects(JPAQuery<?> jpaQuery) {
+        return jpaQuery.select(
+                Projections.bean(FinancialDataDto.class, FINANCIAL_DATA.payable.as(FinancialDataDto.PAYABLE),
+                        FINANCIAL_DATA.hasInvoice.as(FinancialDataDto.HAS_INVOICE),
+                        FINANCIAL_DATA.paid.as(FinancialDataDto.PAID),
+                        FINANCIAL_DATA.value.value.as(FinancialDataDto.VALUE))).fetch();
+    }
 
 }

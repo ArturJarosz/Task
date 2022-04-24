@@ -18,7 +18,6 @@ public class ProjectFinancialDataDto {
         this.totalProjectValue = new FinancialValueDto();
     }
 
-
     public FinancialValueDto getTotalProjectValue() {
         return this.totalProjectValue;
     }

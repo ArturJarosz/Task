@@ -2,6 +2,7 @@ package com.arturjarosz.task.finance.application.impl;
 
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.finance.application.dto.ProjectFinancialDataDto;
+import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialDataDto;
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService;
 import com.arturjarosz.task.finance.infrastructure.FinancialDataRepository;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
@@ -92,6 +93,12 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
         ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.loadProjectFinancialDataWithProjectId(
                 projectId);
         this.projectFinancialDataRepository.remove(projectFinancialData.getId());
+    }
+
+    @Override
+    public TotalProjectFinancialDataDto getTotalProjectFinancialData(Long projectId) {
+        this.projectValidator.validateProjectExistence(projectId);
+        return this.financialDataQueryService.getTotalProjectFinancialData(projectId);
     }
 
     private void recalculateTotalProjectValue(ProjectFinancialDataDto projectFinancialDataDto) {
