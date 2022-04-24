@@ -1,5 +1,6 @@
 package com.arturjarosz.task.finance.query;
 
+import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialDataDto;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
@@ -7,11 +8,7 @@ import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 import java.util.List;
 
 public interface FinancialDataQueryService {
-    /**
-     *
-     * @param supervisionId
-     * @return
-     */
+
     SupervisionRatesDto getSupervisionRatesDto(long supervisionId);
 
     List<SupervisionVisitFinancialDto> getVisitsFinancialDto(Long supervisionId);
@@ -25,4 +22,6 @@ public interface FinancialDataQueryService {
     FinancialDataDto getSupervisionFinancialData(long projectId);
 
     List<FinancialDataDto> getInstallmentsFinancialData(long projectId);
+
+    TotalProjectFinancialDataDto getTotalProjectFinancialData(long projectId);
 }

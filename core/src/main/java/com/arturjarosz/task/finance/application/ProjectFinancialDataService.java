@@ -1,5 +1,6 @@
 package com.arturjarosz.task.finance.application;
 
+import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialDataDto;
 import com.arturjarosz.task.finance.model.ProjectFinancialData;
 
 public interface ProjectFinancialDataService {
@@ -24,4 +25,10 @@ public interface ProjectFinancialDataService {
      * Removes ProjectFinancialData for Project with given projectId.
      */
     void removeFinancialDataForProject(Long projectId);
+
+    /**
+     * Returns total financial data of Project with given projectId. If Project does not exist, then
+     * new exception will be thrown.
+     */
+    TotalProjectFinancialDataDto getTotalProjectFinancialData(Long projectId);
 }
