@@ -19,6 +19,7 @@ import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.utils.ProjectBuilder
+import com.arturjarosz.task.sharedkernel.model.Money
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -375,7 +376,7 @@ class ProjectApplicationServiceImplTest extends Specification {
 
     private ProjectCreateDto prepareCreateProjectDto() {
         ProjectCreateDto projectCreateDto = new ProjectCreateDto(name: PROJECT_NAME, architectId: ARCHITECT_ID,
-                clientId: CLIENT_ID, projectType: ProjectType.CONCEPT)
+                clientId: CLIENT_ID, projectType: ProjectType.CONCEPT, offerValue: PROJECT_VALUE)
         return projectCreateDto
     }
 
@@ -439,6 +440,7 @@ class ProjectApplicationServiceImplTest extends Specification {
                 .withStatus(ProjectStatus.TO_DO)
                 .build()
     }
+
     private ProjectDto prepareProjectDtoForFinish() {
         ProjectDto projectDto = new ProjectDto(endDate: PROJECT_END_DATE)
         return projectDto
@@ -477,6 +479,8 @@ class ProjectApplicationServiceImplTest extends Specification {
     }
 
     private void mockContractServiceCreateContract() {
-        this.contractService.createContract(_ as ContractDto) >> new ContractBuilder().withId(CONTRACT_ID).build()
+        this.contractService.createContract(_ as ContractDto) >> new ContractBuilder()
+                .withId(CONTRACT_ID)
+                .withContractValue(new Money(PROJECT_VALUE)).build()
     }
 }

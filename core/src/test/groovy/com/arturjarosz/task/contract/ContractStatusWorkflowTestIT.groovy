@@ -21,12 +21,16 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
 
+import java.time.LocalDate
+
 class ContractStatusWorkflowTestIT extends BaseTestIT {
     private static final String ARCHITECTS_URI = "/architects"
     private static final String CLIENTS_URI = "/clients"
     private static final String CONTRACTS_URI = "/contracts"
     private static final String PROJECTS_URI = "/projects"
     private static final ObjectMapper MAPPER = new ObjectMapper()
+    private static final Double NEW_OFFER = 55000.00d
+    private static final LocalDate END_DATE = LocalDate.of(2022, 10, 10)
 
     private final ArchitectBasicDto architect =
             MAPPER.readValue(new File(getClass().classLoader.getResource('json/architect/architect.json').file),
@@ -36,6 +40,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
                     ClientDto.class)
     private final ContractDto signContractDto =
             MAPPER.readValue(new File(getClass().classLoader.getResource('json/contract/signContract.json').file),
+                    ContractDto.class)
+    private final ContractDto offerContractDto =
+            MAPPER.readValue(new File(getClass().classLoader.getResource('json/contract/offer.json').file),
                     ContractDto.class)
     private final ProjectCreateDto properProjectDto =
             MAPPER.readValue(new File(getClass().classLoader.getResource('json/project/properProject.json').file),
@@ -179,12 +186,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     def "Contract in REJECTED status does not allow for creating new work objects"() {
         given:
             ProjectDto projectDto = this.createProject()
-            def updateContractResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(this.createContractUri(projectDto.contractDto.id) + "/reject")
-                            .header("Content-Type", "application/json")
-
-            ).andReturn().response
+            this.rejectContract(projectDto.contractDto.id)
             String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         when:
             def stageResponse = this.mockMvc.perform(
@@ -204,12 +206,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto projectDto = this.createProject()
             StageDto createdStageDto = this.createStage(projectDto.id)
             TaskDto createdTaskDto = this.createTask(projectDto.id, createdStageDto.id)
-            def updateContractResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(this.createContractUri(projectDto.contractDto.id) + "/reject")
-                            .header("Content-Type", "application/json")
-
-            ).andReturn().response
+            this.rejectContract(projectDto.contractDto.id)
         when:
             def updateTaskResponse =
                     this.updateTaskStatus(projectDto.id, createdStageDto.id, createdTaskDto.id, TaskStatus.IN_PROGRESS)
@@ -223,12 +220,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     def "Contract in REJECTED status cannot be signed"() {
         given:
             ProjectDto projectDto = this.createProject()
-            def updateContractResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(this.createContractUri(projectDto.contractDto.id) + "/reject")
-                            .header("Content-Type", "application/json")
-
-            ).andReturn().response
+            this.rejectContract(projectDto.contractDto.id)
             String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
         when:
             def signContractResponse = this.mockMvc.perform(
@@ -241,6 +233,309 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def message = MAPPER.readValue(signContractResponse.contentAsString, ErrorMessage.class)
             message.message == "It is not possible to make contract status transition from REJECTED to SIGNED."
     }
+
+    @Transactional
+    def "Making new offer on contract in REJECTED status changes this contract status to OFFER and updates offer value"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.rejectContract(projectDto.contractDto.id)
+            this.offerContractDto.setOfferValue(NEW_OFFER)
+            String offerRequestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.offerContractDto)
+        when:
+            def newOfferContractResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .post(this.createContractUri(projectDto.contractDto.id) + "/newOffer")
+                            .header("Content-Type", "application/json")
+                            .content(offerRequestText)
+            ).andReturn().response
+        then:
+            newOfferContractResponse.status == HttpStatus.OK.value()
+            ContractDto contractDto = MAPPER.readValue(newOfferContractResponse.contentAsString, ContractDto.class)
+            contractDto.status == ContractStatus.OFFER
+            contractDto.offerValue == NEW_OFFER
+    }
+
+    @Transactional
+    def "Making new offer from contract in status OFFER is not possible and returns error message"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            String offerRequestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.offerContractDto)
+        when:
+            def newOfferContractResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .post(this.createContractUri(projectDto.contractDto.id) + "/newOffer")
+                            .header("Content-Type", "application/json")
+                            .content(offerRequestText)
+            ).andReturn().response
+        then:
+            newOfferContractResponse.status == HttpStatus.BAD_REQUEST.value()
+            def message = MAPPER.readValue(newOfferContractResponse.contentAsString, ErrorMessage.class)
+            message.message == "It is not possible to make contract status transition from OFFER to OFFER."
+    }
+
+    @Transactional
+    def "Making new offer from contract in status ACCEPTED is not possible and returns error message"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptContractOffer(projectDto.contractDto.id)
+            String offerRequestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.offerContractDto)
+        when:
+            def newOfferContractResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .post(this.createContractUri(projectDto.contractDto.id) + "/newOffer")
+                            .header("Content-Type", "application/json")
+                            .content(offerRequestText)
+            ).andReturn().response
+        then:
+            newOfferContractResponse.status == HttpStatus.BAD_REQUEST.value()
+            def message = MAPPER.readValue(newOfferContractResponse.contentAsString, ErrorMessage.class)
+            message.message == "It is not possible to make contract status transition from ACCEPTED to OFFER."
+    }
+
+    @Transactional
+    def "Making new offer from contract in status SIGNED is not possible and returns error message"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptContractOffer(projectDto.contractDto.id)
+            String offerRequestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.offerContractDto)
+            String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+            this.signContract(projectDto.contractDto.id, signContractText)
+        when:
+            def newOfferContractResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders
+                            .post(this.createContractUri(projectDto.contractDto.id) + "/newOffer")
+                            .header("Content-Type", "application/json")
+                            .content(offerRequestText)
+            ).andReturn().response
+        then:
+            newOfferContractResponse.status == HttpStatus.BAD_REQUEST.value()
+            def message = MAPPER.readValue(newOfferContractResponse.contentAsString, ErrorMessage.class)
+            message.message == "It is not possible to make contract status transition from SIGNED to OFFER."
+    }
+
+    @Transactional
+    def "Signing contract in status OFFER is not possible and returns error message"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+        when:
+            def signContractResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(this.createContractUri(projectDto.contractDto.id) + "/sign")
+                            .header("Content-Type", "application/json")
+                            .content(signContractText)
+            ).andReturn().response
+        then:
+            signContractResponse.status == HttpStatus.BAD_REQUEST.value()
+            def message = MAPPER.readValue(signContractResponse.contentAsString, ErrorMessage.class)
+            message.message == "It is not possible to make contract status transition from OFFER to SIGNED."
+    }
+
+    @Transactional
+    def "Signing contract in status ACCEPTED changes contract status to SIGNED"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptContractOffer(projectDto.contractDto.id)
+            String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+        when:
+            def signContractResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(this.createContractUri(projectDto.contractDto.id) + "/sign")
+                            .header("Content-Type", "application/json")
+                            .content(signContractText)
+            ).andReturn().response
+        then:
+            signContractResponse.status == HttpStatus.OK.value()
+            ContractDto contractDto = MAPPER.readValue(signContractResponse.contentAsString, ContractDto.class)
+            contractDto.status == ContractStatus.SIGNED
+    }
+
+    @Transactional
+    def "Contract in SIGNED status allows for creating work objects"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptContractOffer(projectDto.contractDto.id)
+            String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+            this.signContract(projectDto.contractDto.id, signContractText)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
+        when:
+            def stageResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
+                            .header("Content-Type", "application/json")
+                            .content(stageRequestBody)
+            ).andReturn().response
+        then:
+            stageResponse.status == HttpStatus.CREATED.value()
+    }
+
+    @Transactional
+    def "Contract in SIGNED status allows for working on project"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptContractOffer(projectDto.contractDto.id)
+            String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+            this.signContract(projectDto.contractDto.id, signContractText)
+            StageDto createdStageDto = this.createStage(projectDto.id)
+            TaskDto createdTaskDto = this.createTask(projectDto.id, createdStageDto.id)
+        when:
+            def updateTaskResponse =
+                    this.updateTaskStatus(projectDto.id, createdStageDto.id, createdTaskDto.id, TaskStatus.IN_PROGRESS)
+        then:
+            updateTaskResponse.status == HttpStatus.OK.value()
+            TaskDto updateTaskDto = MAPPER.readValue(updateTaskResponse.contentAsString, TaskDto.class)
+            updateTaskDto.status == TaskStatus.IN_PROGRESS
+    }
+
+    @Transactional
+    def "Terminating singed contract changes this contract status to TERMINATED"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptContractOffer(projectDto.contractDto.id)
+            String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+            this.signContract(projectDto.contractDto.id, signContractText)
+            ContractDto terminateContractDto = new ContractDto(endDate: END_DATE)
+            String terminateRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(terminateContractDto)
+        when:
+            def terminateContractResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(this.createContractUri(projectDto.contractDto.id) + "/terminate")
+                            .header("Content-Type", "application/json")
+                            .content(terminateRequest)
+            ).andReturn().response
+        then:
+            terminateContractResponse.status == HttpStatus.OK.value()
+            ContractDto contractDto = MAPPER.readValue(terminateContractResponse.contentAsString, ContractDto.class)
+            contractDto.status == ContractStatus.TERMINATED
+    }
+
+    @Transactional
+    def "Contract in status TERMINATED does not allow for creating working objects"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptContractOffer(projectDto.contractDto.id)
+            String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+            this.signContract(projectDto.contractDto.id, signContractText)
+            ContractDto terminateContractDto = new ContractDto(endDate: END_DATE)
+            String terminateRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(terminateContractDto)
+            this.terminateContract(projectDto.contractDto.id, terminateRequest)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
+        when:
+            def stageResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
+                            .header("Content-Type", "application/json")
+                            .content(stageRequestBody)
+            ).andReturn().response
+        then:
+            stageResponse.status == HttpStatus.BAD_REQUEST.value()
+            def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage.class)
+            message.message == "Contract in status TERMINATED does not allow for creating new working objects."
+    }
+
+    @Transactional
+    def "Contract in status TERMINATED does not allow for working on project"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptContractOffer(projectDto.contractDto.id)
+            String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+            this.signContract(projectDto.contractDto.id, signContractText)
+            ContractDto terminateContractDto = new ContractDto(endDate: END_DATE)
+            String terminateRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(terminateContractDto)
+            StageDto createdStageDto = this.createStage(projectDto.id)
+            TaskDto createdTaskDto = this.createTask(projectDto.id, createdStageDto.id)
+            this.terminateContract(projectDto.contractDto.id, terminateRequest)
+        when:
+            def updateTaskResponse =
+                    this.updateTaskStatus(projectDto.id, createdStageDto.id, createdTaskDto.id, TaskStatus.IN_PROGRESS)
+        then:
+            updateTaskResponse.status == HttpStatus.BAD_REQUEST.value()
+            def message = MAPPER.readValue(updateTaskResponse.contentAsString, ErrorMessage.class)
+            message.message == "Contract in status TERMINATED does not allow for work on the project."
+    }
+
+    @Transactional
+    def "Resuming terminated contract changes its status to SIGNED"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptContractOffer(projectDto.contractDto.id)
+            String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+            this.signContract(projectDto.contractDto.id, signContractText)
+            ContractDto terminateContractDto = new ContractDto(endDate: END_DATE)
+            String terminateRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(terminateContractDto)
+            this.terminateContract(projectDto.contractDto.id, terminateRequest)
+        when:
+            def resumeContractResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(this.createContractUri(projectDto.contractDto.id) + "/resume")
+                            .header("Content-Type", "application/json")
+            ).andReturn().response
+        then:
+            resumeContractResponse.status == HttpStatus.OK.value()
+            ContractDto contractDto = MAPPER.readValue(resumeContractResponse.contentAsString, ContractDto.class)
+            contractDto.status == ContractStatus.SIGNED
+    }
+
+    @Transactional
+    def "Completing signed contract changes its status to COMPLETED"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptContractOffer(projectDto.contractDto.id)
+            String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+            this.signContract(projectDto.contractDto.id, signContractText)
+            ContractDto completeContractDto = new ContractDto(endDate: END_DATE)
+            String completeRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(completeContractDto)
+        when:
+            def completeContractResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(this.createContractUri(projectDto.contractDto.id) + "/complete")
+                            .header("Content-Type", "application/json")
+                            .content(completeRequest)
+            ).andReturn().response
+        then:
+            completeContractResponse.status == HttpStatus.OK.value()
+            ContractDto contractDto = MAPPER.readValue(completeContractResponse.contentAsString, ContractDto.class)
+            contractDto.status == ContractStatus.COMPLETED
+    }
+
+    @Transactional
+    def "Contract in status COMPLETED does not allow for creating work objects on project"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptContractOffer(projectDto.contractDto.id)
+            String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+            this.signContract(projectDto.contractDto.id, signContractText)
+            ContractDto completeContractDto = new ContractDto(endDate: END_DATE)
+            String completeRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(completeContractDto)
+            this.completeContract(projectDto.contractDto.id, completeRequest)
+            String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
+        when:
+            def stageResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
+                            .header("Content-Type", "application/json")
+                            .content(stageRequestBody)
+            ).andReturn().response
+        then:
+            stageResponse.status == HttpStatus.BAD_REQUEST.value()
+            def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage.class)
+            message.message == "Contract in status COMPLETED does not allow for creating new working objects."
+    }
+
+    @Transactional
+    def "Contract in status COMPLETED does not allow for working on project"() {
+        given:
+            ProjectDto projectDto = this.createProject()
+            this.acceptContractOffer(projectDto.contractDto.id)
+            String signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+            this.signContract(projectDto.contractDto.id, signContractText)
+            ContractDto completeContractDto = new ContractDto(endDate: END_DATE)
+            String completeRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(completeContractDto)
+            StageDto createdStageDto = this.createStage(projectDto.id)
+            TaskDto createdTaskDto = this.createTask(projectDto.id, createdStageDto.id)
+            this.completeContract(projectDto.contractDto.id, completeRequest)
+        when:
+            def updateTaskResponse =
+                    this.updateTaskStatus(projectDto.id, createdStageDto.id, createdTaskDto.id, TaskStatus.IN_PROGRESS)
+        then:
+            updateTaskResponse.status == HttpStatus.BAD_REQUEST.value()
+            def message = MAPPER.readValue(updateTaskResponse.contentAsString, ErrorMessage.class)
+            message.message == "Contract in status COMPLETED does not allow for work on the project."
+    }
+
+    // helper methods
 
     private ProjectDto createProject() {
         ArchitectDto architectDto =
@@ -289,6 +584,43 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
 
         ).andReturn().response
         return MAPPER.readValue(acceptContractResponse.contentAsString, ContractDto.class)
+    }
+
+    private ContractDto signContract(long contractId, String signContractDataText) {
+        def signResponse = this.mockMvc.perform(
+                MockMvcRequestBuilders.post(this.createContractUri(contractId) + "/sign")
+                        .header("Content-Type", "application/json")
+                        .content(signContractDataText)
+        ).andReturn().response
+        return MAPPER.readValue(signResponse.contentAsString, ContractDto.class)
+    }
+
+    private ContractDto rejectContract(long contractId) {
+        def rejectedContractResponse = this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post(this.createContractUri(contractId) + "/reject")
+                        .header("Content-Type", "application/json")
+
+        ).andReturn().response
+        return MAPPER.readValue(rejectedContractResponse.contentAsString, ContractDto.class)
+    }
+
+    private ContractDto terminateContract(long contractId, String requestText) {
+        def terminateContractResponse = this.mockMvc.perform(
+                MockMvcRequestBuilders.post(this.createContractUri(contractId) + "/terminate")
+                        .header("Content-Type", "application/json")
+                        .content(requestText)
+        ).andReturn().response
+        return MAPPER.readValue(terminateContractResponse.contentAsString, ContractDto.class)
+    }
+
+    private ContractDto completeContract(long contractId, String requestText) {
+        def completeContractResponse = this.mockMvc.perform(
+                MockMvcRequestBuilders.post(this.createContractUri(contractId) + "/complete")
+                        .header("Content-Type", "application/json")
+                        .content(requestText)
+        ).andReturn().response
+        return MAPPER.readValue(completeContractResponse.contentAsString, ContractDto.class)
     }
 
     private String createBasicArchitectUri() {
