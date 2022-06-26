@@ -1,7 +1,8 @@
-package com.arturjarosz.task.sharedkernel.utils;
+package com.arturjarosz.task.sharedkernel.testhelpers;
 
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
+import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Field;
 
@@ -46,7 +47,7 @@ public final class TestUtils {
      * @param fieldName
      * @return
      */
-    public static Field getDeclaredField(Class<?> theClass, String fieldName) {
+    public static Field getDeclaredField(@NonNull Class<?> theClass, String fieldName) {
         Field field;
         try {
             field = theClass.getDeclaredField(fieldName);

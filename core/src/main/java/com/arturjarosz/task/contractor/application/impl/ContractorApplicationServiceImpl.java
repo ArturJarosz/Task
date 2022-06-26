@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationService
 public class ContractorApplicationServiceImpl implements ContractorApplicationService {
@@ -25,7 +24,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
 
     @Autowired
     public ContractorApplicationServiceImpl(ContractorRepository contractorRepository,
-                                            ContractorValidator contractorValidator) {
+            ContractorValidator contractorValidator) {
         this.contractorRepository = contractorRepository;
         this.contractorValidator = contractorValidator;
     }
@@ -48,8 +47,8 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
         this.contractorValidator.validateContractorExistence(contractorId);
         this.contractorValidator.validateUpdateContractorDto(contractorDto);
         Contractor contractor = this.contractorRepository.load(contractorId);
-        contractor.update(contractorDto.getName(), contractorDto.getCategory(),
-                contractorDto.getEmail(), contractorDto.getTelephone(), contractorDto.getNote());
+        contractor.update(contractorDto.getName(), contractorDto.getCategory(), contractorDto.getEmail(),
+                contractorDto.getTelephone(), contractorDto.getNote());
         this.contractorRepository.save(contractor);
         LOG.debug("Contractor with id {} updated", contractorId);
     }
@@ -78,6 +77,6 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     public List<ContractorDto> getBasicContractors() {
         LOG.debug("Loading Contractors list");
         return this.contractorRepository.loadAll().stream()
-                .map(ContractorDtoMapper.INSTANCE::contractorToBasicContractor).collect(Collectors.toList());
+                .map(ContractorDtoMapper.INSTANCE::contractorToBasicContractor).toList();
     }
 }

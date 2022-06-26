@@ -1,7 +1,6 @@
 package com.arturjarosz.task.data;
 
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
-import com.arturjarosz.task.systemparameter.application.SystemParameterService;
 import com.arturjarosz.task.systemparameter.infrastructure.repository.SystemParameterRepository;
 import com.arturjarosz.task.systemparameter.model.SystemParameter;
 import com.arturjarosz.task.systemparameter.model.SystemParameterType;
@@ -24,13 +23,10 @@ public class SystemParametersInitializer implements DataInitializer {
     private static final Logger LOGGER = LogManager.getLogger(SystemParametersInitializer.class);
     private static final String SYSTEM_PARAMETERS_PATH = "initialSystemParameters.json";
 
-    private final SystemParameterService systemParameterService;
     private final SystemParameterRepository systemParameterRepository;
 
     @Autowired
-    public SystemParametersInitializer(SystemParameterService systemParameterService,
-                                       SystemParameterRepository systemParameterRepository) {
-        this.systemParameterService = systemParameterService;
+    public SystemParametersInitializer(SystemParameterRepository systemParameterRepository) {
         this.systemParameterRepository = systemParameterRepository;
     }
 
@@ -47,7 +43,7 @@ public class SystemParametersInitializer implements DataInitializer {
     }
 
     private List<SystemParameter> prepareSystemParameters(String filename) {
-        ObjectMapper mapper = new ObjectMapper();
+        var mapper = new ObjectMapper();
         BaseValidator.assertNotEmpty(filename, "File name cannot be empty.");
         try (InputStream inputStream = SystemParametersInitializer.class.getClassLoader()
                 .getResourceAsStream(filename)) {

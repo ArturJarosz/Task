@@ -2,8 +2,8 @@ package com.arturjarosz.task.project.utils;
 
 import com.arturjarosz.task.finance.model.FinancialData;
 import com.arturjarosz.task.project.model.Installment;
-import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
-import com.arturjarosz.task.sharedkernel.utils.TestUtils;
+import com.arturjarosz.task.sharedkernel.testhelpers.AbstractBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils;
 
 public class InstallmentBuilder extends AbstractBuilder<Installment, InstallmentBuilder> {
 

@@ -11,7 +11,7 @@ import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
-import com.arturjarosz.task.sharedkernel.utils.TestUtils
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import spock.lang.Specification
 
 class ContractorJobApplicationServiceImplTest extends Specification {

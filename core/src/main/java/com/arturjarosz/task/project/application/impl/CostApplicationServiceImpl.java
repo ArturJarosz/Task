@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @ApplicationService
 public class CostApplicationServiceImpl implements CostApplicationService {
@@ -31,8 +30,8 @@ public class CostApplicationServiceImpl implements CostApplicationService {
 
     @Autowired
     public CostApplicationServiceImpl(CostValidator costValidator, ProjectValidator projectValidator,
-                                      ProjectRepository projectRepository, ProjectQueryService projectQueryService,
-                                      ProjectFinanceAwareObjectService projectFinanceAwareObjectService) {
+            ProjectRepository projectRepository, ProjectQueryService projectQueryService,
+            ProjectFinanceAwareObjectService projectFinanceAwareObjectService) {
         this.costValidator = costValidator;
         this.projectValidator = projectValidator;
         this.projectRepository = projectRepository;
@@ -81,7 +80,7 @@ public class CostApplicationServiceImpl implements CostApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
         Set<Cost> costs = project.getCosts();
-        return new ArrayList<>(costs.stream().map(CostDtoMapper.INSTANCE::costToCostDto).collect(Collectors.toList()));
+        return new ArrayList<>(costs.stream().map(CostDtoMapper.INSTANCE::costToCostDto).toList());
     }
 
     @Transactional

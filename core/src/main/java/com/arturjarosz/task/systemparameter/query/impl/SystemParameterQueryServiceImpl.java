@@ -12,7 +12,7 @@ import java.util.List;
 @Finder
 public class SystemParameterQueryServiceImpl extends AbstractQueryService<QSystemParameter> implements SystemParameterQueryService {
 
-    private final static QSystemParameter SYSTEM_PARAMETER = QSystemParameter.systemParameter;
+    private static final QSystemParameter SYSTEM_PARAMETER = QSystemParameter.systemParameter;
 
     public SystemParameterQueryServiceImpl() {
         super(SYSTEM_PARAMETER);

@@ -9,7 +9,7 @@ public class SupervisionDto implements Serializable {
     private static final long serialVersionUID = 6120237413436097370L;
 
     @JsonIgnore
-    public String ID = "id";
+    public String ID_NAME = "id";
     @JsonIgnore
     public String HAS_INVOICE = "hasInvoice";
     @JsonIgnore
@@ -42,7 +42,7 @@ public class SupervisionDto implements Serializable {
     }
 
     public Boolean getHasInvoice() {
-        return hasInvoice;
+        return this.hasInvoice;
     }
 
     public void setHasInvoice(Boolean hasInvoice) {
@@ -90,7 +90,7 @@ public class SupervisionDto implements Serializable {
     }
 
     public String getNote() {
-        return note;
+        return this.note;
     }
 
     public void setNote(String note) {
@@ -98,7 +98,7 @@ public class SupervisionDto implements Serializable {
     }
 
     public BigDecimal getValue() {
-        return value;
+        return this.value;
     }
 
     public void setValue(BigDecimal value) {

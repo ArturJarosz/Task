@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationService
 public class ProjectApplicationServiceImpl implements ProjectApplicationService {
@@ -128,7 +127,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
             ClientDto clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
             ArchitectDto architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
             return ProjectDtoMapper.INSTANCE.projectToBasicProjectDto(clientDto, architectDto, project);
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     @Transactional

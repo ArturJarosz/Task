@@ -9,7 +9,7 @@ import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Supply
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.sharedkernel.utils.TestUtils
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import spock.lang.Specification
 
 class SupplyApplicationServiceImplTest extends Specification {

@@ -3,8 +3,8 @@ package com.arturjarosz.task.contract.utils;
 import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.contract.status.ContractStatus;
 import com.arturjarosz.task.sharedkernel.model.Money;
-import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
-import com.arturjarosz.task.sharedkernel.utils.TestUtils;
+import com.arturjarosz.task.sharedkernel.testhelpers.AbstractBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils;
 
 import java.time.LocalDate;
 

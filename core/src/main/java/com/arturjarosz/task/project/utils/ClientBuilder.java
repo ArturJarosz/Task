@@ -1,9 +1,9 @@
 package com.arturjarosz.task.project.utils;
 
 import com.arturjarosz.task.client.model.Client;
-import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.AbstractBuilder;
 
-import static com.arturjarosz.task.sharedkernel.utils.TestUtils.setFieldForObject;
+import static com.arturjarosz.task.sharedkernel.testhelpers.TestUtils.setFieldForObject;
 
 public class ClientBuilder extends AbstractBuilder<Client, ClientBuilder> {
 

@@ -3,7 +3,7 @@ package com.arturjarosz.task.architect.rest;
 import com.arturjarosz.task.architect.application.ArchitectApplicationService;
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
 import com.arturjarosz.task.architect.application.dto.ArchitectDto;
-import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

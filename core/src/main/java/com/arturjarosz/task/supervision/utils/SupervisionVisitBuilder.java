@@ -1,7 +1,7 @@
 package com.arturjarosz.task.supervision.utils;
 
-import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
-import com.arturjarosz.task.sharedkernel.utils.TestUtils;
+import com.arturjarosz.task.sharedkernel.testhelpers.AbstractBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils;
 import com.arturjarosz.task.supervision.model.SupervisionVisit;
 
 import java.time.LocalDate;

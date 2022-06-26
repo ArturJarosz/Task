@@ -114,4 +114,15 @@ public class Address extends AbstractValueObject<Address> implements ValueObject
     public Address copy() {
         return new Address(this.postCode, this.city, this.street, this.houseNumber, this.flatNumber);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (!(o instanceof Address)) return false;
+
+        Address address = (Address) o;
+
+        return this.hasSameValueAs(address);
+    }
 }

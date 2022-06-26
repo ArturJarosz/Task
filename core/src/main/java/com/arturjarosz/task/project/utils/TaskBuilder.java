@@ -3,8 +3,8 @@ package com.arturjarosz.task.project.utils;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.TaskType;
 import com.arturjarosz.task.project.status.task.TaskStatus;
-import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
-import com.arturjarosz.task.sharedkernel.utils.TestUtils;
+import com.arturjarosz.task.sharedkernel.testhelpers.AbstractBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils;
 
 public class TaskBuilder extends AbstractBuilder<Task, TaskBuilder> {
     private static final String ID = "id";

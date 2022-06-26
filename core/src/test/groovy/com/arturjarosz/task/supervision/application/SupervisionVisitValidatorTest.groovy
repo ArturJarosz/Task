@@ -9,7 +9,7 @@ import java.time.LocalDate
 
 class SupervisionVisitValidatorTest extends Specification {
     private static final Long SUPERVISION_ID = 1L
-    private static final LocalDate DATE_OF_VISIT = new LocalDate(2021, 10, 10)
+    private static final LocalDate DATE_OF_VISIT = LocalDate.of(2021,10,10)
     private static final int HOURS_COUNT = 10
     private static final int NEGATIVE_HOURS_COUNT = -10
 

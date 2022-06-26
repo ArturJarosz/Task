@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @ApplicationService
 public class TaskApplicationServiceImpl implements TaskApplicationService {
@@ -124,7 +123,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         Project project = this.projectRepository.load(projectId);
         return project.getStages().stream().filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .flatMap(stageOnProject -> stageOnProject.getTasks().stream())
-                .map(TaskDtoMapper.INSTANCE::taskToTaskBasicDto).collect(Collectors.toList());
+                .map(TaskDtoMapper.INSTANCE::taskToTaskBasicDto).toList();
 
     }
 

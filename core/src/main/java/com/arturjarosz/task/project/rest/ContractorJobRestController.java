@@ -2,7 +2,7 @@ package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.project.application.ContractorJobApplicationService;
 import com.arturjarosz.task.project.application.dto.ContractorJobDto;
-import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -5,13 +5,13 @@ import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.StageType;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.status.stage.StageStatus;
-import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.AbstractBuilder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.arturjarosz.task.sharedkernel.utils.TestUtils.setFieldForObject;
+import static com.arturjarosz.task.sharedkernel.testhelpers.TestUtils.setFieldForObject;
 
 public class StageBuilder extends AbstractBuilder<Stage, StageBuilder> {
 

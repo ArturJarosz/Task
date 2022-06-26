@@ -1,4 +1,4 @@
-package com.arturjarosz.task.sharedkernel.utils;
+package com.arturjarosz.task.sharedkernel.testhelpers;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.util.UriComponents;
@@ -6,11 +6,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 public class HttpHeadersBuilder {
     private final HttpHeaders headers;
-    private final HttpHeadersBuilder headersBuilder;
 
     public HttpHeadersBuilder() {
         this.headers = new HttpHeaders();
-        this.headersBuilder = this;
     }
 
     public HttpHeadersBuilder withLocation(String path, Object... variables) {

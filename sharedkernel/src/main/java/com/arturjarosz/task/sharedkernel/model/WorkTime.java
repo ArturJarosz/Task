@@ -10,12 +10,6 @@ import javax.persistence.Embeddable;
 public class WorkTime extends AbstractValueObject<WorkTime> implements ValueObject<WorkTime> {
     private static final long serialVersionUID = -9057875053913061735L;
 
-    /*
-    TODO: For now it does not validate adding time. The idea is to have something like parsing of entered text
-        1d 5h 10m and then translated to minutes and store as minutes amount. When no letter is provided,
-        then it should tread it as minutes. No any other letters are allowed.
-     */
-
     @Column(name = "WORK_TIME")
     private Long time;
 
