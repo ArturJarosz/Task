@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationService
 public class ClientApplicationServiceImpl implements ClientApplicationService {
@@ -104,8 +103,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
     @Override
     public List<ClientDto> getBasicClients() {
-        return this.clientRepository.loadAll().stream().map(ClientDtoMapper.INSTANCE::clientToClientBasicDto)
-                .collect(Collectors.toList());
+        return this.clientRepository.loadAll().stream().map(ClientDtoMapper.INSTANCE::clientToClientBasicDto).toList();
     }
 
     @Override

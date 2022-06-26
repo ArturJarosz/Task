@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @ApplicationService
 public class InstallmentApplicationServiceImpl implements InstallmentApplicationService {
@@ -115,7 +114,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.projectValidator.validateProjectExistence(projectId);
         Project project = this.projectRepository.load(projectId);
         return project.getStages().stream().map(Stage::getInstallment).filter(Objects::nonNull)
-                .map(InstallmentDtoMapper.INSTANCE::installmentToInstallmentDto).collect(Collectors.toList());
+                .map(InstallmentDtoMapper.INSTANCE::installmentToInstallmentDto).toList();
     }
 
     @Override

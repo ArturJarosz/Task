@@ -14,7 +14,7 @@ import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.Money
-import com.arturjarosz.task.sharedkernel.utils.TestUtils
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import spock.lang.Specification
 
 class ProjectFinancialDataServiceImplTest extends Specification {

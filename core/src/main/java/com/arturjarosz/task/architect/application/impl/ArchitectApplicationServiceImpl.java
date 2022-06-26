@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectDto;
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectExistence;
@@ -85,6 +84,6 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     @Override
     public List<ArchitectBasicDto> getBasicArchitects() {
         return this.architectRepository.loadAll().stream()
-                .map(ArchitectDtoMapper.INSTANCE::architectToArchitectBasicDto).collect(Collectors.toList());
+                .map(ArchitectDtoMapper.INSTANCE::architectToArchitectBasicDto).toList();
     }
 }

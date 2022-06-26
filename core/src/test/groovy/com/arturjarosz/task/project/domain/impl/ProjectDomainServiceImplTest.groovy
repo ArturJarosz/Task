@@ -12,7 +12,7 @@ import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionS
 import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.project.utils.StageBuilder
-import com.arturjarosz.task.sharedkernel.utils.TestUtils
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import spock.lang.Specification
 
 import java.time.LocalDate

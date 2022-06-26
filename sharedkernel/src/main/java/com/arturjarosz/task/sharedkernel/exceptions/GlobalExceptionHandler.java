@@ -32,10 +32,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorMessage> handleException(IllegalArgumentException exception) {
         LOG.error(exception.getMessage(), exception);
         String errorMessage = exception.getMessage();
-        String message = this.messageSource
-                .getMessage(errorMessage, exception.getMessageParameters(), errorMessage,
-                        Locale.getDefault());
-        return new ResponseEntity<>(new ErrorMessage(message),
-                HttpStatus.BAD_REQUEST);
+        String message = this.messageSource.getMessage(errorMessage, exception.getMessageParameters(), errorMessage,
+                Locale.getDefault());
+        return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.BAD_REQUEST);
     }
 }

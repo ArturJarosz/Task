@@ -3,7 +3,7 @@ package com.arturjarosz.task.supervision.rest;
 import com.arturjarosz.task.supervision.application.SupervisionApplicationService;
 import com.arturjarosz.task.supervision.application.dto.SupervisionDto;
 import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto;
-import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

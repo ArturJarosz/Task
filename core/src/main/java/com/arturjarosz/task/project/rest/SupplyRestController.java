@@ -2,7 +2,7 @@ package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.project.application.SupplyApplicationService;
 import com.arturjarosz.task.project.application.dto.SupplyDto;
-import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

@@ -5,8 +5,8 @@ import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Supply;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
-import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
-import com.arturjarosz.task.sharedkernel.utils.TestUtils;
+import com.arturjarosz.task.sharedkernel.testhelpers.AbstractBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils;
 
 import java.time.LocalDate;
 import java.util.HashSet;

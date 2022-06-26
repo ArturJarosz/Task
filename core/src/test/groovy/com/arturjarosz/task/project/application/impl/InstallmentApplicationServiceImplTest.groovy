@@ -14,7 +14,7 @@ import com.arturjarosz.task.project.utils.InstallmentBuilder
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.project.utils.StageBuilder
 import com.arturjarosz.task.sharedkernel.model.Money
-import com.arturjarosz.task.sharedkernel.utils.TestUtils
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import com.arturjarosz.task.supervision.utils.FinancialDataBuilder
 import spock.lang.Specification
 

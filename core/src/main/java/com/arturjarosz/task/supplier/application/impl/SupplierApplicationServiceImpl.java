@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationService
 public class SupplierApplicationServiceImpl implements SupplierApplicationService {
@@ -75,6 +74,6 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     public List<SupplierDto> getBasicSuppliers() {
         LOG.debug("Loading Suppliers list");
         return this.supplierRepository.loadAll().stream().map(SupplierDtoMapper.INSTANCE::supplierToBasicSupplier)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

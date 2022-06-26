@@ -31,7 +31,7 @@ public abstract class GenericJpaRepositoryImpl<T extends AbstractAggregateRoot, 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public GenericJpaRepositoryImpl(S qAggregateRoot) {
+    protected GenericJpaRepositoryImpl(S qAggregateRoot) {
         this.qAggregateRoot = qAggregateRoot;
         this.qAbstractAggregateRoot = new QAbstractAggregateRoot(qAggregateRoot.getMetadata());
     }

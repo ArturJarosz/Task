@@ -2,7 +2,7 @@ package com.arturjarosz.task.client.rest;
 
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.dto.ClientDto;
-import com.arturjarosz.task.sharedkernel.utils.HttpHeadersBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

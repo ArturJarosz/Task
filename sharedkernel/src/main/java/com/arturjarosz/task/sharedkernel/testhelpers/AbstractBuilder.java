@@ -1,4 +1,4 @@
-package com.arturjarosz.task.sharedkernel.utils;
+package com.arturjarosz.task.sharedkernel.testhelpers;
 
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 
