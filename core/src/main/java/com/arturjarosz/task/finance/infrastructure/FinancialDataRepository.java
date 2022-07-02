@@ -1,7 +1,9 @@
 package com.arturjarosz.task.finance.infrastructure;
 
 import com.arturjarosz.task.finance.model.FinancialData;
-import com.arturjarosz.task.sharedkernel.infrastructure.AbstractBaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface FinancialDataRepository extends AbstractBaseRepository<FinancialData> {
+@Repository
+public interface FinancialDataRepository extends JpaRepository<FinancialData, Long> {
 }

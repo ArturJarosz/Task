@@ -50,7 +50,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractDto reject(Long contractId) {
         LOG.debug("Rejecting contract with id {}", contractId);
-        Contract contract = this.contractRepository.load(contractId);
+        Contract contract = this.contractRepository.getById(contractId);
         this.contractValidator.validateContractExistence(contract, contractId);
         this.contractStatusTransitionService.rejectOffer(contract);
         LOG.debug("Contract with id {} rejected.", contractId);
@@ -61,7 +61,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractDto makeNewOffer(Long contractId, ContractDto contractDto) {
         LOG.debug("Making new offer for contract with id {}", contractId);
-        Contract contract = this.contractRepository.load(contractId);
+        Contract contract = this.contractRepository.getById(contractId);
         this.contractValidator.validateContractExistence(contract, contractId);
         this.contractValidator.validateOffer(contractDto);
         contract.update(contractDto.getOfferValue(), contractDto.getDeadline());
@@ -74,7 +74,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractDto acceptOffer(Long contractId) {
         LOG.debug("Accepting offer for contract with id {}.", contractId);
-        Contract contract = this.contractRepository.load(contractId);
+        Contract contract = this.contractRepository.getById(contractId);
         this.contractValidator.validateContractExistence(contract, contractId);
         this.contractStatusTransitionService.acceptOffer(contract);
         LOG.debug("Offer for contract with id {} accepted.", contractId);
@@ -85,7 +85,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractDto sign(Long contractId, ContractDto contractDto) {
         LOG.debug("Signing contract with id {}.", contractId);
-        Contract contract = this.contractRepository.load(contractId);
+        Contract contract = this.contractRepository.getById(contractId);
         this.contractValidator.validateContractExistence(contract, contractId);
         this.contractValidator.validateSignContractDto(contractDto);
         contract.sign(contractDto);
@@ -98,7 +98,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractDto terminate(Long contractId, ContractDto contractDto) {
         LOG.debug("Terminating contract with id {}.", contractId);
-        Contract contract = this.contractRepository.load(contractId);
+        Contract contract = this.contractRepository.getById(contractId);
         this.contractValidator.validateContractExistence(contract, contractId);
         this.contractValidator.validateTerminateContractDto(contractDto);
         contract.terminate(contractDto);
@@ -111,7 +111,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractDto resume(Long contractId) {
         LOG.debug("Resuming contract with id {}.", contractId);
-        Contract contract = this.contractRepository.load(contractId);
+        Contract contract = this.contractRepository.getById(contractId);
         this.contractValidator.validateContractExistence(contract, contractId);
         this.contractStatusTransitionService.resumeContract(contract);
         contract.resume();
@@ -123,7 +123,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractDto complete(Long contractId, ContractDto contractDto) {
         LOG.debug("Completing contract with id {}.", contractId);
-        Contract contract = this.contractRepository.load(contractId);
+        Contract contract = this.contractRepository.getById(contractId);
         this.contractValidator.validateContractExistence(contract, contractId);
         this.contractValidator.validateCompleteContractDto(contractDto);
         contract.complete(contractDto);

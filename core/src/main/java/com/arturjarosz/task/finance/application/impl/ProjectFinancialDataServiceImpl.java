@@ -53,7 +53,7 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
         SupervisionRatesDto supervisionRatesDto = this.financialDataQueryService.getSupervisionRatesDto(supervisionId);
         List<SupervisionVisitFinancialDto> supervisionVisitFinancialDtos = this.financialDataQueryService.getVisitsFinancialDto(
                 supervisionId);
-        FinancialData financialData = this.financialDataRepository.load(supervisionFinancialDataId);
+        FinancialData financialData = this.financialDataRepository.getById(supervisionFinancialDataId);
 
         BigDecimal value = new BigDecimal("0");
         value = value.add(BigDecimal.valueOf(supervisionRatesDto.getBaseNetRate().doubleValue()));
@@ -76,7 +76,7 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
 
     @Override
     public void recalculateProjectFinancialData(long projectId) {
-        ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.loadProjectFinancialDataWithProjectId(
+        ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.findProjectFinancialDataByProjectId(
                 projectId);
         ProjectFinancialDataDto summedUpFinancialData = new ProjectFinancialDataDto();
         for (PartialFinancialDataService partialFinancialDataService : this.partialFinancialDataServices) {
@@ -90,9 +90,9 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
 
     @Override
     public void removeFinancialDataForProject(Long projectId) {
-        ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.loadProjectFinancialDataWithProjectId(
+        ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.findProjectFinancialDataByProjectId(
                 projectId);
-        this.projectFinancialDataRepository.remove(projectFinancialData.getId());
+        this.projectFinancialDataRepository.deleteById(projectFinancialData.getId());
     }
 
     @Override

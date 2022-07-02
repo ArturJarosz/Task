@@ -1,7 +1,9 @@
 package com.arturjarosz.task.contract.intrastructure;
 
 import com.arturjarosz.task.contract.model.Contract;
-import com.arturjarosz.task.sharedkernel.infrastructure.AbstractBaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ContractRepository extends AbstractBaseRepository<Contract> {
+@Repository
+public interface ContractRepository extends JpaRepository<Contract, Long> {
 }

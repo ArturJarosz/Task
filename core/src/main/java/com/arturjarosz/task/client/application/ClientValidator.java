@@ -11,8 +11,11 @@ import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 /**
  * Validates Client entity and Client related Dtos.
@@ -29,16 +32,13 @@ public class ClientValidator {
     }
 
     public void validateClientDtoPresence(ClientDto clientDto) {
-        assertIsTrue(clientDto != null,
-                createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT));
+        assertIsTrue(clientDto != null, createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT));
     }
 
     public void validateClientBasicDto(ClientDto clientDto) {
-        assertIsTrue(clientDto != null,
-                createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT));
+        assertIsTrue(clientDto != null, createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT));
         assertIsTrue(clientDto.getClientType() != null,
-                createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT,
-                        ClientExceptionCodes.CLIENT_TYPE));
+                createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT, ClientExceptionCodes.CLIENT_TYPE));
         if (clientDto.getClientType().equals(ClientType.CORPORATE)) {
             this.validateCorporateClient(clientDto);
         } else {
@@ -55,28 +55,26 @@ public class ClientValidator {
         this.validateName(clientDto.getCompanyName(), ClientExceptionCodes.COMPANY_NAME);
     }
 
-    public void validateClientExistence(Client client, Long clientId) {
-        assertIsTrue(client != null,
+    public void validateClientExistence(Optional<Client> maybeClient, Long clientId) {
+        assertIsTrue(maybeClient.isPresent(),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ClientExceptionCodes.CLIENT), clientId);
     }
 
     private void validateName(String name, String nameExceptionCode) {
         assertIsTrue(name != null,
-                createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT,
-                        nameExceptionCode));
+                createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT, nameExceptionCode));
         assertNotEmpty(name, createMessageCode(ExceptionCodes.EMPTY, ClientExceptionCodes.CLIENT, nameExceptionCode));
     }
 
     public void validateClientExistence(Long clientId) {
-        Client client = this.clientRepository.load(clientId);
-        this.validateClientExistence(client, clientId);
+        Optional<Client> maybeClient = this.clientRepository.findById(clientId);
+        this.validateClientExistence(maybeClient, clientId);
     }
 
     public void validateClientHasNoProjects(Long clientId) {
         List<Project> projects = this.projectQueryService.getProjectsForClientId(clientId);
-        assertIsTrue(projects.isEmpty(),
-                createMessageCode(ExceptionCodes.NOT_VALID, ClientExceptionCodes.CLIENT,
-                        ClientExceptionCodes.PROJECTS));
+        assertIsTrue(projects.isEmpty(), createMessageCode(ExceptionCodes.NOT_VALID, ClientExceptionCodes.CLIENT,
+                ClientExceptionCodes.PROJECTS));
     }
 
 }

@@ -44,7 +44,7 @@ public class ContractorValidator {
     }
 
     public void validateContractorExistence(Long contractorId) {
-        Contractor contractor = this.contractorRepository.load(contractorId);
+        Contractor contractor = this.contractorRepository.getById(contractorId);
         assertNotNull(contractor, createMessageCode(ExceptionCodes.NOT_EXIST, ContractorExceptionCodes.CONTRACTOR));
     }
 

@@ -1,11 +1,10 @@
 package com.arturjarosz.task.client.application
 
 import com.arturjarosz.task.client.application.dto.AddressDto
-
 import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.client.application.dto.ContactDto
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
-import com.arturjarosz.task.client.infrastructure.repository.impl.ClientRepositoryImpl
+import com.arturjarosz.task.client.infrastructure.repository.ClientRepository
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
@@ -33,13 +32,10 @@ class ClientApplicationServiceImplTest extends Specification {
     private Client privateClient = new Client(new PersonName(FIRST_NAME, LAST_NAME), COMPANY_NAME,
             ClientType.PRIVATE)
 
-    def clientRepository = Mock(ClientRepositoryImpl) {
-        load(EXISTING_PRIVATE_ID) >> {
-            return privateClient
-        }
-        loadAll() >> {
-            return Collections.singletonList(privateClient)
-        }
+    def clientRepository = Mock(ClientRepository.class) {
+        findById(EXISTING_PRIVATE_ID) >> { return Optional.of(privateClient) }
+        findAll() >> { return Collections.singletonList(privateClient) }
+
     }
 
     def projectQueryService = Mock(ProjectQueryServiceImpl)
@@ -113,7 +109,7 @@ class ClientApplicationServiceImplTest extends Specification {
         when:
             clientApplicationServiceImpl.removeClient(EXISTING_PRIVATE_ID)
         then:
-            1 * this.clientRepository.remove(EXISTING_PRIVATE_ID)
+            1 * this.clientRepository.deleteById(EXISTING_PRIVATE_ID)
     }
 
     def "getClientShouldLoadClientFromRepository"() {
@@ -121,7 +117,7 @@ class ClientApplicationServiceImplTest extends Specification {
         when:
             ClientDto clientDto = this.clientApplicationServiceImpl.getClient(EXISTING_PRIVATE_ID)
         then:
-            1 * this.clientRepository.load(EXISTING_PRIVATE_ID)
+            1 * this.clientRepository.findById(EXISTING_PRIVATE_ID) >> Optional.of(privateClient)
     }
 
     def "updateClientShouldCallValidateClientExistence"() {
@@ -130,7 +126,7 @@ class ClientApplicationServiceImplTest extends Specification {
         when:
             ClientDto updatedClientDto = this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
         then:
-            1 * this.clientValidator.validateClientExistence(_)
+            1 * this.clientValidator.validateClientExistence(_, EXISTING_PRIVATE_ID)
     }
 
     def "updateClientShouldCallValidateClientDtoPresence"() {
@@ -177,7 +173,7 @@ class ClientApplicationServiceImplTest extends Specification {
         when:
             List<ClientDto> clientDtoList = this.clientApplicationServiceImpl.basicClients
         then:
-            1 * this.clientRepository.loadAll() >> Collections.singletonList(privateClient)
+            1 * this.clientRepository.findAll() >> Collections.singletonList(privateClient)
     }
 
     def "getBasicClientsShouldReturnClientsList"() {
@@ -215,5 +211,9 @@ class ClientApplicationServiceImplTest extends Specification {
         AddressDto addressDto = new AddressDto(city: NEW_CITY, houseNumber: NEW_HOUSE_NUMBER,
                 flatNumber: NEW_FLAT_NUMBER, postCode: NEW_POST_CODE, street: NEW_STREET)
         return addressDto
+    }
+
+    private mockRepo(){
+        1 * this.clientRepository.findById(EXISTING_PRIVATE_ID) >> Optional.of(privateClient)
     }
 }

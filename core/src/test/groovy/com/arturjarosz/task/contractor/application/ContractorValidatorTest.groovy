@@ -1,7 +1,6 @@
 package com.arturjarosz.task.contractor.application
 
 import com.arturjarosz.task.contractor.application.dto.ContractorDto
-import com.arturjarosz.task.contractor.infrastructure.impl.ContractorRepositoryImpl
 import com.arturjarosz.task.contractor.model.Contractor
 import com.arturjarosz.task.contractor.model.ContractorCategory
 import spock.lang.Specification

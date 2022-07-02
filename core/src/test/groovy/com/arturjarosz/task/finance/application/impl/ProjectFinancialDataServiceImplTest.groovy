@@ -4,8 +4,7 @@ import com.arturjarosz.task.finance.application.dto.FinancialValueDto
 import com.arturjarosz.task.finance.application.dto.ProjectFinancialDataDto
 import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialDataDto
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService
-import com.arturjarosz.task.finance.infrastructure.impl.FinancialDataRepositoryImpl
-import com.arturjarosz.task.finance.infrastructure.impl.ProjectFinancialDataRepositoryImpl
+import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.FinancialData
 import com.arturjarosz.task.finance.model.ProjectFinancialData
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto
@@ -35,7 +34,7 @@ class ProjectFinancialDataServiceImplTest extends Specification {
     private static final BigDecimal COST_VAT_TAX_VALUE = new BigDecimal("15")
     private static final BigDecimal COST_INCOME_TAX_VALUE = new BigDecimal("5")
 
-    def projectFinancialDataRepository = Mock(ProjectFinancialDataRepositoryImpl)
+    def projectFinancialDataRepository = Mock(ProjectFinancialDataRepository)
     def projectValidator = Mock(ProjectValidator)
     def financialDataQueryService = Mock(FinancialDataQueryServiceImpl)
     def financialDataRepository = Mock(FinancialDataRepositoryImpl)
@@ -154,7 +153,7 @@ class ProjectFinancialDataServiceImplTest extends Specification {
     }
 
     private void mockLoadProjectFinancialDataWithProjectId() {
-        this.projectFinancialDataRepository.loadProjectFinancialDataWithProjectId(PROJECT_ID) >>
+        this.projectFinancialDataRepository.findProjectFinancialDataByProjectId(PROJECT_ID) >>
                 this.buildProjectFinancialData(PROJECT_ID, PROJECT_FINANCIAL_DATA_ID)
     }
 

@@ -1,7 +1,7 @@
 package com.arturjarosz.task.client.application
 
 import com.arturjarosz.task.client.application.dto.ClientDto
-import com.arturjarosz.task.client.infrastructure.repository.impl.ClientRepositoryImpl
+import com.arturjarosz.task.client.infrastructure.repository.ClientRepository
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
 import com.arturjarosz.task.project.model.Project
@@ -26,9 +26,9 @@ class ClientValidatorTest extends Specification {
 
     private static Client client = new Client(new PersonName(FIRST_NAME, LAST_NAME), null, ClientType.PRIVATE)
 
-    def clientRepository = Mock(ClientRepositoryImpl) {
-        load(NON_EXISTING_ID) >> { null }
-        load(PRIVATE_CLIENT_ID) >> { client }
+    def clientRepository = Mock(ClientRepository) {
+        findById(NON_EXISTING_ID) >> { Optional.ofNullable(null )}
+        findById(PRIVATE_CLIENT_ID) >> { Optional.of(client) }
     }
 
     def projectQueryService = Mock(ProjectQueryServiceImpl) {
@@ -146,18 +146,18 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an exception when client is null"() {
         given:
-            def client = null
+            def maybeClient = Optional.ofNullable(null)
         when:
-            clientValidator.validateClientExistence(client, PRIVATE_CLIENT_ID)
+            clientValidator.validateClientExistence(maybeClient, PRIVATE_CLIENT_ID)
         then:
             thrown(IllegalArgumentException)
     }
 
     def "Should not throw an exception when client in not null"() {
         given:
-            def client = new Client(new PersonName(FIRST_NAME, LAST_NAME), "", ClientType.PRIVATE)
+            def maybeClient = Optional.of(new Client(new PersonName(FIRST_NAME, LAST_NAME), "", ClientType.PRIVATE))
         when:
-            clientValidator.validateClientExistence(client, PRIVATE_CLIENT_ID)
+            clientValidator.validateClientExistence(maybeClient, PRIVATE_CLIENT_ID)
         then:
             noExceptionThrown()
     }

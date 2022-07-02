@@ -46,7 +46,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
         LOG.debug("Updating Contractor with id {}", contractorId);
         this.contractorValidator.validateContractorExistence(contractorId);
         this.contractorValidator.validateUpdateContractorDto(contractorDto);
-        Contractor contractor = this.contractorRepository.load(contractorId);
+        Contractor contractor = this.contractorRepository.getById(contractorId);
         contractor.update(contractorDto.getName(), contractorDto.getCategory(), contractorDto.getEmail(),
                 contractorDto.getTelephone(), contractorDto.getNote());
         this.contractorRepository.save(contractor);
@@ -59,7 +59,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
         LOG.debug("Deleting Contractor with id {}", contractorId);
         this.contractorValidator.validateContractorExistence(contractorId);
         this.contractorValidator.validateContractorHasNoJobs(contractorId);
-        this.contractorRepository.remove(contractorId);
+        this.contractorRepository.deleteById(contractorId);
         LOG.debug("Contractor with id {} deleted.", contractorId);
     }
 
@@ -67,7 +67,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     public ContractorDto getContractor(Long contractorId) {
         LOG.debug("Loading Contractor with id {}.", contractorId);
         this.contractorValidator.validateContractorExistence(contractorId);
-        Contractor contractor = this.contractorRepository.load(contractorId);
+        Contractor contractor = this.contractorRepository.getById(contractorId);
         ContractorDto contractorDto = ContractorDtoMapper.INSTANCE.contractorToContractorDto(contractor);
         LOG.debug("Contractor with id {} loaded", contractorId);
         return contractorDto;
@@ -76,7 +76,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     @Override
     public List<ContractorDto> getBasicContractors() {
         LOG.debug("Loading Contractors list");
-        return this.contractorRepository.loadAll().stream()
+        return this.contractorRepository.findAll().stream()
                 .map(ContractorDtoMapper.INSTANCE::contractorToBasicContractor).toList();
     }
 }

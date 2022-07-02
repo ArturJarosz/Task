@@ -10,9 +10,11 @@ import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectDto;
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectExistence;
@@ -26,8 +28,9 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     private final ArchitectRepository architectRepository;
     private final ArchitectValidator architectValidator;
 
+    @Autowired
     public ArchitectApplicationServiceImpl(ArchitectRepository architectRepository,
-                                           ArchitectValidator architectValidator) {
+            ArchitectValidator architectValidator) {
         this.architectRepository = architectRepository;
         this.architectValidator = architectValidator;
     }
@@ -49,21 +52,21 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     public void removeArchitect(Long architectId) {
         LOG.debug("removing architect");
 
-        Architect architect = this.architectRepository.load(architectId);
-        validateArchitectExistence(architect, architectId);
+        Optional<Architect> maybeArchitect = this.architectRepository.findById(architectId);
+        validateArchitectExistence(maybeArchitect, architectId);
         this.architectValidator.validateArchitectHasNoProjects(architectId);
-        this.architectRepository.remove(architectId);
+        this.architectRepository.deleteById(architectId);
 
         LOG.debug("architect with id {} removed", architectId);
     }
 
     @Override
     public ArchitectDto getArchitect(Long architectId) {
-        Architect architect = this.architectRepository.load(architectId);
-        validateArchitectExistence(architect, architectId);
+        Optional<Architect> maybeArchitect = this.architectRepository.findById(architectId);
+        validateArchitectExistence(maybeArchitect, architectId);
 
         LOG.debug("architect with id {} loaded", architectId);
-        return ArchitectDtoMapper.INSTANCE.architectToArchitectDto(architect);
+        return ArchitectDtoMapper.INSTANCE.architectToArchitectDto(maybeArchitect.get());
     }
 
     @Transactional
@@ -71,19 +74,21 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     public ArchitectDto updateArchitect(Long architectId, ArchitectDto architectDto) {
         LOG.debug("updating architect with id {}", architectId);
 
-        Architect architect = this.architectRepository.load(architectId);
-        validateArchitectExistence(architect, architectId);
+        Optional<Architect> maybeArchitect = this.architectRepository.findById(architectId);
+        validateArchitectExistence(maybeArchitect, architectId);
         validateArchitectDto(architectDto);
+        Architect architect = maybeArchitect.get();
         architect.updateArchitectName(architectDto.getFirstName(), architectDto.getLastName());
-
         architect = this.architectRepository.save(architect);
+
         LOG.debug("architect with id {} updated", architectId);
+
         return ArchitectDtoMapper.INSTANCE.architectToArchitectDto(architect);
     }
 
     @Override
     public List<ArchitectBasicDto> getBasicArchitects() {
-        return this.architectRepository.loadAll().stream()
+        return this.architectRepository.findAll().stream()
                 .map(ArchitectDtoMapper.INSTANCE::architectToArchitectBasicDto).toList();
     }
 }

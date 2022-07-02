@@ -315,7 +315,7 @@ class ContractServiceImplTest extends Specification {
     }
 
     private mockLoadContractFromContractRepository() {
-        this.contractRepository.load(EXISTING_CONTRACT_ID) >> new ContractBuilder()
+        this.contractRepository.getById(EXISTING_CONTRACT_ID) >> new ContractBuilder()
                 .withId(EXISTING_CONTRACT_ID).withContractValue(new Money(OFFER_VALUE)).build()
     }
 
