@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @ApplicationService
 public class ContractorJobApplicationServiceImpl implements ContractorJobApplicationService {
     private static final Logger LOG = LoggerFactory.getLogger(ContractorJobApplicationServiceImpl.class);
@@ -42,10 +44,12 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
     public ContractorJobDto createContractorJob(Long projectId, ContractorJobDto contractorJobDto) {
         LOG.debug("Creating ContractorJob for Project with id {}", projectId);
 
-        this.projectValidator.validateProjectExistence(projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.contractorJobValidator.validateCreateContractorJobDto(contractorJobDto);
         this.contractorJobValidator.validateContractorExistence(contractorJobDto.getContractorId());
-        Project project = this.projectRepository.load(projectId);
+
+        Project project = maybeProject.get();
         ContractorJob contractorJob = ContractorJobDtoMapper.INSTANCE.contractorJobDtoToContractorJob(contractorJobDto);
         project.addContractorJob(contractorJob);
         this.projectRepository.save(project);
@@ -63,10 +67,12 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
                                                 ContractorJobDto contractorJobDto) {
         LOG.debug("Updating ContractorJob with id {} from Project with id {}", contractorJobId, projectId);
 
-        this.projectValidator.validateProjectExistence(projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.contractorJobValidator.validateContractorJobOnProjectExistence(projectId, contractorJobId);
         this.contractorJobValidator.validateUpdateContractorJobDto(contractorJobDto);
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
+
         ContractorJob contractorJob = project.updateContractorJob(contractorJobId, contractorJobDto);
         this.projectRepository.save(project);
         this.projectFinanceAwareObjectService.onUpdate(projectId);
@@ -87,9 +93,12 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
     @Override
     public void deleteContractorJob(Long projectId, Long contractorJobId) {
         LOG.debug("Removing ContractorJob with id {} from Project with id {}", contractorJobId, projectId);
-        this.projectValidator.validateProjectExistence(projectId);
+
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.contractorJobValidator.validateContractorJobOnProjectExistence(projectId, contractorJobId);
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
+
         project.removeContractorJob(contractorJobId);
         this.projectRepository.save(project);
         this.projectFinanceAwareObjectService.onRemove(projectId);

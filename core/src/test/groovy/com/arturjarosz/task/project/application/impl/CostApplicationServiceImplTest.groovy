@@ -4,7 +4,7 @@ import com.arturjarosz.task.finance.application.impl.ProjectFinanceAwareObjectSe
 import com.arturjarosz.task.project.application.CostValidator
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.CostDto
-import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Cost
 import com.arturjarosz.task.project.model.CostCategory
 import com.arturjarosz.task.project.model.Project
@@ -38,7 +38,7 @@ class CostApplicationServiceImplTest extends Specification {
 
     private final static ProjectWorkflow PROJECT_WORKFLOW = new ProjectWorkflow()
 
-    def projectRepository = Mock(ProjectRepositoryImpl)
+    def projectRepository = Mock(ProjectRepository)
     def projectValidator = Mock(ProjectValidator)
     def projectQueryService = Mock(ProjectQueryServiceImpl)
     def costValidator = Mock(CostValidator)
@@ -55,7 +55,7 @@ class CostApplicationServiceImplTest extends Specification {
         when:
             this.projectCostApplicationService.createCost(EXISTING_PROJECT_ID, costDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(_)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, EXISTING_PROJECT_ID)
     }
 
     def "createCost should run ValidateCostDto"() {
@@ -120,7 +120,7 @@ class CostApplicationServiceImplTest extends Specification {
         when:
             this.projectCostApplicationService.getCosts(PROJECT_WITH_COST_ID)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_COST_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_WITH_COST_ID)
     }
 
     def "getCosts should return list of projectCosts"() {
@@ -286,10 +286,8 @@ class CostApplicationServiceImplTest extends Specification {
 
     private void mockProjectRepository() {
         Project project = this.prepareProjectWithNoCosts()
-        this.projectRepository.load(NOT_EXISTING_PROJECT_ID) >> { null }
-        this.projectRepository.load(EXISTING_PROJECT_ID) >> {
-            return project
-        }
+        this.projectRepository.findById(NOT_EXISTING_PROJECT_ID) >> { Optional.ofNullable(null) }
+        this.projectRepository.findById(EXISTING_PROJECT_ID) >> { Optional.of(project) }
         this.projectRepository.save(_ as Project) >> {
             Cost cost = project.costs.iterator().next()
             TestUtils.setFieldForObject(cost, "id", COST_ID)
@@ -299,7 +297,7 @@ class CostApplicationServiceImplTest extends Specification {
 
     private void mockProjectRepositoryForProjectWithCost() {
         Project project = this.prepareProjectWithCost()
-        this.projectRepository.load(PROJECT_WITH_COST_ID) >> project
+        this.projectRepository.findById(PROJECT_WITH_COST_ID) >> Optional.of(project)
     }
 
     private void mockProjectQueryService() {

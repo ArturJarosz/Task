@@ -5,7 +5,7 @@ import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.dto.InstallmentDto
 import com.arturjarosz.task.project.domain.impl.InstallmentDomainServiceImpl
-import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Installment
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
@@ -51,10 +51,13 @@ class InstallmentApplicationServiceImplTest extends Specification {
     def installmentDomainService = new InstallmentDomainServiceImpl()
 
 
-    def projectRepository = Mock(ProjectRepositoryImpl) {
-        load(NOT_EXISTING_PROJECT_ID) >> { null }
-        load(EXISTING_PROJECT_ID) >> { project }
-        load(EXISTING_PROJECT_WITH_INSTALLMENT_ID) >> { projectWithInstallment }
+    def projectRepository = Mock(ProjectRepository) {
+        findById(NOT_EXISTING_PROJECT_ID) >> { Optional.ofNullable(null) }
+        findById(EXISTING_PROJECT_ID) >> { Optional.of(project) }
+        findById(EXISTING_PROJECT_WITH_INSTALLMENT_ID) >> { Optional.of(projectWithInstallment) }
+        getById(NOT_EXISTING_PROJECT_ID) >> { null }
+        getById(EXISTING_PROJECT_ID) >> { project }
+        getById(EXISTING_PROJECT_WITH_INSTALLMENT_ID) >> { projectWithInstallment }
         save(_ as Project) >> {
             Set<Stage> stages = this.project.stages
             Installment installmentFromStage = stages.iterator().next().installment
@@ -70,10 +73,9 @@ class InstallmentApplicationServiceImplTest extends Specification {
             return stageWithInstallment
         }
         getStageById(STAGE_WITHOUT_INSTALLMENT_ID) >> { return stageWithoutInstallment }
-
     }
 
-    def projectValidator = new ProjectValidator(projectRepository, projectQueryService)
+    def projectValidator = new ProjectValidator(projectRepository)
 
     def stageValidator = new StageValidator(projectRepository, projectQueryService)
 

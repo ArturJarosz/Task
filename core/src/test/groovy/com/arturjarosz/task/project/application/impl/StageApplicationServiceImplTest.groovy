@@ -5,7 +5,7 @@ import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.dto.StageDto
 import com.arturjarosz.task.project.domain.StageDomainService
-import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.StageType
@@ -32,7 +32,7 @@ class StageApplicationServiceImplTest extends Specification {
 
     def projectQueryService = Mock(ProjectQueryServiceImpl)
     def projectValidator = Mock(ProjectValidator)
-    def projectRepository = Mock(ProjectRepositoryImpl)
+    def projectRepository = Mock(ProjectRepository)
     def stageValidator = Mock(StageValidator)
     def stageDomainService = Mock(StageDomainService)
     def contractWorkflowValidator = Mock(ContractWorkflowValidator)
@@ -48,7 +48,7 @@ class StageApplicationServiceImplTest extends Specification {
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_ID)
     }
 
     def "createStage should call validateCreateStageDto on stageValidator"() {
@@ -80,7 +80,7 @@ class StageApplicationServiceImplTest extends Specification {
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto)
         then:
-            1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProject()
+            1 * this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProject())
     }
 
     def "createStage should call createStage on stageDomainService"() {
@@ -110,7 +110,7 @@ class StageApplicationServiceImplTest extends Specification {
         when:
             this.stageApplicationService.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_STAGE_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_WITH_STAGE_ID)
     }
 
     def "removeStage should call validateExistenceOfStageInProject"() {
@@ -128,7 +128,7 @@ class StageApplicationServiceImplTest extends Specification {
         when:
             this.stageApplicationService.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
-            1 * this.projectRepository.load(PROJECT_WITH_STAGE_ID) >> this.prepareProjectWithStage()
+            1 * this.projectRepository.findById(PROJECT_WITH_STAGE_ID) >> Optional.of(this.prepareProjectWithStage())
     }
 
     def "removeStage should save project with projectRepository"() {
@@ -159,7 +159,7 @@ class StageApplicationServiceImplTest extends Specification {
         when:
             this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_STAGE_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_WITH_STAGE_ID)
     }
 
     def "updateStage should call validateExistenceOfStageInProject"() {
@@ -179,7 +179,7 @@ class StageApplicationServiceImplTest extends Specification {
         when:
             this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
-            1 * this.projectRepository.load(PROJECT_WITH_STAGE_ID) >> this.prepareProjectWithStage()
+            1 * this.projectRepository.findById(PROJECT_WITH_STAGE_ID) >> Optional.of(this.prepareProjectWithStage())
     }
 
     def "updateStage should call validateUpdateStageDto from stageValidator"() {
@@ -264,7 +264,7 @@ class StageApplicationServiceImplTest extends Specification {
         when:
             this.stageApplicationService.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_STAGE_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_WITH_STAGE_ID)
     }
 
     def "rejectStage should call validateExistenceOfStageInProject on stageValidator"() {
@@ -282,7 +282,7 @@ class StageApplicationServiceImplTest extends Specification {
         when:
             this.stageApplicationService.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
-            1 * this.projectRepository.load(PROJECT_WITH_STAGE_ID) >> this.prepareProjectWithStage()
+            1 * this.projectRepository.findById(PROJECT_WITH_STAGE_ID) >> Optional.of(this.prepareProjectWithStage())
     }
 
     def "rejectStage should call rejectStage on stageDomainService"() {
@@ -310,7 +310,7 @@ class StageApplicationServiceImplTest extends Specification {
         when:
             this.stageApplicationService.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_STAGE_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_WITH_STAGE_ID)
     }
 
     def "reopenStage should call validateExistenceOfStageInProject on stageValidator"() {
@@ -330,7 +330,7 @@ class StageApplicationServiceImplTest extends Specification {
         when:
             this.stageApplicationService.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
         then:
-            1 * this.projectRepository.load(PROJECT_WITH_STAGE_ID) >> this.prepareProjectWithStage()
+            1 * this.projectRepository.findById(PROJECT_WITH_STAGE_ID) >> Optional.of(this.prepareProjectWithStage())
     }
 
     def "reopenStage should call reopenStage on stageDomainService"() {
@@ -356,11 +356,11 @@ class StageApplicationServiceImplTest extends Specification {
 
     // mocks
     private void mockProjectRepositoryLoad() {
-        this.projectRepository.load(PROJECT_ID) >> this.prepareProject()
+        this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProject())
     }
 
     private void mockProjectRepositoryLoadProjectWithStage() {
-        this.projectRepository.load(PROJECT_WITH_STAGE_ID) >> this.prepareProjectWithStage()
+        this.projectRepository.findById(PROJECT_WITH_STAGE_ID) >> Optional.of(this.prepareProjectWithStage())
     }
 
     private void mockProjectQueryServiceGetStageById() {

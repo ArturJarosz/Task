@@ -1,10 +1,9 @@
 package com.arturjarosz.task.project.application
 
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
-import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
-import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.utils.ProjectBuilder
 import spock.lang.Shared
 import spock.lang.Specification
@@ -22,16 +21,12 @@ class ProjectValidatorTest extends Specification {
     @Shared
     Project project = new ProjectBuilder().withName("name").build()
 
-    def projectRepository = Mock(ProjectRepositoryImpl) {
-        load(NOT_EXISTING_PROJECT_ID) >> { null }
-        load(EXISTING_PROJECT_ID) >> {
-            return project
-        }
+    def projectRepository = Mock(ProjectRepository) {
+        findById(NOT_EXISTING_PROJECT_ID) >> { Optional.ofNullable(null) }
+        findById(EXISTING_PROJECT_ID) >> { Optional.of(project) }
     }
 
-    def projectQueryService = Mock(ProjectQueryServiceImpl)
-
-    ProjectValidator projectValidator = new ProjectValidator(projectRepository, projectQueryService)
+    ProjectValidator projectValidator = new ProjectValidator(projectRepository)
 
     def "passing null to validateProjectBasicDto should thrown an exception"() {
         given:

@@ -1061,7 +1061,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "45 Creating new stage for project in TO_DO status returns code 201 and does not change project status"() {
+    def "Creating new stage for project in TO_DO status with accepted offer returns code 201 and does not change project status"() {
         given:
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1082,7 +1082,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "46 Creating new stage for project in IN_PROGRESS status returns code 201 and does not change project status"() {
+    def "Creating new stage for project in IN_PROGRESS status returns code 201 and does not change project status"() {
         given:
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1104,7 +1104,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "47 Creating new stage for project in REJECTED status returns code 400 and error message"() {
+    def "Creating new stage for project in REJECTED status returns code 400 and error message"() {
         given:
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1124,7 +1124,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "48 Changing stage status to IN_PROGRESS on project in status TO_DO changes project status to IN_PROGRESS"() {
+    def "Changing stage status to IN_PROGRESS on project in status TO_DO changes project status to IN_PROGRESS"() {
         given:
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1141,7 +1141,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "49 Changing stage status to IN_PROGRESS on project in status REJECTED returns code 400 and error message"() {
+    def "Changing stage status to IN_PROGRESS on project in status REJECTED returns code 400 and error message"() {
         given:
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1159,7 +1159,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "50 Changing stage status from IN_PROGRESS to TO_DO, while other stages are in TO_DO and REJECTED on project in IN_PROGRESS status, changes project status to TO_DO"() {
+    def "Changing stage status from IN_PROGRESS to TO_DO, while other stages are in TO_DO and REJECTED on project in IN_PROGRESS status, changes project status to TO_DO"() {
         given:
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1180,7 +1180,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "51 Changing stage status from IN_PROGRESS to TO_DO, while there is at least one stage in IN_PROGRESS on project in IN_PROGRESS status, changes project status to TO_DO"() {
+    def "Changing stage status from IN_PROGRESS to TO_DO, while there is at least one stage in IN_PROGRESS on project in IN_PROGRESS status, changes project status to TO_DO"() {
         given:
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1202,7 +1202,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "52 Changing stage status from IN_PROGRESS to DONE on project with other IN_PROGRESS stages does not change project status"() {
+    def "Changing stage status from IN_PROGRESS to DONE on project with other IN_PROGRESS stages does not change project status"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1227,7 +1227,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "53 Changing stage status from IN_PROGRESS to DONE on project with other stages in REJECTED changes project status to DONE"() {
+    def "Changing stage status from IN_PROGRESS to DONE on project with other stages in REJECTED changes project status to DONE"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1253,7 +1253,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "54 Changing stage status from IN_PROGRESS to DONE on project with other stages in DONE changes project status to DONE"() {
+    def "Changing stage status from IN_PROGRESS to DONE on project with other stages in DONE changes project status to DONE"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1282,7 +1282,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "55 Changing stage status from DONE to IN_PROGRESS on project in status in DONE changes project status to IN_PROGRESS"() {
+    def "Changing stage status from DONE to IN_PROGRESS on project in status in DONE changes project status to IN_PROGRESS"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1313,7 +1313,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "56 Changing stage status from DONE to IN_PROGRESS on project in status in IN_PROGRESS does not change project status"() {
+    def "Changing stage status from DONE to IN_PROGRESS on project in status in IN_PROGRESS does not change project status"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1343,7 +1343,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "57 Rejecting stage from TO_DO on project in status TO_DO does not change project status"() {
+    def "Rejecting stage from TO_DO on project in status TO_DO does not change project status"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1365,7 +1365,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "58 Rejecting stage from TO_DO on project in status IN_PROGRESS with other stages in DONE and REJECTED changes project status to DONE"() {
+    def "Rejecting stage from TO_DO on project in status IN_PROGRESS with other stages in DONE and REJECTED changes project status to DONE"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1392,7 +1392,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "59 Rejecting stage from TO_DO on project in status IN_PROGRESS with at least one stage in IN_PROGRESS does not change project status"() {
+    def "Rejecting stage from TO_DO on project in status IN_PROGRESS with at least one stage in IN_PROGRESS does not change project status"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1418,7 +1418,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "60 Rejecting the only stage from status IN_PROGRESS on project in IN_PROGRESS status changes project status to TO_DO"() {
+    def "Rejecting the only stage from status IN_PROGRESS on project in IN_PROGRESS status changes project status to TO_DO"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1437,7 +1437,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "61 Rejecting stage from status IN_PROGRESS on project in IN_PROGRESS status with other stages in REJECTED changes project status to TO_DO"() {
+    def "Rejecting stage from status IN_PROGRESS on project in IN_PROGRESS status with other stages in REJECTED changes project status to TO_DO"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1462,7 +1462,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "62 Rejecting stage from status IN_PROGRESS on project in IN_PROGRESS status with other stages in TO_DO and REJECTED changes project status to TO_DO"() {
+    def "Rejecting stage from status IN_PROGRESS on project in IN_PROGRESS status with other stages in TO_DO and REJECTED changes project status to TO_DO"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1486,7 +1486,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "63 Rejecting stage from status IN_PROGRESS on project in IN_PROGRESS status with other stages in DONE and REJECTED changes project status to DONE"() {
+    def "Rejecting stage from status IN_PROGRESS on project in IN_PROGRESS status with other stages in DONE and REJECTED changes project status to DONE"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1513,7 +1513,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "64 Rejecting stage from status IN_PROGRESS on project in IN_PROGRESS status with at least one stage in IN_PROGRESS does not change project status"() {
+    def "Rejecting stage from status IN_PROGRESS on project in IN_PROGRESS status with at least one stage in IN_PROGRESS does not change project status"() {
         given: "Existing project"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1539,7 +1539,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "65 Reopening stage with tasks only in TO_DO and REJECTED status reopens stage to TO_DO status"() {
+    def "Reopening stage with tasks only in TO_DO and REJECTED status reopens stage to TO_DO status"() {
         given: "Rejected stage with tasks only in TO_DO and REJECTED statuses"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1562,7 +1562,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "66 Reopening stage with at least one task in IN_PROGRESS changes stage status to IN_PROGRESS"() {
+    def "Reopening stage with at least one task in IN_PROGRESS changes stage status to IN_PROGRESS"() {
         given: "Rejected stage at least one task in IN_PROGRESS status"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1586,7 +1586,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "67 Reopening stage with at least one task in DONE changes stage status to IN_PROGRESS"() {
+    def "Reopening stage with at least one task in DONE changes stage status to IN_PROGRESS"() {
         given: "Rejected stage at least one task in DONE status"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1611,7 +1611,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "68 Reopening stage to TO_DO on project in DONE status changes project status to IN_PROGRESS"() {
+    def "Reopening stage to TO_DO on project in DONE status changes project status to IN_PROGRESS"() {
         given: "Existing project with stages in DONE and REJECTED"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1638,7 +1638,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "69 Reopening stage to IN_PROGRESS on project in TO_DO status changes project status to IN_PROGRESS"() {
+    def "Reopening stage to IN_PROGRESS on project in TO_DO status changes project status to IN_PROGRESS"() {
         given: "Existing project with stages in DONE and REJECTED"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
@@ -1664,7 +1664,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "70 Reopening stage to IN_PROGRESS on project in DONE status changes project status to IN_PROGRESS"() {
+    def "Reopening stage to IN_PROGRESS on project in DONE status changes project status to IN_PROGRESS"() {
         given: "Existing project with stages in DONE and REJECTED"
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)

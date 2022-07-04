@@ -4,6 +4,7 @@ import com.arturjarosz.task.finance.application.dto.FinancialValueDto
 import com.arturjarosz.task.finance.application.dto.ProjectFinancialDataDto
 import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialDataDto
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService
+import com.arturjarosz.task.finance.infrastructure.FinancialDataRepository
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.FinancialData
 import com.arturjarosz.task.finance.model.ProjectFinancialData
@@ -37,7 +38,7 @@ class ProjectFinancialDataServiceImplTest extends Specification {
     def projectFinancialDataRepository = Mock(ProjectFinancialDataRepository)
     def projectValidator = Mock(ProjectValidator)
     def financialDataQueryService = Mock(FinancialDataQueryServiceImpl)
-    def financialDataRepository = Mock(FinancialDataRepositoryImpl)
+    def financialDataRepository = Mock(FinancialDataRepository)
     def partialFinancialDataService = Mock(PartialFinancialDataService)
     List<PartialFinancialDataService> partialFinancialDataServices = Arrays.asList(partialFinancialDataService)
 
@@ -149,7 +150,7 @@ class ProjectFinancialDataServiceImplTest extends Specification {
 
     private void mockFinancialDataRepositoryLoad() {
         FinancialData financialData = new FinancialData(new Money(0), true, true)
-        1 * this.financialDataRepository.load(SUPERVISION_FINANCIAL_DATA_ID) >> financialData
+        1 * this.financialDataRepository.getById(SUPERVISION_FINANCIAL_DATA_ID) >> financialData
     }
 
     private void mockLoadProjectFinancialDataWithProjectId() {

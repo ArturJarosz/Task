@@ -14,7 +14,7 @@ import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
 import com.arturjarosz.task.project.application.dto.ProjectDto
 import com.arturjarosz.task.project.domain.impl.ProjectDomainServiceImpl
-import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.status.project.ProjectStatus
@@ -42,7 +42,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def clientValidator = Mock(ClientValidator)
     def architectApplicationService = Mock(ArchitectApplicationServiceImpl)
     def architectValidator = Mock(ArchitectValidator)
-    def projectRepository = Mock(ProjectRepositoryImpl)
+    def projectRepository = Mock(ProjectRepository)
     def projectDomainService = Mock(ProjectDomainServiceImpl)
     def projectValidator = Mock(ProjectValidator)
     def projectFinancialDataApplicationService = Mock(ProjectFinancialDataServiceImpl)
@@ -136,7 +136,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             ProjectDto projectDto = this.projectApplicationService.getProject(EXISTING_PROJECT_ID)
         then:
-            1 * this.projectValidator.validateProjectExistence(_)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, EXISTING_PROJECT_ID)
     }
 
     def "getProject should return project of given id"() {
@@ -173,21 +173,23 @@ class ProjectApplicationServiceImplTest extends Specification {
             ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
                     projectDto)
         then:
-            1 * this.projectRepository.load(EXISTING_PROJECT_ID)
+            1 * this.projectRepository.findById(EXISTING_PROJECT_ID) >> Optional.of(this.prepareExistingProject())
     }
 
     def "updateProject should call validateProjectExistence on projectValidator"() {
         given:
+            this.mockProjectRepositoryLoad()
             ProjectDto projectDto = this.prepareUpdateProjectDto()
         when:
             ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
                     projectDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, EXISTING_PROJECT_ID)
     }
 
     def "updateProject should call validateUpdateProjectDto on project validator"() {
         given:
+            this.mockProjectRepositoryLoad()
             ProjectDto projectDto = this.prepareUpdateProjectDto()
         when:
             ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
@@ -198,6 +200,7 @@ class ProjectApplicationServiceImplTest extends Specification {
 
     def "updateProject should call update on projectDomainService"() {
         given:
+            this.mockProjectRepositoryLoad()
             ProjectDto projectDto = this.prepareUpdateProjectDto()
         when:
             ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
@@ -208,6 +211,7 @@ class ProjectApplicationServiceImplTest extends Specification {
 
     def "updateProject should call save on projectRepository"() {
         given:
+            this.mockProjectRepositoryLoad()
             ProjectDto projectDto = this.prepareUpdateProjectDto()
         when:
             ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
@@ -232,6 +236,7 @@ class ProjectApplicationServiceImplTest extends Specification {
 
     def "removeProject should call validateProjectExistence on projectValidator"() {
         given:
+            this.mockProjectRepositoryLoad()
         when:
             this.projectApplicationService.removeProject(EXISTING_PROJECT_ID)
         then:
@@ -243,7 +248,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             this.projectApplicationService.removeProject(EXISTING_PROJECT_ID)
         then:
-            1 * this.projectRepository.remove(EXISTING_PROJECT_ID)
+            1 * this.projectRepository.deleteById(EXISTING_PROJECT_ID)
     }
 
     def "finishProject should load project from projectRepository"() {
@@ -254,7 +259,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto)
         then:
-            1 * this.projectRepository.load(EXISTING_PROJECT_ID)
+            1 * this.projectRepository.findById(EXISTING_PROJECT_ID) >> Optional.of(this.prepareExistingProject())
     }
 
     def "finishProject should call validateProjectExistence on projectValidator"() {
@@ -265,7 +270,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, EXISTING_PROJECT_ID)
     }
 
     def "finishProject should call finishProject on projectDomainService"() {
@@ -308,7 +313,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             this.projectApplicationService.rejectProject(EXISTING_PROJECT_ID)
         then:
-            1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, EXISTING_PROJECT_ID)
     }
 
     def "rejectProject should load project from projectRepository"() {
@@ -317,7 +322,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             this.projectApplicationService.rejectProject(EXISTING_PROJECT_ID)
         then:
-            1 * projectRepository.load(EXISTING_PROJECT_ID)
+            1 * projectRepository.findById(EXISTING_PROJECT_ID) >> Optional.of(this.prepareExistingProject())
     }
 
     def "rejectProject should call rejectProject on projectDomainService"() {
@@ -344,7 +349,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             this.projectApplicationService.reopenProject(EXISTING_PROJECT_ID)
         then:
-            1 * this.projectValidator.validateProjectExistence(EXISTING_PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, EXISTING_PROJECT_ID)
     }
 
     def "reopenProject should load project from projectRepository"() {
@@ -353,7 +358,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             this.projectApplicationService.reopenProject(EXISTING_PROJECT_ID)
         then:
-            1 * projectRepository.load(EXISTING_PROJECT_ID)
+            1 * projectRepository.findById(EXISTING_PROJECT_ID) >> Optional.of(this.prepareExistingProject())
     }
 
     def "reopenProject should call reopenProject on projectDomainService"() {
@@ -447,11 +452,11 @@ class ProjectApplicationServiceImplTest extends Specification {
     }
 
     private void mockProjectRepositoryLoad() {
-        this.projectRepository.load(EXISTING_PROJECT_ID) >> this.prepareExistingProject()
+        this.projectRepository.findById(EXISTING_PROJECT_ID) >> Optional.of(this.prepareExistingProject())
     }
 
     private void mockProjectRepositoryLoadAll() {
-        1 * this.projectRepository.loadAll() >> Collections.singletonList(this.prepareExistingProject())
+        1 * this.projectRepository.findAll() >> Collections.singletonList(this.prepareExistingProject())
     }
 
     private void mockProjectRepositorySaveUpdated() {

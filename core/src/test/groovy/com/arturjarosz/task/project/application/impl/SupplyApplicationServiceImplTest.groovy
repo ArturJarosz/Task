@@ -4,7 +4,7 @@ import com.arturjarosz.task.finance.application.impl.ProjectFinanceAwareObjectSe
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.SupplyValidator
 import com.arturjarosz.task.project.application.dto.SupplyDto
-import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Supply
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
@@ -27,15 +27,13 @@ class SupplyApplicationServiceImplTest extends Specification {
     private static final boolean NEW_PAYABLE = false
 
     def projectQueryService = Mock(ProjectQueryServiceImpl)
-    def projectRepository = Mock(ProjectRepositoryImpl)
+    def projectRepository = Mock(ProjectRepository)
     def projectValidator = Mock(ProjectValidator)
     def supplyValidator = Mock(SupplyValidator)
     def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectServiceImpl)
 
     def supplyApplicationService = new SupplyApplicationServiceImpl(projectFinanceAwareObjectService,
-            projectQueryService,
-            projectRepository,
-            projectValidator, supplyValidator)
+            projectQueryService, projectRepository, projectValidator, supplyValidator)
 
     def "createSupply should validate project existence"() {
         given:
@@ -44,7 +42,7 @@ class SupplyApplicationServiceImplTest extends Specification {
         when:
             this.supplyApplicationService.createSupply(PROJECT_ID, supplyDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_ID)
     }
 
     def "createSupply should validate supply dto"() {
@@ -97,7 +95,7 @@ class SupplyApplicationServiceImplTest extends Specification {
         when:
             this.supplyApplicationService.updateSupply(PROJECT_ID, SUPPLY_ID, supplyDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_ID)
     }
 
     def "updateSupply should validate supply on project existence"() {
@@ -220,16 +218,16 @@ class SupplyApplicationServiceImplTest extends Specification {
     }
 
     private void mockProjectRepositoryLoad() {
-        this.projectRepository.load(PROJECT_ID) >> new ProjectBuilder()
+        this.projectRepository.findById(PROJECT_ID) >> Optional.of(new ProjectBuilder()
                 .withId(PROJECT_ID)
-                .build()
+                .build())
     }
 
     private void mockProjectRepositoryLoadWithSupply() {
-        this.projectRepository.load(PROJECT_ID) >> new ProjectBuilder()
+        this.projectRepository.findById(PROJECT_ID) >> Optional.of(new ProjectBuilder()
                 .withId(PROJECT_ID)
                 .withSupply(prepareSupply(SUPPLY_ID))
-                .build()
+                .build())
     }
 
     private static Supply prepareSupply(long supplyId) {

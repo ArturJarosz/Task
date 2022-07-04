@@ -1,7 +1,6 @@
 package com.arturjarosz.task.contract.application
 
 import com.arturjarosz.task.contract.application.dto.ContractDto
-import com.arturjarosz.task.contract.model.Contract
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -46,9 +45,9 @@ class ContractValidatorTest extends Specification {
 
     def "validateContractExistence should throw an exception when passed contract is null"() {
         given:
-            Contract contract = null
+            Optional<Object> maybeContract = Optional.ofNullable(null)
         when:
-            this.contractValidator.validateContractExistence(contract, CONTRACT_ID)
+            this.contractValidator.validateContractExistence(maybeContract, CONTRACT_ID)
         then:
             Exception exception = thrown()
             exception.message == "notExist.contract"

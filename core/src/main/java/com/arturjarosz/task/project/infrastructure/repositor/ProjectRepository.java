@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.infrastructure.repositor;
 
 import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.sharedkernel.infrastructure.AbstractBaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProjectRepository extends AbstractBaseRepository<Project> {
+public interface ProjectRepository extends JpaRepository<Project, Long> {
 }

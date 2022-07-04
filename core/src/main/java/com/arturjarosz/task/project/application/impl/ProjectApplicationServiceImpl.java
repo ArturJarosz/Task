@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationService
 public class ProjectApplicationServiceImpl implements ProjectApplicationService {
@@ -76,8 +77,9 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Override
     public ProjectDto getProject(Long projectId) {
         LOG.debug("Loading Project with id {}.", projectId);
-        this.projectValidator.validateProjectExistence(projectId);
-        Project project = this.projectRepository.load(projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
+        Project project = maybeProject.get();
         ClientDto clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
         ArchitectDto architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
         LOG.debug("Project with id {} loaded.", projectId);
@@ -88,9 +90,10 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Override
     public ProjectDto updateProject(Long projectId, ProjectDto projectDto) {
         LOG.debug("Updating Project with id {}.", projectId);
-        Project project = this.projectRepository.load(projectId);
-        this.projectValidator.validateProjectExistence(projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.projectValidator.validateUpdateProjectDto(projectDto);
+        Project project = maybeProject.get();
         project = this.projectDomainService.updateProject(project, projectDto);
         project = this.projectRepository.save(project);
         LOG.debug("Project with id {} updated", projectId);
@@ -103,7 +106,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         LOG.debug("Removing Project with id {}.", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.projectFinancialDataService.removeFinancialDataForProject(projectId);
-        this.projectRepository.remove(projectId);
+        this.projectRepository.deleteById(projectId);
         LOG.debug("Project with id {} removed.", projectId);
     }
 
@@ -112,8 +115,9 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     public ProjectDto finishProject(Long projectId, ProjectDto projectContractDto) {
         LOG.debug("Finishing Project with id {}.", projectId);
         //TODO: TA-62 update conditions on what project can be ended
-        Project project = this.projectRepository.load(projectId);
-        this.projectValidator.validateProjectExistence(projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
+        Project project = maybeProject.get();
         project = this.projectDomainService.finishProject(project, projectContractDto.getEndDate());
         this.projectRepository.save(project);
         LOG.debug("Project with id {} is finished.", projectId);
@@ -123,7 +127,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Override
     public List<ProjectDto> getProjects() {
         LOG.debug("Loading list of projects.");
-        return this.projectRepository.loadAll().stream().map(project -> {
+        return this.projectRepository.findAll().stream().map(project -> {
             ClientDto clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
             ArchitectDto architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
             return ProjectDtoMapper.INSTANCE.projectToBasicProjectDto(clientDto, architectDto, project);
@@ -134,8 +138,9 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Override
     public ProjectDto rejectProject(Long projectId) {
         LOG.debug("Rejecting Project with id {}.", projectId);
-        this.projectValidator.validateProjectExistence(projectId);
-        Project project = this.projectRepository.load(projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
+        Project project = maybeProject.get();
         project = this.projectDomainService.rejectProject(project);
         this.projectRepository.save(project);
         return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
@@ -145,8 +150,9 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Override
     public ProjectDto reopenProject(Long projectId) {
         LOG.debug("Reopening Project with id {}.", projectId);
-        this.projectValidator.validateProjectExistence(projectId);
-        Project project = this.projectRepository.load(projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
+        Project project = maybeProject.get();
         project = this.projectDomainService.reopenProject(project);
         this.projectRepository.save(project);
         return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);

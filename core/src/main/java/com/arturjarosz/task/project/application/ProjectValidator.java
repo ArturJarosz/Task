@@ -4,12 +4,14 @@ import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -22,12 +24,10 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 public class ProjectValidator {
 
     private final ProjectRepository projectRepository;
-    private final ProjectQueryService projectQueryService;
 
     @Autowired
-    public ProjectValidator(ProjectRepository projectRepository, ProjectQueryService projectQueryService) {
+    public ProjectValidator(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
-        this.projectQueryService = projectQueryService;
     }
 
     private static void validateProjectName(String projectName) {
@@ -51,13 +51,14 @@ public class ProjectValidator {
                         ProjectExceptionCodes.TYPE));
     }
 
-    public void validateProjectExistence(Project project, Long projectId) {
-        assertNotNull(project, createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT), projectId);
+    public void validateProjectExistence(Optional<Project> maybeProject, Long projectId) {
+        assertIsTrue(maybeProject.isPresent(),
+                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT), projectId);
     }
 
     public void validateProjectExistence(Long projectId) {
-        Project project = this.projectRepository.load(projectId);
-        this.validateProjectExistence(project, projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.validateProjectExistence(maybeProject, projectId);
     }
 
     public void validateUpdateProjectDto(ProjectDto projectDto) {

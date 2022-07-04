@@ -7,6 +7,9 @@ import com.arturjarosz.task.contractor.model.Contractor;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -44,8 +47,8 @@ public class ContractorValidator {
     }
 
     public void validateContractorExistence(Long contractorId) {
-        Contractor contractor = this.contractorRepository.getById(contractorId);
-        assertNotNull(contractor, createMessageCode(ExceptionCodes.NOT_EXIST, ContractorExceptionCodes.CONTRACTOR));
+        Optional<Contractor> maybeContract = this.contractorRepository.findById(contractorId);
+        assertIsTrue(maybeContract.isPresent(), createMessageCode(ExceptionCodes.NOT_EXIST, ContractorExceptionCodes.CONTRACTOR));
     }
 
     public void validateContractorHasNoJobs(Long contractorId) {

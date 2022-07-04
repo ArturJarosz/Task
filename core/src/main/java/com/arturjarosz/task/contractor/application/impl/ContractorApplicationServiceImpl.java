@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationService
 public class ContractorApplicationServiceImpl implements ContractorApplicationService {
@@ -46,7 +47,8 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
         LOG.debug("Updating Contractor with id {}", contractorId);
         this.contractorValidator.validateContractorExistence(contractorId);
         this.contractorValidator.validateUpdateContractorDto(contractorDto);
-        Contractor contractor = this.contractorRepository.getById(contractorId);
+        Optional<Contractor> maybeContractor = this.contractorRepository.findById(contractorId);
+        Contractor contractor = maybeContractor.get();
         contractor.update(contractorDto.getName(), contractorDto.getCategory(), contractorDto.getEmail(),
                 contractorDto.getTelephone(), contractorDto.getNote());
         this.contractorRepository.save(contractor);
@@ -67,8 +69,8 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     public ContractorDto getContractor(Long contractorId) {
         LOG.debug("Loading Contractor with id {}.", contractorId);
         this.contractorValidator.validateContractorExistence(contractorId);
-        Contractor contractor = this.contractorRepository.getById(contractorId);
-        ContractorDto contractorDto = ContractorDtoMapper.INSTANCE.contractorToContractorDto(contractor);
+        Optional<Contractor> maybeContractor = this.contractorRepository.findById(contractorId);
+        ContractorDto contractorDto = ContractorDtoMapper.INSTANCE.contractorToContractorDto(maybeContractor.get());
         LOG.debug("Contractor with id {} loaded", contractorId);
         return contractorDto;
     }
