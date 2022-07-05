@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @ApplicationService
 public class SupplyApplicationServiceImpl implements SupplyApplicationService {
     private static final Logger LOG = LoggerFactory.getLogger(SupplyApplicationServiceImpl.class);
@@ -28,8 +30,8 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
 
     @Autowired
     public SupplyApplicationServiceImpl(ProjectFinanceAwareObjectService projectFinanceAwareObjectService,
-                                        ProjectQueryService projectQueryService, ProjectRepository projectRepository,
-                                        ProjectValidator projectValidator, SupplyValidator supplyValidator) {
+            ProjectQueryService projectQueryService, ProjectRepository projectRepository,
+            ProjectValidator projectValidator, SupplyValidator supplyValidator) {
         this.projectFinanceAwareObjectService = projectFinanceAwareObjectService;
         this.projectQueryService = projectQueryService;
         this.projectRepository = projectRepository;
@@ -42,10 +44,11 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
     public SupplyDto createSupply(Long projectId, SupplyDto supplyDto) {
         LOG.debug("Creating Supply for Project with id {}", projectId);
 
-        this.projectValidator.validateProjectExistence(projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.supplyValidator.validateCreateSupplyDto(supplyDto);
         this.supplyValidator.validateSupplierExistence(supplyDto.getSupplierId());
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
         Supply supply = SupplyDtoMapper.INSTANCE.supplyDtoToSupply(supplyDto);
         project.addSupply(supply);
         this.projectRepository.save(project);
@@ -61,10 +64,11 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
     public SupplyDto updateSupply(Long projectId, Long supplyId, SupplyDto supplyDto) {
         LOG.debug("Updating Supply with id {}", supplyId);
 
-        this.projectValidator.validateProjectExistence(projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
         this.supplyValidator.validateUpdateSupplyDto(supplyDto);
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
         Supply supply = project.updateSupply(supplyId, supplyDto);
         this.projectFinanceAwareObjectService.onUpdate(projectId);
 
@@ -84,9 +88,11 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
     @Override
     public void deleteSupply(Long projectId, Long supplyId) {
         LOG.debug("Removing Supply with id {} for Project wit id {}.", supplyId, projectId);
-        this.projectValidator.validateProjectExistence(projectId);
+
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
         project.removeSupply(supplyId);
         this.projectRepository.save(project);
         this.projectFinanceAwareObjectService.onRemove(projectId);

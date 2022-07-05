@@ -2,7 +2,7 @@ package com.arturjarosz.task.architect.application
 
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
 import com.arturjarosz.task.architect.application.dto.ArchitectDto
-import com.arturjarosz.task.architect.infrastructure.repository.impl.ArchitectRepositoryImpl
+import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository
 import com.arturjarosz.task.architect.model.Architect
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
@@ -22,9 +22,9 @@ class ArchitectValidatorTest extends Specification {
 
     private static Project project = new ProjectBuilder().build()
 
-    def architectRepository = Mock(ArchitectRepositoryImpl) {
-        load(NON_EXISTING_ID) >> { null }
-        load(EXISTING_ID) >> { architect }
+    def architectRepository = Mock(ArchitectRepository) {
+        findById(NON_EXISTING_ID) >> { Optional.ofNullable(null) }
+        findById(EXISTING_ID) >> { Optional.of(architect) }
     }
 
     def projectQueryService = Mock(ProjectQueryServiceImpl) {

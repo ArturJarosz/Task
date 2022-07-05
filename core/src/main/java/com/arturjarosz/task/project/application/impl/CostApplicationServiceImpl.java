@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @ApplicationService
@@ -42,9 +43,12 @@ public class CostApplicationServiceImpl implements CostApplicationService {
     @Transactional
     @Override
     public CostDto createCost(Long projectId, CostDto costDto) {
-        this.projectValidator.validateProjectExistence(projectId);
+
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.costValidator.validateCostDto(costDto);
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
+
         Cost cost = CostDtoMapper.INSTANCE.costCreateDtoToCost(costDto);
         project.addCost(cost);
         project = this.projectRepository.save(project);
@@ -57,10 +61,11 @@ public class CostApplicationServiceImpl implements CostApplicationService {
     @Transactional
     @Override
     public CostDto updateCost(Long projectId, Long costId, CostDto costDto) {
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.costValidator.validateCostExistence(costId);
         this.costValidator.validateUpdateCostDto(costDto);
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
         Cost cost = project.updateCost(costId, costDto.getName(), costDto.getDate(), costDto.getValue(),
                 costDto.getCategory(), costDto.getNote());
         this.projectRepository.save(project);
@@ -77,8 +82,9 @@ public class CostApplicationServiceImpl implements CostApplicationService {
 
     @Override
     public List<CostDto> getCosts(Long projectId) {
-        this.projectValidator.validateProjectExistence(projectId);
-        Project project = this.projectRepository.load(projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
+        Project project = maybeProject.get();
         Set<Cost> costs = project.getCosts();
         return new ArrayList<>(costs.stream().map(CostDtoMapper.INSTANCE::costToCostDto).toList());
     }
@@ -86,9 +92,10 @@ public class CostApplicationServiceImpl implements CostApplicationService {
     @Transactional
     @Override
     public void deleteCost(Long projectId, Long costId) {
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.costValidator.validateCostExistence(costId);
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
         project.removeCost(costId);
         this.projectRepository.save(project);
         this.projectFinanceAwareObjectService.onRemove(projectId);

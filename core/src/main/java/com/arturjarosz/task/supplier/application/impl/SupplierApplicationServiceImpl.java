@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationService
 public class SupplierApplicationServiceImpl implements SupplierApplicationService {
@@ -41,9 +42,11 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     @Override
     public void updateSupplier(Long supplierId, SupplierDto supplierDto) {
         LOG.debug("Updating Supplier with id {}.", supplierId);
+
+        Optional<Supplier> maybeSupplier = this.supplierRepository.findById(supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
         this.supplierValidator.validateUpdateSupplierDto(supplierDto);
-        Supplier supplier = this.supplierRepository.load(supplierId);
+        Supplier supplier = maybeSupplier.get();
         supplier.update(supplierDto.getName(), supplierDto.getCategory(), supplierDto.getEmail(),
                 supplierDto.getTelephone(), supplierDto.getNote());
         this.supplierRepository.save(supplier);
@@ -54,17 +57,19 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     @Override
     public void deleteSupplier(Long supplierId) {
         LOG.debug("Loading Supplier with id {}", supplierId);
+        Optional<Supplier> maybeSupplier = this.supplierRepository.findById(supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
         this.supplierValidator.validateSupplierHasNoSupply(supplierId);
-        this.supplierRepository.remove(supplierId);
+        this.supplierRepository.deleteById(supplierId);
         LOG.debug("Supplier with id {} deleted.", supplierId);
     }
 
     @Override
     public SupplierDto getSupplier(Long supplierId) {
         LOG.debug("Loading Supplier with id {}", supplierId);
+        Optional<Supplier> maybeSupplier = this.supplierRepository.findById(supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
-        Supplier supplier = this.supplierRepository.load(supplierId);
+        Supplier supplier = maybeSupplier.get();
         SupplierDto supplierDto = SupplierDtoMapper.INSTANCE.supplierToSupplierDto(supplier);
         LOG.debug("Supplier with id {} loaded.", supplierId);
         return supplierDto;
@@ -73,7 +78,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     @Override
     public List<SupplierDto> getBasicSuppliers() {
         LOG.debug("Loading Suppliers list");
-        return this.supplierRepository.loadAll().stream().map(SupplierDtoMapper.INSTANCE::supplierToBasicSupplier)
+        return this.supplierRepository.findAll().stream().map(SupplierDtoMapper.INSTANCE::supplierToBasicSupplier)
                 .toList();
     }
 }

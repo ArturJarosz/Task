@@ -3,7 +3,7 @@ package com.arturjarosz.task.architect.application
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
 import com.arturjarosz.task.architect.application.dto.ArchitectDto
 import com.arturjarosz.task.architect.application.impl.ArchitectApplicationServiceImpl
-import com.arturjarosz.task.architect.infrastructure.repository.impl.ArchitectRepositoryImpl
+import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository
 import com.arturjarosz.task.architect.model.Architect
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
@@ -24,13 +24,13 @@ class ArchitectApplicationServiceImplTest extends Specification {
     private static final Architect ARCHITECT_ONE = new Architect(FIRST_NAME, LAST_NAME)
     private static final Architect ANOTHER_ARCHITECT = new Architect(NEW_FIRST_NAME, NEW_LAST_NAME)
 
-    def architectRepository = Mock(ArchitectRepositoryImpl) {
-        load(NOT_EXISTING_ID) >> { null }
-        load(EXISTING_ID) >> { ARCHITECT_ONE }
-        load(EXISTING_ID2) >> { ANOTHER_ARCHITECT }
-        loadAll() >> { [ARCHITECT_ONE, ANOTHER_ARCHITECT] }
-        remove(EXISTING_ID) >> {}
-        remove(NOT_EXISTING_ID) >> { throw new IllegalArgumentException() }
+    def architectRepository = Mock(ArchitectRepository) {
+        findById(NOT_EXISTING_ID) >> { Optional.ofNullable(null) }
+        findById(EXISTING_ID) >> { Optional.ofNullable(ARCHITECT_ONE) }
+        findById(EXISTING_ID2) >> { Optional.ofNullable(ANOTHER_ARCHITECT) }
+        findAll() >> { [ARCHITECT_ONE, ANOTHER_ARCHITECT] }
+        deleteById(EXISTING_ID) >> {}
+        deleteById(NOT_EXISTING_ID) >> { throw new IllegalArgumentException() }
         save(_ as Architect) >> {
             ARCHITECT_ONE
             Field field = Architect.superclass.superclass.getDeclaredField("id")
@@ -93,7 +93,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
             architectApplicationService.removeArchitect(EXISTING_ID)
         then:
             noExceptionThrown()
-            1 * architectRepository.remove(EXISTING_ID)
+            1 * architectRepository.deleteById(EXISTING_ID)
     }
 
     def "when passing existing architect id getArchitect should return architect"() {

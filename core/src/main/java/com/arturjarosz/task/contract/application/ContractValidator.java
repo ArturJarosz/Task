@@ -7,6 +7,7 @@ import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
@@ -31,9 +32,9 @@ public class ContractValidator {
         }
     }
 
-    public void validateContractExistence(Contract contract, Long contractId) {
-        assertNotNull(contract, createMessageCode(ExceptionCodes.NOT_EXIST, ContractExceptionCodes.CONTRACT),
-                contractId);
+    public void validateContractExistence(Optional<Contract> maybeContract, Long contractId) {
+        assertIsTrue(maybeContract.isPresent(),
+                createMessageCode(ExceptionCodes.NOT_EXIST, ContractExceptionCodes.CONTRACT), contractId);
     }
 
     public void validateSignContractDto(ContractDto contractDto) {

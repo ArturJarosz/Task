@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationService
 public class SystemParameterServiceImpl implements SystemParameterService {
@@ -36,10 +37,11 @@ public class SystemParameterServiceImpl implements SystemParameterService {
     @Transactional
     @Override
     public SystemParameterDto updateSystemParameter(Long systemParameterId, SystemParameterDto systemParameterDto) {
-        SystemParameter systemParameter = this.systemParameterRepository.load(systemParameterId);
-        this.systemParameterApplicationValidator.validateParameterExistence(systemParameter,
+        Optional<SystemParameter> maybeSystemParameter = this.systemParameterRepository.findById(systemParameterId);
+        this.systemParameterApplicationValidator.validateParameterExistence(maybeSystemParameter,
                 systemParameterDto.getName());
         this.systemParameterValidatorService.validateOnUpdate(systemParameterDto);
+        SystemParameter systemParameter = maybeSystemParameter.get();
         systemParameter.update(systemParameterDto);
         return SystemParameterDtoMapper.MAPPER.systemParameterToSystemParameterDto(systemParameter);
     }

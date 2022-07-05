@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.application
 
 import com.arturjarosz.task.project.application.dto.StageDto
-import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Installment
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
@@ -21,7 +21,7 @@ class StageValidatorTest extends Specification {
 
     private static final String STAGE_NAME = "stageName"
 
-    def projectRepository = Mock(ProjectRepositoryImpl)
+    def projectRepository = Mock(ProjectRepository)
     def projectQueryService = Mock(ProjectQueryServiceImpl)
 
     def stageValidator = new StageValidator(projectRepository, projectQueryService)
@@ -127,6 +127,7 @@ class StageValidatorTest extends Specification {
     def "validateExistenceStageInProject should throw an exception when stage not present on project"() {
         given:
             this.mockProjectRepositoryLoadProject()
+            this.mockProjectRepositoryGetProject()
         when:
             this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, NOT_EXISTING_STAGE_ID)
         then:
@@ -137,6 +138,7 @@ class StageValidatorTest extends Specification {
     def "validateExistenceStageInProject should not throw any exception when stage present on project"() {
         given:
             this.mockProjectRepositoryLoadProject()
+            this.mockProjectRepositoryGetProject()
         when:
             this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, EXISTING_STAGE_ID)
         then:
@@ -182,7 +184,11 @@ class StageValidatorTest extends Specification {
     }
 
     private void mockProjectRepositoryLoadProject() {
-        this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStage()
+        this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProjectWithStage())
+    }
+
+    private void mockProjectRepositoryGetProject(){
+        this.projectRepository.getById(PROJECT_ID) >> this.prepareProjectWithStage()
     }
 
     private void mockProjectQueryServiceStageWithInstallment() {

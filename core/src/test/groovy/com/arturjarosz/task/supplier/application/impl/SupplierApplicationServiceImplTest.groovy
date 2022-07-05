@@ -3,7 +3,7 @@ package com.arturjarosz.task.supplier.application.impl
 
 import com.arturjarosz.task.supplier.application.SupplierValidator
 import com.arturjarosz.task.supplier.application.dto.SupplierDto
-import com.arturjarosz.task.supplier.infrastructure.impl.SupplierRepositoryImpl
+import com.arturjarosz.task.supplier.infrastructure.SupplierRepository
 import com.arturjarosz.task.supplier.model.Supplier
 import com.arturjarosz.task.supplier.model.SupplierCategory
 import spock.lang.Specification
@@ -19,7 +19,7 @@ class SupplierApplicationServiceImplTest extends Specification {
     final static Long SUPPLIER_ID = 1L
 
     def supplierValidator = Mock(SupplierValidator)
-    def supplierRepository = Mock(SupplierRepositoryImpl)
+    def supplierRepository = Mock(SupplierRepository)
 
     def supplierApplicationService = new SupplierApplicationServiceImpl(supplierRepository, supplierValidator)
 
@@ -123,7 +123,7 @@ class SupplierApplicationServiceImplTest extends Specification {
             this.supplierApplicationService.deleteSupplier(SUPPLIER_ID)
 
         then:
-            1 * this.supplierRepository.remove(SUPPLIER_ID)
+            1 * this.supplierRepository.deleteById(SUPPLIER_ID)
     }
 
     def "getSupplier should call validateSupplierExistence on supplierValidator"() {
@@ -150,7 +150,7 @@ class SupplierApplicationServiceImplTest extends Specification {
     }
 
     private void mockSupplierRepositoryLoad(Long supplierId) {
-        this.supplierRepository.load(supplierId) >> new Supplier(NAME, CATEGORY)
+        this.supplierRepository.findById(supplierId) >> Optional.of(new Supplier(NAME, CATEGORY))
     }
 
 }

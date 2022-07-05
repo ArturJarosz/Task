@@ -1,11 +1,10 @@
 package com.arturjarosz.task.project.application.impl
 
-
 import com.arturjarosz.task.finance.application.impl.ProjectFinanceAwareObjectServiceImpl
 import com.arturjarosz.task.project.application.ContractorJobValidator
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.ContractorJobDto
-import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.ContractorJob
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
@@ -33,7 +32,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def contractorJobValidator = Mock(ContractorJobValidator)
     def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectServiceImpl)
     def projectQueryService = Mock(ProjectQueryServiceImpl)
-    def projectRepository = Mock(ProjectRepositoryImpl)
+    def projectRepository = Mock(ProjectRepository)
     def projectValidator = Mock(ProjectValidator)
 
     def contractorJobApplicationService = new ContractorJobApplicationServiceImpl(contractorJobValidator,
@@ -47,7 +46,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         when:
             this.contractorJobApplicationService.createContractorJob(PROJECT_ID, contractorJobDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_ID)
     }
 
     def "createContractorJob should call validateCreateContractorJobDto on projectValidator"() {
@@ -77,7 +76,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         when:
             this.contractorJobApplicationService.createContractorJob(PROJECT_ID, contractorJobDto)
         then:
-            1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithoutCooperatorJobs()
+            1 * this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProjectWithoutCooperatorJobs())
     }
 
     def "createContractorJob should call save on projectRepository"() {
@@ -120,7 +119,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
             this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_CONTRACTOR_JOB_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_WITH_CONTRACTOR_JOB_ID)
     }
 
     def "deleteContractorJob should call load on projectRepository"() {
@@ -130,7 +129,8 @@ class ContractorJobApplicationServiceImplTest extends Specification {
             this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID)
         then:
-            1 * this.projectRepository.load(PROJECT_WITH_CONTRACTOR_JOB_ID) >> this.prepareProjectWithContractorJob()
+            1 * this.projectRepository.findById(PROJECT_WITH_CONTRACTOR_JOB_ID) >>
+                    Optional.of(this.prepareProjectWithContractorJob())
     }
 
     def "deleteContractorJob should call validateContractorJobOnProjectExistence on contractorJobValidator"() {
@@ -184,7 +184,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
             this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_CONTRACTOR_JOB_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_WITH_CONTRACTOR_JOB_ID)
     }
 
     def "updateContractorJob should call load on projectRepository"() {
@@ -195,7 +195,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
             this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
         then:
-            1 * this.projectRepository.load(PROJECT_WITH_CONTRACTOR_JOB_ID) >> this.prepareProjectWithContractorJob()
+            1 * this.projectRepository.findById(PROJECT_WITH_CONTRACTOR_JOB_ID) >> Optional.of(this.prepareProjectWithContractorJob())
     }
 
     def "updateContractorJob should call validateContractorJobOnProjectExistence on contractJobValidator"() {
@@ -310,12 +310,12 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     private void mockProjectRepositoryWithProjectWithoutCooperatorJobs() {
         Project project = this.prepareProjectWithoutCooperatorJobs()
-        this.projectRepository.load(PROJECT_ID) >> project
+        this.projectRepository.findById(PROJECT_ID) >> Optional.of(project)
     }
 
     private void mockProjectRepositoryWithProjectWithContractorJobs() {
         Project project = this.prepareProjectWithContractorJob()
-        this.projectRepository.load(PROJECT_WITH_CONTRACTOR_JOB_ID) >> project
+        this.projectRepository.findById(PROJECT_WITH_CONTRACTOR_JOB_ID) >> Optional.of(project)
     }
 
     private Project prepareProjectWithoutCooperatorJobs() {

@@ -6,14 +6,17 @@ import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto;
 import com.arturjarosz.task.systemparameter.model.SystemParameter;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @Component
 public class SystemParameterApplicationValidator {
 
-    public void validateParameterExistence(SystemParameter systemParameter, String name) {
-        assertNotNull(systemParameter,
+    public void validateParameterExistence(Optional<SystemParameter> maybeSystemParameter, String name) {
+        assertIsTrue(maybeSystemParameter.isPresent(),
                 createMessageCode(ExceptionCodes.NOT_EXIST, SystemParameterExceptionCodes.SYSTEM_PARAMETER,
                         SystemParameterExceptionCodes.NAME), name);
     }

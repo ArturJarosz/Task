@@ -1,8 +1,8 @@
 package com.arturjarosz.task.supplier.application
 
-import com.arturjarosz.task.supplier.application.SupplierValidator
+
 import com.arturjarosz.task.supplier.application.dto.SupplierDto
-import com.arturjarosz.task.supplier.infrastructure.impl.SupplierRepositoryImpl
+import com.arturjarosz.task.supplier.infrastructure.SupplierRepository
 import com.arturjarosz.task.supplier.model.Supplier
 import com.arturjarosz.task.supplier.model.SupplierCategory
 import spock.lang.Specification
@@ -14,7 +14,7 @@ class SupplierValidatorTest extends Specification {
     private final static String NAME = "name"
     private final static SupplierCategory SUPPLIER_CATEGORY = SupplierCategory.PAINT_SHOP
 
-    def supplierRepository = Mock(SupplierRepositoryImpl)
+    def supplierRepository = Mock(SupplierRepository)
 
     @Subject
     def supplierValidator = new SupplierValidator(supplierRepository)
@@ -37,11 +37,11 @@ class SupplierValidatorTest extends Specification {
             exception.message == exceptionMessage
 
         where:
-            givenSupplierDto  | name | category || exceptionMessage
-            null              | null | null     || "isNull.supplier"
+            givenSupplierDto  | name | category          || exceptionMessage
+            null              | null | null              || "isNull.supplier"
             new SupplierDto() | null | SUPPLIER_CATEGORY || "isNull.supplier.name"
             new SupplierDto() | ""   | SUPPLIER_CATEGORY || "isEmpty.supplier.name"
-            new SupplierDto() | NAME | null     || "isNull.supplier.category"
+            new SupplierDto() | NAME | null              || "isNull.supplier.category"
 
     }
 
@@ -74,11 +74,11 @@ class SupplierValidatorTest extends Specification {
             exception.message == exceptionMessage
 
         where:
-            givenSupplierDto  | name | category || exceptionMessage
-            null              | null | null     || "isNull.supplier"
+            givenSupplierDto  | name | category          || exceptionMessage
+            null              | null | null              || "isNull.supplier"
             new SupplierDto() | null | SUPPLIER_CATEGORY || "isNull.supplier.name"
             new SupplierDto() | ""   | SUPPLIER_CATEGORY || "isEmpty.supplier.name"
-            new SupplierDto() | NAME | null     || "isNull.supplier.category"
+            new SupplierDto() | NAME | null              || "isNull.supplier.category"
 
     }
 
@@ -117,11 +117,11 @@ class SupplierValidatorTest extends Specification {
     }
 
     private void mockSupplierRepositoryLoadOfExistingSupplier() {
-        1 * this.supplierRepository.load(EXISTING_SUPPLIER_ID) >> new Supplier(NAME, SUPPLIER_CATEGORY)
+        1 * this.supplierRepository.findById(EXISTING_SUPPLIER_ID) >> Optional.of(new Supplier(NAME, SUPPLIER_CATEGORY))
     }
 
     private void mockSupplierRepositoryLoadOfNotExistingSupplier() {
-        1 * this.supplierRepository.load(NOT_EXISTING_SUPPLIER_ID) >> null
+        1 * this.supplierRepository.findById(NOT_EXISTING_SUPPLIER_ID) >> Optional.ofNullable(null)
     }
 
 }

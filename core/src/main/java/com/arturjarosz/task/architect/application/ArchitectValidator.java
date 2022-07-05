@@ -13,8 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 /**
  * Validates architect related dtos and Architect domain model.
@@ -26,8 +29,7 @@ public class ArchitectValidator {
     private final ProjectQueryService projectQueryService;
 
     @Autowired
-    public ArchitectValidator(ArchitectRepository architectRepository,
-                              ProjectQueryService projectQueryService) {
+    public ArchitectValidator(ArchitectRepository architectRepository, ProjectQueryService projectQueryService) {
         this.architectRepository = architectRepository;
         this.projectQueryService = projectQueryService;
     }
@@ -40,8 +42,7 @@ public class ArchitectValidator {
     }
 
     public static void validateArchitectDto(ArchitectDto architectDto) {
-        assertIsTrue(architectDto != null,
-                createMessageCode(ExceptionCodes.NULL, ArchitectExceptionCodes.ARCHITECT));
+        assertIsTrue(architectDto != null, createMessageCode(ExceptionCodes.NULL, ArchitectExceptionCodes.ARCHITECT));
         validateName(architectDto.getFirstName(), ArchitectExceptionCodes.FIRST_NAME);
         validateName(architectDto.getLastName(), ArchitectExceptionCodes.LAST_NAME);
     }
@@ -53,14 +54,14 @@ public class ArchitectValidator {
                 createMessageCode(ExceptionCodes.EMPTY, ArchitectExceptionCodes.ARCHITECT, nameExceptionCode));
     }
 
-    public static void validateArchitectExistence(Architect architect, Long architectId) {
-        assertIsTrue(architect != null,
+    public static void validateArchitectExistence(Optional<Architect> maybeArchitect, Long architectId) {
+        assertIsTrue(maybeArchitect.isPresent(),
                 BaseValidator.createMessageCode(ExceptionCodes.NOT_EXIST, ArchitectExceptionCodes.ARCHITECT),
                 architectId);
     }
 
     public void validateArchitectExistence(Long architectId) {
-        Architect architect = this.architectRepository.load(architectId);
+        Optional<Architect> architect = this.architectRepository.findById(architectId);
         validateArchitectExistence(architect, architectId);
     }
 

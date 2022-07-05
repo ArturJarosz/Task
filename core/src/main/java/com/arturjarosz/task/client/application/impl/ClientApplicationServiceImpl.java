@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationService
 public class ClientApplicationServiceImpl implements ClientApplicationService {
@@ -52,7 +53,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
         this.clientValidator.validateClientExistence(clientId);
         this.clientValidator.validateClientHasNoProjects(clientId);
-        this.clientRepository.remove(clientId);
+        this.clientRepository.deleteById(clientId);
 
         LOG.debug("Client with id {} removed.", clientId);
     }
@@ -61,11 +62,11 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     public ClientDto getClient(Long clientId) {
         LOG.debug("Loading Client with id {}", clientId);
 
-        Client client = this.clientRepository.load(clientId);
-        this.clientValidator.validateClientExistence(client, clientId);
+        Optional<Client> maybeClient = this.clientRepository.findById(clientId);
+        this.clientValidator.validateClientExistence(maybeClient, clientId);
 
         LOG.debug("Client with id {} loaded.", clientId);
-        return ClientDtoMapper.INSTANCE.clientToClientDto(client);
+        return ClientDtoMapper.INSTANCE.clientToClientDto(maybeClient.get());
     }
 
     @Transactional
@@ -73,8 +74,9 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     public ClientDto updateClient(Long clientId, ClientDto clientDto) {
         LOG.debug("Updating Client with id {}.", clientId);
 
-        this.clientValidator.validateClientExistence(clientId);
-        Client client = this.clientRepository.load(clientId);
+        Optional<Client> maybeClient = this.clientRepository.findById(clientId);
+        this.clientValidator.validateClientExistence(maybeClient, clientId);
+        Client client = maybeClient.get();
         this.clientValidator.validateClientDtoPresence(clientDto);
         if (client.isPrivate()) {
             this.clientValidator.validatePrivateClient(clientDto);
@@ -84,13 +86,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
             client.updateCompanyName(clientDto.getCompanyName());
         }
         if (clientDto.getContact() != null) {
-            if (clientDto.getContact().getAddress() != null) {
-                client.updateAddress(ClientDtoMapper.INSTANCE.addressDtoToAddress(clientDto.getContact().getAddress()));
-            }
-            if (clientDto.getContact().getEmail() != null) {
-                client.updateEmail(clientDto.getContact().getEmail());
-            }
-            client.updateTelephone(clientDto.getContact().getTelephone());
+            this.updateClientContact(clientDto, client);
         }
         if (clientDto.getNote() != null) {
             client.updateNote(clientDto.getNote());
@@ -101,15 +97,25 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         return ClientDtoMapper.INSTANCE.clientToClientDto(client);
     }
 
+    private void updateClientContact(ClientDto clientDto, Client client) {
+        if (clientDto.getContact().getAddress() != null) {
+            client.updateAddress(ClientDtoMapper.INSTANCE.addressDtoToAddress(clientDto.getContact().getAddress()));
+        }
+        if (clientDto.getContact().getEmail() != null) {
+            client.updateEmail(clientDto.getContact().getEmail());
+        }
+        client.updateTelephone(clientDto.getContact().getTelephone());
+    }
+
     @Override
     public List<ClientDto> getBasicClients() {
-        return this.clientRepository.loadAll().stream().map(ClientDtoMapper.INSTANCE::clientToClientBasicDto).toList();
+        return this.clientRepository.findAll().stream().map(ClientDtoMapper.INSTANCE::clientToClientBasicDto).toList();
     }
 
     @Override
     public ClientDto getClientBasicData(Long clientId) {
-        Client client = this.clientRepository.load(clientId);
-        this.clientValidator.validateClientExistence(client, clientId);
-        return ClientDtoMapper.INSTANCE.clientToClientBasicDto(client);
+        Optional<Client> maybeClient = this.clientRepository.findById(clientId);
+        this.clientValidator.validateClientExistence(maybeClient, clientId);
+        return ClientDtoMapper.INSTANCE.clientToClientBasicDto(maybeClient.get());
     }
 }

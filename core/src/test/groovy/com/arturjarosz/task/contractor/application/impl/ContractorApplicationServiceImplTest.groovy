@@ -1,8 +1,9 @@
 package com.arturjarosz.task.contractor.application.impl
 
+import com.arturjarosz.task.contract.intrastructure.ContractRepository
 import com.arturjarosz.task.contractor.application.ContractorValidator
 import com.arturjarosz.task.contractor.application.dto.ContractorDto
-import com.arturjarosz.task.contractor.infrastructure.impl.ContractorRepositoryImpl
+import com.arturjarosz.task.contractor.infrastructure.ContractorRepository
 import com.arturjarosz.task.contractor.model.Contractor
 import com.arturjarosz.task.contractor.model.ContractorCategory
 import spock.lang.Specification
@@ -18,11 +19,12 @@ class ContractorApplicationServiceImplTest extends Specification {
     final static String NOTE = "note"
     final static Long CONTRACTOR_ID = 1L
 
-    def contractorRepository = Mock(ContractorRepositoryImpl)
+    def contractorRepository = Mock(ContractRepository)
     def contractorValidator = Mock(ContractorValidator)
 
     @Subject
-    def contractorApplicationService = new ContractorApplicationServiceImpl(contractorRepository, contractorValidator)
+    def contractorApplicationService = new ContractorApplicationServiceImpl(
+            contractorRepository as ContractorRepository, contractorValidator)
 
 
     def "createContractor should call validateCreateContractorDto from contractorValidator"() {
@@ -125,7 +127,7 @@ class ContractorApplicationServiceImplTest extends Specification {
             this.contractorApplicationService.deleteContractor(CONTRACTOR_ID)
 
         then:
-            1 * this.contractorRepository.remove(CONTRACTOR_ID)
+            1 * this.contractorRepository.deleteById(CONTRACTOR_ID)
     }
 
     def "getContactor should call validateContractorExistence on contractorValidator"() {
@@ -152,6 +154,6 @@ class ContractorApplicationServiceImplTest extends Specification {
     }
 
     private void mockContractorRepositoryLoad(Long contractorId) {
-        this.contractorRepository.load(contractorId) >> new Contractor(NAME, CATEGORY)
+        this.contractorRepository.findById(contractorId) >> Optional.of(new Contractor(NAME, CATEGORY))
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @ApplicationService
 public class InstallmentApplicationServiceImpl implements InstallmentApplicationService {
@@ -32,8 +33,8 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     private final StageValidator stageValidator;
 
     public InstallmentApplicationServiceImpl(InstallmentDomainService installmentDomainService,
-                                             ProjectValidator projectValidator, ProjectQueryService projectQueryService,
-                                             ProjectRepository projectRepository, StageValidator stageValidator) {
+            ProjectValidator projectValidator, ProjectQueryService projectQueryService,
+            ProjectRepository projectRepository, StageValidator stageValidator) {
         this.installmentDomainService = installmentDomainService;
         this.projectValidator = projectValidator;
         this.projectQueryService = projectQueryService;
@@ -46,12 +47,13 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     public InstallmentDto createInstallment(Long projectId, Long stageId, InstallmentDto installmentDto) {
         LOG.debug("creating installment");
 
-        this.projectValidator.validateProjectExistence(projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.stageValidator.validateStageNotHavingInstallment(stageId);
         InstallmentValidator.validateCreateInstallmentDto(installmentDto);
         Installment installment = InstallmentDtoMapper.INSTANCE.installmentDtoToInstallment(installmentDto);
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
         project.addInstallmentToStage(stageId, installment);
         project = this.projectRepository.save(project);
 
@@ -65,10 +67,11 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     public InstallmentDto updateInstallment(Long projectId, Long stageId, InstallmentDto installmentDto) {
         LOG.debug("updating installment");
 
-        this.projectValidator.validateProjectExistence(projectId);
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
         Installment installment = this.installmentDomainService.updateInstallment(stage.getInstallment(),
                 installmentDto);
         LOG.debug("installment for stage with id {} updated", stageId);
@@ -81,10 +84,11 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     public void removeInstallment(Long projectId, Long stageId) {
         LOG.debug("removing installment");
 
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
         stage.removeInstallment();
 
         LOG.debug("installment for stage with id {} removed", stageId);
@@ -96,10 +100,11 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     public InstallmentDto payInstallment(Long projectId, Long stageId, InstallmentDto installmentDto) {
         LOG.debug("paying for installment");
 
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
         Installment installment = this.installmentDomainService.payInstallment(stage, installmentDto.getPaymentDate());
 
         LOG.debug("payment for installment on stage with id {} made", stageId);
@@ -111,8 +116,9 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     public List<InstallmentDto> getInstallmentList(Long projectId) {
         LOG.debug("getting list of installments for project with id {}", projectId);
 
+        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        Project project = this.projectRepository.load(projectId);
+        Project project = maybeProject.get();
         return project.getStages().stream().map(Stage::getInstallment).filter(Objects::nonNull)
                 .map(InstallmentDtoMapper.INSTANCE::installmentToInstallmentDto).toList();
     }

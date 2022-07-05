@@ -1,7 +1,9 @@
 package com.arturjarosz.task.architect.infrastructure.repository;
 
 import com.arturjarosz.task.architect.model.Architect;
-import com.arturjarosz.task.sharedkernel.infrastructure.AbstractBaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ArchitectRepository extends AbstractBaseRepository<Architect> {
+@Repository
+public interface ArchitectRepository extends JpaRepository<Architect, Long> {
 }

@@ -11,7 +11,7 @@ import com.arturjarosz.task.supervision.application.SupervisionValidator
 import com.arturjarosz.task.supervision.application.SupervisionVisitValidator
 import com.arturjarosz.task.supervision.application.dto.SupervisionDto
 import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto
-import com.arturjarosz.task.supervision.infrastructure.repository.impl.SupervisionRepositoryImpl
+import com.arturjarosz.task.supervision.infrastructure.repository.SupervisionRepository
 import com.arturjarosz.task.supervision.model.Supervision
 import com.arturjarosz.task.supervision.model.SupervisionVisit
 import com.arturjarosz.task.supervision.query.impl.SupervisionQueryServiceImpl
@@ -42,7 +42,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def projectValidator = Mock(ProjectValidator)
     def supervisionValidator = Mock(SupervisionValidator)
     def supervisionVisitValidator = Mock(SupervisionVisitValidator)
-    def supervisionRepository = Mock(SupervisionRepositoryImpl)
+    def supervisionRepository = Mock(SupervisionRepository)
     def supervisionQueryService = Mock(SupervisionQueryServiceImpl)
     def projectFinancialDataApplicationService = Mock(ProjectFinancialDataServiceImpl)
 
@@ -177,7 +177,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.deleteSupervision(SUPERVISION_ID)
         then:
-            1 * this.supervisionRepository.remove(SUPERVISION_ID)
+            1 * this.supervisionRepository.deleteById(SUPERVISION_ID)
     }
 
     def "getSupervision should return supervision loaded from supervisionRepository"() {
@@ -185,7 +185,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.getSupervision(SUPERVISION_ID)
         then:
-            1 * this.supervisionRepository.load(SUPERVISION_ID)
+            1 * this.supervisionRepository.findById(SUPERVISION_ID) >> Optional.of(this.createSupervisionWithFinancialData())
     }
 
     def "createSupervisionVisit should validate Supervision existence"() {
@@ -374,11 +374,11 @@ class SupervisionApplicationServiceImplTest extends Specification {
     }
 
     private void mockSupervisionRepositoryLoad() {
-        this.supervisionRepository.load(SUPERVISION_ID) >> this.createSupervisionWithFinancialData()
+        this.supervisionRepository.findById(SUPERVISION_ID) >> Optional.of(this.createSupervisionWithFinancialData())
     }
 
     private void mockSupervisionRepositoryLoadWithSupervisionVisit() {
-        this.supervisionRepository.load(SUPERVISION_ID) >> this.createSupervisionWithSupervisionVisit()
+        this.supervisionRepository.findById(SUPERVISION_ID) >> Optional.of(this.createSupervisionWithSupervisionVisit())
 
     }
 
