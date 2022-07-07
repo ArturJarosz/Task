@@ -62,7 +62,7 @@ public class CostApplicationServiceImpl implements CostApplicationService {
     @Override
     public CostDto updateCost(Long projectId, Long costId, CostDto costDto) {
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
-        this.projectValidator.validateProjectExistence(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.costValidator.validateCostExistence(costId);
         this.costValidator.validateUpdateCostDto(costDto);
         Project project = maybeProject.get();

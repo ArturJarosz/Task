@@ -51,4 +51,8 @@ public class SupplierValidator {
     public void validateSupplierHasNoSupply(Long supplierId) {
         //TODO: to implemented when SupplierJob is ready
     }
+
+    public void validateSupplierExistence(Optional<Supplier> maybeSupplier, Long supplierId) {
+        assertIsTrue(maybeSupplier.isPresent(), createMessageCode(ExceptionCodes.NOT_EXIST, SupplierExceptionCodes.SUPPLIER));
+    }
 }

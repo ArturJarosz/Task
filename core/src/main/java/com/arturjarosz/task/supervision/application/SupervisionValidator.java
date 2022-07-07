@@ -2,9 +2,12 @@ package com.arturjarosz.task.supervision.application;
 
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.supervision.application.dto.SupervisionDto;
+import com.arturjarosz.task.supervision.model.Supervision;
 import com.arturjarosz.task.supervision.query.SupervisionQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
@@ -62,6 +65,11 @@ public class SupervisionValidator {
 
     public void validateSupervisionExistence(Long supervisionId) {
         assertIsTrue(this.supervisionQueryService.supervisionExists(supervisionId),
-                createMessageCode(ExceptionCodes.NOT_EXIST, SupervisionExceptionCodes.SUPERVISION));
+                createMessageCode(ExceptionCodes.NOT_EXIST, SupervisionExceptionCodes.SUPERVISION), supervisionId);
+    }
+
+    public void validateSupervisionExistence(Optional<Supervision> maybeSupervision, Long supervisionId) {
+        assertIsTrue(maybeSupervision.isPresent(),
+                createMessageCode(ExceptionCodes.NOT_EXIST, SupervisionExceptionCodes.SUPERVISION), supervisionId);
     }
 }

@@ -114,7 +114,6 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Override
     public ProjectDto finishProject(Long projectId, ProjectDto projectContractDto) {
         LOG.debug("Finishing Project with id {}.", projectId);
-        //TODO: TA-62 update conditions on what project can be ended
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         Project project = maybeProject.get();

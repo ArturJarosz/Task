@@ -85,7 +85,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         LOG.debug("removing installment");
 
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
-        this.projectValidator.validateProjectExistence(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);
         Project project = maybeProject.get();
@@ -101,7 +101,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         LOG.debug("paying for installment");
 
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
-        this.projectValidator.validateProjectExistence(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Stage stage = this.projectQueryService.getStageById(stageId);
         Project project = maybeProject.get();
@@ -117,7 +117,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         LOG.debug("getting list of installments for project with id {}", projectId);
 
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
-        this.projectValidator.validateProjectExistence(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         Project project = maybeProject.get();
         return project.getStages().stream().map(Stage::getInstallment).filter(Objects::nonNull)
                 .map(InstallmentDtoMapper.INSTANCE::installmentToInstallmentDto).toList();

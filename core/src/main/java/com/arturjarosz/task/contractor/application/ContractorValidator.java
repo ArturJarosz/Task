@@ -47,11 +47,16 @@ public class ContractorValidator {
     }
 
     public void validateContractorExistence(Long contractorId) {
-        Optional<Contractor> maybeContract = this.contractorRepository.findById(contractorId);
-        assertIsTrue(maybeContract.isPresent(), createMessageCode(ExceptionCodes.NOT_EXIST, ContractorExceptionCodes.CONTRACTOR));
+        Optional<Contractor> maybeContractor = this.contractorRepository.findById(contractorId);
+        this.validateContractorExistence(maybeContractor, contractorId);
     }
 
     public void validateContractorHasNoJobs(Long contractorId) {
         //TODO: to implemented when CooperatorJob is ready
+    }
+
+    public void validateContractorExistence(Optional<Contractor> maybeContractor, Long contractorId) {
+        assertIsTrue(maybeContractor.isPresent(),
+                createMessageCode(ExceptionCodes.NOT_EXIST, ContractorExceptionCodes.CONTRACTOR), contractorId);
     }
 }

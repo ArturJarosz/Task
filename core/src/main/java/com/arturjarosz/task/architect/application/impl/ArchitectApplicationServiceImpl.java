@@ -52,8 +52,7 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     public void removeArchitect(Long architectId) {
         LOG.debug("removing architect");
 
-        Optional<Architect> maybeArchitect = this.architectRepository.findById(architectId);
-        validateArchitectExistence(maybeArchitect, architectId);
+        this.architectValidator.validateArchitectExistence(architectId);
         this.architectValidator.validateArchitectHasNoProjects(architectId);
         this.architectRepository.deleteById(architectId);
 

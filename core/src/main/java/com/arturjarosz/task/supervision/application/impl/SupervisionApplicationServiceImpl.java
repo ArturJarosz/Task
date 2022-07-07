@@ -68,7 +68,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         LOG.debug("Updating supervision with id {}.", supervisionId);
 
         Optional<Supervision> maybeSupervision = this.supervisionRepository.findById(supervisionId);
-        this.supervisionValidator.validateSupervisionExistence(supervisionId);
+        this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
         this.supervisionValidator.validateUpdateSupervision(supervisionDto);
         Supervision supervision = maybeSupervision.get();
         supervision.update(supervisionDto);
@@ -95,7 +95,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     public SupervisionDto getSupervision(Long supervisionId) {
         LOG.debug("Retrieving supervision with id {}.", supervisionId);
         Optional<Supervision> maybeSupervision = this.supervisionRepository.findById(supervisionId);
-        this.supervisionValidator.validateSupervisionExistence(supervisionId);
+        this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
         return SupervisionDtoMapper.INSTANCE.supervisionToSupervisionDto(maybeSupervision.get());
     }
 
@@ -105,7 +105,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         LOG.debug("Creating visit for supervision with id {}.", supervisionId);
 
         Optional<Supervision> maybeSupervision = this.supervisionRepository.findById(supervisionId);
-        this.supervisionValidator.validateSupervisionExistence(supervisionId);
+        this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
         this.supervisionVisitValidator.validateCreateSupervisionVisit(supervisionVisitDto);
         Supervision supervision = maybeSupervision.get();
         SupervisionVisit supervisionVisit = new SupervisionVisit(supervisionVisitDto.getDateOfVisit(),
@@ -131,7 +131,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         LOG.debug("Updating supervision visit with id {}.", supervisionVisitId);
 
         Optional<Supervision> maybeSupervision = this.supervisionRepository.findById(supervisionId);
-        this.supervisionValidator.validateSupervisionExistence(supervisionId);
+        this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
         this.supervisionVisitValidator.validateUpdateSupervisionVisit(supervisionVisitDto);
         this.supervisionVisitValidator.validateSupervisionHavingSupervisionVisit(supervisionId, supervisionVisitId);
         Supervision supervision = maybeSupervision.get();
@@ -161,7 +161,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         LOG.debug("Removing supervision visit with id {}.", supervisionVisitId);
 
         Optional<Supervision> maybeSupervision = this.supervisionRepository.findById(supervisionId);
-        this.supervisionValidator.validateSupervisionExistence(supervisionId);
+        this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
         this.supervisionVisitValidator.validateSupervisionHavingSupervisionVisit(supervisionId, supervisionVisitId);
         Supervision supervision = maybeSupervision.get();
         supervision.removeSupervisionVisit(supervisionVisitId);
