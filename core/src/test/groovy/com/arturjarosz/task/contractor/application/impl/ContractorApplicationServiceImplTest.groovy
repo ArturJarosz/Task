@@ -60,7 +60,7 @@ class ContractorApplicationServiceImplTest extends Specification {
             this.contractorApplicationService.updateContractor(CONTRACTOR_ID, updateContractorDto)
 
         then:
-            1 * this.contractorValidator.validateContractorExistence(CONTRACTOR_ID)
+            1 * this.contractorValidator.validateContractorExistence(_ as Optional<Contractor>, CONTRACTOR_ID)
     }
 
     def "updateContractor should call validateUpdateContractorDto on contractorValidator"() {
@@ -138,7 +138,7 @@ class ContractorApplicationServiceImplTest extends Specification {
             this.contractorApplicationService.getContractor(CONTRACTOR_ID)
 
         then:
-            1 * this.contractorValidator.validateContractorExistence(CONTRACTOR_ID)
+            1 * this.contractorValidator.validateContractorExistence(_ as Optional<Contractor>, CONTRACTOR_ID)
     }
 
     def "getContractor should return contractorDto of given contractor"() {

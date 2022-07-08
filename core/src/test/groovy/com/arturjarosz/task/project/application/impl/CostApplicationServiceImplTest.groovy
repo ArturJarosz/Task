@@ -193,7 +193,7 @@ class CostApplicationServiceImplTest extends Specification {
         when:
             this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_COST_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_WITH_COST_ID)
     }
 
     def "updateCost should call validateCostExistence"() {

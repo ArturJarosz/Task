@@ -108,7 +108,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.updateSupervision(SUPERVISION_ID, supervisionDto)
         then:
-            1 * this.supervisionValidator.validateSupervisionExistence(SUPERVISION_ID)
+            1 * this.supervisionValidator.validateSupervisionExistence(_ as Optional<Supervision>, SUPERVISION_ID)
     }
 
     def "updateSupervision should call validateUpdateSupervision from supervisionValidator"() {
@@ -196,7 +196,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.createSupervisionVisit(SUPERVISION_ID, supervisionVisitDto)
         then:
-            1 * this.supervisionValidator.validateSupervisionExistence(SUPERVISION_ID)
+            1 * this.supervisionValidator.validateSupervisionExistence(_ as Optional<Supervision>, SUPERVISION_ID)
     }
 
     def "createSupervisionVisit should validate supervisionVisitDto"() {
@@ -253,7 +253,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
             this.supervisionApplicationService.updateSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID,
                     supervisionVisitDto)
         then:
-            1 * this.supervisionValidator.validateSupervisionExistence(SUPERVISION_ID)
+            1 * this.supervisionValidator.validateSupervisionExistence(_ as Optional<Supervision>, SUPERVISION_ID)
     }
 
     def "updateSupervisionVisit validates supervisionVisitDto"() {
@@ -323,7 +323,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.deleteSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID)
         then:
-            1 * this.supervisionValidator.validateSupervisionExistence(SUPERVISION_ID)
+            1 * this.supervisionValidator.validateSupervisionExistence(_ as Optional<Supervision>, SUPERVISION_ID)
     }
 
     def "deleteSupervisionVisit validates if supervisionVisit presence on given supervision"() {
