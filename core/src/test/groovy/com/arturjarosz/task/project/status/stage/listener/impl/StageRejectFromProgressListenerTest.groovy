@@ -71,11 +71,11 @@ class StageRejectFromProgressListenerTest extends Specification {
             0 * projectStatusTransitionService._
     }
 
-    def "Rejecting stage from IN_PROGRESS on project with stages in only COMPLETED statuses should change project status to COMPLETED"() {
+    def "Rejecting stage from IN_PROGRESS on project with stages in only DONE statuses should change project status to DONE"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.IN_PROGRESS)
-            def stage2 = this.createStageWithStatus(StageStatus.COMPLETED)
-            def stage3 = this.createStageWithStatus(StageStatus.COMPLETED)
+            def stage2 = this.createStageWithStatus(StageStatus.DONE)
+            def stage3 = this.createStageWithStatus(StageStatus.DONE)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,
                             Sets.newHashSet(stage, stage2, stage3))
@@ -83,13 +83,13 @@ class StageRejectFromProgressListenerTest extends Specification {
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromProgressListener.onStageStatusChange(project)
         then:
-            1 * projectStatusTransitionService.completeWork(project)
+            1 * projectStatusTransitionService.finishWork(project)
     }
 
-    def "Rejecting stage from IN_PROGRESS on project with stage in COMPLETED and REJECTED statuses should change project stage to COMPLETED"() {
+    def "Rejecting stage from IN_PROGRESS on project with stage in DONE and REJECTED statuses should change project stage to DONE"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.IN_PROGRESS)
-            def stage2 = this.createStageWithStatus(StageStatus.COMPLETED)
+            def stage2 = this.createStageWithStatus(StageStatus.DONE)
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,
@@ -98,7 +98,7 @@ class StageRejectFromProgressListenerTest extends Specification {
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromProgressListener.onStageStatusChange(project)
         then:
-            1 * projectStatusTransitionService.completeWork(project)
+            1 * projectStatusTransitionService.finishWork(project)
     }
 
     private Stage createStageWithStatus(StageStatus stageStatus) {

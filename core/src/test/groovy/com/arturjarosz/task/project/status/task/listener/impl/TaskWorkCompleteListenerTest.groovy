@@ -17,20 +17,20 @@ class TaskWorkCompleteListenerTest extends Specification {
     def stageWorkflowService = Mock(StageWorkflowServiceImpl)
     def taskWorkCompleteListener = new TaskWorkCompleteListener(stageWorkflowService)
 
-    def "When finishing work on the only task on stage in IN_PROGRESS status should change status of that stage to COMPLETED"() {
+    def "When finishing work on the only task on stage in IN_PROGRESS status should change status of that stage to DONE"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
             def stage =
                     this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS, Arrays.asList(task))
             def project = this.createProjectWithGivenStage(stage)
         when:
-            task.changeStatus(TaskStatus.COMPLETED)
+            task.changeStatus(TaskStatus.DONE)
             this.taskWorkCompleteListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.COMPLETED)
+            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.DONE)
     }
 
-    def "When finishing work on the task on stage in IN_PROGRESS, and rest tasks are REJECTED, status should change status of that stage to COMPLETED"() {
+    def "When finishing work on the task on stage in IN_PROGRESS, and rest tasks are REJECTED, status should change status of that stage to DONE"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.REJECTED)
@@ -39,37 +39,37 @@ class TaskWorkCompleteListenerTest extends Specification {
                     this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS, Arrays.asList(task, task2, task3))
             def project = this.createProjectWithGivenStage(stage)
         when:
-            task.changeStatus(TaskStatus.COMPLETED)
+            task.changeStatus(TaskStatus.DONE)
             this.taskWorkCompleteListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.COMPLETED)
+            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.DONE)
     }
 
-    def "When finishing work on the task on stage in IN_PROGRESS, and rest tasks are REJECTED or COMPLETED, status should change status of that stage to COMPLETED"() {
+    def "When finishing work on the task on stage in IN_PROGRESS, and rest tasks are REJECTED or DONE, status should change status of that stage to DONE"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.REJECTED)
-            def task3 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task3 = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def stage =
                     this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS, Arrays.asList(task, task2, task3))
             def project = this.createProjectWithGivenStage(stage)
         when:
-            task.changeStatus(TaskStatus.COMPLETED)
+            task.changeStatus(TaskStatus.DONE)
             this.taskWorkCompleteListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.COMPLETED)
+            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.DONE)
     }
 
     def "When finishing work on the task on stage in IN_PROGRESS, and there is at least on task in TO_DO, status of stage should not change"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
-            def task3 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task3 = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def stage =
                     this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS, Arrays.asList(task, task2, task3))
             def project = this.createProjectWithGivenStage(stage)
         when:
-            task.changeStatus(TaskStatus.COMPLETED)
+            task.changeStatus(TaskStatus.DONE)
             this.taskWorkCompleteListener.onTaskStatusChange(project, STAGE_ID)
         then:
             0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
@@ -78,13 +78,13 @@ class TaskWorkCompleteListenerTest extends Specification {
     def "When finishing work on the task on stage in IN_PROGRESS, and there is at least on task in IN_PROGRESS, status of stage should not change"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
-            def task2 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task2 = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def task3 = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
             def stage =
                     this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS, Arrays.asList(task, task2, task3))
             def project = this.createProjectWithGivenStage(stage)
         when:
-            task.changeStatus(TaskStatus.COMPLETED)
+            task.changeStatus(TaskStatus.DONE)
             this.taskWorkCompleteListener.onTaskStatusChange(project, STAGE_ID)
         then:
             0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)

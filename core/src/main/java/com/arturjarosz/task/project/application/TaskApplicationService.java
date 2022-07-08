@@ -51,7 +51,7 @@ public interface TaskApplicationService {
     TaskDto rejectTask(Long projectId, Long stageId, Long taskId);
 
     /**
-     * Allows continuing work on Task, changing its status to To Do. If Project, Stage or Task do not exist,
+     * Allows continuing work on Task, changing its status to TO_DO. If Project, Stage or Task do not exist,
      * new exception will be thrown.
      */
     TaskDto reopenTask(Long projectId, Long stageId, Long taskId);

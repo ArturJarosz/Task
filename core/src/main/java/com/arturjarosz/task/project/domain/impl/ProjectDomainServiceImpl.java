@@ -1,7 +1,5 @@
 package com.arturjarosz.task.project.domain.impl;
 
-import com.arturjarosz.task.project.application.dto.OfferDto;
-import com.arturjarosz.task.project.application.dto.ProjectContractDto;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
 import com.arturjarosz.task.project.application.mapper.ProjectDtoMapper;
@@ -32,35 +30,15 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
     }
 
     @Override
-    public Project createProject(ProjectCreateDto projectCreateDto) {
-        Project project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto, this.projectWorkflow);
+    public Project createProject(ProjectCreateDto projectCreateDto, Long contractId) {
+        Project project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto, contractId, this.projectWorkflow);
         this.projectStatusTransitionService.create(project);
         return project;
     }
 
     @Override
     public Project updateProject(Project project, ProjectDto projectDto) {
-        //TODO: to think what data should be updatable on project
         project.updateProjectData(projectDto.getName(), projectDto.getNote());
-        return project;
-    }
-
-    @Override
-    public Project signProjectContract(Project project, ProjectContractDto projectContractDto) {
-        LocalDate signingDate = projectContractDto.getSigningDate();
-        LocalDate startDate = projectContractDto.getStartDate();
-        LocalDate deadline = projectContractDto.getDeadline();
-        this.projectDataValidator.allDatesPresent(signingDate, startDate, deadline);
-        //signing date can't be future date
-        this.projectDataValidator.signingDateNotInFuture(signingDate);
-        //start date can't be before signing date
-        this.projectDataValidator.startDateNotBeforeSigningDate(startDate, signingDate);
-        //deadline can't be before start date
-        this.projectDataValidator.deadlineNotBeforeStartDate(startDate, deadline);
-        if (!project.isOfferAccepted()) {
-            project = this.acceptOffer(project);
-        }
-        project.signContract(signingDate, startDate, deadline);
         return project;
     }
 
@@ -74,7 +52,7 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
         this.projectDataValidator.endDateNotBeforeStartDate(project.getStartDate(), endDate);
         project.finishProject(endDate);
         // TODO TA-194: what does it mean to finish project ? is there a need to have action for that ?
-        //this.projectStatusTransitionService.completeWork(project);
+        this.projectStatusTransitionService.complete(project);
         return project;
     }
 
@@ -87,22 +65,6 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
     @Override
     public Project reopenProject(Project project) {
         this.projectStatusTransitionService.reopen(project);
-        return project;
-    }
-
-    @Override
-    public Project makeNewOffer(Project project, OfferDto offerDto) {
-        if (project.getStatus() != null) {
-            this.projectStatusTransitionService.makeNewOffer(project);
-        }
-        project.makeNewOffer(offerDto.getOfferValue());
-        return project;
-    }
-
-    @Override
-    public Project acceptOffer(Project project) {
-        project.acceptOffer();
-        this.projectStatusTransitionService.acceptOffer(project);
         return project;
     }
 }

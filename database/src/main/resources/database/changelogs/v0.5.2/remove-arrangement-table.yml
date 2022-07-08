@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "remove-arrangement-table"
+      changes:
+        - dropForeignKeyConstraint:
+            baseTableName: "PROJECT"
+            constraintName: "FK_PROJECT_ARRANGEMENT"
+        - dropTable:
+            tableName: "ARRANGEMENT"
+        - dropSequence:
+            sequenceName: "arrangement_sequence"
+

@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: "create-contract-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-contract-table.yml"
+      relativeToChangelogFile: true

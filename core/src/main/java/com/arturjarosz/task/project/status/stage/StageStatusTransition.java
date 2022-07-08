@@ -8,14 +8,14 @@ public enum StageStatusTransition implements StatusTransition<StageStatus> {
     START_PROGRESS(StageStatus.TO_DO, StageStatus.IN_PROGRESS),
     REJECT_FROM_TO_DO(StageStatus.TO_DO, StageStatus.REJECTED),
     // from IN_PROGRESS
-    COMPLETE_WORK(StageStatus.IN_PROGRESS, StageStatus.COMPLETED),
+    COMPLETE_WORK(StageStatus.IN_PROGRESS, StageStatus.DONE),
     REJECT_FROM_IN_PROGRESS(StageStatus.IN_PROGRESS, StageStatus.REJECTED),
     BACK_TO_TO_DO(StageStatus.IN_PROGRESS, StageStatus.TO_DO),
     // from REJECTED
     REOPEN(StageStatus.REJECTED, StageStatus.TO_DO),
     REOPEN_TO_PROGRESS(StageStatus.REJECTED, StageStatus.IN_PROGRESS),
     // from DONE
-    BACK_TO_IN_PROGRESS(StageStatus.COMPLETED, StageStatus.IN_PROGRESS);
+    BACK_TO_IN_PROGRESS(StageStatus.DONE, StageStatus.IN_PROGRESS);
 
     private final StageStatus currentStatus;
     private final StageStatus nextStatus;

@@ -5,9 +5,13 @@ import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @Component
 public class StageValidator {
@@ -15,6 +19,7 @@ public class StageValidator {
     private final ProjectRepository projectRepository;
     private final ProjectQueryService projectQueryService;
 
+    @Autowired
     public StageValidator(ProjectRepository projectRepository, ProjectQueryService projectQueryService) {
         this.projectRepository = projectRepository;
         this.projectQueryService = projectQueryService;
@@ -22,8 +27,6 @@ public class StageValidator {
 
     /**
      * Validates whether stageDto contains all needed data for creating stage, and validates their correctness.
-     *
-     * @param stageDto
      */
     public void validateCreateStageDto(StageDto stageDto) {
         this.validateBasicDate(stageDto);
@@ -31,8 +34,6 @@ public class StageValidator {
 
     /**
      * Validates whether stageDto contains all needed data for updating Stage, and validates their correctness.
-     *
-     * @param stageDto
      */
     public void validateUpdateStageDto(StageDto stageDto) {
         this.validateBasicDate(stageDto);
@@ -40,22 +41,17 @@ public class StageValidator {
 
     /**
      * Validates if Stage of given stageId exist.
-     *
-     * @param stageId
      */
     public void validateExistenceOfStageInProject(Long projectId, Long stageId) {
         Stage stage = this.projectRepository.load(projectId).getStages().stream()
-                .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
-                .findFirst()
-                .orElse(null);
-        assertNotNull(stage, createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
-                ProjectExceptionCodes.STAGE), stageId);
+                .filter(stageOnProject -> stageOnProject.getId().equals(stageId)).findFirst().orElse(null);
+        assertNotNull(stage,
+                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STAGE),
+                stageId);
     }
 
     /**
      * Validates basic data that are needed on stage creation and update.
-     *
-     * @param stageDto
      */
     private void validateBasicDate(StageDto stageDto) {
         assertNotNull(stageDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE));
@@ -69,8 +65,6 @@ public class StageValidator {
 
     /**
      * Checks if Installment is not set on Stage yet.
-     *
-     * @param stageId
      */
     public void validateStageNotHavingInstallment(Long stageId) {
         Stage stage = this.projectQueryService.getStageById(stageId);

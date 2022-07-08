@@ -21,6 +21,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     private static final PROJECT_WITH_CONTRACTOR_JOB_ID = 31L
     private static final Long ARCHITECT_ID = 40L
     private static final Long CLIENT_ID = 41L
+    private static final Long CONTRACT_ID = 50L
     private static final BigDecimal VALUE = new BigDecimal("100.0")
     private static final BigDecimal NEW_VALUE = new BigDecimal("200.0")
     private static final String NAME = "name"
@@ -319,7 +320,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     private Project prepareProjectWithoutCooperatorJobs() {
         Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
-                new ProjectWorkflow(), 0.0d)
+                new ProjectWorkflow(), CONTRACT_ID)
         return project
     }
 

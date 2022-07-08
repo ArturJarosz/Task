@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application.impl
 
+import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.TaskValidator
@@ -36,9 +37,10 @@ class TaskApplicationServiceImplTest extends Specification {
     private stageValidator = Mock(StageValidator)
     private taskDomainService = Mock(TaskDomainService)
     private taskValidator = Mock(TaskValidator)
+    private contractWorkflowValidator = Mock(ContractWorkflowValidator)
 
     def taskApplicationService = new TaskApplicationServiceImpl(projectQueryService, projectRepository,
-            projectValidator, stageValidator, taskDomainService, taskValidator)
+            projectValidator, stageValidator, taskDomainService, taskValidator, contractWorkflowValidator)
 
     def "createTask should call validateProjectExistence on ProjectValidator"() {
         given:
@@ -74,6 +76,18 @@ class TaskApplicationServiceImplTest extends Specification {
             this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto)
         then:
             1 * this.taskValidator.validateCreateTaskDto(_ as TaskDto)
+    }
+
+    def "createTask should call validateContractAllowsForWorkObjectsCreation on contractWorkflowValidator"() {
+        given:
+            TaskDto taskDto = this.prepareNewTaskDto()
+            this.mockProjectRepositoryLoad()
+            this.mockTaskDomainServiceCreateTask()
+            this.mockProjectRepositorySaveProjectWithStageAndTask()
+        when:
+            this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto)
+        then:
+            1 * this.contractWorkflowValidator.validateContractAllowsForWorkObjectsCreation(PROJECT_ID)
     }
 
     def "createTask should load project from ProjectRepository"() {
@@ -454,7 +468,7 @@ class TaskApplicationServiceImplTest extends Specification {
                 .withName(PROJECT_NAME)
                 .withId(PROJECT_ID)
                 .withStage(this.prepareStage())
-                .withStatus(ProjectStatus.OFFER)
+                .withStatus(ProjectStatus.TO_DO)
                 .build()
     }
 
@@ -463,7 +477,7 @@ class TaskApplicationServiceImplTest extends Specification {
                 .withName(PROJECT_NAME)
                 .withId(PROJECT_ID)
                 .withStage(this.prepareStageWithTask())
-                .withStatus(ProjectStatus.OFFER)
+                .withStatus(ProjectStatus.TO_DO)
                 .build()
     }
 

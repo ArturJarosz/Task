@@ -46,11 +46,11 @@ class TaskRejectFromProgressListenerTest extends Specification {
             1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.TO_DO)
     }
 
-    def "Rejecting task from stage in IN_PROGRESS status, while other tasks are in COMPLETED, should change status of stage to COMPLETED"() {
+    def "Rejecting task from stage in IN_PROGRESS status, while other tasks are in DONE, should change status of stage to DONE"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
-            def task2 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
-            def task3 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task2 = this.createTaskOfGivenStatus(TaskStatus.DONE)
+            def task3 = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def stage =
                     this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS,
                             Arrays.asList(task, task2, task3))
@@ -59,14 +59,14 @@ class TaskRejectFromProgressListenerTest extends Specification {
             task.changeStatus(TaskStatus.REJECTED)
             this.taskRejectFromProgressListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.COMPLETED)
+            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.DONE)
     }
 
     def "Rejecting task from stage in IN_PROGRESS status, while there is at least on task in IN_PROGRESS status, should not change status of stage"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
-            def task3 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task3 = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def stage =
                     this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS,
                             Arrays.asList(task, task2, task3))
@@ -78,11 +78,11 @@ class TaskRejectFromProgressListenerTest extends Specification {
             0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
     }
 
-    def "Rejecting task from stage in IN_PROGRESS status, while there are at least one of task in TO_DO and COMPLETED statuses, should not change status of stage"() {
+    def "Rejecting task from stage in IN_PROGRESS status, while there are at least one of task in TO_DO and DONE statuses, should not change status of stage"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
-            def task3 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task3 = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def stage =
                     this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.IN_PROGRESS,
                             Arrays.asList(task, task2, task3))

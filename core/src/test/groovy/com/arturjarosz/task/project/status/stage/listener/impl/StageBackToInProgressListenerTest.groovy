@@ -10,15 +10,15 @@ import com.arturjarosz.task.project.utils.StageBuilder
 import com.google.common.collect.Sets
 import spock.lang.Specification
 
-class StageBackToInProgressTest extends Specification {
+class StageBackToInProgressListenerTest extends Specification {
 
     def projectStatusTransitionService = Mock(ProjectStatusTransitionServiceImpl)
-    def stageBackToInProgress = new StageBackToInProgress(projectStatusTransitionService)
+    def stageBackToInProgress = new StageBackToInProgressListener(projectStatusTransitionService)
 
-    def "Changing status from COMPLETED to IN_PROGRESS of the only stage on project in COMPLETE status pushes project back to IN_PROGRESS"() {
+    def "Changing status from DONE to IN_PROGRESS of the only stage on project in DONE status pushes project back to IN_PROGRESS"() {
         given:
-            def stage = this.createStageWithStatus(StageStatus.COMPLETED)
-            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.COMPLETED, Sets.newHashSet(stage))
+            def stage = this.createStageWithStatus(StageStatus.DONE)
+            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.DONE, Sets.newHashSet(stage))
         when:
             stage.changeStatus(StageStatus.IN_PROGRESS)
             this.stageBackToInProgress.onStageStatusChange(project)
@@ -26,13 +26,13 @@ class StageBackToInProgressTest extends Specification {
             1 * projectStatusTransitionService.backToProgress(project)
     }
 
-    def "Changing status from COMPLETED to IN_PROGRESS of the stage on project in COMPLETE status with other stages pushes project back to IN_PROGRESS"() {
+    def "Changing status from DONE to IN_PROGRESS of the stage on project in DONE status with other stages pushes project back to IN_PROGRESS"() {
         given:
-            def stage = this.createStageWithStatus(StageStatus.COMPLETED)
+            def stage = this.createStageWithStatus(StageStatus.DONE)
             def stage2 = this.createStageWithStatus(StageStatus.REJECTED)
-            def stage3 = this.createStageWithStatus(StageStatus.COMPLETED)
+            def stage3 = this.createStageWithStatus(StageStatus.DONE)
             def project =
-                    this.createProjectWithGivenStatusAndStages(ProjectStatus.COMPLETED,
+                    this.createProjectWithGivenStatusAndStages(ProjectStatus.DONE,
                             Sets.newHashSet(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.IN_PROGRESS)
@@ -41,9 +41,9 @@ class StageBackToInProgressTest extends Specification {
             1 * projectStatusTransitionService.backToProgress(project)
     }
 
-    def "Changing status from COMPLETED to IN_PROGRESS of the stage on project in IN_PROGRESS status, with other stages does not changes project status"() {
+    def "Changing status from DONE to IN_PROGRESS of the stage on project in IN_PROGRESS status, with other stages does not changes project status"() {
         given:
-            def stage = this.createStageWithStatus(StageStatus.COMPLETED)
+            def stage = this.createStageWithStatus(StageStatus.DONE)
             def stage2 = this.createStageWithStatus(StageStatus.REJECTED)
             def stage3 = this.createStageWithStatus(StageStatus.IN_PROGRESS)
             def project =

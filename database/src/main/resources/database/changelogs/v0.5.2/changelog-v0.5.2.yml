@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: "remove-arrangement-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "contract/contract-changes.yml"
+      relativeToChangelogFile: true
+  - changeSet:
+      author: "liquibase"
+      id: "tag-version_0.5.2"
+      changes:
+        - tagDatabase:
+            tag: "v0.5.2"

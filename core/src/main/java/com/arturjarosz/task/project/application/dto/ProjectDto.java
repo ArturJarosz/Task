@@ -12,6 +12,7 @@ public class ProjectDto implements Serializable {
     private static final long serialVersionUID = 8501354213746117568L;
 
     private Long id;
+    private Long contractId;
     private ClientDto client;
     private ArchitectBasicDto architect;
     private String name;
@@ -23,7 +24,6 @@ public class ProjectDto implements Serializable {
     private String note;
     private ProjectStatus status;
     private Double projectValue;
-    private Boolean isOfferAccepted;
 
     public ProjectDto() {
         //needed by Hibernate
@@ -125,11 +125,11 @@ public class ProjectDto implements Serializable {
         this.projectValue = projectValue;
     }
 
-    public Boolean getOfferAccepted() {
-        return this.isOfferAccepted;
+    public Long getContractId() {
+        return this.contractId;
     }
 
-    public void setOfferAccepted(Boolean offerAccepted) {
-        this.isOfferAccepted = offerAccepted;
+    public void setContractId(Long contractId) {
+        this.contractId = contractId;
     }
 }

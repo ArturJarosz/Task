@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application.impl;
 
+import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.StageValidator;
@@ -27,16 +28,18 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     private final ProjectRepository projectRepository;
     private final StageDomainService stageDomainService;
     private final StageValidator stageValidator;
+    private final ContractWorkflowValidator contractWorkflowValidator;
 
     @Autowired
     public StageApplicationServiceImpl(ProjectQueryService projectQueryService, ProjectValidator projectValidator,
-                                       ProjectRepository projectRepository, StageDomainService stageDomainService,
-                                       StageValidator stageValidator) {
+            ProjectRepository projectRepository, StageDomainService stageDomainService, StageValidator stageValidator,
+            ContractWorkflowValidator contractWorkflowValidator) {
         this.projectQueryService = projectQueryService;
         this.projectValidator = projectValidator;
         this.projectRepository = projectRepository;
         this.stageDomainService = stageDomainService;
         this.stageValidator = stageValidator;
+        this.contractWorkflowValidator = contractWorkflowValidator;
     }
 
     @Transactional
@@ -45,6 +48,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         LOG.debug("Creating Stage for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateCreateStageDto(stageDto);
+        this.contractWorkflowValidator.validateContractAllowsForWorkObjectsCreation(projectId);
         Project project = this.projectRepository.load(projectId);
         Stage stage = this.stageDomainService.createStage(project, stageDto);
         project = this.projectRepository.save(project);

@@ -7,44 +7,34 @@ import java.util.Collection;
 import java.util.Collections;
 
 public enum ProjectStatus implements Status<ProjectStatus> {
-    OFFER {
+    TO_DO {
         @Override
         public Collection<ProjectStatus> getPossibleStatusTransitions() {
-            return Arrays.asList(REJECTED, TO_DO);
+            return Arrays.asList(IN_PROGRESS, REJECTED);
         }
     },
     REJECTED {
         @Override
         public Collection<ProjectStatus> getPossibleStatusTransitions() {
-            return Arrays.asList(OFFER, TO_DO, IN_PROGRESS);
+            return Arrays.asList(TO_DO, IN_PROGRESS);
         }
     },
-    TO_DO {
-        @Override
-        public Collection<ProjectStatus> getPossibleStatusTransitions() {
-            return Arrays.asList(IN_PROGRESS, REJECTED);
-
-        }
-    },
-
     IN_PROGRESS {
         @Override
         public Collection<ProjectStatus> getPossibleStatusTransitions() {
             return Arrays.asList(TO_DO, COMPLETED, REJECTED);
         }
     },
-
-    COMPLETED {
-        @Override
-        public Collection<ProjectStatus> getPossibleStatusTransitions() {
-            return Arrays.asList(IN_PROGRESS, DONE);
-        }
-    },
-
     DONE {
         @Override
         public Collection<ProjectStatus> getPossibleStatusTransitions() {
-            return Collections.singletonList(IN_PROGRESS);
+            return Arrays.asList(IN_PROGRESS, COMPLETED);
+        }
+    },
+    COMPLETED {
+        @Override
+        public Collection<ProjectStatus> getPossibleStatusTransitions() {
+            return Collections.emptyList();
         }
     };
 

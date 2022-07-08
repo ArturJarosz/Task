@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application.impl
 
+import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.dto.StageDto
@@ -34,9 +35,10 @@ class StageApplicationServiceImplTest extends Specification {
     def projectRepository = Mock(ProjectRepositoryImpl)
     def stageValidator = Mock(StageValidator)
     def stageDomainService = Mock(StageDomainService)
+    def contractWorkflowValidator = Mock(ContractWorkflowValidator)
 
     def stageApplicationService = new StageApplicationServiceImpl(projectQueryService, projectValidator,
-            projectRepository, stageDomainService, stageValidator)
+            projectRepository, stageDomainService, stageValidator, contractWorkflowValidator)
 
     def "createStage should call validateProjectExistence on projectValidator"() {
         given:
@@ -58,6 +60,17 @@ class StageApplicationServiceImplTest extends Specification {
             this.stageApplicationService.createStage(PROJECT_ID, stageDto)
         then:
             1 * this.stageValidator.validateCreateStageDto(_ as StageDto)
+    }
+
+    def "createStage should call validateContractAllowsForWorkObjectsCreation on contractWorkflowValidator"() {
+        given:
+            this.mockProjectRepositoryLoad()
+            StageDto stageDto = new StageDto()
+            this.mockProjectRepositorySaveProjectWithStage()
+        when:
+            this.stageApplicationService.createStage(PROJECT_ID, stageDto)
+        then:
+            1 * this.contractWorkflowValidator.validateContractAllowsForWorkObjectsCreation(PROJECT_ID)
     }
 
     def "createStage should load project from projectRepository"() {

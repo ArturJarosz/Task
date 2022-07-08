@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.application.impl
 
-
 import com.arturjarosz.task.finance.application.impl.ProjectFinanceAwareObjectServiceImpl
 import com.arturjarosz.task.project.application.CostValidator
 import com.arturjarosz.task.project.application.ProjectValidator
@@ -23,7 +22,8 @@ class CostApplicationServiceImplTest extends Specification {
     private final static BigDecimal NEW_VALUE = new BigDecimal("120.0")
     private final static Long ARCHITECT_ID = 33L
     private final static Long CLIENT_ID = 44L
-    private final static Long COST_ID = 100L
+    private final static Long CONTRACT_ID = 55L;
+    private final static Long COST_ID = 100L;
     private final static Long EXISTING_PROJECT_ID = 1L
     private final static Long NOT_EXISTING_PROJECT_ID = 900L
     private final static Long PROJECT_WITH_COST_ID = 2L
@@ -270,13 +270,13 @@ class CostApplicationServiceImplTest extends Specification {
 
     private Project prepareProjectWithNoCosts() {
         Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
-                PROJECT_WORKFLOW, 0.0D)
+                PROJECT_WORKFLOW, CONTRACT_ID)
         return project
     }
 
     private Project prepareProjectWithCost() {
         Project project = new Project(PROJECT_NAME, ARCHITECT_ID, CLIENT_ID, ProjectType.CONCEPT,
-                PROJECT_WORKFLOW, 0.0D)
+                PROJECT_WORKFLOW, CONTRACT_ID)
         def cost = new Cost(NAME, VALUE, CostCategory.FUEL, DATE, NOTE, true, true)
         TestUtils.setFieldForObject(cost, "id", COST_ID)
         project.addCost(cost)

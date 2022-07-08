@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional(readOnly = true)
 public class ProjectRepositoryImpl extends GenericJpaRepositoryImpl<Project, QProject> implements ProjectRepository {
-
     public static final QProject PROJECT = QProject.project;
 
     public ProjectRepositoryImpl() {

@@ -1,7 +1,6 @@
 package com.arturjarosz.task.project.utils;
 
-import com.arturjarosz.task.project.model.Contract;
-import com.arturjarosz.task.project.model.Offer;
+import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Supply;
@@ -83,10 +82,10 @@ public class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
         return this;
     }
 
-    public ProjectBuilder withOffer(Offer offer) {
+/*    public ProjectBuilder withOffer(Offer offer) {
         TestUtils.setFieldForObject(this.object, ARRANGEMENT, offer);
         return this;
-    }
+    }*/
 
     public ProjectBuilder withContract(Contract contract) {
         TestUtils.setFieldForObject(this.object, ARRANGEMENT, contract);

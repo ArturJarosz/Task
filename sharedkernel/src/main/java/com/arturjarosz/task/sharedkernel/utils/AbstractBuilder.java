@@ -34,8 +34,6 @@ public class AbstractBuilder<T extends AbstractEntity, B extends AbstractBuilder
 
     /**
      * Build entity T type object.
-     *
-     * @return
      */
     public T build() {
         return this.object;

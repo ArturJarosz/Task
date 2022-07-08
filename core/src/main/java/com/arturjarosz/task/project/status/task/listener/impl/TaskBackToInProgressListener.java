@@ -23,7 +23,7 @@ public class TaskBackToInProgressListener implements TaskStatusTransitionListene
                 .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .findFirst().orElse(null);
         assert stage != null;
-        if (stage.getStatus().equals(StageStatus.COMPLETED)) {
+        if (stage.getStatus().equals(StageStatus.DONE)) {
             this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.IN_PROGRESS);
         }
     }

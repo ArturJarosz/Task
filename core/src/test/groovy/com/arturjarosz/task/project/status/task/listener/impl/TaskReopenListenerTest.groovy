@@ -49,13 +49,13 @@ class TaskReopenListenerTest extends Specification {
             0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
     }
 
-    def "Reopening task in stage in COMPLETED status should change that stage status to IN_PROGRESS"() {
+    def "Reopening task in stage in DONE status should change that stage status to IN_PROGRESS"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.REJECTED)
-            def task2 = this.createTaskOfGivenStatus(TaskStatus.COMPLETED)
+            def task2 = this.createTaskOfGivenStatus(TaskStatus.DONE)
             def task3 = this.createTaskOfGivenStatus(TaskStatus.REJECTED)
             def stage =
-                    this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.COMPLETED,
+                    this.createStageWithIdStatusAndGivenTasks(STAGE_ID, StageStatus.DONE,
                             Arrays.asList(task, task2, task3))
             def project = this.createProjectWithGivenStage(stage)
         when:
