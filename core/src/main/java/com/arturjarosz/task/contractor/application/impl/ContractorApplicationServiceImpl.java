@@ -45,9 +45,9 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     @Override
     public void updateContractor(Long contractorId, ContractorDto contractorDto) {
         LOG.debug("Updating Contractor with id {}", contractorId);
-        this.contractorValidator.validateContractorExistence(contractorId);
-        this.contractorValidator.validateUpdateContractorDto(contractorDto);
         Optional<Contractor> maybeContractor = this.contractorRepository.findById(contractorId);
+        this.contractorValidator.validateContractorExistence(maybeContractor, contractorId);
+        this.contractorValidator.validateUpdateContractorDto(contractorDto);
         Contractor contractor = maybeContractor.get();
         contractor.update(contractorDto.getName(), contractorDto.getCategory(), contractorDto.getEmail(),
                 contractorDto.getTelephone(), contractorDto.getNote());
@@ -68,8 +68,8 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     @Override
     public ContractorDto getContractor(Long contractorId) {
         LOG.debug("Loading Contractor with id {}.", contractorId);
-        this.contractorValidator.validateContractorExistence(contractorId);
         Optional<Contractor> maybeContractor = this.contractorRepository.findById(contractorId);
+        this.contractorValidator.validateContractorExistence(maybeContractor, contractorId);
         ContractorDto contractorDto = ContractorDtoMapper.INSTANCE.contractorToContractorDto(maybeContractor.get());
         LOG.debug("Contractor with id {} loaded", contractorId);
         return contractorDto;

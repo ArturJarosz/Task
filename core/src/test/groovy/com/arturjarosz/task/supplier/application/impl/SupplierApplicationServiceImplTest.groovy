@@ -56,7 +56,7 @@ class SupplierApplicationServiceImplTest extends Specification {
             this.supplierApplicationService.updateSupplier(SUPPLIER_ID, updateSupplierDto)
 
         then:
-            1 * this.supplierValidator.validateSupplierExistence(SUPPLIER_ID)
+            1 * this.supplierValidator.validateSupplierExistence(_ as Optional<Supplier>, SUPPLIER_ID)
     }
 
     def "updateSupplier should call validateUpdateSupplierDto on supplierValidator"() {

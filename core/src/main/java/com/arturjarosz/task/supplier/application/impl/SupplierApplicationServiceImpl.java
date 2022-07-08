@@ -44,7 +44,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
         LOG.debug("Updating Supplier with id {}.", supplierId);
 
         Optional<Supplier> maybeSupplier = this.supplierRepository.findById(supplierId);
-        this.supplierValidator.validateSupplierExistence(supplierId);
+        this.supplierValidator.validateSupplierExistence(maybeSupplier, supplierId);
         this.supplierValidator.validateUpdateSupplierDto(supplierDto);
         Supplier supplier = maybeSupplier.get();
         supplier.update(supplierDto.getName(), supplierDto.getCategory(), supplierDto.getEmail(),
@@ -57,7 +57,6 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     @Override
     public void deleteSupplier(Long supplierId) {
         LOG.debug("Loading Supplier with id {}", supplierId);
-        Optional<Supplier> maybeSupplier = this.supplierRepository.findById(supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
         this.supplierValidator.validateSupplierHasNoSupply(supplierId);
         this.supplierRepository.deleteById(supplierId);
