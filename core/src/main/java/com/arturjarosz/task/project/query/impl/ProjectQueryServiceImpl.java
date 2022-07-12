@@ -21,6 +21,7 @@ import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 
@@ -118,5 +119,16 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
         return this.query().from(STAGE).where(STAGE.id.eq(stageId))
                 .select(Projections.constructor(StageStatusData.class, STAGE.status, STAGE.workflowName)).fetchOne();
 
+    }
+
+    @Override
+    public List<SupplyDto> getSuppliesForProject(Long projectId) {
+        Predicate isSupply = SUPPLY.type.eq(CooperatorJobType.SUPPLY);
+        return this.query().from(PROJECT).join(PROJECT.supplies, SUPPLY)
+                .where(PROJECT.id.eq(projectId).and(isSupply))
+                .select(Projections.bean(SupplyDto.class, SUPPLY.id, SUPPLY.name, SUPPLY.financialData.value.value,
+                        SUPPLY.cooperatorId.as("supplierId"), SUPPLY.note, SUPPLY.financialData.hasInvoice,
+                        SUPPLY.financialData.payable, SUPPLY.financialData.paid,
+                        Expressions.asNumber(projectId).as("projectId"))).fetch();
     }
 }
