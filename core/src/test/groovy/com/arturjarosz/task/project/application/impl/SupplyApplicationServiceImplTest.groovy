@@ -37,8 +37,8 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "createSupply should validate project existence"() {
         given:
-            mockProjectRepositoryLoad()
-            SupplyDto supplyDto = prepareCreateSupplyDto()
+            this.mockProjectRepositoryLoad()
+            SupplyDto supplyDto = this.prepareCreateSupplyDto()
         when:
             this.supplyApplicationService.createSupply(PROJECT_ID, supplyDto)
         then:
@@ -47,8 +47,8 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "createSupply should validate supply dto"() {
         given:
-            mockProjectRepositoryLoad()
-            SupplyDto supplyDto = prepareCreateSupplyDto()
+            this.mockProjectRepositoryLoad()
+            SupplyDto supplyDto = this.prepareCreateSupplyDto()
         when:
             this.supplyApplicationService.createSupply(PROJECT_ID, supplyDto)
         then:
@@ -57,8 +57,8 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "createSupply should validate supplier existence"() {
         given:
-            mockProjectRepositoryLoad()
-            SupplyDto supplyDto = prepareCreateSupplyDto()
+            this.mockProjectRepositoryLoad()
+            SupplyDto supplyDto = this.prepareCreateSupplyDto()
         when:
             this.supplyApplicationService.createSupply(PROJECT_ID, supplyDto)
         then:
@@ -67,8 +67,8 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "createSupply should add supply to project"() {
         given:
-            mockProjectRepositoryLoad()
-            SupplyDto supplyDto = prepareCreateSupplyDto()
+            this.mockProjectRepositoryLoad()
+            SupplyDto supplyDto = this.prepareCreateSupplyDto()
         when:
             this.supplyApplicationService.createSupply(PROJECT_ID, supplyDto)
         then:
@@ -80,8 +80,8 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "createSupply should call onCreate on projectFinanceAwareObjectService"() {
         given:
-            mockProjectRepositoryLoad()
-            SupplyDto supplyDto = prepareCreateSupplyDto()
+            this.mockProjectRepositoryLoad()
+            SupplyDto supplyDto = this.prepareCreateSupplyDto()
         when:
             this.supplyApplicationService.createSupply(PROJECT_ID, supplyDto)
         then:
@@ -90,8 +90,8 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "updateSupply should validate project existence"() {
         given:
-            mockProjectRepositoryLoadWithSupply()
-            SupplyDto supplyDto = prepareUpdateSupplyDto()
+            this.mockProjectRepositoryLoadWithSupply()
+            SupplyDto supplyDto = this.prepareUpdateSupplyDto()
         when:
             this.supplyApplicationService.updateSupply(PROJECT_ID, SUPPLY_ID, supplyDto)
         then:
@@ -100,8 +100,8 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "updateSupply should validate supply on project existence"() {
         given:
-            mockProjectRepositoryLoadWithSupply()
-            SupplyDto supplyDto = prepareUpdateSupplyDto()
+            this.mockProjectRepositoryLoadWithSupply()
+            SupplyDto supplyDto = this.prepareUpdateSupplyDto()
         when:
             this.supplyApplicationService.updateSupply(PROJECT_ID, SUPPLY_ID, supplyDto)
         then:
@@ -110,8 +110,8 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "updateSupply should validate supply dto"() {
         given:
-            mockProjectRepositoryLoadWithSupply()
-            SupplyDto supplyDto = prepareUpdateSupplyDto()
+            this.mockProjectRepositoryLoadWithSupply()
+            SupplyDto supplyDto = this.prepareUpdateSupplyDto()
         when:
             this.supplyApplicationService.updateSupply(PROJECT_ID, SUPPLY_ID, supplyDto)
         then:
@@ -120,8 +120,8 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "updateSupply should update data on supply"() {
         given:
-            mockProjectRepositoryLoadWithSupply()
-            SupplyDto supplyDto = prepareUpdateSupplyDto()
+            this.mockProjectRepositoryLoadWithSupply()
+            SupplyDto supplyDto = this.prepareUpdateSupplyDto()
         when:
             SupplyDto updatedSupply = this.supplyApplicationService.updateSupply(PROJECT_ID, SUPPLY_ID, supplyDto)
         then:
@@ -134,8 +134,8 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "updateSupply should call onUpdate on projectFinanceAwareObjectService"() {
         given:
-            mockProjectRepositoryLoadWithSupply()
-            SupplyDto supplyDto = prepareUpdateSupplyDto()
+            this.mockProjectRepositoryLoadWithSupply()
+            SupplyDto supplyDto = this.prepareUpdateSupplyDto()
         when:
             SupplyDto updatedSupply = this.supplyApplicationService.updateSupply(PROJECT_ID, SUPPLY_ID, supplyDto)
         then:
@@ -160,7 +160,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "getSupply should return correct supply"() {
         given:
-            mockProjectQueryServiceGetSupplyForProject()
+            this.mockProjectQueryServiceGetSupplyForProject()
         when:
             SupplyDto supply = this.supplyApplicationService.getSupply(PROJECT_ID, SUPPLY_ID)
         then:
@@ -169,7 +169,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "deleteSupply should validate project existence"() {
         given:
-            mockProjectRepositoryLoadWithSupply()
+            this.mockProjectRepositoryLoadWithSupply()
         when:
             this.supplyApplicationService.deleteSupply(PROJECT_ID, SUPPLY_ID)
         then:
@@ -178,7 +178,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "deleteSupply should validate supply on project existence"() {
         given:
-            mockProjectRepositoryLoadWithSupply()
+            this.mockProjectRepositoryLoadWithSupply()
         when:
             this.supplyApplicationService.deleteSupply(PROJECT_ID, SUPPLY_ID)
         then:
@@ -187,7 +187,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "deleteSupply should remove supply from project"() {
         given:
-            mockProjectRepositoryLoadWithSupply()
+            this.mockProjectRepositoryLoadWithSupply()
         when:
             this.supplyApplicationService.deleteSupply(PROJECT_ID, SUPPLY_ID)
         then:
@@ -198,20 +198,39 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "deleteSupply should call onRemove on projectFinanceAwareObjectService"() {
         given:
-            mockProjectRepositoryLoadWithSupply()
+            this.mockProjectRepositoryLoadWithSupply()
         when:
             this.supplyApplicationService.deleteSupply(PROJECT_ID, SUPPLY_ID)
         then:
             1 * this.projectFinanceAwareObjectService.onRemove(PROJECT_ID)
     }
 
-    private static SupplyDto prepareCreateSupplyDto() {
+    def "getSupplyForProject should call validateProjectExistence"() {
+        given:
+            this.mockProjectQueryServiceGetSuppliesForProject()
+        when:
+            this.supplyApplicationService.getSuppliesForProject(PROJECT_ID)
+        then:
+            1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
+    }
+
+    def "getSupplyForProject should return list of all supplies for project with given projectId"() {
+        given:
+            this.mockProjectQueryServiceGetSuppliesForProject()
+        when:
+            def listOfSupplies = this.supplyApplicationService.getSuppliesForProject(PROJECT_ID)
+        then:
+            listOfSupplies.size() == 1
+    }
+
+
+    private SupplyDto prepareCreateSupplyDto() {
         SupplyDto supplyDto = new SupplyDto(hasInvoice: HAS_INVOICE, payable: PAYABLE, supplierId: SUPPLIER_ID,
                 value: VALUE)
         return supplyDto
     }
 
-    private static SupplyDto prepareUpdateSupplyDto() {
+    private SupplyDto prepareUpdateSupplyDto() {
         SupplyDto supplyDto = new SupplyDto(hasInvoice: NEW_HAS_INVOICE, payable: NEW_PAYABLE, supplierId: SUPPLIER_ID,
                 value: NEW_VALUE, name: NEW_NAME, note: NEW_NOTE)
         return supplyDto
@@ -237,8 +256,14 @@ class SupplyApplicationServiceImplTest extends Specification {
     }
 
     private void mockProjectQueryServiceGetSupplyForProject() {
-        SupplyDto supplyDto = prepareCreateSupplyDto()
+        SupplyDto supplyDto = this.prepareCreateSupplyDto()
         supplyDto.setId(SUPPLY_ID)
         1 * this.projectQueryService.getSupplyForProject(SUPPLY_ID, PROJECT_ID) >> supplyDto
+    }
+
+    private void mockProjectQueryServiceGetSuppliesForProject() {
+        SupplyDto supplyDto = this.prepareCreateSupplyDto()
+        supplyDto.setId(SUPPLY_ID)
+        1 * this.projectQueryService.getSuppliesForProject(PROJECT_ID) >> List.of(supplyDto)
     }
 }

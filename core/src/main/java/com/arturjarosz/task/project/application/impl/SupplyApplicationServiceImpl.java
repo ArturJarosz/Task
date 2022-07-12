@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @ApplicationService
@@ -97,6 +98,14 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         this.projectRepository.save(project);
         this.projectFinanceAwareObjectService.onRemove(projectId);
         LOG.debug("Supply with id {} for Project with id {} removed.", supplyId, projectId);
+    }
+
+    @Override
+    public List<SupplyDto> getSuppliesForProject(Long projectId) {
+        LOG.debug("Loading list of supplies for Project with id {}", projectId);
+
+        this.projectValidator.validateProjectExistence(projectId);
+        return this.projectQueryService.getSuppliesForProject(projectId);
     }
 
     private Supply getCreatedSupply(Project project, Supply supply) {

@@ -2,6 +2,8 @@ package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.project.application.dto.SupplyDto;
 
+import java.util.List;
+
 public interface SupplyApplicationService {
 
     /**
@@ -28,4 +30,11 @@ public interface SupplyApplicationService {
      * new exception will be thrown.
      */
     void deleteSupply(Long projectId, Long supplyId);
+
+    /**
+     * Returns a list of all Supplies for Project with given projectId as a List of SupplyDto. If Project does not exist,
+     * then exception with be exception will be thrown. If Project does not have any supplies, then the list will be
+     * empty.
+     */
+    List<SupplyDto> getSuppliesForProject(Long projectId);
 }

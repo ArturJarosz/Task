@@ -63,4 +63,9 @@ public interface ProjectQueryService {
     ProjectStatusData getProjectStatusData(long projectId);
 
     StageStatusData getStageStatusData(long stageId);
+
+    /**
+     * Returns all Supplies as a List of SupplyDto for Project with given projectId.
+     */
+    List<SupplyDto> getSuppliesForProject(Long projectId);
 }
