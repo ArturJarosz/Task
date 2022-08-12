@@ -82,7 +82,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     private String workflowName;
 
     protected Project() {
-        //needed by Hibernate
+        //needed by Hibernate test
     }
 
     public Project(String name, Long architectId, Long clientId, ProjectType projectType,
