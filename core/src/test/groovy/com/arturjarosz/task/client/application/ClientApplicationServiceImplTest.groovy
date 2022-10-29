@@ -7,7 +7,6 @@ import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
-import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.PersonName
 import spock.lang.Specification
@@ -38,15 +37,13 @@ class ClientApplicationServiceImplTest extends Specification {
 
     }
 
-    def projectQueryService = Mock(ProjectQueryServiceImpl)
-
     ClientValidator clientValidator = Mock(ClientValidator) {
         validateClientBasicDto(null) >> { throw new IllegalArgumentException() }
     }
     def clientApplicationServiceImpl = new ClientApplicationServiceImpl(clientRepository, clientValidator
     )
 
-    def "createClientShouldValidateClientBasicDto"() {
+    def "createClient should validate clientBasicDto"() {
         given:
             ClientDto clientDto = this.prepareProperPrivateClint()
         when:
@@ -55,31 +52,29 @@ class ClientApplicationServiceImplTest extends Specification {
             1 * this.clientValidator.validateClientBasicDto(_)
     }
 
-    def "whenClientDtoWithPrivateClientTypePassedPrivateClientShouldBeCreated"() {
+    def "when ClientDto with private client type passed client of private type should be created"() {
         given:
             ClientDto clientDto = this.prepareProperPrivateClint()
         when:
             clientApplicationServiceImpl.createClient(clientDto)
         then:
             1 * this.clientRepository.save({
-                Client client ->
-                    client.isPrivate()
+                Client client -> client.isPrivate()
             })
     }
 
-    def "whenClientWithCorporateClientTypePassedCorporateClientShouldBeCreated"() {
+    def "when client with corporate client type passed corporate client should be created"() {
         given:
             ClientDto clientDto = this.prepareProperCorporateClient()
         when:
             clientApplicationServiceImpl.createClient(clientDto)
         then:
             1 * this.clientRepository.save({
-                Client client ->
-                    !client.isPrivate()
+                Client client -> !client.isPrivate()
             })
     }
 
-    def "createClientShouldCallRepositorySaveOnProperClientDto"() {
+    def "createClient should call repository cave on proper ClientDto"() {
         given:
             ClientDto clientDto = this.prepareProperPrivateClint()
         when:
@@ -88,7 +83,7 @@ class ClientApplicationServiceImplTest extends Specification {
             1 * this.clientRepository.save(_)
     }
 
-    def "removeClientShouldCallValidateClientExistence"() {
+    def "removeClient should call validateClientExistence"() {
         given:
         when:
             clientApplicationServiceImpl.removeClient(EXISTING_PRIVATE_ID)
@@ -96,7 +91,7 @@ class ClientApplicationServiceImplTest extends Specification {
             1 * this.clientValidator.validateClientExistence(EXISTING_PRIVATE_ID)
     }
 
-    def "removeClientShouldCallValidateClientHasNoProjects"() {
+    def "removeClient should call validateClientHasNoProjects"() {
         given:
         when:
             clientApplicationServiceImpl.removeClient(EXISTING_PRIVATE_ID)
@@ -104,7 +99,7 @@ class ClientApplicationServiceImplTest extends Specification {
             1 * this.clientValidator.validateClientHasNoProjects(EXISTING_PRIVATE_ID)
     }
 
-    def "removeClientShouldCallRepositoryRemove"() {
+    def "removeClient should call repository remove"() {
         given:
         when:
             clientApplicationServiceImpl.removeClient(EXISTING_PRIVATE_ID)
@@ -112,7 +107,7 @@ class ClientApplicationServiceImplTest extends Specification {
             1 * this.clientRepository.deleteById(EXISTING_PRIVATE_ID)
     }
 
-    def "getClientShouldLoadClientFromRepository"() {
+    def "getClient should load client from repository"() {
         given:
         when:
             ClientDto clientDto = this.clientApplicationServiceImpl.getClient(EXISTING_PRIVATE_ID)
@@ -120,7 +115,7 @@ class ClientApplicationServiceImplTest extends Specification {
             1 * this.clientRepository.findById(EXISTING_PRIVATE_ID) >> Optional.of(privateClient)
     }
 
-    def "updateClientShouldCallValidateClientExistence"() {
+    def "updateClient should call validateClientExistence"() {
         given:
             ClientDto clientDto = this.prepareClientDtoForUpdate()
         when:
@@ -129,7 +124,7 @@ class ClientApplicationServiceImplTest extends Specification {
             1 * this.clientValidator.validateClientExistence(_, EXISTING_PRIVATE_ID)
     }
 
-    def "updateClientShouldCallValidateClientDtoPresence"() {
+    def "updateClient should call validateClientDtoPresence"() {
         given:
             ClientDto clientDto = this.prepareClientDtoForUpdate()
         when:
@@ -138,7 +133,7 @@ class ClientApplicationServiceImplTest extends Specification {
             1 * this.clientValidator.validateClientDtoPresence(_)
     }
 
-    def "updateClientShouldCallSaveOnRepository"() {
+    def "updateClient should call save on repository"() {
         given:
             ClientDto clientDto = this.prepareClientDtoForUpdate()
         when:
@@ -147,28 +142,25 @@ class ClientApplicationServiceImplTest extends Specification {
             1 * this.clientRepository.save(_)
     }
 
-    def "updateClientShouldReplaceClientsData"() {
+    def "updateClient should replace client data"() {
         given:
             ClientDto clientDto = this.prepareClientDtoForUpdate()
         when:
             ClientDto updatedClientDto = this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
         then:
-            1 * this.clientRepository.save({
-                Client client ->
-                    client.personName.firstName == NEW_FIRST_NAME
-                    client.personName.lastName == NEW_LAST_NAME
-                    client.email.value == NEW_EMAIL
-                    client.note == NEW_NOTE
-                    client.telephone == NEW_TELEPHONE
-                    client.address.city == NEW_CITY
-                    client.address.flatNumber == NEW_FLAT_NUMBER
-                    client.address.houseNumber == NEW_HOUSE_NUMBER
-                    client.address.postCode == NEW_POST_CODE
-                    client.address.street == NEW_STREET
-            })
+            updatedClientDto.firstName == NEW_FIRST_NAME
+            updatedClientDto.lastName == NEW_LAST_NAME
+            updatedClientDto.contact.email == NEW_EMAIL
+            updatedClientDto.note == NEW_NOTE
+            updatedClientDto.contact.telephone == NEW_TELEPHONE
+            updatedClientDto.contact.address.city == NEW_CITY
+            updatedClientDto.contact.address.flatNumber == NEW_FLAT_NUMBER
+            updatedClientDto.contact.address.houseNumber == NEW_HOUSE_NUMBER
+            updatedClientDto.contact.address.postCode == NEW_POST_CODE
+            updatedClientDto.contact.address.street == NEW_STREET
     }
 
-    def "getBasicClientsShouldCallLoadAllONRepository"() {
+    def "getBasicClients should call loadAll on repository"() {
         given:
         when:
             List<ClientDto> clientDtoList = this.clientApplicationServiceImpl.basicClients
@@ -176,7 +168,7 @@ class ClientApplicationServiceImplTest extends Specification {
             1 * this.clientRepository.findAll() >> Collections.singletonList(privateClient)
     }
 
-    def "getBasicClientsShouldReturnClientsList"() {
+    def "getBasicClients should return list of clients"() {
         given:
         when:
             List<ClientDto> clientDtoList = this.clientApplicationServiceImpl.basicClients
@@ -213,7 +205,4 @@ class ClientApplicationServiceImplTest extends Specification {
         return addressDto
     }
 
-    private mockRepo(){
-        1 * this.clientRepository.findById(EXISTING_PRIVATE_ID) >> Optional.of(privateClient)
-    }
 }
