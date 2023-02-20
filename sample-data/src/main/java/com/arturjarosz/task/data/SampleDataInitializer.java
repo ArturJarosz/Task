@@ -2,8 +2,8 @@ package com.arturjarosz.task.data;
 
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.SampleDataException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 @ApplicationService
 public class SampleDataInitializer extends AbstractDataInitializer {
 
-    private static final Logger LOG = LogManager.getLogger(SampleDataInitializer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SampleDataInitializer.class);
     private final List<DataInitializer> dataInitializers;
     private final TransactionHandler transactionHandler;
 

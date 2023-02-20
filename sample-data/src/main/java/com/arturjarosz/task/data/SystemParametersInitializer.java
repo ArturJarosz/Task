@@ -7,8 +7,8 @@ import com.arturjarosz.task.systemparameter.model.SystemParameterType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ import java.util.List;
 
 @Component
 public class SystemParametersInitializer implements DataInitializer {
-    private static final Logger LOGGER = LogManager.getLogger(SystemParametersInitializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SystemParametersInitializer.class);
     private static final String SYSTEM_PARAMETERS_PATH = "initialSystemParameters.json";
 
     private final SystemParameterRepository systemParameterRepository;
