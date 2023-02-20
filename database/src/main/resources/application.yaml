@@ -24,6 +24,9 @@ spring:
     banner-mode: off
   jackson:
     default-property-inclusion: non_null
+  output:
+    ansi:
+      enabled: always
 server:
   port: 8099
 task:

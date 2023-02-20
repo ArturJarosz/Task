@@ -5,6 +5,9 @@ spring:
     properties:
       hibernate:
         default_schema: task_schema
+  output:
+    ansi:
+      enabled: always
 task:
   language: en
   encoding: UTF-8

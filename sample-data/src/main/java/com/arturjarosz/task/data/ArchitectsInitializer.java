@@ -5,8 +5,8 @@ import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Component
 public class ArchitectsInitializer implements DataInitializer {
-    private static final Logger LOG = LogManager.getLogger(ArchitectsInitializer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ArchitectsInitializer.class);
 
     private final ArchitectApplicationService architectApplicationService;
 
