@@ -1,13 +1,13 @@
 package com.arturjarosz.task.finance.application.impl;
 
-import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
-import com.arturjarosz.task.finance.application.dto.ProjectFinancialDataDto;
-import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialDataDto;
+import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
+import com.arturjarosz.task.finance.application.dto.ProjectFinancialSummaryDto;
+import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService;
 import com.arturjarosz.task.finance.infrastructure.FinancialDataRepository;
-import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
+import com.arturjarosz.task.finance.infrastructure.ProjectFinancialSummaryRepository;
 import com.arturjarosz.task.finance.model.FinancialData;
-import com.arturjarosz.task.finance.model.ProjectFinancialData;
+import com.arturjarosz.task.finance.model.ProjectFinancialSummary;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl;
@@ -20,20 +20,20 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @ApplicationService
-public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataService {
+public class ProjectFinancialSummaryServiceImpl implements ProjectFinancialSummaryService {
 
-    private final ProjectFinancialDataRepository projectFinancialDataRepository;
+    private final ProjectFinancialSummaryRepository projectFinancialSummaryRepository;
     private final ProjectValidator projectValidator;
     private final FinancialDataQueryServiceImpl financialDataQueryService;
     private final FinancialDataRepository financialDataRepository;
     private final List<PartialFinancialDataService> partialFinancialDataServices;
 
     @Autowired
-    public ProjectFinancialDataServiceImpl(ProjectFinancialDataRepository projectFinancialDataRepository,
+    public ProjectFinancialSummaryServiceImpl(ProjectFinancialSummaryRepository projectFinancialSummaryRepository,
             ProjectValidator projectValidator, FinancialDataQueryServiceImpl financialDataQueryService,
             FinancialDataRepository financialDataRepository,
             List<PartialFinancialDataService> partialFinancialDataServices) {
-        this.projectFinancialDataRepository = projectFinancialDataRepository;
+        this.projectFinancialSummaryRepository = projectFinancialSummaryRepository;
         this.projectValidator = projectValidator;
         this.financialDataQueryService = financialDataQueryService;
         this.financialDataRepository = financialDataRepository;
@@ -41,11 +41,11 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
     }
 
     @Override
-    public ProjectFinancialData createProjectFinancialData(Long projectId) {
+    public ProjectFinancialSummary createProjectFinancialSummary(Long projectId) {
         this.projectValidator.validateProjectExistence(projectId);
-        ProjectFinancialData projectFinancialData = new ProjectFinancialData(projectId);
-        projectFinancialData = this.projectFinancialDataRepository.save(projectFinancialData);
-        return projectFinancialData;
+        ProjectFinancialSummary projectFinancialSummary = new ProjectFinancialSummary(projectId);
+        projectFinancialSummary = this.projectFinancialSummaryRepository.save(projectFinancialSummary);
+        return projectFinancialSummary;
     }
 
     @Override
@@ -75,36 +75,36 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
     }
 
     @Override
-    public void recalculateProjectFinancialData(long projectId) {
-        ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.findProjectFinancialDataByProjectId(
+    public void recalculateProjectFinancialSummary(long projectId) {
+        ProjectFinancialSummary projectFinancialSummary = this.projectFinancialSummaryRepository.findProjectFinancialSummaryByProjectId(
                 projectId);
-        ProjectFinancialDataDto summedUpFinancialData = new ProjectFinancialDataDto();
+        ProjectFinancialSummaryDto summedUpFinancialData = new ProjectFinancialSummaryDto();
         for (PartialFinancialDataService partialFinancialDataService : this.partialFinancialDataServices) {
             summedUpFinancialData.addFinancialValues(
-                    partialFinancialDataService.providePartialFinancialData(projectFinancialData.getId()));
+                    partialFinancialDataService.providePartialFinancialData(projectFinancialSummary.getId()));
         }
         this.recalculateTotalProjectValue(summedUpFinancialData);
-        projectFinancialData.updateWithPartialData(summedUpFinancialData);
-        this.projectFinancialDataRepository.save(projectFinancialData);
+        projectFinancialSummary.updateWithPartialData(summedUpFinancialData);
+        this.projectFinancialSummaryRepository.save(projectFinancialSummary);
     }
 
     @Override
-    public void removeFinancialDataForProject(Long projectId) {
-        ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.findProjectFinancialDataByProjectId(
+    public void removeFinancialSummaryForProject(Long projectId) {
+        ProjectFinancialSummary projectFinancialSummary = this.projectFinancialSummaryRepository.findProjectFinancialSummaryByProjectId(
                 projectId);
-        this.projectFinancialDataRepository.deleteById(projectFinancialData.getId());
+        this.projectFinancialSummaryRepository.deleteById(projectFinancialSummary.getId());
     }
 
     @Override
-    public TotalProjectFinancialDataDto getTotalProjectFinancialData(Long projectId) {
+    public TotalProjectFinancialSummaryDto getTotalProjectFinancialSummary(Long projectId) {
         this.projectValidator.validateProjectExistence(projectId);
-        return this.financialDataQueryService.getTotalProjectFinancialData(projectId);
+        return this.financialDataQueryService.getTotalProjectFinancialSummary(projectId);
     }
 
-    private void recalculateTotalProjectValue(ProjectFinancialDataDto projectFinancialDataDto) {
-        projectFinancialDataDto.getTotalProjectValue().addValues(projectFinancialDataDto.getSuppliesValue());
-        projectFinancialDataDto.getTotalProjectValue().addValues(projectFinancialDataDto.getSupervisionValue());
-        projectFinancialDataDto.getTotalProjectValue().addValues(projectFinancialDataDto.getContractorJobsValue());
-        projectFinancialDataDto.getTotalProjectValue().subtractValues(projectFinancialDataDto.getCostsValue());
+    private void recalculateTotalProjectValue(ProjectFinancialSummaryDto projectFinancialSummaryDto) {
+        projectFinancialSummaryDto.getTotalProjectValue().addValues(projectFinancialSummaryDto.getSuppliesValue());
+        projectFinancialSummaryDto.getTotalProjectValue().addValues(projectFinancialSummaryDto.getSupervisionValue());
+        projectFinancialSummaryDto.getTotalProjectValue().addValues(projectFinancialSummaryDto.getContractorJobsValue());
+        projectFinancialSummaryDto.getTotalProjectValue().subtractValues(projectFinancialSummaryDto.getCostsValue());
     }
 }

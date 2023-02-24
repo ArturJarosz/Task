@@ -2,7 +2,7 @@ package com.arturjarosz.task.finance.application.dto;
 
 import java.io.Serializable;
 
-public class TotalProjectFinancialDataDto implements Serializable {
+public class TotalProjectFinancialSummaryDto implements Serializable {
 
     private static final long serialVersionUID = -5305124883533888889L;
     private Double netValue;
@@ -10,10 +10,10 @@ public class TotalProjectFinancialDataDto implements Serializable {
     private Double vatTax;
     private Double incomeTax;
 
-    public TotalProjectFinancialDataDto() {
+    public TotalProjectFinancialSummaryDto() {
     }
 
-    public TotalProjectFinancialDataDto(Double grossValue, Double netValue, Double vatTax, Double incomeTax) {
+    public TotalProjectFinancialSummaryDto(Double grossValue, Double netValue, Double vatTax, Double incomeTax) {
         this.netValue = netValue;
         this.grossValue = grossValue;
         this.vatTax = vatTax;

@@ -2,7 +2,7 @@ package com.arturjarosz.task.finance.domain.impl;
 
 import com.arturjarosz.task.configuration.UserProperties;
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto;
-import com.arturjarosz.task.finance.application.dto.ProjectFinancialDataDto;
+import com.arturjarosz.task.finance.application.dto.ProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.domain.AbstractPartialFinancialDataService;
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
@@ -26,15 +26,15 @@ public class SupervisionFinancialDataServiceImpl extends AbstractPartialFinancia
     }
 
     @Override
-    public ProjectFinancialDataDto providePartialFinancialData(long projectId) {
+    public ProjectFinancialSummaryDto providePartialFinancialData(long projectId) {
         FinancialDataDto supervisionFinancialData = this.financialDataQueryService.getSupervisionFinancialData(
                 projectId);
         FinancialValueDto supervisionFinancialValue = new FinancialValueDto();
         List<FinancialDataDto> supervisionsFinancialData = supervisionFinancialData != null ? Collections.singletonList(
                 supervisionFinancialData) : Collections.emptyList();
         supervisionFinancialValue = this.recalculateFinancialData(supervisionFinancialValue, supervisionsFinancialData);
-        ProjectFinancialDataDto projectFinancialDataDto = new ProjectFinancialDataDto();
-        projectFinancialDataDto.setSupervisionValue(supervisionFinancialValue);
-        return projectFinancialDataDto;
+        ProjectFinancialSummaryDto projectFinancialSummaryDto = new ProjectFinancialSummaryDto();
+        projectFinancialSummaryDto.setSupervisionValue(supervisionFinancialValue);
+        return projectFinancialSummaryDto;
     }
 }

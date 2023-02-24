@@ -10,7 +10,7 @@ import com.arturjarosz.task.contract.application.ContractService;
 import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.contract.application.mapper.ContractDtoMapper;
 import com.arturjarosz.task.contract.model.Contract;
-import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
+import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
@@ -39,14 +39,14 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final ProjectRepository projectRepository;
     private final ProjectDomainService projectDomainService;
     private final ProjectValidator projectValidator;
-    private final ProjectFinancialDataService projectFinancialDataService;
+    private final ProjectFinancialSummaryService projectFinancialSummaryService;
     private final ContractService contractService;
 
     @Autowired
     public ProjectApplicationServiceImpl(ClientApplicationService clientApplicationService, ClientValidator clientValidator,
             ArchitectApplicationService architectApplicationService, ArchitectValidator architectValidator, ProjectRepository projectRepository,
             ProjectDomainService projectDomainService, ProjectValidator projectValidator,
-            ProjectFinancialDataService projectFinancialDataService, ContractService contractService) {
+            ProjectFinancialSummaryService projectFinancialSummaryService, ContractService contractService) {
         this.clientApplicationService = clientApplicationService;
         this.clientValidator = clientValidator;
         this.architectApplicationService = architectApplicationService;
@@ -54,7 +54,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectRepository = projectRepository;
         this.projectDomainService = projectDomainService;
         this.projectValidator = projectValidator;
-        this.projectFinancialDataService = projectFinancialDataService;
+        this.projectFinancialSummaryService = projectFinancialSummaryService;
         this.contractService = contractService;
     }
 
@@ -69,7 +69,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         Contract contract = this.contractService.createContract(contractDto);
         Project project = this.projectDomainService.createProject(projectCreateDto, contract.getId());
         project = this.projectRepository.save(project);
-        this.projectFinancialDataService.createProjectFinancialData(project.getId());
+        this.projectFinancialSummaryService.createProjectFinancialSummary(project.getId());
         LOG.debug("Project created.");
         return ProjectDtoMapper.INSTANCE.projectToProjectDto(project, contract);
     }
@@ -105,7 +105,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     public void removeProject(Long projectId) {
         LOG.debug("Removing Project with id {}.", projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        this.projectFinancialDataService.removeFinancialDataForProject(projectId);
+        this.projectFinancialSummaryService.removeFinancialSummaryForProject(projectId);
         this.projectRepository.deleteById(projectId);
         LOG.debug("Project with id {} removed.", projectId);
     }

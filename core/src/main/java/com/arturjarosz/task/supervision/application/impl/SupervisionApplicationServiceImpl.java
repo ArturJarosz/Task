@@ -1,6 +1,6 @@
 package com.arturjarosz.task.supervision.application.impl;
 
-import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
+import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
@@ -31,7 +31,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     private final SupervisionVisitValidator supervisionVisitValidator;
     private final SupervisionRepository supervisionRepository;
     private final SupervisionQueryService supervisionQueryService;
-    private final ProjectFinancialDataService projectFinancialDataApplicationService;
+    private final ProjectFinancialSummaryService projectFinancialSummaryApplicationService;
 
     @Autowired
     public SupervisionApplicationServiceImpl(ProjectValidator projectValidator,
@@ -39,13 +39,13 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
                                              SupervisionVisitValidator supervisionVisitValidator,
                                              SupervisionRepository supervisionRepository,
                                              SupervisionQueryService supervisionQueryService,
-                                             ProjectFinancialDataService projectFinancialDataApplicationService) {
+                                             ProjectFinancialSummaryService projectFinancialSummaryApplicationService) {
         this.projectValidator = projectValidator;
         this.supervisionValidator = supervisionValidator;
         this.supervisionVisitValidator = supervisionVisitValidator;
         this.supervisionRepository = supervisionRepository;
         this.supervisionQueryService = supervisionQueryService;
-        this.projectFinancialDataApplicationService = projectFinancialDataApplicationService;
+        this.projectFinancialSummaryApplicationService = projectFinancialSummaryApplicationService;
     }
 
     @Transactional
@@ -72,7 +72,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionValidator.validateUpdateSupervision(supervisionDto);
         Supervision supervision = maybeSupervision.get();
         supervision.update(supervisionDto);
-        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
+        this.projectFinancialSummaryApplicationService.recalculateSupervision(supervisionId,
                 supervision.getFinancialData().getId());
         this.supervisionRepository.save(supervision);
 
@@ -114,7 +114,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         SupervisionVisitDto createdSupervisionVisitDto = SupervisionVisitDtoMapper.INSTANCE.supervisionVisitToSupervisionVisionDto(
                 supervisionVisit);
         this.updateSupervisionHoursCount(supervision);
-        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
+        this.projectFinancialSummaryApplicationService.recalculateSupervision(supervisionId,
                 supervision.getFinancialData().getId());
         this.supervisionRepository.save(supervision);
         createdSupervisionVisitDto.setId(this.getIdForCreatedSupervisionVisit(supervision, supervisionVisit));
@@ -137,7 +137,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         Supervision supervision = maybeSupervision.get();
         supervision.updateSupervisionVisit(supervisionVisitId, supervisionVisitDto);
         this.updateSupervisionHoursCount(supervision);
-        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
+        this.projectFinancialSummaryApplicationService.recalculateSupervision(supervisionId,
                 supervision.getFinancialData().getId());
         this.supervisionRepository.save(supervision);
 
@@ -166,7 +166,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         Supervision supervision = maybeSupervision.get();
         supervision.removeSupervisionVisit(supervisionVisitId);
         this.updateSupervisionHoursCount(supervision);
-        this.projectFinancialDataApplicationService.recalculateSupervision(supervisionId,
+        this.projectFinancialSummaryApplicationService.recalculateSupervision(supervisionId,
                 supervision.getFinancialData().getId());
         this.supervisionRepository.save(supervision);
 

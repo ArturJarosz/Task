@@ -37,7 +37,7 @@ public class SampleDataInitializer extends AbstractDataInitializer {
                     return null;
                 });
             } catch (Exception e) {
-                throw new SampleDataException("Cannot load sample data.");
+                throw new SampleDataException("Cannot load sample data.", e);
             }
         }
 
