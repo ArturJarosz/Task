@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.query;
 
-import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialDataDto;
+import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
@@ -23,5 +23,5 @@ public interface FinancialDataQueryService {
 
     List<FinancialDataDto> getInstallmentsFinancialData(long projectId);
 
-    TotalProjectFinancialDataDto getTotalProjectFinancialData(long projectId);
+    TotalProjectFinancialSummaryDto getTotalProjectFinancialSummary(long projectId);
 }

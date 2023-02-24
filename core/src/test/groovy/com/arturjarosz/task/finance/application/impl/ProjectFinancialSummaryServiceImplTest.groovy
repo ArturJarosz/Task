@@ -1,13 +1,13 @@
 package com.arturjarosz.task.finance.application.impl
 
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto
-import com.arturjarosz.task.finance.application.dto.ProjectFinancialDataDto
-import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialDataDto
+import com.arturjarosz.task.finance.application.dto.ProjectFinancialSummaryDto
+import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialSummaryDto
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService
 import com.arturjarosz.task.finance.infrastructure.FinancialDataRepository
-import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
+import com.arturjarosz.task.finance.infrastructure.ProjectFinancialSummaryRepository
 import com.arturjarosz.task.finance.model.FinancialData
-import com.arturjarosz.task.finance.model.ProjectFinancialData
+import com.arturjarosz.task.finance.model.ProjectFinancialSummary
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto
 import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl
@@ -17,7 +17,7 @@ import com.arturjarosz.task.sharedkernel.model.Money
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import spock.lang.Specification
 
-class ProjectFinancialDataServiceImplTest extends Specification {
+class ProjectFinancialSummaryServiceImplTest extends Specification {
     private static final Long PROJECT_ID = 1L
     private static final Long NOT_EXISTING_PROJECT_ID = 2L
     private static final Long SUPERVISION_ID = 10L
@@ -35,21 +35,21 @@ class ProjectFinancialDataServiceImplTest extends Specification {
     private static final BigDecimal COST_VAT_TAX_VALUE = new BigDecimal("15")
     private static final BigDecimal COST_INCOME_TAX_VALUE = new BigDecimal("5")
 
-    def projectFinancialDataRepository = Mock(ProjectFinancialDataRepository)
+    def projectFinancialDataRepository = Mock(ProjectFinancialSummaryRepository)
     def projectValidator = Mock(ProjectValidator)
     def financialDataQueryService = Mock(FinancialDataQueryServiceImpl)
     def financialDataRepository = Mock(FinancialDataRepository)
     def partialFinancialDataService = Mock(PartialFinancialDataService)
     List<PartialFinancialDataService> partialFinancialDataServices = Arrays.asList(partialFinancialDataService)
 
-    def projectFinancialDataService = new ProjectFinancialDataServiceImpl
+    def projectFinancialDataService = new ProjectFinancialSummaryServiceImpl
             (projectFinancialDataRepository, projectValidator, financialDataQueryService, financialDataRepository,
                     partialFinancialDataServices)
 
     def "createProjectFinancialData should call validateProjectExistence on projectValidator"() {
         given:
         when:
-            this.projectFinancialDataService.createProjectFinancialData(PROJECT_ID)
+            this.projectFinancialDataService.createProjectFinancialSummary(PROJECT_ID)
         then:
             1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
     }
@@ -57,17 +57,17 @@ class ProjectFinancialDataServiceImplTest extends Specification {
     def "createProjectFinancialData should save projectFinancialData with repository"() {
         given:
         when:
-            this.projectFinancialDataService.createProjectFinancialData(PROJECT_ID)
+            this.projectFinancialDataService.createProjectFinancialSummary(PROJECT_ID)
         then:
-            1 * this.projectFinancialDataRepository.save(_ as ProjectFinancialData)
+            1 * this.projectFinancialDataRepository.save(_ as ProjectFinancialSummary)
     }
 
     def "createProjectFinancialData should return projectFinancialData with correct projectId"() {
         given:
             mockProjectFinancialDataRepositorySave()
         when:
-            ProjectFinancialData projectFinancialData = this.projectFinancialDataService
-                    .createProjectFinancialData(PROJECT_ID)
+            ProjectFinancialSummary projectFinancialData = this.projectFinancialDataService
+                    .createProjectFinancialSummary(PROJECT_ID)
         then:
             projectFinancialData.projectId == PROJECT_ID
     }
@@ -91,9 +91,9 @@ class ProjectFinancialDataServiceImplTest extends Specification {
             this.mockLoadProjectFinancialDataWithProjectId()
             this.mockCostProvidePartialFinancialData()
         when:
-            this.projectFinancialDataService.recalculateProjectFinancialData(PROJECT_ID)
+            this.projectFinancialDataService.recalculateProjectFinancialSummary(PROJECT_ID)
         then:
-            1 * this.projectFinancialDataRepository.save({ ProjectFinancialData projectFinancialData ->
+            1 * this.projectFinancialDataRepository.save({ ProjectFinancialSummary projectFinancialData ->
                 projectFinancialData.costsGrossValue == new Money(100)
                 projectFinancialData.costsNetValue == new Money(80)
                 projectFinancialData.costsVatTax == new Money(15)
@@ -105,8 +105,8 @@ class ProjectFinancialDataServiceImplTest extends Specification {
         given:
             this.mockValidateProjectExistenceOnNotExistingProject()
         when:
-            TotalProjectFinancialDataDto projectFinancialDataDto =
-                    this.projectFinancialDataService.getTotalProjectFinancialData(NOT_EXISTING_PROJECT_ID)
+            TotalProjectFinancialSummaryDto projectFinancialDataDto =
+                    this.projectFinancialDataService.getTotalProjectFinancialSummary(NOT_EXISTING_PROJECT_ID)
         then:
             Exception exception = thrown()
             projectFinancialDataDto == null
@@ -116,15 +116,15 @@ class ProjectFinancialDataServiceImplTest extends Specification {
         given:
             this.mockLoadTotalProjectFinancialData()
         when:
-            TotalProjectFinancialDataDto projectFinancialDataDto =
-                    this.projectFinancialDataService.getTotalProjectFinancialData(PROJECT_ID)
+            TotalProjectFinancialSummaryDto projectFinancialDataDto =
+                    this.projectFinancialDataService.getTotalProjectFinancialSummary(PROJECT_ID)
         then:
             projectFinancialDataDto != null
     }
 
     private void mockProjectFinancialDataRepositorySave() {
-        ProjectFinancialData projectFinancialData = new ProjectFinancialData(PROJECT_ID)
-        1 * this.projectFinancialDataRepository.save(_ as ProjectFinancialData) >> projectFinancialData
+        ProjectFinancialSummary projectFinancialData = new ProjectFinancialSummary(PROJECT_ID)
+        1 * this.projectFinancialDataRepository.save(_ as ProjectFinancialSummary) >> projectFinancialData
     }
 
     private void mockFinancialDataGetSupervisionRates() {
@@ -154,18 +154,18 @@ class ProjectFinancialDataServiceImplTest extends Specification {
     }
 
     private void mockLoadProjectFinancialDataWithProjectId() {
-        this.projectFinancialDataRepository.findProjectFinancialDataByProjectId(PROJECT_ID) >>
+        this.projectFinancialDataRepository.findProjectFinancialSummaryByProjectId(PROJECT_ID) >>
                 this.buildProjectFinancialData(PROJECT_ID, PROJECT_FINANCIAL_DATA_ID)
     }
 
-    private ProjectFinancialData buildProjectFinancialData(long projectId, long id) {
-        ProjectFinancialData projectFinancialData = new ProjectFinancialData(projectId)
+    private ProjectFinancialSummary buildProjectFinancialData(long projectId, long id) {
+        ProjectFinancialSummary projectFinancialData = new ProjectFinancialSummary(projectId)
         TestUtils.setFieldForObject(projectFinancialData, "id", id)
         return projectFinancialData
     }
 
     private void mockCostProvidePartialFinancialData() {
-        ProjectFinancialDataDto projectFinancialDataDto = new ProjectFinancialDataDto()
+        ProjectFinancialSummaryDto projectFinancialDataDto = new ProjectFinancialSummaryDto()
         FinancialValueDto costsValue = new FinancialValueDto(grossValue: COST_GROSS_VALUE, netValue: COST_NET_VALUE,
                 vatTax: COST_VAT_TAX_VALUE, incomeTax: COST_INCOME_TAX_VALUE)
         projectFinancialDataDto.costsValue = costsValue
@@ -178,6 +178,6 @@ class ProjectFinancialDataServiceImplTest extends Specification {
     }
 
     private void mockLoadTotalProjectFinancialData(){
-        this.financialDataQueryService.getTotalProjectFinancialData(PROJECT_ID) >> new TotalProjectFinancialDataDto()
+        this.financialDataQueryService.getTotalProjectFinancialSummary(PROJECT_ID) >> new TotalProjectFinancialSummaryDto()
     }
 }

@@ -2,7 +2,7 @@ package com.arturjarosz.task.finance.domain.impl;
 
 import com.arturjarosz.task.configuration.UserProperties;
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto;
-import com.arturjarosz.task.finance.application.dto.ProjectFinancialDataDto;
+import com.arturjarosz.task.finance.application.dto.ProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.domain.AbstractPartialFinancialDataService;
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
@@ -25,12 +25,12 @@ public class SupplyFinancialDataServiceImpl extends AbstractPartialFinancialData
     }
 
     @Override
-    public ProjectFinancialDataDto providePartialFinancialData(long projectId) {
+    public ProjectFinancialSummaryDto providePartialFinancialData(long projectId) {
         List<FinancialDataDto> supplyFinancialData = this.financialDataQueryService.getSuppliesFinancialData(projectId);
         FinancialValueDto suppliesFinancialValue = new FinancialValueDto();
         suppliesFinancialValue = this.recalculateFinancialData(suppliesFinancialValue, supplyFinancialData);
-        ProjectFinancialDataDto projectFinancialDataDto = new ProjectFinancialDataDto();
-        projectFinancialDataDto.setSuppliesValue(suppliesFinancialValue);
-        return projectFinancialDataDto;
+        ProjectFinancialSummaryDto projectFinancialSummaryDto = new ProjectFinancialSummaryDto();
+        projectFinancialSummaryDto.setSuppliesValue(suppliesFinancialValue);
+        return projectFinancialSummaryDto;
     }
 }

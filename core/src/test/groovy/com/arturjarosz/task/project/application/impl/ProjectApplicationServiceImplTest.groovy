@@ -9,7 +9,7 @@ import com.arturjarosz.task.contract.application.impl.ContractServiceImpl
 import com.arturjarosz.task.contract.model.Contract
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow
 import com.arturjarosz.task.contract.utils.ContractBuilder
-import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataServiceImpl
+import com.arturjarosz.task.finance.application.impl.ProjectFinancialSummaryServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
 import com.arturjarosz.task.project.application.dto.ProjectDto
@@ -45,7 +45,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def projectRepository = Mock(ProjectRepository)
     def projectDomainService = Mock(ProjectDomainServiceImpl)
     def projectValidator = Mock(ProjectValidator)
-    def projectFinancialDataApplicationService = Mock(ProjectFinancialDataServiceImpl)
+    def projectFinancialDataApplicationService = Mock(ProjectFinancialSummaryServiceImpl)
     def contractService = Mock(ContractServiceImpl)
     def contractWorkflow = Mock(ContractStatusWorkflow)
 
@@ -116,7 +116,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto)
         then:
-            1 * this.projectFinancialDataApplicationService.createProjectFinancialData(NEW_PROJECT_ID)
+            1 * this.projectFinancialDataApplicationService.createProjectFinancialSummary(NEW_PROJECT_ID)
     }
 
     def "createProject should return newly created project"() {
