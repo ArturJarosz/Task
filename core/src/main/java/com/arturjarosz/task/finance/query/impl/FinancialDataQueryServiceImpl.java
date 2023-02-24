@@ -3,7 +3,7 @@ package com.arturjarosz.task.finance.query.impl;
 import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
 import com.arturjarosz.task.finance.model.QFinancialData;
-import com.arturjarosz.task.finance.model.QProjectFinancialData;
+import com.arturjarosz.task.finance.model.QProjectFinancialSummary;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
@@ -34,7 +34,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     private static final QSupervision SUPERVISION = QSupervision.supervision;
     private static final QSupervisionVisit SUPERVISION_VISIT = QSupervisionVisit.supervisionVisit;
     private static final QSupply SUPPLY = QSupply.supply;
-    private static final QProjectFinancialData PROJECT_FINANCIAL_SUMMARY = QProjectFinancialData.projectFinancialData;
+    private static final QProjectFinancialSummary PROJECT_FINANCIAL_SUMMARY = QProjectFinancialSummary.projectFinancialSummary;
 
     public FinancialDataQueryServiceImpl() {
         super(FINANCIAL_DATA);

@@ -10,7 +10,6 @@ import com.arturjarosz.task.client.model.ClientType;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -22,12 +21,10 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
     private final ClientRepository clientRepository;
     private final ClientValidator clientValidator;
-    private final String lang;
 
-    public ClientApplicationServiceImpl(ClientRepository clientRepository, ClientValidator clientValidator, @Value("${task.language}") String lang) {
+    public ClientApplicationServiceImpl(ClientRepository clientRepository, ClientValidator clientValidator) {
         this.clientRepository = clientRepository;
         this.clientValidator = clientValidator;
-        this.lang = lang;
     }
 
     @Transactional
