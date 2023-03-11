@@ -49,7 +49,7 @@ public class Client extends AbstractAggregateRoot {
     private ClientType clientType;
 
     protected Client() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Client(PersonName personName, String companyName, ClientType clientType) {

@@ -9,6 +9,7 @@ import com.arturjarosz.task.contract.application.impl.ContractServiceImpl
 import com.arturjarosz.task.contract.model.Contract
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow
 import com.arturjarosz.task.contract.utils.ContractBuilder
+import com.arturjarosz.task.finance.application.ProjectFinancialDataService
 import com.arturjarosz.task.finance.application.impl.ProjectFinancialSummaryServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto
@@ -18,8 +19,8 @@ import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.status.project.ProjectStatus
-import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.sharedkernel.model.Money
+import com.arturjarosz.task.utils.ProjectBuilder
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -48,10 +49,11 @@ class ProjectApplicationServiceImplTest extends Specification {
     def projectFinancialDataApplicationService = Mock(ProjectFinancialSummaryServiceImpl)
     def contractService = Mock(ContractServiceImpl)
     def contractWorkflow = Mock(ContractStatusWorkflow)
+    def projectFinancialDataService = Mock(ProjectFinancialDataService)
 
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator,
-            projectFinancialDataApplicationService, contractService)
+            projectFinancialDataApplicationService, projectFinancialDataService, contractService)
 
     def "createProject should call validateProjectBasicDto on projectValidator"() {
         given:

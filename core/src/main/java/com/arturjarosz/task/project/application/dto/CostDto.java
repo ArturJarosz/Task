@@ -1,12 +1,22 @@
 package com.arturjarosz.task.project.application.dto;
 
-import com.arturjarosz.task.project.model.CostCategory;
+import com.arturjarosz.task.finance.model.CostCategory;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class CostDto implements Serializable {
+
+    public static final String ID_FIELD = "id";
+    public static final String VALUE_FIELD = "value";
+    public static final String NAME_FIELD = "name";
+    public static final String CATEGORY_FIELD = "category";
+    public static final String DATE_FIELD = "date";
+    public static final String NOTE_FIELD = "note";
+    public static final String HAS_INVOICE_FIELD = "hasInvoice";
+    public static final String IS_PAID_FIELD = "paid";
+
     private static final long serialVersionUID = 5692523801946817998L;
 
     private Long id;
@@ -20,7 +30,7 @@ public class CostDto implements Serializable {
     private Boolean paid;
 
     public CostDto() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Long getId() {
@@ -72,7 +82,7 @@ public class CostDto implements Serializable {
     }
 
     public Boolean getHasInvoice() {
-        return hasInvoice;
+        return this.hasInvoice;
     }
 
     public void setHasInvoice(Boolean hasInvoice) {
@@ -80,7 +90,7 @@ public class CostDto implements Serializable {
     }
 
     public Boolean getPayable() {
-        return payable;
+        return this.payable;
     }
 
     public void setPayable(Boolean payable) {
@@ -88,7 +98,7 @@ public class CostDto implements Serializable {
     }
 
     public Boolean getPaid() {
-        return paid;
+        return this.paid;
     }
 
     public void setPaid(Boolean paid) {

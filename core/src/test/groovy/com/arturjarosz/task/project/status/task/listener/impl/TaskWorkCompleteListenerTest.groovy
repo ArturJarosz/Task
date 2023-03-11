@@ -6,9 +6,9 @@ import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.project.status.stage.impl.StageWorkflowServiceImpl
 import com.arturjarosz.task.project.status.task.TaskStatus
-import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
-import com.arturjarosz.task.project.utils.TaskBuilder
+import com.arturjarosz.task.utils.ProjectBuilder
+import com.arturjarosz.task.utils.StageBuilder
+import com.arturjarosz.task.utils.TaskBuilder
 import spock.lang.Specification
 
 class TaskWorkCompleteListenerTest extends Specification {

@@ -33,7 +33,7 @@ public class SystemParameter extends AbstractAggregateRoot {
     private boolean singleValue;
 
     protected SystemParameter() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public SystemParameter(String name, String value, String defaultValue, SystemParameterType type,

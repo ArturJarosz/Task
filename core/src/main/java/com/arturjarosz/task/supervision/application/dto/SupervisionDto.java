@@ -30,7 +30,7 @@ public class SupervisionDto implements Serializable {
     private String note;
 
     public SupervisionDto() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Long getId() {

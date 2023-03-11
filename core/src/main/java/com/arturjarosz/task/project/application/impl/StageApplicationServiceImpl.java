@@ -62,10 +62,12 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     @Override
     public void removeStage(Long projectId, Long stageId) {
         LOG.debug("Removing Stage with id {} for Project with id {}.", stageId, projectId);
+
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         Project project = maybeProject.get();
+
         project.removeStage(stageId);
         this.projectRepository.save(project);
         LOG.debug("Stage with id {} for Project with id {} removed.", stageId, projectId);

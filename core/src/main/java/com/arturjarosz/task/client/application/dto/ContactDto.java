@@ -10,7 +10,7 @@ public class ContactDto implements Serializable {
     private String telephone;
 
     public ContactDto() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public AddressDto getAddress() {

@@ -45,7 +45,7 @@ public class Contract extends AbstractAggregateRoot implements WorkflowAware<Con
     private String workflowName;
 
     protected Contract() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Contract(double offerValue, LocalDate deadline, ContractStatusWorkflow contractWorkflow) {

@@ -22,7 +22,7 @@ public class FinancialData extends AbstractAggregateRoot {
     private static final long serialVersionUID = -7882045222253776404L;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "VALUE"))
+    @AttributeOverride(name = "value", column = @Column(name = "VALUE", precision = 5, scale = 2))
     private Money value;
 
     @Column(name = "HAS_INVOICE", nullable = false)
@@ -38,7 +38,7 @@ public class FinancialData extends AbstractAggregateRoot {
     private LocalDate paymentDate;
 
     protected FinancialData() {
-        // Needed by Hibernate
+        // needed by JPA
     }
 
     public FinancialData(Money value, boolean hasInvoice, boolean payable) {

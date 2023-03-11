@@ -17,7 +17,7 @@ public class PersonName extends AbstractValueObject<PersonName> implements Value
     private String lastName;
 
     public PersonName() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public PersonName(String firstName, String lastName) {

@@ -20,11 +20,11 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertI
 public class Money extends AbstractValueObject<Money> implements ValueObject<Money>, Comparable<Money> {
     private static final long serialVersionUID = -5524298857488493145L;
 
-    @Column(name = "MONEY")
+    @Column(name = "MONEY", precision = 5, scale = 2)
     private BigDecimal value;
 
     protected Money() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Money(double value) {

@@ -5,8 +5,8 @@ import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionServiceImpl
 import com.arturjarosz.task.project.status.stage.StageStatus
-import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
+import com.arturjarosz.task.utils.ProjectBuilder
+import com.arturjarosz.task.utils.StageBuilder
 import com.google.common.collect.Sets
 import spock.lang.Specification
 

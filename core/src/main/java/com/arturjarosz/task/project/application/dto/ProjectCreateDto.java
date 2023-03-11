@@ -17,7 +17,7 @@ public class ProjectCreateDto implements Serializable {
     private LocalDate deadline;
 
     public ProjectCreateDto() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Long getId() {

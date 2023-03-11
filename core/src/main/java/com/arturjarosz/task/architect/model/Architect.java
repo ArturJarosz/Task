@@ -25,7 +25,7 @@ public class Architect extends AbstractAggregateRoot {
     private Money projectsValue;
 
     protected Architect() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Architect(String firstName, String lastName) {

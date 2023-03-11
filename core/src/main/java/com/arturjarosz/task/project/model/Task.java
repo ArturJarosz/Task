@@ -48,7 +48,7 @@ public class Task extends AbstractEntity implements WorkflowAware<TaskStatus> {
     private String workflowName;
 
     public Task() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Task(String name, TaskType taskType, TaskWorkflow taskWorkflow) {

@@ -10,9 +10,9 @@ import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
 import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionServiceImpl
 import com.arturjarosz.task.project.status.stage.StageStatus
-import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
+import com.arturjarosz.task.utils.ProjectBuilder
+import com.arturjarosz.task.utils.StageBuilder
 import spock.lang.Specification
 
 import java.time.LocalDate

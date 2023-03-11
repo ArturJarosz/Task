@@ -17,7 +17,7 @@ public class ClientDto implements Serializable {
     private ClientType clientType;
 
     public ClientDto() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public String getFirstName() {

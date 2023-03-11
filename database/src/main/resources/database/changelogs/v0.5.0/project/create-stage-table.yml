@@ -44,9 +44,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: "INSTALLMENT_ID"
-                  type: "${long.type}"
-              - column:
                   name: "STATUS"
                   type: "VARCHAR2(50 ${char.unit})"
                   constraints:

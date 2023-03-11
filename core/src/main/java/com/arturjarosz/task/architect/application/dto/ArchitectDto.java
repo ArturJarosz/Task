@@ -11,7 +11,7 @@ public class ArchitectDto implements Serializable {
     private Double projectsValue;
 
     public ArchitectDto() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public String getFirstName() {

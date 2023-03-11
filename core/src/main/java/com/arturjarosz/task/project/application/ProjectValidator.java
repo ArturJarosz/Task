@@ -2,8 +2,8 @@ package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
 import com.arturjarosz.task.project.application.dto.ProjectDto;
-import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +23,11 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 @Component
 public class ProjectValidator {
 
-    private final ProjectRepository projectRepository;
+    private final ProjectQueryService projectQueryService;
 
     @Autowired
-    public ProjectValidator(ProjectRepository projectRepository) {
-        this.projectRepository = projectRepository;
+    public ProjectValidator(ProjectQueryService projectQueryService) {
+        this.projectQueryService = projectQueryService;
     }
 
     private static void validateProjectName(String projectName) {
@@ -57,8 +57,9 @@ public class ProjectValidator {
     }
 
     public void validateProjectExistence(Long projectId) {
-        Optional<Project> maybeProject = this.projectRepository.findById(projectId);
-        this.validateProjectExistence(maybeProject, projectId);
+        Boolean projectExists = this.projectQueryService.doesProjectExistByProjectId(projectId);
+        assertIsTrue(projectExists, createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT),
+                projectId);
     }
 
     public void validateUpdateProjectDto(ProjectDto projectDto) {
