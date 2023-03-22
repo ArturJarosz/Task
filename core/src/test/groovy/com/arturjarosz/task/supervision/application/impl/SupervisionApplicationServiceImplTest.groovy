@@ -1,6 +1,6 @@
 package com.arturjarosz.task.supervision.application.impl
 
-import com.arturjarosz.task.finance.application.impl.ProjectFinancialDataServiceImpl
+import com.arturjarosz.task.finance.application.impl.ProjectFinancialSummaryServiceImpl
 import com.arturjarosz.task.finance.model.FinancialData
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
@@ -44,7 +44,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def supervisionVisitValidator = Mock(SupervisionVisitValidator)
     def supervisionRepository = Mock(SupervisionRepository)
     def supervisionQueryService = Mock(SupervisionQueryServiceImpl)
-    def projectFinancialDataApplicationService = Mock(ProjectFinancialDataServiceImpl)
+    def projectFinancialDataApplicationService = Mock(ProjectFinancialSummaryServiceImpl)
 
     def supervisionApplicationService = new SupervisionApplicationServiceImpl(projectValidator, supervisionValidator,
             supervisionVisitValidator, supervisionRepository, supervisionQueryService,

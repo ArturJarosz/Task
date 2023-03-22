@@ -1,9 +1,9 @@
 package com.arturjarosz.task.finance.query.impl;
 
-import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialDataDto;
+import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
 import com.arturjarosz.task.finance.model.QFinancialData;
-import com.arturjarosz.task.finance.model.QProjectFinancialData;
+import com.arturjarosz.task.finance.model.QProjectFinancialSummary;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
@@ -34,7 +34,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     private static final QSupervision SUPERVISION = QSupervision.supervision;
     private static final QSupervisionVisit SUPERVISION_VISIT = QSupervisionVisit.supervisionVisit;
     private static final QSupply SUPPLY = QSupply.supply;
-    private static final QProjectFinancialData PROJECT_FINANCIAL_DATA = QProjectFinancialData.projectFinancialData;
+    private static final QProjectFinancialSummary PROJECT_FINANCIAL_SUMMARY = QProjectFinancialSummary.projectFinancialSummary;
 
     public FinancialDataQueryServiceImpl() {
         super(FINANCIAL_DATA);
@@ -100,13 +100,13 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     }
 
     @Override
-    public TotalProjectFinancialDataDto getTotalProjectFinancialData(long projectId) {
-        return this.query().from(PROJECT_FINANCIAL_DATA).where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
-                .select(Projections.constructor(TotalProjectFinancialDataDto.class,
-                        PROJECT_FINANCIAL_DATA.totalGrossValue.value.doubleValue(),
-                        PROJECT_FINANCIAL_DATA.totalNetValue.value.doubleValue(),
-                        PROJECT_FINANCIAL_DATA.totalVatTax.value.doubleValue(),
-                        PROJECT_FINANCIAL_DATA.totalIncomeTax.value.doubleValue())).fetchOne();
+    public TotalProjectFinancialSummaryDto getTotalProjectFinancialSummary(long projectId) {
+        return this.query().from(PROJECT_FINANCIAL_SUMMARY).where(PROJECT_FINANCIAL_SUMMARY.projectId.eq(projectId))
+                .select(Projections.constructor(TotalProjectFinancialSummaryDto.class,
+                        PROJECT_FINANCIAL_SUMMARY.totalGrossValue.value.doubleValue(),
+                        PROJECT_FINANCIAL_SUMMARY.totalNetValue.value.doubleValue(),
+                        PROJECT_FINANCIAL_SUMMARY.totalVatTax.value.doubleValue(),
+                        PROJECT_FINANCIAL_SUMMARY.totalIncomeTax.value.doubleValue())).fetchOne();
     }
 
     private List<FinancialDataDto> getFinancialDataForFinancialDataAwareObjects(JPAQuery<?> jpaQuery) {
