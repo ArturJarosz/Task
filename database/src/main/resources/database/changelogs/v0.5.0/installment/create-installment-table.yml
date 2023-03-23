@@ -24,6 +24,16 @@ databaseChangeLog:
                   type: "${long.type}"
                   constraints:
                     nullable: false
+              - column:
+                  name: "STAGE_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "PROJECT_FINANCIAL_DATA_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
         - addPrimaryKey:
             tableName: "INSTALLMENT"
             columnNames: "ID"

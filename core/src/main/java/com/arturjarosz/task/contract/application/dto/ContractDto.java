@@ -16,7 +16,7 @@ public class ContractDto implements Serializable {
     private ContractStatus status;
 
     public ContractDto() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Double getOfferValue() {

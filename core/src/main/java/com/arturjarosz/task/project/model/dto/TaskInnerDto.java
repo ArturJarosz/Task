@@ -15,7 +15,7 @@ public class TaskInnerDto implements Serializable {
     String note;
 
     public TaskInnerDto() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public String getName() {

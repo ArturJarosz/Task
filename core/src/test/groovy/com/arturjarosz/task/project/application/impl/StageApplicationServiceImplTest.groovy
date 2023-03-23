@@ -12,9 +12,9 @@ import com.arturjarosz.task.project.model.StageType
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.status.task.TaskStatus
-import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
-import com.arturjarosz.task.project.utils.TaskBuilder
+import com.arturjarosz.task.utils.ProjectBuilder
+import com.arturjarosz.task.utils.StageBuilder
+import com.arturjarosz.task.utils.TaskBuilder
 import spock.lang.Specification
 
 import java.time.LocalDate

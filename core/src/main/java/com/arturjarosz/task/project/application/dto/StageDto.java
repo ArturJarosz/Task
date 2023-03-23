@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application.dto;
 
+import com.arturjarosz.task.finance.application.dto.InstallmentDto;
 import com.arturjarosz.task.project.model.StageType;
 import com.arturjarosz.task.project.status.stage.StageStatus;
 

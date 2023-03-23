@@ -25,7 +25,7 @@ public class ProjectDto implements Serializable {
     private ContractDto contractDto;
 
     public ProjectDto() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public String getName() {

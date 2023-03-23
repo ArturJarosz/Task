@@ -6,9 +6,9 @@ import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
-import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.PersonName
+import com.arturjarosz.task.utils.ProjectBuilder
 import spock.lang.Specification
 
 class ClientValidatorTest extends Specification {

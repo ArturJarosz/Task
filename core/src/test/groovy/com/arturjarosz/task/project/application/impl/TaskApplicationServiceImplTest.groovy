@@ -15,9 +15,9 @@ import com.arturjarosz.task.project.model.dto.TaskInnerDto
 import com.arturjarosz.task.project.query.ProjectQueryService
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.task.TaskStatus
-import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
-import com.arturjarosz.task.project.utils.TaskBuilder
+import com.arturjarosz.task.utils.ProjectBuilder
+import com.arturjarosz.task.utils.StageBuilder
+import com.arturjarosz.task.utils.TaskBuilder
 import spock.lang.Specification
 
 class TaskApplicationServiceImplTest extends Specification {
@@ -28,7 +28,6 @@ class TaskApplicationServiceImplTest extends Specification {
     private static final String STAGE_NAME = "stageName"
     private static final String TASK_NAME = "taskName"
     private static final String NEW_TASK_NAME = "newTaskName"
-    private static final String NOTE = "note"
     private static final TaskStatus NEW_TASK_STATUS = TaskStatus.IN_PROGRESS
 
     private projectQueryService = Mock(ProjectQueryService)

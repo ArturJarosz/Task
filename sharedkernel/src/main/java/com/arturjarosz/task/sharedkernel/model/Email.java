@@ -19,7 +19,7 @@ public class Email extends AbstractValueObject<Email> implements ValueObject<Ema
     private String value;
 
     protected Email() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Email(String value) {

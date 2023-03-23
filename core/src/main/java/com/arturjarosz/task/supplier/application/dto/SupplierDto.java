@@ -16,7 +16,7 @@ public class SupplierDto implements Serializable {
     private SupplierCategory category;
 
     public SupplierDto() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public String getName() {

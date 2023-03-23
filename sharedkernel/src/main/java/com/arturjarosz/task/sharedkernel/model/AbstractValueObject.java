@@ -11,7 +11,7 @@ public abstract class AbstractValueObject<T extends ValueObject<T>> implements V
     private static final long serialVersionUID = -8491331532881822544L;
 
     protected AbstractValueObject() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     @Override

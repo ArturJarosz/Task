@@ -16,7 +16,7 @@ public class ContractorDto implements Serializable {
     private ContractorCategory category;
 
     public ContractorDto() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public String getName() {

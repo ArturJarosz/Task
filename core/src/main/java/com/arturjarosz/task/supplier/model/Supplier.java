@@ -33,7 +33,7 @@ public class Supplier extends AbstractAggregateRoot {
     private String note;
 
     protected Supplier() {
-        // needed by Hibernate
+        // needed by JPA
     }
 
     public Supplier(String name, SupplierCategory category) {

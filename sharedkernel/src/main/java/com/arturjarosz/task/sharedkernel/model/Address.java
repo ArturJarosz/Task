@@ -34,7 +34,7 @@ public class Address extends AbstractValueObject<Address> implements ValueObject
     private String flatNumber;
 
     public Address() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Address(String postCode, String city, String street, String houseNumber, String flatNumber) {

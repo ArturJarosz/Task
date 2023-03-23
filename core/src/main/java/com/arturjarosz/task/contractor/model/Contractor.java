@@ -34,7 +34,7 @@ public class Contractor extends AbstractAggregateRoot {
     private String note;
 
     protected Contractor() {
-        // needed by hibernate
+        // needed by JPA
     }
 
     public Contractor(String name, ContractorCategory category) {

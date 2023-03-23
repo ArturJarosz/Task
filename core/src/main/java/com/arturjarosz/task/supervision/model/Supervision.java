@@ -56,7 +56,7 @@ public class Supervision extends AbstractAggregateRoot {
     private Long projectId;
 
     protected Supervision() {
-        // Needed by Hibernate
+        // needed by JPA
     }
 
     public Supervision(SupervisionDto supervisionDto) {
@@ -113,7 +113,7 @@ public class Supervision extends AbstractAggregateRoot {
     }
 
     public Long getProjectId() {
-        return projectId;
+        return this.projectId;
     }
 
     public SupervisionVisit updateSupervisionVisit(Long supervisionVisitId,
