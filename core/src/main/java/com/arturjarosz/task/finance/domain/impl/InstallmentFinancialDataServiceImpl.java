@@ -19,7 +19,7 @@ public class InstallmentFinancialDataServiceImpl extends AbstractPartialFinancia
 
     @Autowired
     public InstallmentFinancialDataServiceImpl(FinancialDataQueryService financialDataQueryService,
-                                               UserProperties userProperties) {
+            UserProperties userProperties) {
         super(userProperties);
         this.financialDataQueryService = financialDataQueryService;
     }

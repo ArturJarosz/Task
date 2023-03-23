@@ -25,7 +25,7 @@ public class SupervisionVisit extends AbstractEntity {
     private boolean payable;
 
     protected SupervisionVisit() {
-        // Needed by Hibernate
+        // needed by JPA
     }
 
     public SupervisionVisit(LocalDate dateOfVisit, int hoursCount, boolean payable) {

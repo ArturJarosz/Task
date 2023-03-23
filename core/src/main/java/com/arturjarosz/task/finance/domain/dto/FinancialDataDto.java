@@ -3,10 +3,10 @@ package com.arturjarosz.task.finance.domain.dto;
 import java.math.BigDecimal;
 
 public class FinancialDataDto {
-    public static final String HAS_INVOICE = "hasInvoice";
-    public static final String PAYABLE = "payable";
-    public static final String PAID = "paid";
-    public static final String VALUE = "value";
+    public static final String HAS_INVOICE_FIELD = "hasInvoice";
+    public static final String PAYABLE_FIELD = "payable";
+    public static final String PAID_FIELD = "paid";
+    public static final String VALUE_FIELD = "value";
 
     private boolean hasInvoice;
     private boolean payable;

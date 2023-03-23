@@ -15,7 +15,7 @@ public abstract class AbstractPerson extends AbstractEntity {
     private PersonName name;
 
     protected AbstractPerson() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     protected AbstractPerson(PersonName name) {

@@ -9,9 +9,6 @@ databaseChangeLog:
       file: "create-task-sequence.yml"
       relativeToChangelogFile: true
   - include:
-      file: "create-cooperator-job-sequence.yml"
-      relativeToChangelogFile: true
-  - include:
       file: "create-arrangement-sequence.yml"
       relativeToChangelogFile: true
   - include:
@@ -25,7 +22,4 @@ databaseChangeLog:
       relativeToChangelogFile: true
   - include:
       file: "create-task-table.yml"
-      relativeToChangelogFile: true
-  - include:
-      file: "create-cooperator-job-table.yml"
       relativeToChangelogFile: true

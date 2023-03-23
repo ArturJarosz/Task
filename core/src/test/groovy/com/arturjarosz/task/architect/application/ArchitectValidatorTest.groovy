@@ -6,7 +6,7 @@ import com.arturjarosz.task.architect.infrastructure.repository.ArchitectReposit
 import com.arturjarosz.task.architect.model.Architect
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
-import com.arturjarosz.task.project.utils.ProjectBuilder
+import com.arturjarosz.task.utils.ProjectBuilder
 import spock.lang.Specification
 
 class ArchitectValidatorTest extends Specification {

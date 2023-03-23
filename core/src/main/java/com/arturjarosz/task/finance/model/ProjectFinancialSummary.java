@@ -18,90 +18,110 @@ public class ProjectFinancialSummary extends AbstractAggregateRoot {
     private static final long serialVersionUID = 4803569322363900378L;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "BASE_NET_VALUE", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "BASE_NET_VALUE", nullable = false, precision = 5, scale = 2))
     private Money baseNetValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "BASE_GROSS_VALUE", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "BASE_GROSS_VALUE", nullable = false, precision = 5, scale = 2))
     private Money baseGrossValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "BASE_VAT_TAX", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "BASE_VAT_TAX", nullable = false, precision = 5, scale = 2))
     private Money baseVatTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "BASE_INCOME_TAX", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "BASE_INCOME_TAX", nullable = false, precision = 5, scale = 2))
     private Money baseIncomeTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "CONTRACTORS_JOBS_NET_VALUE", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "CONTRACTORS_JOBS_NET_VALUE", nullable = false, precision = 5, scale = 2))
     private Money contractorsJobsNetValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "CONTRACTORS_JOBS_GROSS_VALUE", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "CONTRACTORS_JOBS_GROSS_VALUE", nullable = false, precision = 5, scale = 2))
     private Money contractorsJobsGrossValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "CONTRACTORS_JOBS_VAT_TAX", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "CONTRACTORS_JOBS_VAT_TAX", nullable = false, precision = 5, scale = 2))
     private Money contractorsJobsVatTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "CONTRACTORS_JOBS_INCOME_TAX", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "CONTRACTORS_JOBS_INCOME_TAX", nullable = false, precision = 5, scale = 2))
     private Money contractorsJobsIncomeTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "COSTS_NET_VALUE", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "COSTS_NET_VALUE", nullable = false, precision = 5, scale = 2))
     private Money costsNetValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "COSTS_GROSS_VALUE", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "COSTS_GROSS_VALUE", nullable = false, precision = 5, scale = 2))
     private Money costsGrossValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "COSTS_VAT_TAX", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "COSTS_VAT_TAX", nullable = false, precision = 5, scale = 2))
     private Money costsVatTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "COSTS_INCOME_TAX", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "COSTS_INCOME_TAX", nullable = false, precision = 5, scale = 2))
     private Money costsIncomeTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_NET_VALUE", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "SUPPLIES_NET_VALUE", nullable = false, precision = 5, scale = 2))
     private Money suppliesNetValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_GROSS_VALUE", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "SUPPLIES_GROSS_VALUE", nullable = false, precision = 5, scale = 2))
     private Money suppliesGrossValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_VAT_TAX", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "SUPPLIES_VAT_TAX", nullable = false, precision = 5, scale = 2))
     private Money suppliesVatTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "SUPPLIES_INCOME_TAX", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "SUPPLIES_INCOME_TAX", nullable = false, precision = 5, scale = 2))
     private Money suppliesIncomeTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "TOTAL_NET_VALUE", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "TOTAL_NET_VALUE", nullable = false, precision = 5, scale = 2))
     private Money totalNetValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "TOTAL_GROSS_VALUE", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "TOTAL_GROSS_VALUE", nullable = false, precision = 5, scale = 2))
     private Money totalGrossValue;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "TOTAL_VAT_TAX", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "TOTAL_VAT_TAX", nullable = false, precision = 5, scale = 2))
     private Money totalVatTax;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "TOTAL_INCOME_TAX", nullable = false))
+    @AttributeOverride(name = "value",
+            column = @Column(name = "TOTAL_INCOME_TAX", nullable = false, precision = 5, scale = 2))
     private Money totalIncomeTax;
 
     @Column(name = "PROJECT_ID", nullable = false)
     private Long projectId;
 
     protected ProjectFinancialSummary() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public ProjectFinancialSummary(Long projectId) {
@@ -241,7 +261,8 @@ public class ProjectFinancialSummary extends AbstractAggregateRoot {
         }
 
         if (projectFinancialSummaryDto.getContractorJobsValue() != null) {
-            this.contractorsJobsGrossValue.setValue(projectFinancialSummaryDto.getContractorJobsValue().getGrossValue());
+            this.contractorsJobsGrossValue.setValue(
+                    projectFinancialSummaryDto.getContractorJobsValue().getGrossValue());
             this.contractorsJobsNetValue.setValue(projectFinancialSummaryDto.getContractorJobsValue().getNetValue());
             this.contractorsJobsIncomeTax.setValue(projectFinancialSummaryDto.getContractorJobsValue().getIncomeTax());
             this.contractorsJobsVatTax.setValue(projectFinancialSummaryDto.getContractorJobsValue().getVatTax());

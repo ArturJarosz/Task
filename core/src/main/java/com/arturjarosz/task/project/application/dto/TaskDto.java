@@ -27,7 +27,7 @@ public class TaskDto implements Serializable {
     private TaskStatus status;
 
     public TaskDto() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public String getName() {

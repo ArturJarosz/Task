@@ -14,7 +14,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDate;
@@ -51,10 +50,6 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
     @Column(name = "STAGE_TYPE", nullable = false)
     private StageType stageType;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "INSTALLMENT_ID", referencedColumnName = "ID")
-    private Installment installment;
-
     @Column(name = "STATUS", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private StageStatus status;
@@ -63,7 +58,7 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
     private String workflowName;
 
     protected Stage() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Stage(String name, StageType stageType, StageWorkflow stageWorkflow) {
@@ -77,18 +72,6 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
         this.note = note;
         this.stageType = stageType;
         this.deadline = deadline;
-    }
-
-    public Installment getInstallment() {
-        return this.installment;
-    }
-
-    public void setInstallment(Installment installment) {
-        this.installment = installment;
-    }
-
-    public void removeInstallment() {
-        this.installment = null;
     }
 
     public void addTask(Task task) {
@@ -110,9 +93,8 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
     }
 
     public Task updateTask(Long taskId, TaskInnerDto taskInnerDto) {
-        Task taskToUpdate = Objects.requireNonNull(this.tasks.stream()
-                .filter(task -> task.getId().equals(taskId))
-                .findFirst().orElse(null));
+        Task taskToUpdate = Objects.requireNonNull(
+                this.tasks.stream().filter(task -> task.getId().equals(taskId)).findFirst().orElse(null));
         taskToUpdate.update(taskInnerDto);
         return taskToUpdate;
     }
