@@ -24,6 +24,8 @@ import static com.arturjarosz.task.architect.application.ArchitectValidator.vali
 public class ArchitectApplicationServiceImpl implements ArchitectApplicationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArchitectApplicationServiceImpl.class);
+    
+    private final static String some__wrong_name = "";
 
     private final ArchitectRepository architectRepository;
     private final ArchitectValidator architectValidator;
