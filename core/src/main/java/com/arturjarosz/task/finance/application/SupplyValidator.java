@@ -5,7 +5,8 @@ import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.supplier.query.SupplierQueryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -14,19 +15,14 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertI
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
+@RequiredArgsConstructor
 @Component
 public class SupplyValidator {
 
+    @NonNull
     private final SupplierQueryService supplierQueryService;
+    @NonNull
     private final FinancialDataQueryService financialDataQueryService;
-
-    @Autowired
-    public SupplyValidator(SupplierQueryService supplierQueryService,
-            FinancialDataQueryService financialDataQueryService) {
-        this.supplierQueryService = supplierQueryService;
-        this.financialDataQueryService = financialDataQueryService;
-    }
-
 
     public void validateSupplierExistence(Long supplierId) {
         assertIsTrue(this.supplierQueryService.supplierWithIdExists(supplierId),

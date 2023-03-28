@@ -14,31 +14,26 @@ import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.Money;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@RequiredArgsConstructor
 @ApplicationService
 public class ProjectFinancialSummaryServiceImpl implements ProjectFinancialSummaryService {
 
+    @NonNull
     private final ProjectFinancialSummaryRepository projectFinancialSummaryRepository;
+    @NonNull
     private final ProjectValidator projectValidator;
+    @NonNull
     private final FinancialDataQueryServiceImpl financialDataQueryService;
+    @NonNull
     private final FinancialDataRepository financialDataRepository;
+    @NonNull
     private final List<PartialFinancialDataService> partialFinancialDataServices;
-
-    @Autowired
-    public ProjectFinancialSummaryServiceImpl(ProjectFinancialSummaryRepository projectFinancialSummaryRepository,
-            ProjectValidator projectValidator, FinancialDataQueryServiceImpl financialDataQueryService,
-            FinancialDataRepository financialDataRepository,
-            List<PartialFinancialDataService> partialFinancialDataServices) {
-        this.projectFinancialSummaryRepository = projectFinancialSummaryRepository;
-        this.projectValidator = projectValidator;
-        this.financialDataQueryService = financialDataQueryService;
-        this.financialDataRepository = financialDataRepository;
-        this.partialFinancialDataServices = partialFinancialDataServices;
-    }
 
     @Override
     public ProjectFinancialSummary createProjectFinancialSummary(Long projectId) {

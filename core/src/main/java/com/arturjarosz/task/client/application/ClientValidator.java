@@ -8,6 +8,8 @@ import com.arturjarosz.task.client.model.ClientType;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,16 +22,14 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 /**
  * Validates Client entity and Client related Dtos.
  */
+@RequiredArgsConstructor
 @Component
 public class ClientValidator {
 
+    @NonNull
     private final ClientRepository clientRepository;
+    @NonNull
     private final ProjectQueryService projectQueryService;
-
-    public ClientValidator(ClientRepository clientRepository, ProjectQueryService projectQueryService) {
-        this.clientRepository = clientRepository;
-        this.projectQueryService = projectQueryService;
-    }
 
     public void validateClientDtoPresence(ClientDto clientDto) {
         assertIsTrue(clientDto != null, createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT));

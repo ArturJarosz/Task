@@ -4,6 +4,8 @@ import com.arturjarosz.task.architect.application.ArchitectApplicationService;
 import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
 import com.arturjarosz.task.architect.application.dto.ArchitectDto;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +22,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("architects")
+@RequiredArgsConstructor
 public class ArchitectRestController {
 
+    @NonNull
     private final ArchitectApplicationService architectApplicationService;
-
-    public ArchitectRestController(ArchitectApplicationService architectApplicationService) {
-        this.architectApplicationService = architectApplicationService;
-    }
 
     @PostMapping("")
     public ResponseEntity<ArchitectDto> createArchitect(@RequestBody ArchitectBasicDto architectBasicDto) {
         ArchitectDto architectDto = this.architectApplicationService.createArchitect(architectBasicDto);
-        HttpHeaders headers = new HttpHeadersBuilder()
-                .withLocation("/architects/{id}", architectDto.getId())
-                .build();
+        HttpHeaders headers = new HttpHeadersBuilder().withLocation("/architects/{id}", architectDto.getId()).build();
         return new ResponseEntity<>(architectDto, headers, HttpStatus.CREATED);
     }
 
@@ -46,20 +44,18 @@ public class ArchitectRestController {
 
     @GetMapping("{architectId}")
     public ResponseEntity<ArchitectDto> getArchitect(@PathVariable("architectId") Long architectId) {
-        return new ResponseEntity<>(this.architectApplicationService.getArchitect(architectId),
-                HttpStatus.OK);
+        return new ResponseEntity<>(this.architectApplicationService.getArchitect(architectId), HttpStatus.OK);
     }
 
     @PutMapping("{architectId}")
     public ResponseEntity<ArchitectDto> updateArchitect(@PathVariable("architectId") Long architectId,
-                                                        @RequestBody ArchitectDto architectDto) {
+            @RequestBody ArchitectDto architectDto) {
         ArchitectDto updatedArchitectDto = this.architectApplicationService.updateArchitect(architectId, architectDto);
         return new ResponseEntity<>(updatedArchitectDto, HttpStatus.OK);
     }
 
     @GetMapping("")
     public ResponseEntity<List<ArchitectBasicDto>> getBasicArchitects() {
-        return new ResponseEntity<>(this.architectApplicationService.getBasicArchitects(),
-                HttpStatus.OK);
+        return new ResponseEntity<>(this.architectApplicationService.getBasicArchitects(), HttpStatus.OK);
     }
 }

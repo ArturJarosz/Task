@@ -3,6 +3,8 @@ package com.arturjarosz.task.finance.rest;
 import com.arturjarosz.task.finance.application.CostApplicationService;
 import com.arturjarosz.task.project.application.dto.CostDto;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,16 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("projects")
 public class CostRestController {
 
+    @NonNull
     private final CostApplicationService costApplicationService;
-
-    public CostRestController(
-            CostApplicationService costApplicationService) {
-        this.costApplicationService = costApplicationService;
-    }
 
     @PostMapping("{projectId}/costs")
     public ResponseEntity<CostDto> createCost(@PathVariable("projectId") Long projectId,

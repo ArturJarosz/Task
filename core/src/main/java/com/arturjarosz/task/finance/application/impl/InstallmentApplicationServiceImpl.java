@@ -11,34 +11,28 @@ import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @ApplicationService
 public class InstallmentApplicationServiceImpl implements InstallmentApplicationService {
-    private static final Logger LOG = LoggerFactory.getLogger(InstallmentApplicationServiceImpl.class);
-
+    @NonNull
     private final ProjectValidator projectValidator;
+    @NonNull
     private final StageValidator stageValidator;
+    @NonNull
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
+    @NonNull
     private final FinancialDataQueryService financialDataQueryService;
+    @NonNull
     private final InstallmentValidator installmentValidator;
-
-    @Autowired
-    public InstallmentApplicationServiceImpl(ProjectValidator projectValidator, StageValidator stageValidator,
-            ProjectFinancialDataRepository projectFinancialDataRepository,
-            FinancialDataQueryService financialDataQueryService, InstallmentValidator installmentValidator) {
-        this.projectValidator = projectValidator;
-        this.stageValidator = stageValidator;
-        this.projectFinancialDataRepository = projectFinancialDataRepository;
-        this.financialDataQueryService = financialDataQueryService;
-        this.installmentValidator = installmentValidator;
-    }
 
     @Transactional
     @Override

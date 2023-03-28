@@ -9,16 +9,14 @@ import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @ApplicationService
 public class ContractStatusTransitionServiceImpl implements ContractStatusTransitionService {
+    @NonNull
     private final ContractWorkflowService contractWorkflowService;
-
-    @Autowired
-    public ContractStatusTransitionServiceImpl(ContractWorkflowService contractWorkflowService) {
-        this.contractWorkflowService = contractWorkflowService;
-    }
 
     @Override
     public void createOffer(Contract contract) {

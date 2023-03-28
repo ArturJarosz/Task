@@ -3,6 +3,8 @@ package com.arturjarosz.task.finance.rest;
 import com.arturjarosz.task.finance.application.ContractorJobApplicationService;
 import com.arturjarosz.task.finance.application.dto.ContractorJobDto;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,15 +17,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("projects")
 public class ContractorJobRestController {
 
+    @NonNull
     private final ContractorJobApplicationService contractorJobApplicationService;
-
-    public ContractorJobRestController(ContractorJobApplicationService contractorJobApplicationService) {
-        this.contractorJobApplicationService = contractorJobApplicationService;
-    }
 
     @PostMapping("{projectId}/contractorJobs")
     public ResponseEntity<ContractorJobDto> createContractorJob(@PathVariable("projectId") Long projectId,

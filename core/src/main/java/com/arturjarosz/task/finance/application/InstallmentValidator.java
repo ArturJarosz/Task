@@ -6,7 +6,8 @@ import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -15,15 +16,12 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertI
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
+@RequiredArgsConstructor
 @Component
 public class InstallmentValidator {
 
+    @NonNull
     private final FinancialDataQueryService financialDataQueryService;
-
-    @Autowired
-    public InstallmentValidator(FinancialDataQueryService financialDataQueryService) {
-        this.financialDataQueryService = financialDataQueryService;
-    }
 
     public void validateCreateInstallmentDto(InstallmentDto installmentDto) {
         assertNotNull(installmentDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.INSTALLMENT));

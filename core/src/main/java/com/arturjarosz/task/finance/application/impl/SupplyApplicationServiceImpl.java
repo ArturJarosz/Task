@@ -11,34 +11,28 @@ import com.arturjarosz.task.finance.model.Supply;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
+@RequiredArgsConstructor
 @ApplicationService
 public class SupplyApplicationServiceImpl implements SupplyApplicationService {
-    private static final Logger LOG = LoggerFactory.getLogger(SupplyApplicationServiceImpl.class);
 
+    @NonNull
     private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
+    @NonNull
     private final ProjectValidator projectValidator;
+    @NonNull
     private final SupplyValidator supplyValidator;
+    @NonNull
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
+    @NonNull
     private final FinancialDataQueryService financialDataQueryService;
-
-    @Autowired
-    public SupplyApplicationServiceImpl(ProjectFinanceAwareObjectService projectFinanceAwareObjectService,
-            ProjectValidator projectValidator, SupplyValidator supplyValidator,
-            ProjectFinancialDataRepository projectFinancialDataRepository,
-            FinancialDataQueryService financialDataQueryService) {
-        this.projectFinanceAwareObjectService = projectFinanceAwareObjectService;
-        this.projectValidator = projectValidator;
-        this.supplyValidator = supplyValidator;
-        this.projectFinancialDataRepository = projectFinancialDataRepository;
-        this.financialDataQueryService = financialDataQueryService;
-    }
 
     @Transactional
     @Override
