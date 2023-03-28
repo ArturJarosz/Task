@@ -8,27 +8,24 @@ import com.arturjarosz.task.contractor.infrastructure.ContractorRepository;
 import com.arturjarosz.task.contractor.model.Contractor;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
+@RequiredArgsConstructor
 @ApplicationService
 public class ContractorApplicationServiceImpl implements ContractorApplicationService {
-    private static final Logger LOG = LoggerFactory.getLogger(ContractorApplicationServiceImpl.class);
 
+    @NonNull
     private final ContractorRepository contractorRepository;
+    @NonNull
     private final ContractorValidator contractorValidator;
 
-    @Autowired
-    public ContractorApplicationServiceImpl(ContractorRepository contractorRepository,
-            ContractorValidator contractorValidator) {
-        this.contractorRepository = contractorRepository;
-        this.contractorValidator = contractorValidator;
-    }
 
     @Transactional
     @Override

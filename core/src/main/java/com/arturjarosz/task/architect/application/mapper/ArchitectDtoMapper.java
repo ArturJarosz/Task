@@ -19,8 +19,8 @@ public interface ArchitectDtoMapper {
     @Mapping(target = "projectsValue", source = "projectsValue", qualifiedByName = "moneyToDouble")
     ArchitectDto architectToArchitectDto(Architect architect);
 
-    @Mapping(source = "firstName", target = "firstName")
-    @Mapping(source = "lastName", target = "lastName")
+    @Mapping(source = "firstName", target = "personName.firstName")
+    @Mapping(source = "lastName", target = "personName.lastName")
     Architect architectBasicDtoToArchitect(ArchitectBasicDto architectBasicDto);
 
     @Mapping(source = "personName.firstName", target = "firstName")

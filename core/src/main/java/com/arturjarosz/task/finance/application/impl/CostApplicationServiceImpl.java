@@ -11,32 +11,26 @@ import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.dto.CostDto;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @ApplicationService
 public class CostApplicationServiceImpl implements CostApplicationService {
-
+    @NonNull
     private final CostValidator costValidator;
+    @NonNull
     private final ProjectValidator projectValidator;
+    @NonNull
     private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
+    @NonNull
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
+    @NonNull
     private final FinancialDataQueryService financialDataQueryService;
-
-    @Autowired
-    public CostApplicationServiceImpl(CostValidator costValidator, ProjectValidator projectValidator,
-            ProjectFinanceAwareObjectService projectFinanceAwareObjectService,
-            ProjectFinancialDataRepository projectFinancialDataRepository,
-            FinancialDataQueryService financialDataQueryService) {
-        this.costValidator = costValidator;
-        this.projectValidator = projectValidator;
-        this.projectFinanceAwareObjectService = projectFinanceAwareObjectService;
-        this.projectFinancialDataRepository = projectFinancialDataRepository;
-        this.financialDataQueryService = financialDataQueryService;
-    }
 
     @Transactional
     @Override

@@ -6,7 +6,8 @@ import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.application.dto.CostDto;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
@@ -14,15 +15,12 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertN
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
+@RequiredArgsConstructor
 @Component
 public class CostValidator {
 
+    @NonNull
     private final FinancialDataQueryService financialDataQueryService;
-
-    @Autowired
-    public CostValidator(FinancialDataQueryService financialDataQueryService) {
-        this.financialDataQueryService = financialDataQueryService;
-    }
 
     public void validateCostDto(CostDto costDto) {
         assertNotNull(costDto, BaseValidator.createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST));

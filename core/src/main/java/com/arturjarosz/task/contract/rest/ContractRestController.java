@@ -2,7 +2,8 @@ package com.arturjarosz.task.contract.rest;
 
 import com.arturjarosz.task.contract.application.ContractService;
 import com.arturjarosz.task.contract.application.dto.ContractDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,15 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("contracts/{contractId}")
 public class ContractRestController {
+    @NonNull
     private final ContractService contractService;
-
-    @Autowired
-    public ContractRestController(ContractService contractService) {
-        this.contractService = contractService;
-    }
 
     @PostMapping("reject")
     public ResponseEntity<ContractDto> rejectOffer(@PathVariable("contractId") Long contractId) {

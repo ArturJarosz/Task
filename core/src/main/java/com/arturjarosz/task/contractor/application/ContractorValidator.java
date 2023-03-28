@@ -5,6 +5,8 @@ import com.arturjarosz.task.contractor.domain.ContractorExceptionCodes;
 import com.arturjarosz.task.contractor.infrastructure.ContractorRepository;
 import com.arturjarosz.task.contractor.model.Contractor;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -14,14 +16,12 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertN
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
+@RequiredArgsConstructor
 @Component
 public class ContractorValidator {
 
+    @NonNull
     private final ContractorRepository contractorRepository;
-
-    public ContractorValidator(ContractorRepository contractorRepository) {
-        this.contractorRepository = contractorRepository;
-    }
 
     public void validateCreateContractorDto(ContractorDto contractorDto) {
         assertNotNull(contractorDto, createMessageCode(ExceptionCodes.NULL, ContractorExceptionCodes.CONTRACTOR));

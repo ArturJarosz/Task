@@ -5,22 +5,20 @@ import com.arturjarosz.task.contract.status.ContractStatus;
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
+@RequiredArgsConstructor
 @Component
 public class ContractWorkflowValidator {
+    @NonNull
     private final ProjectQueryService projectQueryService;
+    @NonNull
     private final ContractStatusWorkflow contractWorkflow;
-
-    @Autowired
-    public ContractWorkflowValidator(ProjectQueryService projectQueryService, ContractStatusWorkflow contractWorkflow) {
-        this.projectQueryService = projectQueryService;
-        this.contractWorkflow = contractWorkflow;
-    }
 
     public void validateContractAllowsForWorkObjectsCreation(Long projectId) {
         ContractStatus contractStatus = this.projectQueryService.getContractStatusForProject(projectId);
@@ -34,7 +32,7 @@ public class ContractWorkflowValidator {
         ContractStatus contractStatus = this.projectQueryService.getContractStatusForProject(projectId);
         assertIsTrue(this.contractWorkflow.getStatusesThatAllowWorking().contains(contractStatus),
                 createMessageCode(ExceptionCodes.NOT_VALID, ContractExceptionCodes.CONTRACT,
-                        ContractExceptionCodes.STATUS, ContractExceptionCodes.WORK,
-                        ContractExceptionCodes.TRANSITION), contractStatus.getStatusName());
+                        ContractExceptionCodes.STATUS, ContractExceptionCodes.WORK, ContractExceptionCodes.TRANSITION),
+                contractStatus.getStatusName());
     }
 }

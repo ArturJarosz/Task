@@ -3,7 +3,8 @@ package com.arturjarosz.task.finance.rest;
 import com.arturjarosz.task.finance.application.SupplyApplicationService;
 import com.arturjarosz.task.finance.application.dto.SupplyDto;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("projects")
 public class SupplyRestController {
 
+    @NonNull
     private final SupplyApplicationService supplyApplicationService;
-
-    @Autowired
-    public SupplyRestController(SupplyApplicationService supplyApplicationService) {
-        this.supplyApplicationService = supplyApplicationService;
-    }
 
     @PostMapping("{projectId}/supplies")
     public ResponseEntity<SupplyDto> createSupply(@PathVariable("projectId") Long projectId,

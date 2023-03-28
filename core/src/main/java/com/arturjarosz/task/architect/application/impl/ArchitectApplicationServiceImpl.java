@@ -8,9 +8,9 @@ import com.arturjarosz.task.architect.application.mapper.ArchitectDtoMapper;
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository;
 import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -20,20 +20,14 @@ import static com.arturjarosz.task.architect.application.ArchitectValidator.vali
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectExistence;
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateBasicArchitectDto;
 
+@Slf4j
+@RequiredArgsConstructor
 @ApplicationService
 public class ArchitectApplicationServiceImpl implements ArchitectApplicationService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ArchitectApplicationServiceImpl.class);
-
+    @NonNull
     private final ArchitectRepository architectRepository;
+    @NonNull
     private final ArchitectValidator architectValidator;
-
-    @Autowired
-    public ArchitectApplicationServiceImpl(ArchitectRepository architectRepository,
-            ArchitectValidator architectValidator) {
-        this.architectRepository = architectRepository;
-        this.architectValidator = architectValidator;
-    }
 
     @Transactional
     @Override
@@ -87,7 +81,9 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
 
     @Override
     public List<ArchitectBasicDto> getBasicArchitects() {
-        return this.architectRepository.findAll().stream()
-                .map(ArchitectDtoMapper.INSTANCE::architectToArchitectBasicDto).toList();
+        return this.architectRepository.findAll()
+                .stream()
+                .map(ArchitectDtoMapper.INSTANCE::architectToArchitectBasicDto)
+                .toList();
     }
 }

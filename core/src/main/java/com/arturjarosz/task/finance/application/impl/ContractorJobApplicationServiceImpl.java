@@ -10,31 +10,26 @@ import com.arturjarosz.task.finance.model.ProjectFinancialData;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
+@RequiredArgsConstructor
 @ApplicationService
 public class ContractorJobApplicationServiceImpl implements ContractorJobApplicationService {
-    private static final Logger LOG = LoggerFactory.getLogger(ContractorJobApplicationServiceImpl.class);
-    private final ContractorJobValidator contractorJobValidator;
-    private final ProjectFinanceAwareObjectServiceImpl projectFinanceAwareObjectService;
-    private final ProjectValidator projectValidator;
-    private final ProjectFinancialDataRepository projectFinancialDataRepository;
-    private final FinancialDataQueryService financialDataQueryService;
 
-    @Autowired
-    public ContractorJobApplicationServiceImpl(ContractorJobValidator contractorJobValidator,
-            ProjectFinanceAwareObjectServiceImpl projectFinanceAwareObjectService, ProjectValidator projectValidator,
-            ProjectFinancialDataRepository projectFinancialDataRepository,
-            FinancialDataQueryService financialDataQueryService) {
-        this.contractorJobValidator = contractorJobValidator;
-        this.projectFinanceAwareObjectService = projectFinanceAwareObjectService;
-        this.projectValidator = projectValidator;
-        this.projectFinancialDataRepository = projectFinancialDataRepository;
-        this.financialDataQueryService = financialDataQueryService;
-    }
+    @NonNull
+    private final ContractorJobValidator contractorJobValidator;
+    @NonNull
+    private final ProjectFinanceAwareObjectServiceImpl projectFinanceAwareObjectService;
+    @NonNull
+    private final ProjectValidator projectValidator;
+    @NonNull
+    private final ProjectFinancialDataRepository projectFinancialDataRepository;
+    @NonNull
+    private final FinancialDataQueryService financialDataQueryService;
 
     @Transactional
     @Override

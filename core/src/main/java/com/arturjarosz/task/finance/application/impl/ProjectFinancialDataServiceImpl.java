@@ -4,16 +4,14 @@ import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.model.ProjectFinancialData;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @ApplicationService
 public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataService {
+    @NonNull
     private final ProjectFinancialDataRepository financialDataRepository;
-
-    @Autowired
-    public ProjectFinancialDataServiceImpl(ProjectFinancialDataRepository financialDataRepository) {
-        this.financialDataRepository = financialDataRepository;
-    }
 
     @Override
     public ProjectFinancialData joinFinancialDataWithProject(Long projectId) {

@@ -18,7 +18,7 @@ public abstract class AbstractPartialFinancialDataService {
     }
 
     protected FinancialValueDto recalculateFinancialData(FinancialValueDto financialValueDto,
-                                                         List<FinancialDataDto> objectsFinancialDataDtos) {
+            List<FinancialDataDto> objectsFinancialDataDtos) {
         FinancialValueDto summedUpFinancialValueDto = new FinancialValueDto();
         summedUpFinancialValueDto.copyValues(financialValueDto);
 
@@ -28,8 +28,7 @@ public abstract class AbstractPartialFinancialDataService {
             if (financialDataDto.isHasInvoice()) {
                 BigDecimal vatTaxValue = netValue.multiply(BigDecimal.valueOf(this.userProperties.getVatTax()))
                         .setScale(2, RoundingMode.HALF_UP);
-                BigDecimal grossValue = financialDataDto.getValue()
-                        .add(vatTaxValue);
+                BigDecimal grossValue = financialDataDto.getValue().add(vatTaxValue);
                 BigDecimal incomeTaxValue = netValue.multiply(BigDecimal.valueOf(this.userProperties.getIncomeTax()))
                         .setScale(2, RoundingMode.HALF_UP);
                 summedUpFinancialValueDto.addGross(grossValue);

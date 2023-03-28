@@ -3,16 +3,14 @@ package com.arturjarosz.task.finance.application.impl;
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
 import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @ApplicationService
 public class ProjectFinanceAwareObjectServiceImpl implements ProjectFinanceAwareObjectService {
+    @NonNull
     private final ProjectFinancialSummaryService projectFinancialSummaryService;
-
-    @Autowired
-    public ProjectFinanceAwareObjectServiceImpl(ProjectFinancialSummaryService projectFinancialSummaryService) {
-        this.projectFinancialSummaryService = projectFinancialSummaryService;
-    }
 
     @Override
     public void onCreate(long projectId) {

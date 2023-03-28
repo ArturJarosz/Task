@@ -3,6 +3,8 @@ package com.arturjarosz.task.client.rest;
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,16 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("clients")
 public class ClientRestController {
 
+    @NonNull
     private final ClientApplicationService clientApplicationService;
-
-    public ClientRestController(
-            ClientApplicationService clientApplicationService) {
-        this.clientApplicationService = clientApplicationService;
-    }
 
     @PostMapping("")
     public ResponseEntity<ClientDto> createClient(@RequestBody ClientDto clientDto) {

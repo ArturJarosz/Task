@@ -1,8 +1,13 @@
 package com.arturjarosz.task.finance.application.dto;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+@Data
+@NoArgsConstructor
 public class ContractorJobDto implements Serializable {
     private static final long serialVersionUID = -532775551414801250L;
 
@@ -24,71 +29,4 @@ public class ContractorJobDto implements Serializable {
     private Boolean payable;
     private Boolean paid;
 
-    public ContractorJobDto() {
-        // needed by JPA
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getValue() {
-        return this.value;
-    }
-
-    public void setValue(BigDecimal value) {
-        this.value = value;
-    }
-
-    public Long getContractorId() {
-        return this.contractorId;
-    }
-
-    public void setContractorId(Long contractorId) {
-        this.contractorId = contractorId;
-    }
-
-    public String getNote() {
-        return this.note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Boolean getHasInvoice() {
-        return this.hasInvoice;
-    }
-
-    public void setHasInvoice(Boolean hasInvoice) {
-        this.hasInvoice = hasInvoice;
-    }
-
-    public Boolean getPayable() {
-        return this.payable;
-    }
-
-    public void setPayable(Boolean payable) {
-        this.payable = payable;
-    }
-
-    public Boolean getPaid() {
-        return this.paid;
-    }
-
-    public void setPaid(Boolean paid) {
-        this.paid = paid;
-    }
 }

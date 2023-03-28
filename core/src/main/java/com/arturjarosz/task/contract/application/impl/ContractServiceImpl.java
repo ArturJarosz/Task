@@ -9,31 +9,26 @@ import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.contract.status.ContractStatusTransitionService;
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
 
+@Slf4j
+@RequiredArgsConstructor
 @ApplicationService
 public class ContractServiceImpl implements ContractService {
-    private static final Logger LOG = LoggerFactory.getLogger(ContractServiceImpl.class);
 
+    @NonNull
     private final ContractStatusTransitionService contractStatusTransitionService;
+    @NonNull
     private final ContractStatusWorkflow contractWorkflow;
+    @NonNull
     private final ContractValidator contractValidator;
+    @NonNull
     private final ContractRepository contractRepository;
-
-    @Autowired
-    public ContractServiceImpl(ContractStatusTransitionService contractStatusTransitionService,
-            ContractStatusWorkflow contractWorkflow, ContractValidator contractValidator,
-            ContractRepository contractRepository) {
-        this.contractStatusTransitionService = contractStatusTransitionService;
-        this.contractWorkflow = contractWorkflow;
-        this.contractValidator = contractValidator;
-        this.contractRepository = contractRepository;
-    }
 
     @Transactional
     @Override

@@ -12,7 +12,7 @@ public interface CostDtoMapper {
 
     Cost costCreateDtoToCost(CostDto costDto);
 
-    @Mapping(source = "cost.value", target = "value")
+    @Mapping(source = "value", target = "value")
     CostDto costToCostDto(Cost cost);
 
 }

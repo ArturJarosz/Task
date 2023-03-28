@@ -9,7 +9,8 @@ import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,16 +24,12 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
  * Validates architect related dtos and Architect domain model.
  */
 @Component
+@RequiredArgsConstructor
 public class ArchitectValidator {
-
+    @NonNull
     private final ArchitectRepository architectRepository;
+    @NonNull
     private final ProjectQueryService projectQueryService;
-
-    @Autowired
-    public ArchitectValidator(ArchitectRepository architectRepository, ProjectQueryService projectQueryService) {
-        this.architectRepository = architectRepository;
-        this.projectQueryService = projectQueryService;
-    }
 
     public static void validateBasicArchitectDto(ArchitectBasicDto architectBasicDto) {
         assertIsTrue(architectBasicDto != null,

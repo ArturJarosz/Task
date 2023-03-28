@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 
 @Entity
@@ -23,6 +24,7 @@ public class ContractorJob extends CooperatorJob {
         super(name, contractorId, CooperatorJobType.CONTRACTOR_JOB, value, hasInvoice, payable);
     }
 
+    @Transient
     public long getContractorId(){
         return this.getCooperatorId();
     }

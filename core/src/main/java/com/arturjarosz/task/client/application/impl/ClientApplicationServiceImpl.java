@@ -8,24 +8,22 @@ import com.arturjarosz.task.client.infrastructure.repository.ClientRepository;
 import com.arturjarosz.task.client.model.Client;
 import com.arturjarosz.task.client.model.ClientType;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
+@RequiredArgsConstructor
 @ApplicationService
 public class ClientApplicationServiceImpl implements ClientApplicationService {
-    private static final Logger LOG = LoggerFactory.getLogger(ClientApplicationServiceImpl.class);
-
+    @NonNull
     private final ClientRepository clientRepository;
+    @NonNull
     private final ClientValidator clientValidator;
-
-    public ClientApplicationServiceImpl(ClientRepository clientRepository, ClientValidator clientValidator) {
-        this.clientRepository = clientRepository;
-        this.clientValidator = clientValidator;
-    }
 
     @Transactional
     @Override
