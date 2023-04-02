@@ -17,7 +17,7 @@ public abstract class AbstractPartialFinancialDataService {
         this.userProperties = userProperties;
     }
 
-    protected FinancialValueDto recalculateFinancialData(FinancialValueDto financialValueDto,
+    protected FinancialValueDto addUpFinancialData(FinancialValueDto financialValueDto,
             List<FinancialDataDto> objectsFinancialDataDtos) {
         FinancialValueDto summedUpFinancialValueDto = new FinancialValueDto();
         summedUpFinancialValueDto.copyValues(financialValueDto);

@@ -1,12 +1,12 @@
 package com.arturjarosz.task.finance.application.impl
 
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto
-import com.arturjarosz.task.finance.application.dto.ProjectFinancialSummaryDto
 import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialSummaryDto
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService
 import com.arturjarosz.task.finance.infrastructure.FinancialDataRepository
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialSummaryRepository
 import com.arturjarosz.task.finance.model.FinancialData
+import com.arturjarosz.task.finance.model.PartialFinancialDataType
 import com.arturjarosz.task.finance.model.ProjectFinancialSummary
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto
@@ -42,9 +42,14 @@ class ProjectFinancialSummaryServiceImplTest extends Specification {
     def partialFinancialDataService = Mock(PartialFinancialDataService)
     List<PartialFinancialDataService> partialFinancialDataServices = Arrays.asList(partialFinancialDataService)
 
-    def projectFinancialDataService = new ProjectFinancialSummaryServiceImpl
-            (projectFinancialDataRepository, projectValidator, financialDataQueryService, financialDataRepository,
-                    partialFinancialDataServices)
+    def setup() {
+        this.partialFinancialDataService.getType() >> PartialFinancialDataType.COST
+        projectFinancialDataService = new ProjectFinancialSummaryServiceImpl
+                (projectFinancialDataRepository, projectValidator, financialDataQueryService, financialDataRepository,
+                        partialFinancialDataServices)
+    }
+
+    def projectFinancialDataService;
 
     def "createProjectFinancialData should call validateProjectExistence on projectValidator"() {
         given:
@@ -94,10 +99,10 @@ class ProjectFinancialSummaryServiceImplTest extends Specification {
             this.projectFinancialDataService.recalculateProjectFinancialSummary(PROJECT_ID)
         then:
             1 * this.projectFinancialDataRepository.save({ ProjectFinancialSummary projectFinancialData ->
-                projectFinancialData.costsGrossValue == new Money(100)
-                projectFinancialData.costsNetValue == new Money(80)
-                projectFinancialData.costsVatTax == new Money(15)
-                projectFinancialData.costsIncomeTax == new Money(5)
+                projectFinancialData.partialSummaries[PartialFinancialDataType.COST].grossValue == new Money(100)
+                projectFinancialData.partialSummaries[PartialFinancialDataType.COST].netValue == new Money(80)
+                projectFinancialData.partialSummaries[PartialFinancialDataType.COST].vatTax == new Money(15)
+                projectFinancialData.partialSummaries[PartialFinancialDataType.COST].incomeTax == new Money(5)
             })
     }
 
@@ -165,11 +170,9 @@ class ProjectFinancialSummaryServiceImplTest extends Specification {
     }
 
     private void mockCostProvidePartialFinancialData() {
-        ProjectFinancialSummaryDto projectFinancialDataDto = new ProjectFinancialSummaryDto()
         FinancialValueDto costsValue = new FinancialValueDto(grossValue: COST_GROSS_VALUE, netValue: COST_NET_VALUE,
                 vatTax: COST_VAT_TAX_VALUE, incomeTax: COST_INCOME_TAX_VALUE)
-        projectFinancialDataDto.costsValue = costsValue
-        partialFinancialDataService.providePartialFinancialData(PROJECT_FINANCIAL_DATA_ID) >> projectFinancialDataDto
+        partialFinancialDataService.getPartialFinancialData(PROJECT_ID) >> costsValue
     }
 
     private void mockValidateProjectExistenceOnNotExistingProject() {
@@ -177,7 +180,7 @@ class ProjectFinancialSummaryServiceImplTest extends Specification {
                 NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }
     }
 
-    private void mockLoadTotalProjectFinancialData(){
+    private void mockLoadTotalProjectFinancialData() {
         this.financialDataQueryService.getTotalProjectFinancialSummary(PROJECT_ID) >> new TotalProjectFinancialSummaryDto()
     }
 }

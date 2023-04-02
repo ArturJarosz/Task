@@ -1,12 +1,15 @@
 package com.arturjarosz.task.finance.application.impl;
 
 import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
-import com.arturjarosz.task.finance.application.dto.ProjectFinancialSummaryDto;
+import com.arturjarosz.task.finance.application.dto.FinancialValueDto;
 import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService;
+import com.arturjarosz.task.finance.domain.SummationStrategy;
 import com.arturjarosz.task.finance.infrastructure.FinancialDataRepository;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialSummaryRepository;
 import com.arturjarosz.task.finance.model.FinancialData;
+import com.arturjarosz.task.finance.model.PartialFinancialData;
+import com.arturjarosz.task.finance.model.PartialFinancialDataType;
 import com.arturjarosz.task.finance.model.ProjectFinancialSummary;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
@@ -15,12 +18,18 @@ import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
+@Slf4j
+@Transactional
 @ApplicationService
 public class ProjectFinancialSummaryServiceImpl implements ProjectFinancialSummaryService {
 
@@ -33,7 +42,20 @@ public class ProjectFinancialSummaryServiceImpl implements ProjectFinancialSumma
     @NonNull
     private final FinancialDataRepository financialDataRepository;
     @NonNull
-    private final List<PartialFinancialDataService> partialFinancialDataServices;
+    private final Map<PartialFinancialDataType, PartialFinancialDataService> typeToPartialFinancialDataServices;
+
+    @Autowired
+    public ProjectFinancialSummaryServiceImpl(ProjectFinancialSummaryRepository projectFinancialSummaryRepository,
+            ProjectValidator projectValidator, FinancialDataQueryServiceImpl financialDataQueryService,
+            FinancialDataRepository financialDataRepository,
+            List<PartialFinancialDataService> partialFinancialDataServices) {
+        this.projectFinancialSummaryRepository = projectFinancialSummaryRepository;
+        this.projectValidator = projectValidator;
+        this.financialDataQueryService = financialDataQueryService;
+        this.financialDataRepository = financialDataRepository;
+        this.typeToPartialFinancialDataServices = partialFinancialDataServices.stream()
+                .collect(Collectors.toMap(PartialFinancialDataService::getType, Function.identity()));
+    }
 
     @Override
     public ProjectFinancialSummary createProjectFinancialSummary(Long projectId) {
@@ -73,13 +95,20 @@ public class ProjectFinancialSummaryServiceImpl implements ProjectFinancialSumma
     public void recalculateProjectFinancialSummary(long projectId) {
         ProjectFinancialSummary projectFinancialSummary = this.projectFinancialSummaryRepository.findProjectFinancialSummaryByProjectId(
                 projectId);
-        ProjectFinancialSummaryDto summedUpFinancialData = new ProjectFinancialSummaryDto();
-        for (PartialFinancialDataService partialFinancialDataService : this.partialFinancialDataServices) {
-            summedUpFinancialData.addFinancialValues(
-                    partialFinancialDataService.providePartialFinancialData(projectFinancialSummary.getId()));
+        FinancialValueDto totalFinancialData = new FinancialValueDto();
+
+        Map<PartialFinancialDataType, FinancialValueDto> typeToFinancialValue = this.typeToPartialFinancialDataServices.values()
+                .stream()
+                .collect(Collectors.toMap(PartialFinancialDataService::getType,
+                        service -> service.getPartialFinancialData(projectId)));
+
+        typeToFinancialValue.put(PartialFinancialDataType.TOTAL, this.recalculateTotalProjectValue(typeToFinancialValue,
+                totalFinancialData));
+
+        for (Map.Entry<PartialFinancialDataType, FinancialValueDto> entry : typeToFinancialValue.entrySet()) {
+            projectFinancialSummary.updatePartialData(entry.getKey(), entry.getValue());
         }
-        this.recalculateTotalProjectValue(summedUpFinancialData);
-        projectFinancialSummary.updateWithPartialData(summedUpFinancialData);
+
         this.projectFinancialSummaryRepository.save(projectFinancialSummary);
     }
 
@@ -96,10 +125,18 @@ public class ProjectFinancialSummaryServiceImpl implements ProjectFinancialSumma
         return this.financialDataQueryService.getTotalProjectFinancialSummary(projectId);
     }
 
-    private void recalculateTotalProjectValue(ProjectFinancialSummaryDto projectFinancialSummaryDto) {
-        projectFinancialSummaryDto.getTotalProjectValue().addValues(projectFinancialSummaryDto.getSuppliesValue());
-        projectFinancialSummaryDto.getTotalProjectValue().addValues(projectFinancialSummaryDto.getSupervisionValue());
-        projectFinancialSummaryDto.getTotalProjectValue().addValues(projectFinancialSummaryDto.getContractorJobsValue());
-        projectFinancialSummaryDto.getTotalProjectValue().subtractValues(projectFinancialSummaryDto.getCostsValue());
+    private FinancialValueDto recalculateTotalProjectValue(
+            Map<PartialFinancialDataType, FinancialValueDto> typeToFinancialValue,
+            FinancialValueDto totalFinancialData) {
+        for (Map.Entry<PartialFinancialDataType, FinancialValueDto> entry : typeToFinancialValue.entrySet()) {
+            PartialFinancialDataService<PartialFinancialData> partialFinancialDataService = this.typeToPartialFinancialDataServices.get(
+                    entry.getKey());
+            if (partialFinancialDataService.getSummationStrategy() == SummationStrategy.ADD) {
+                totalFinancialData.addValues(entry.getValue());
+            } else {
+                totalFinancialData.subtractValues(entry.getValue());
+            }
+        }
+        return totalFinancialData;
     }
 }

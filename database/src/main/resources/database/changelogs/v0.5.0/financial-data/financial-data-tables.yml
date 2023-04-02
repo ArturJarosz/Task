@@ -12,6 +12,12 @@ databaseChangeLog:
       file: "create-project-financial-summary-table.yml"
       relativeToChangelogFile: true
   - include:
+      file: "create-project-financial-partial-summary-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-project-financial-partial-summary-table.yml"
+      relativeToChangelogFile: true
+  - include:
       file: "create-project-financial-data-sequence.yml"
       relativeToChangelogFile: true
   - include:

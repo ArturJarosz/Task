@@ -20,7 +20,6 @@ public class FinancialValueDto {
         this.grossValue = new BigDecimal("0.0");
         this.vatTax = new BigDecimal("0.0");
         this.incomeTax = new BigDecimal("0.0");
-
     }
 
     public void copyValues(FinancialValueDto financialValueDto) {
@@ -58,5 +57,10 @@ public class FinancialValueDto {
 
     public void addIncomeTax(BigDecimal value) {
         this.incomeTax = this.incomeTax.add(value);
+    }
+
+    @Override
+    public String toString() {
+        return "FinancialValueDto{" + "netValue=" + this.netValue + ", grossValue=" + this.grossValue + ", vatTax=" + this.vatTax + ", incomeTax=" + this.incomeTax + '}';
     }
 }

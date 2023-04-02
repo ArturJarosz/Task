@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-project-financial-summary-table"
+      changes:
+        - createTable:
+            tableName: "PROJECT_FINANCIAL_PARTIAL_SUMMARY"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "PROJECT_FINANCIAL_SUMMARY_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NET_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "GROSS_VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "VAT_TAX"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "INCOME_TAX"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "DATA_TYPE"
+                  type: "VARCHAR2(30 ${char.unit})"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "PROJECT_FINANCIAL_PARTIAL_SUMMARY"
+            columnNames: "ID"
+            constraintName: "PROJECT_FINANCIAL_PARTIAL_SUMMARY_ID"
+        - addForeignKeyConstraint:
+            baseTableName: "PROJECT_FINANCIAL_PARTIAL_SUMMARY"
+            baseColumnNames: "PROJECT_FINANCIAL_SUMMARY_ID"
+            referencedTableName: "PROJECT_FINANCIAL_SUMMARY"
+            referencedColumnNames: "ID"
+            constraintName: "FK_PARTIAL_PROJECT_FINANCIAL_SUMMARY"
+

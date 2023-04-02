@@ -1,4 +1,4 @@
-package com.arturjarosz.task.finance.application;
+package com.arturjarosz.task.finance.application.validator;
 
 import com.arturjarosz.task.contractor.domain.ContractorExceptionCodes;
 import com.arturjarosz.task.contractor.query.ContractorQueryService;

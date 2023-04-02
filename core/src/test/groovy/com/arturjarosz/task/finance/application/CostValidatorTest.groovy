@@ -1,5 +1,6 @@
 package com.arturjarosz.task.finance.application
 
+import com.arturjarosz.task.finance.application.validator.CostValidator
 import com.arturjarosz.task.finance.model.Cost
 import com.arturjarosz.task.finance.model.CostCategory
 import com.arturjarosz.task.finance.query.FinancialDataQueryService

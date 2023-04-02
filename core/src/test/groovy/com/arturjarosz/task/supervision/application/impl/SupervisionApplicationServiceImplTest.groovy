@@ -1,6 +1,7 @@
 package com.arturjarosz.task.supervision.application.impl
 
-import com.arturjarosz.task.finance.application.impl.ProjectFinancialSummaryServiceImpl
+import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService
+import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService
 import com.arturjarosz.task.finance.model.FinancialData
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
@@ -14,7 +15,7 @@ import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto
 import com.arturjarosz.task.supervision.infrastructure.repository.SupervisionRepository
 import com.arturjarosz.task.supervision.model.Supervision
 import com.arturjarosz.task.supervision.model.SupervisionVisit
-import com.arturjarosz.task.supervision.query.impl.SupervisionQueryServiceImpl
+import com.arturjarosz.task.supervision.query.SupervisionQueryService
 import com.arturjarosz.task.supervision.utils.FinancialDataBuilder
 import com.arturjarosz.task.supervision.utils.SupervisionBuilder
 import com.arturjarosz.task.supervision.utils.SupervisionVisitBuilder
@@ -43,12 +44,13 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def supervisionValidator = Mock(SupervisionValidator)
     def supervisionVisitValidator = Mock(SupervisionVisitValidator)
     def supervisionRepository = Mock(SupervisionRepository)
-    def supervisionQueryService = Mock(SupervisionQueryServiceImpl)
-    def projectFinancialDataApplicationService = Mock(ProjectFinancialSummaryServiceImpl)
+    def supervisionQueryService = Mock(SupervisionQueryService)
+    def projectFinancialSummaryApplicationService = Mock(ProjectFinancialSummaryService)
+    def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectService)
 
     def supervisionApplicationService = new SupervisionApplicationServiceImpl(projectValidator, supervisionValidator,
             supervisionVisitValidator, supervisionRepository, supervisionQueryService,
-            projectFinancialDataApplicationService
+            projectFinancialSummaryApplicationService, projectFinanceAwareObjectService
     )
 
     def "createSupervision should call validateCreateSupervision from supervisionValidator"() {
@@ -142,7 +144,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.updateSupervision(SUPERVISION_ID, supervisionDto)
         then:
-            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID,
+            1 * this.projectFinancialSummaryApplicationService.recalculateSupervision(SUPERVISION_ID,
                     SUPERVISION_FINANCIAL_DATA_ID)
     }
 
@@ -218,7 +220,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.createSupervisionVisit(SUPERVISION_ID, supervisionVisitDto)
         then:
-            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID,
+            1 * this.projectFinancialSummaryApplicationService.recalculateSupervision(SUPERVISION_ID,
                     SUPERVISION_FINANCIAL_DATA_ID)
     }
 
@@ -290,7 +292,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
             this.supervisionApplicationService.updateSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID,
                     supervisionVisitDto)
         then:
-            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID,
+            1 * this.projectFinancialSummaryApplicationService.recalculateSupervision(SUPERVISION_ID,
                     SUPERVISION_FINANCIAL_DATA_ID)
     }
 
@@ -342,7 +344,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.deleteSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID)
         then:
-            1 * this.projectFinancialDataApplicationService.recalculateSupervision(SUPERVISION_ID,
+            1 * this.projectFinancialSummaryApplicationService.recalculateSupervision(SUPERVISION_ID,
                     SUPERVISION_FINANCIAL_DATA_ID)
     }
 
@@ -358,7 +360,6 @@ class SupervisionApplicationServiceImplTest extends Specification {
                 }
             })
     }
-
 
     private void mockValidateCreateSupervisionDtoOnNull() {
         this.supervisionValidator.validateCreateSupervision(null) >> { throw new IllegalArgumentException() }

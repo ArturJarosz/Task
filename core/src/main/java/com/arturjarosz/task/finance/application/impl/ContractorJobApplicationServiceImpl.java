@@ -1,9 +1,9 @@
 package com.arturjarosz.task.finance.application.impl;
 
 import com.arturjarosz.task.finance.application.ContractorJobApplicationService;
-import com.arturjarosz.task.finance.application.ContractorJobValidator;
 import com.arturjarosz.task.finance.application.dto.ContractorJobDto;
 import com.arturjarosz.task.finance.application.mapper.ContractorJobDtoMapper;
+import com.arturjarosz.task.finance.application.validator.ContractorJobValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.model.ContractorJob;
 import com.arturjarosz.task.finance.model.ProjectFinancialData;

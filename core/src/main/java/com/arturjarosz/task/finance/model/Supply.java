@@ -3,18 +3,14 @@ package com.arturjarosz.task.finance.model;
 import com.arturjarosz.task.finance.application.dto.SupplyDto;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
 @DiscriminatorValue(value = "CONTRACTOR_JOB")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "COOPERATOR_JOB")
-public class Supply extends CooperatorJob {
+public class Supply extends CooperatorJob implements PartialFinancialData {
 
     protected Supply() {
     }
@@ -23,6 +19,7 @@ public class Supply extends CooperatorJob {
         super(name, supplierId, CooperatorJobType.SUPPLY, value, hasInvoice, payable);
     }
 
+    @Transient
     public long getSupplierId() {
         return this.getCooperatorId();
     }

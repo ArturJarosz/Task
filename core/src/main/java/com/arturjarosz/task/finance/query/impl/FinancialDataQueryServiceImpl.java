@@ -5,13 +5,7 @@ import com.arturjarosz.task.finance.application.dto.InstallmentDto;
 import com.arturjarosz.task.finance.application.dto.SupplyDto;
 import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
-import com.arturjarosz.task.finance.model.QContractorJob;
-import com.arturjarosz.task.finance.model.QCost;
-import com.arturjarosz.task.finance.model.QFinancialData;
-import com.arturjarosz.task.finance.model.QInstallment;
-import com.arturjarosz.task.finance.model.QProjectFinancialData;
-import com.arturjarosz.task.finance.model.QProjectFinancialSummary;
-import com.arturjarosz.task.finance.model.QSupply;
+import com.arturjarosz.task.finance.model.*;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
@@ -37,6 +31,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     private static final QSupervisionVisit SUPERVISION_VISIT = QSupervisionVisit.supervisionVisit;
     private static final QSupply SUPPLY = QSupply.supply;
     private static final QProjectFinancialSummary PROJECT_FINANCIAL_SUMMARY = QProjectFinancialSummary.projectFinancialSummary;
+    private static final QProjectFinancialPartialSummary PROJECT_FINANCIAL_PARTIAL_SUMMARY = QProjectFinancialPartialSummary.projectFinancialPartialSummary;
     private static final QProjectFinancialData PROJECT_FINANCIAL_DATA = QProjectFinancialData.projectFinancialData;
 
     public FinancialDataQueryServiceImpl() {
@@ -45,10 +40,10 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
 
     private static ConstructorExpression<TotalProjectFinancialSummaryDto> projectQueryToTotalProjectFinancialSummaryDto() {
         return Projections.constructor(TotalProjectFinancialSummaryDto.class,
-                PROJECT_FINANCIAL_SUMMARY.totalGrossValue.value.doubleValue(),
-                PROJECT_FINANCIAL_SUMMARY.totalNetValue.value.doubleValue(),
-                PROJECT_FINANCIAL_SUMMARY.totalVatTax.value.doubleValue(),
-                PROJECT_FINANCIAL_SUMMARY.totalIncomeTax.value.doubleValue());
+                PROJECT_FINANCIAL_PARTIAL_SUMMARY.grossValue.value.doubleValue(),
+                PROJECT_FINANCIAL_PARTIAL_SUMMARY.netValue.value.doubleValue(),
+                PROJECT_FINANCIAL_PARTIAL_SUMMARY.vatTax.value.doubleValue(),
+                PROJECT_FINANCIAL_PARTIAL_SUMMARY.incomeTax.value.doubleValue());
     }
 
     private static QBean<CostDto> costToCostDto() {
@@ -161,7 +156,9 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     public TotalProjectFinancialSummaryDto getTotalProjectFinancialSummary(long projectId) {
         return this.query()
                 .from(PROJECT_FINANCIAL_SUMMARY)
-                .where(PROJECT_FINANCIAL_SUMMARY.projectId.eq(projectId))
+                .join(PROJECT_FINANCIAL_SUMMARY.partialSummaries, PROJECT_FINANCIAL_PARTIAL_SUMMARY)
+                .where(PROJECT_FINANCIAL_SUMMARY.projectId.eq(projectId)
+                        .and(PROJECT_FINANCIAL_PARTIAL_SUMMARY.dataType.eq(PartialFinancialDataType.TOTAL)))
                 .select(projectQueryToTotalProjectFinancialSummaryDto())
                 .fetchOne();
     }

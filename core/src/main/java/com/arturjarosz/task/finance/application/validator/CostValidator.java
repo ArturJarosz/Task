@@ -1,4 +1,4 @@
-package com.arturjarosz.task.finance.application;
+package com.arturjarosz.task.finance.application.validator;
 
 import com.arturjarosz.task.finance.model.Cost;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;

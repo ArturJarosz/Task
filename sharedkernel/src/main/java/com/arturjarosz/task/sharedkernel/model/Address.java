@@ -49,10 +49,6 @@ public class Address extends AbstractValueObject<Address> implements ValueObject
         return this.postCode;
     }
 
-    public void setPostCode(String postCode) {
-        this.postCode = postCode;
-    }
-
     public String getCity() {
         return this.city;
     }

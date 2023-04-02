@@ -18,6 +18,7 @@ public class SupervisionQueryServiceImpl extends AbstractQueryService<QSupervisi
         super(SUPERVISION);
     }
 
+    @Override
     public boolean supervisionExists(Long supervisionId) {
         return this.queryFromAggregate().where(SUPERVISION.id.eq(supervisionId)).fetchOne() != null;
     }
@@ -40,5 +41,23 @@ public class SupervisionQueryServiceImpl extends AbstractQueryService<QSupervisi
                         SUPERVISION_VISIT.dateOfVisit.as(SupervisionVisitDto.DATE_OF_VISIT),
                         SUPERVISION_VISIT.payable.as(SupervisionVisitDto.PAYABLE)
                 )).fetchOne();
+    }
+
+    @Override
+    public long getProjectIdForSupervision(Long supervisionId) {
+        return this.query()
+                .from(SUPERVISION)
+                .where(SUPERVISION.id.eq(supervisionId))
+                .select(SUPERVISION.projectId)
+                .fetchOne();
+    }
+
+    @Override
+    public boolean supervisionOnProjectExistence(Long projectId) {
+        return this.query()
+                .from(SUPERVISION)
+                .where(SUPERVISION.projectId.eq(projectId))
+                .select(SUPERVISION)
+                .fetchOne() != null;
     }
 }
