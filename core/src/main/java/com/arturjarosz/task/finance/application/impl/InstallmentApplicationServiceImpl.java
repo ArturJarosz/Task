@@ -1,9 +1,10 @@
 package com.arturjarosz.task.finance.application.impl;
 
 import com.arturjarosz.task.finance.application.InstallmentApplicationService;
-import com.arturjarosz.task.finance.application.InstallmentValidator;
+import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
 import com.arturjarosz.task.finance.application.dto.InstallmentDto;
 import com.arturjarosz.task.finance.application.mapper.InstallmentDtoMapper;
+import com.arturjarosz.task.finance.application.validator.InstallmentValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.model.Installment;
 import com.arturjarosz.task.finance.model.ProjectFinancialData;
@@ -33,6 +34,8 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     private final FinancialDataQueryService financialDataQueryService;
     @NonNull
     private final InstallmentValidator installmentValidator;
+    @NonNull
+    private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
 
     @Transactional
     @Override
@@ -54,6 +57,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         LOG.debug("Installment created.");
         InstallmentDto createdInstallment = InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(installment);
         createdInstallment.setId(this.getIdForCreatedInstallment(projectFinancialData, installment));
+        this.projectFinanceAwareObjectService.onCreate(projectId);
         return createdInstallment;
     }
 
@@ -71,6 +75,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.installmentValidator.validateUpdateInstallmentDto(installmentDto, installment.isPaid());
         installment = projectFinancialData.updateInstallment(installmentId, installmentDto);
         this.projectFinancialDataRepository.save(projectFinancialData);
+        this.projectFinanceAwareObjectService.onUpdate(projectId);
 
         LOG.debug("Installment updated");
         return InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(installment);
@@ -86,6 +91,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
                 projectId);
         projectFinancialData.removeInstallment(installmentId);
         this.projectFinancialDataRepository.save(projectFinancialData);
+        this.projectFinanceAwareObjectService.onRemove(projectId);
 
         LOG.debug("Installment removed");
     }

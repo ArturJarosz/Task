@@ -9,4 +9,8 @@ public interface SupervisionQueryService {
     boolean supervisionVisitExistsInSupervision(Long supervisionId, Long supervisionVisitId);
 
     SupervisionVisitDto getSupervisionVisit(Long supervisionVisitId);
+
+    long getProjectIdForSupervision(Long supervisionId);
+
+    boolean supervisionOnProjectExistence(Long projectId);
 }

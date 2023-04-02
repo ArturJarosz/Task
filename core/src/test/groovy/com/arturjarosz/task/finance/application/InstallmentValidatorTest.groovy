@@ -2,6 +2,7 @@ package com.arturjarosz.task.finance.application
 
 
 import com.arturjarosz.task.finance.application.dto.InstallmentDto
+import com.arturjarosz.task.finance.application.validator.InstallmentValidator
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import spock.lang.Specification

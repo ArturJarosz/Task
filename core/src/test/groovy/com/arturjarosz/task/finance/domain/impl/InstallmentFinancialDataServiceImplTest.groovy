@@ -1,7 +1,9 @@
 package com.arturjarosz.task.finance.domain.impl
 
 import com.arturjarosz.task.configuration.UserProperties
+import com.arturjarosz.task.finance.domain.SummationStrategy
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto
+import com.arturjarosz.task.finance.model.PartialFinancialDataType
 import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl
 import spock.lang.Specification
 
@@ -24,12 +26,28 @@ class InstallmentFinancialDataServiceImplTest extends Specification {
             this.mockGetInstallmentsFinancialData()
             this.mockUserService()
         when:
-            def partialFinancialData = this.installmentFinancialDataService.providePartialFinancialData(PROJECT_ID)
+            def partialFinancialData = this.installmentFinancialDataService.getPartialFinancialData(PROJECT_ID)
         then:
-            partialFinancialData.baseProjectValue.grossValue == new BigDecimal("60")
-            partialFinancialData.baseProjectValue.netValue == new BigDecimal("50").setScale(2, RoundingMode.HALF_UP)
-            partialFinancialData.baseProjectValue.vatTax == new BigDecimal("10").setScale(2, RoundingMode.HALF_UP)
-            partialFinancialData.baseProjectValue.incomeTax == new BigDecimal("5").setScale(2, RoundingMode.HALF_UP)
+            partialFinancialData.grossValue == new BigDecimal("60")
+            partialFinancialData.netValue == new BigDecimal("50").setScale(2, RoundingMode.HALF_UP)
+            partialFinancialData.vatTax == new BigDecimal("10").setScale(2, RoundingMode.HALF_UP)
+            partialFinancialData.incomeTax == new BigDecimal("5").setScale(2, RoundingMode.HALF_UP)
+    }
+
+    def "getSummationStrategy should return correct strategy"() {
+        given:
+        when:
+            def strategy = this.installmentFinancialDataService.getSummationStrategy();
+        then:
+            strategy == SummationStrategy.ADD
+    }
+
+    def "getType should return correct type"() {
+        given:
+        when:
+            def type = this.installmentFinancialDataService.getType();
+        then:
+            type == PartialFinancialDataType.INSTALLMENT
     }
 
     private void mockGetInstallmentsFinancialData() {

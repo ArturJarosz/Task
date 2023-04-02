@@ -2,6 +2,7 @@ package com.arturjarosz.task.finance.application
 
 import com.arturjarosz.task.contractor.query.impl.ContractorQueryServiceImpl
 import com.arturjarosz.task.finance.application.dto.ContractorJobDto
+import com.arturjarosz.task.finance.application.validator.ContractorJobValidator
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import spock.lang.Specification

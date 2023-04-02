@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @DiscriminatorValue(value = "CONTRACTOR_JOB")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "COOPERATOR_JOB")
-public class ContractorJob extends CooperatorJob {
+public class ContractorJob extends CooperatorJob implements PartialFinancialData {
 
     protected ContractorJob() {
     }

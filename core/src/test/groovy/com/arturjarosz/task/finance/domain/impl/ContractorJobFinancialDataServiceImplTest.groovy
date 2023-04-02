@@ -1,7 +1,9 @@
 package com.arturjarosz.task.finance.domain.impl
 
 import com.arturjarosz.task.configuration.UserProperties
+import com.arturjarosz.task.finance.domain.SummationStrategy
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto
+import com.arturjarosz.task.finance.model.PartialFinancialDataType
 import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl
 import spock.lang.Specification
 
@@ -25,15 +27,28 @@ class ContractorJobFinancialDataServiceImplTest extends Specification {
             this.mockGetContractorsJobsFinancialData()
             this.mockUserService()
         when:
-            def partialFinancialData = this.contractorJobFinancialDataService.providePartialFinancialData(PROJECT_ID)
+            def partialFinancialData = this.contractorJobFinancialDataService.getPartialFinancialData(PROJECT_ID)
         then:
-            partialFinancialData.contractorJobsValue.grossValue == new BigDecimal("100")
-            partialFinancialData.contractorJobsValue.netValue == new BigDecimal("90")
-                    .setScale(2, RoundingMode.HALF_UP)
-            partialFinancialData.contractorJobsValue.vatTax == new BigDecimal("10")
-                    .setScale(2, RoundingMode.HALF_UP)
-            partialFinancialData.contractorJobsValue.incomeTax == new BigDecimal("5")
-                    .setScale(2, RoundingMode.HALF_UP)
+            partialFinancialData.grossValue == new BigDecimal("100")
+            partialFinancialData.netValue == new BigDecimal("90").setScale(2, RoundingMode.HALF_UP)
+            partialFinancialData.vatTax == new BigDecimal("10").setScale(2, RoundingMode.HALF_UP)
+            partialFinancialData.incomeTax == new BigDecimal("5").setScale(2, RoundingMode.HALF_UP)
+    }
+
+    def "getSummationStrategy should return correct strategy"() {
+        given:
+        when:
+            def strategy = this.contractorJobFinancialDataService.getSummationStrategy();
+        then:
+            strategy == SummationStrategy.ADD
+    }
+
+    def "getType should return correct type"() {
+        given:
+        when:
+            def type = this.contractorJobFinancialDataService.getType();
+        then:
+            type == PartialFinancialDataType.CONTRACTOR_JOB
     }
 
     private void mockGetContractorsJobsFinancialData() {

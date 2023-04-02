@@ -1,7 +1,7 @@
 package com.arturjarosz.task.finance.application.impl
 
-import com.arturjarosz.task.finance.application.SupplyValidator
 import com.arturjarosz.task.finance.application.dto.SupplyDto
+import com.arturjarosz.task.finance.application.validator.SupplyValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.ProjectFinancialData
 import com.arturjarosz.task.finance.model.Supply

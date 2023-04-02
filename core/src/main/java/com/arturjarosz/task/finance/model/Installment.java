@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "installment_sequence", allocationSize = 1)
 @Table(name = "INSTALLMENT")
-public class Installment extends AbstractEntity {
+public class Installment extends AbstractEntity implements PartialFinancialData{
 
     private static final long serialVersionUID = -8420590861357070177L;
 
