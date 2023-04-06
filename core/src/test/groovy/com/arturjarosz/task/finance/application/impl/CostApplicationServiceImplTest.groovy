@@ -18,8 +18,8 @@ class CostApplicationServiceImplTest extends Specification {
 
     private final static BigDecimal VALUE = new BigDecimal("100.0")
     private final static BigDecimal NEW_VALUE = new BigDecimal("120.0")
-    private final static Long COST_ID = 100L;
-    private final static Long NOT_EXISTING_COST_ID = 101L;
+    private final static Long COST_ID = 100L
+    private final static Long NOT_EXISTING_COST_ID = 101L
     private final static Long PROJECT_WITHOUT_COST_ID = 1L
     private final static Long NOT_EXISTING_PROJECT_ID = 2L
     private final static Long PROJECT_WITH_COST_ID = 3L
@@ -75,17 +75,17 @@ class CostApplicationServiceImplTest extends Specification {
 
     def "createCost should call save on projectFinancialDataRepository"() {
         given:
-            mockSaveProjectFinancialData()
+            mockSaveProjectFinancialData(null)
             CostDto costDto = this.prepareCostDto()
         when:
             this.projectCostApplicationService.createCost(PROJECT_WITHOUT_COST_ID, costDto)
         then:
-            1 * this.projectFinancialDataRepository.save(_) >> this.prepareProjectFinancialDataWithCost()
+            1 * this.projectFinancialDataRepository.save(_) >> this.prepareProjectFinancialDataWithCost(null)
     }
 
     def "createCost should add cost to project"() {
         given:
-            mockSaveProjectFinancialData()
+            mockSaveProjectFinancialData(null)
             CostDto costDto = this.prepareCostDto()
         when:
             this.projectCostApplicationService.createCost(PROJECT_WITHOUT_COST_ID, costDto)
@@ -93,12 +93,12 @@ class CostApplicationServiceImplTest extends Specification {
             1 * this.projectFinancialDataRepository.save({
                 ProjectFinancialData financialData ->
                     financialData.costs.size() == 1
-            }) >> this.prepareProjectFinancialDataWithCost()
+            }) >> this.prepareProjectFinancialDataWithCost(null)
     }
 
     def "createCost should call onCreate from projectFinanceAwareObjectService"() {
         given:
-            mockSaveProjectFinancialData()
+            mockSaveProjectFinancialData(null)
             CostDto costDto = this.prepareCostDto()
         when:
             this.projectCostApplicationService.createCost(PROJECT_WITHOUT_COST_ID, costDto)
@@ -270,7 +270,7 @@ class CostApplicationServiceImplTest extends Specification {
     }
 
     private void mockSaveProjectFinancialData(Long projectId) {
-        ProjectFinancialData financialData = this.prepareProjectFinancialDataWithCost(projectId);
+        ProjectFinancialData financialData = this.prepareProjectFinancialDataWithCost(projectId)
         this.projectFinancialDataRepository.save(_ as ProjectFinancialData) >> {
             Cost cost = financialData.costs.iterator().next()
             TestUtils.setFieldForObject(cost, "id", COST_ID)

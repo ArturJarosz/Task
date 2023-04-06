@@ -37,7 +37,7 @@ class InstallmentFinancialDataServiceImplTest extends Specification {
     def "getSummationStrategy should return correct strategy"() {
         given:
         when:
-            def strategy = this.installmentFinancialDataService.getSummationStrategy();
+            def strategy = this.installmentFinancialDataService.getSummationStrategy()
         then:
             strategy == SummationStrategy.ADD
     }
@@ -45,7 +45,7 @@ class InstallmentFinancialDataServiceImplTest extends Specification {
     def "getType should return correct type"() {
         given:
         when:
-            def type = this.installmentFinancialDataService.getType();
+            def type = this.installmentFinancialDataService.getType()
         then:
             type == PartialFinancialDataType.INSTALLMENT
     }

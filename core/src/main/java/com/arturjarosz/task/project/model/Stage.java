@@ -6,27 +6,21 @@ import com.arturjarosz.task.project.status.stage.StageWorkflow;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serial;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "stage_sequence", allocationSize = 1)
 @Table(name = "STAGE")
 public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> {
-
+    @Serial
     private static final long serialVersionUID = 3201266147496282083L;
+
     @Column(name = "NAME")
     private String name;
 

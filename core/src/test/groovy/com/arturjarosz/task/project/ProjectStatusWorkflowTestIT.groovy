@@ -69,7 +69,6 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
                             .header("Content-Type", "application/json")
                             .content(projectRequestBody)
             ).andReturn().response
-            ProjectDto projectDto = MAPPER.readValue(projectResponse.contentAsString, ProjectDto.class)
         then: "Returns code 201"
             projectResponse.status == HttpStatus.CREATED.value()
         and: "Project status is set to TO_DO"
@@ -145,7 +144,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto projectDto = this.createProject()
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto = this.createTask(projectDto.id, stageDto.id)
-            def acceptOfferResponse = this.acceptContractOffer(projectDto.contractDto.id)
+            this.acceptContractOffer(projectDto.contractDto.id)
         when:
             def changeTaskStatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto.id, TaskStatus.IN_PROGRESS)
@@ -213,7 +212,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     def "Rejecting project with accepted offer should put it in REJECTED status"() {
         given:
             ProjectDto projectDto = this.createProject()
-            def acceptOfferResponse = this.acceptContractOffer(projectDto.contractDto.id)
+            this.acceptContractOffer(projectDto.contractDto.id)
         when:
             def rejectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/reject"))
@@ -228,12 +227,10 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     def "Reopening rejected project with accepted offer and stages only in TO_DO statuses should change project status to TO_DO"() {
         given:
             ProjectDto projectDto = this.createProject()
-            def acceptOfferResponse = this.acceptContractOffer(projectDto.contractDto.id)
+            this.acceptContractOffer(projectDto.contractDto.id)
             StageDto stageDto = this.createStage(projectDto.id)
-            TaskDto taskDto = this.createTask(projectDto.id, stageDto.id)
-            def rejectResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/reject"))
-            ).andReturn().response
+            this.createTask(projectDto.id, stageDto.id)
+            this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/reject"))).andReturn().response
         when:
             def reopenResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/reopen"))
@@ -248,14 +245,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     def "Reopening rejected project, that was in IN_PROGRESS status, should be back to IN_PROGRESS"() {
         given:
             ProjectDto projectDto = this.createProject()
-            def acceptOfferResponse = this.acceptContractOffer(projectDto.contractDto.id)
+            this.acceptContractOffer(projectDto.contractDto.id)
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto = this.createTask(projectDto.id, stageDto.id)
-            def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto.id, TaskStatus.IN_PROGRESS)
-            def rejectResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/reject"))
-            ).andReturn().response
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto.id, TaskStatus.IN_PROGRESS)
+            this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/reject"))).andReturn().response
         when:
             def reopenResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/reopen"))
@@ -272,11 +266,10 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto projectDto = this.createProject()
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
-            def acceptOfferResponse = this.acceptContractOffer(projectDto.contractDto.id)
-            def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.acceptContractOffer(projectDto.contractDto.id)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
         when: "Change one task status to IN PROGRESS"
-            changeTaskStatusResponse =
+            def changeTaskStatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
         then: "Response code is 200"
             changeTaskStatusResponse.status == HttpStatus.OK.value()
@@ -297,16 +290,15 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto projectDto = this.createProject()
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
-            def acceptOfferResponse = this.acceptContractOffer(projectDto.contractDto.id)
-            def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.acceptContractOffer(projectDto.contractDto.id)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
         when: "Change one task status to IN PROGRESS"
-            changeTaskStatusResponse =
+            def changeTaskStatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.DONE)
         then: "Response code is 200"
             changeTaskStatusResponse.status == HttpStatus.OK.value()
         and: "Task status is DONE"
-            def getTaskResponse = this.getTaskResponse(projectDto.id, stageDto.id, taskDto11.id);
+            def getTaskResponse = this.getTaskResponse(projectDto.id, stageDto.id, taskDto11.id)
             this.getTaskStatus(getTaskResponse) == TaskStatus.DONE
         and: "Stage status is DONE"
             def getStageResponse = this.getStageResponse(projectDto.id, stageDto.id)
@@ -321,8 +313,8 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto projectDto = this.createProject()
             StageDto stageDto = this.createStage(projectDto.id)
-            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
-            def acceptOfferResponse = this.acceptContractOffer(projectDto.contractDto.id)
+            this.createTask(projectDto.id, stageDto.id)
+            this.acceptContractOffer(projectDto.contractDto.id)
         when:
             def rejectStageResponse = this.mockMvc.perform(MockMvcRequestBuilders
                     .post(URI
@@ -342,8 +334,8 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         given: "Project with accepted offer and stages and tasks in TO DO"
             ProjectDto projectDto = this.createProject()
             StageDto stageDto = this.createStage(projectDto.id)
-            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
-            def acceptOfferResponse = this.acceptContractOffer(projectDto.contractDto.id)
+            this.createTask(projectDto.id, stageDto.id)
+            this.acceptContractOffer(projectDto.contractDto.id)
         when:
             String taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
             def taskResponse = this.mockMvc.perform(
@@ -372,9 +364,8 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto projectDto = this.createProject()
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
-            def acceptOfferResponse = this.acceptContractOffer(projectDto.contractDto.id)
-            def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.acceptContractOffer(projectDto.contractDto.id)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
         when:
             String taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
             def taskResponse = this.mockMvc.perform(
@@ -403,11 +394,10 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto projectDto = this.createProject()
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto = this.createTask(projectDto.id, stageDto.id)
-            def acceptOfferResponse = this.acceptContractOffer(projectDto.contractDto.id)
-            def rejectStageResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI
-                                    .create(this.createStageUri(projectDto.id, stageDto.id) + "/reject"))
+            this.acceptContractOffer(projectDto.contractDto.id)
+            this.mockMvc.perform(MockMvcRequestBuilders
+                    .post(URI
+                            .create(this.createStageUri(projectDto.id, stageDto.id) + "/reject"))
             ).andReturn().response
         when:
             String taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
@@ -430,10 +420,9 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto projectDto = this.createProject()
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
-            def acceptOfferResponse = this.acceptContractOffer(projectDto.contractDto.id)
-            def changeTaskStatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
-            changeTaskStatusResponse = this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.DONE)
+            this.acceptContractOffer(projectDto.contractDto.id)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.DONE)
         when:
             String taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
             def taskResponse = this.mockMvc.perform(
@@ -482,10 +471,8 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
         when:
             def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
@@ -505,10 +492,8 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
         when:
             def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
@@ -527,8 +512,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
         when:
             def changeTask12StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
@@ -564,8 +548,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
         when:
             def changeTask12StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
@@ -585,12 +568,9 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
-            changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
         when:
             def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.REJECTED)
@@ -610,14 +590,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.REJECTED)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -635,14 +612,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.REJECTED)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -657,15 +631,13 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
             StageDto stageDto = this.createStage(projectDto.id)
-            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
+            this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.REJECTED)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -683,16 +655,12 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
-            changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.DONE)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.DONE)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.REJECTED)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -708,11 +676,9 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.acceptContractOffer(projectDto.contractDto.id)
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
-            TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
-            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id,
-                            TaskStatus.REJECTED)
+            this.createTask(projectDto.id, stageDto.id)
+            this.createTask(projectDto.id, stageDto.id)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
         when:
             def reopenTask11 = this.mockMvc.perform(MockMvcRequestBuilders
                     .post(URI
@@ -734,11 +700,9 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
-            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
+            this.createTask(projectDto.id, stageDto.id)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
         when:
             def reopenTask11 = this.mockMvc.perform(MockMvcRequestBuilders
                     .post(URI
@@ -761,16 +725,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
-            changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
-            changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
         when:
             def reopenTask11 = this.mockMvc.perform(MockMvcRequestBuilders
                     .post(URI
@@ -793,14 +752,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.TO_DO)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -818,16 +774,12 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
-            changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.TO_DO)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -843,14 +795,12 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.acceptContractOffer(projectDto.contractDto.id)
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
-            TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
+            this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.TO_DO)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -868,14 +818,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.TO_DO)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -893,14 +840,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -918,14 +862,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -943,16 +884,12 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
-            changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -970,16 +907,12 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
-            changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -997,18 +930,13 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
-            def changeTask11StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
-            def changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
-            changeTask12StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
-            def changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
-            changeTask13StatusResponse =
-                    this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatus.REJECTED)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.DONE)
         when:
-            changeTask13StatusResponse =
+            def changeTask13StatusResponse =
                     this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatus.IN_PROGRESS)
         then:
             changeTask13StatusResponse.status == HttpStatus.OK.value()
@@ -1022,7 +950,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
         given:
             ProjectDto projectDto = this.createProject()
             StageDto stageDto1 = this.createStage(projectDto.id)
-            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            this.createTask(projectDto.id, stageDto1.id)
         when:
             String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
             def stageResponse = this.mockMvc.perform(
@@ -1066,7 +994,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             ProjectDto projectDto = this.createProject()
             this.acceptContractOffer(projectDto.contractDto.id)
             StageDto stageDto1 = this.createStage(projectDto.id)
-            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            this.createTask(projectDto.id, stageDto1.id)
         when:
             String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
             def stageResponse = this.mockMvc.perform(
@@ -1167,7 +1095,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.rejectStage(projectDto.id, stageDto1.id)
             StageDto stageDto2 = this.createStage(projectDto.id)
             StageDto stageDto3 = this.createStage(projectDto.id)
-            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            this.createTask(projectDto.id, stageDto2.id)
             TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
             this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto31.id, TaskStatus.IN_PROGRESS)
         when:
@@ -1234,7 +1162,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto1 = this.createStage(projectDto.id)
             StageDto stageDto2 = this.createStage(projectDto.id)
             StageDto stageDto3 = this.createStage(projectDto.id)
-            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
+            this.createTask(projectDto.id, stageDto2.id)
             TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
             this.rejectStage(projectDto.id, stageDto1.id)
             this.rejectStage(projectDto.id, stageDto2.id)
@@ -1350,9 +1278,9 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto1 = this.createStage(projectDto.id)
             StageDto stageDto2 = this.createStage(projectDto.id)
             StageDto stageDto3 = this.createStage(projectDto.id)
-            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
-            TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
-            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.createTask(projectDto.id, stageDto1.id)
+            this.createTask(projectDto.id, stageDto2.id)
+            this.createTask(projectDto.id, stageDto3.id)
             this.rejectStage(projectDto.id, stageDto1.id)
         expect: "In status TO_DO"
             this.getProjectStatus(projectDto.id) == ProjectStatus.TO_DO
@@ -1372,9 +1300,9 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto1 = this.createStage(projectDto.id)
             StageDto stageDto2 = this.createStage(projectDto.id)
             StageDto stageDto3 = this.createStage(projectDto.id)
-            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            this.createTask(projectDto.id, stageDto1.id)
             TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
-            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.createTask(projectDto.id, stageDto3.id)
             this.rejectStage(projectDto.id, stageDto1.id)
             this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.IN_PROGRESS)
             this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.DONE)
@@ -1399,9 +1327,9 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto1 = this.createStage(projectDto.id)
             StageDto stageDto2 = this.createStage(projectDto.id)
             StageDto stageDto3 = this.createStage(projectDto.id)
-            TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
+            this.createTask(projectDto.id, stageDto1.id)
             TaskDto taskDto21 = this.createTask(projectDto.id, stageDto2.id)
-            TaskDto taskDto31 = this.createTask(projectDto.id, stageDto3.id)
+            this.createTask(projectDto.id, stageDto3.id)
             this.rejectStage(projectDto.id, stageDto1.id)
             this.updateTaskStatus(projectDto.id, stageDto2.id, taskDto21.id, TaskStatus.IN_PROGRESS)
         expect: "In status IN_PROGRESS with at least one stage in IN_PROGRESS"
@@ -1545,8 +1473,8 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.acceptContractOffer(projectDto.contractDto.id)
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
-            TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
-            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
+            this.createTask(projectDto.id, stageDto.id)
+            this.createTask(projectDto.id, stageDto.id)
             this.rejectTask(projectDto.id, stageDto.id, taskDto11.id)
             this.rejectStage(projectDto.id, stageDto.id)
         expect: "Stage is in REJECTED status"
@@ -1569,7 +1497,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
-            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
+            this.createTask(projectDto.id, stageDto.id)
             this.rejectTask(projectDto.id, stageDto.id, taskDto11.id)
             this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
             this.rejectStage(projectDto.id, stageDto.id)
@@ -1593,7 +1521,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto.id)
             TaskDto taskDto12 = this.createTask(projectDto.id, stageDto.id)
-            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto.id)
+            this.createTask(projectDto.id, stageDto.id)
             this.rejectTask(projectDto.id, stageDto.id, taskDto11.id)
             this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.IN_PROGRESS)
             this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatus.DONE)
@@ -1619,8 +1547,8 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto2 = this.createStage(projectDto.id)
             StageDto stageDto3 = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
-            TaskDto taskDto12 = this.createTask(projectDto.id, stageDto2.id)
-            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto3.id)
+            this.createTask(projectDto.id, stageDto2.id)
+            this.createTask(projectDto.id, stageDto3.id)
             this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
             this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.DONE)
             this.rejectStage(projectDto.id, stageDto2.id)
@@ -1646,8 +1574,8 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto2 = this.createStage(projectDto.id)
             StageDto stageDto3 = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
-            TaskDto taskDto12 = this.createTask(projectDto.id, stageDto2.id)
-            TaskDto taskDto13 = this.createTask(projectDto.id, stageDto3.id)
+            this.createTask(projectDto.id, stageDto2.id)
+            this.createTask(projectDto.id, stageDto3.id)
             this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
             this.rejectStage(projectDto.id, stageDto1.id)
             this.rejectStage(projectDto.id, stageDto2.id)
@@ -1672,7 +1600,7 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             StageDto stageDto2 = this.createStage(projectDto.id)
             StageDto stageDto3 = this.createStage(projectDto.id)
             TaskDto taskDto11 = this.createTask(projectDto.id, stageDto1.id)
-            TaskDto taskDto12 = this.createTask(projectDto.id, stageDto2.id)
+            this.createTask(projectDto.id, stageDto2.id)
             TaskDto taskDto13 = this.createTask(projectDto.id, stageDto3.id)
             this.updateTaskStatus(projectDto.id, stageDto1.id, taskDto11.id, TaskStatus.IN_PROGRESS)
             this.updateTaskStatus(projectDto.id, stageDto3.id, taskDto13.id, TaskStatus.IN_PROGRESS)

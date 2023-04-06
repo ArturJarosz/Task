@@ -8,9 +8,7 @@ import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 
 @Component
 public class TaskValidator {
@@ -24,8 +22,6 @@ public class TaskValidator {
 
     /**
      * Validated whether TaskDto contains all data for creating Task and validate their correctness.
-     *
-     * @param taskDto
      */
     public void validateCreateTaskDto(TaskDto taskDto) {
         assertNotNull(taskDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK));
@@ -47,10 +43,7 @@ public class TaskValidator {
     }
 
     public void validateUpdateTaskDto(TaskDto taskDto) {
-        assertNotNull(taskDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK));
-        this.validateName(taskDto.getName());
-        assertNotNull(taskDto.getType(),
-                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK, ProjectExceptionCodes.TYPE));
+        this.validateUpdateTaskDto(taskDto);
     }
 
     private void validateName(String name) {

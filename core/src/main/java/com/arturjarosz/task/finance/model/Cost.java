@@ -3,25 +3,19 @@ package com.arturjarosz.task.finance.model;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "cost_sequence", allocationSize = 1)
 @Table(name = "COST")
-public class Cost extends AbstractEntity implements PartialFinancialData{
-
+public class Cost extends AbstractEntity implements PartialFinancialData {
+    @Serial
     private static final long serialVersionUID = 4833869293487851155L;
+
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -47,16 +41,12 @@ public class Cost extends AbstractEntity implements PartialFinancialData{
     }
 
     public Cost(String name, BigDecimal value, CostCategory category, LocalDate date, String note, boolean hasInvoice,
-                boolean payable) {
+            boolean payable) {
         this.name = name;
         this.category = category;
         this.date = date;
         this.note = note;
         this.financialData = new FinancialData(new Money(value), hasInvoice, payable);
-    }
-
-    public void setValue(BigDecimal value) {
-        this.financialData.setValue(new Money(value));
     }
 
     public String getName() {
@@ -65,6 +55,10 @@ public class Cost extends AbstractEntity implements PartialFinancialData{
 
     public BigDecimal getValue() {
         return this.financialData.getValue().getValue();
+    }
+
+    public void setValue(BigDecimal value) {
+        this.financialData.setValue(new Money(value));
     }
 
     public CostCategory getCategory() {

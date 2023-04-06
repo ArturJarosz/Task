@@ -12,7 +12,7 @@ public interface SupervisionApplicationService {
     SupervisionDto createSupervision(SupervisionDto supervisionDto);
 
     /**
-     * Updates Supervision supervisionId according to data in supervisionDto. If Supervision does not exists, then new
+     * Updates Supervision supervisionId according to data in supervisionDto. If Supervision does not exist, then new
      * exception will be thrown.
      */
     SupervisionDto updateSupervision(Long supervisionId, SupervisionDto supervisionDto);
@@ -38,7 +38,7 @@ public interface SupervisionApplicationService {
      * will be thrown.
      */
     SupervisionVisitDto updateSupervisionVisit(Long supervisionId, Long supervisionVisitId,
-                                               SupervisionVisitDto supervisionVisitDto);
+            SupervisionVisitDto supervisionVisitDto);
 
     /**
      * Loads supervisionVision of given supervisionVisitId for supervision with supervisionId.

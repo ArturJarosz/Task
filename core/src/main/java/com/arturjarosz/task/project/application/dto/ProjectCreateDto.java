@@ -4,12 +4,14 @@ import com.arturjarosz.task.project.model.ProjectType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 public class ProjectCreateDto implements Serializable {
+    @Serial
     private static final long serialVersionUID = -7596108006634813082L;
 
     private Long id;

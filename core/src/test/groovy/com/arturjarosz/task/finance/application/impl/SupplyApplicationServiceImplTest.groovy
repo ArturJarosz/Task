@@ -128,7 +128,7 @@ class SupplyApplicationServiceImplTest extends Specification {
     def "updateSupply should not update supply if update supply dto fails"() {
         given:
             SupplyDto supplyDto = this.prepareUpdateSupplyDto()
-            mockValidatingUpdateSupplyDtoThrowsException();
+            mockValidatingUpdateSupplyDtoThrowsException()
         when:
             this.supplyApplicationService.updateSupply(PROJECT_WITH_SUPPLY_ID, SUPPLY_ID, supplyDto)
         then:

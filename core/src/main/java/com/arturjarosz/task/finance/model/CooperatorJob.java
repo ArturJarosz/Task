@@ -3,24 +3,17 @@ package com.arturjarosz.task.finance.model;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serial;
 import java.math.BigDecimal;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @SequenceGenerator(name = "sequence_generator", sequenceName = "cooperator_job_sequence", allocationSize = 1)
 @MappedSuperclass
 @DiscriminatorColumn(name = "TYPE")
 @Table(name = "COOPERATOR_JOB")
 public abstract class CooperatorJob extends AbstractEntity {
+    @Serial
     private static final long serialVersionUID = -2817735161319438104L;
 
     @Column(name = "NAME", nullable = false)
@@ -47,8 +40,8 @@ public abstract class CooperatorJob extends AbstractEntity {
         // needed by JPA
     }
 
-    public CooperatorJob(String name, Long cooperatorId, CooperatorJobType cooperatorJobType, BigDecimal value,
-                         boolean hasInvoice, boolean payable) {
+    protected CooperatorJob(String name, Long cooperatorId, CooperatorJobType cooperatorJobType, BigDecimal value,
+            boolean hasInvoice, boolean payable) {
         this.name = name;
         this.cooperatorId = cooperatorId;
         this.type = cooperatorJobType;
@@ -59,12 +52,24 @@ public abstract class CooperatorJob extends AbstractEntity {
         return this.name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public BigDecimal getValue() {
         return this.financialData.getValue().getValue();
     }
 
+    public void setValue(BigDecimal value) {
+        this.financialData.setValue(new Money(value));
+    }
+
     public String getNote() {
         return this.note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     long getCooperatorId() {
@@ -74,19 +79,6 @@ public abstract class CooperatorJob extends AbstractEntity {
     public CooperatorJobType getType() {
         return this.type;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setValue(BigDecimal value) {
-        this.financialData.setValue(new Money(value));
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
 
     public boolean isHasInvoice() {
         return this.financialData.isHasInvoice();

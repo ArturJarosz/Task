@@ -134,7 +134,7 @@ class ProjectTestIT extends BaseTestIT {
     def "Getting not existing project should give code 400 and error message"() {
         given:
         when:
-            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
+            MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def projectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .get(URI.create(HOST + ":" + port + PROJECTS_URI + "/" + NOT_EXISTING_PROJECT_ID))
@@ -230,7 +230,7 @@ class ProjectTestIT extends BaseTestIT {
     def "Removing not existing project should give code 400 and error message"() {
         given:
         when:
-            String projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
+            MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def projectResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .delete(URI.create(HOST + ":" + port + PROJECTS_URI + "/" + NOT_EXISTING_PROJECT_ID))
@@ -283,15 +283,13 @@ class ProjectTestIT extends BaseTestIT {
         and: "Creating project with not proper data"
             String creatingProjectRequestBody =
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
-            def creatingProjectResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
-                            .header("Content-Type", "application/json")
-                            .content(creatingProjectRequestBody)
+            this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
+                    .header("Content-Type", "application/json")
+                    .content(creatingProjectRequestBody)
             ).andReturn().response
-            def creatingProjectResponse2 = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
-                            .header("Content-Type", "application/json")
-                            .content(creatingProjectRequestBody)
+            this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
+                    .header("Content-Type", "application/json")
+                    .content(creatingProjectRequestBody)
             ).andReturn().response
         when:
             def projectsListResponse = this.mockMvc.perform(

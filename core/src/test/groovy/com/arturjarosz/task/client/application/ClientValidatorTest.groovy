@@ -27,7 +27,7 @@ class ClientValidatorTest extends Specification {
     private static Client client = new Client(new PersonName(FIRST_NAME, LAST_NAME), null, ClientType.PRIVATE)
 
     def clientRepository = Mock(ClientRepository) {
-        findById(NON_EXISTING_ID) >> { Optional.ofNullable(null )}
+        findById(NON_EXISTING_ID) >> { Optional.ofNullable(null) }
         findById(PRIVATE_CLIENT_ID) >> { Optional.of(client) }
     }
 
@@ -146,7 +146,7 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an exception when client is null"() {
         given:
-            def maybeClient = Optional.ofNullable(null)
+            Optional<Client> maybeClient = Optional.ofNullable(null)
         when:
             clientValidator.validateClientExistence(maybeClient, PRIVATE_CLIENT_ID)
         then:

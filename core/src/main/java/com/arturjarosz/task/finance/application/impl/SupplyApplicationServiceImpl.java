@@ -11,6 +11,7 @@ import com.arturjarosz.task.finance.model.Supply;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -106,8 +107,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         LOG.debug("Loading list of supplies for Project with id {}", projectId);
 
         this.projectValidator.validateProjectExistence(projectId);
-        List<SupplyDto> suppliesForProject = this.financialDataQueryService.getSuppliesForProject(projectId);
-        return suppliesForProject;
+        return this.financialDataQueryService.getSuppliesForProject(projectId);
     }
 
     private Supply getCreatedSupply(ProjectFinancialData financialData, Supply supply) {
@@ -115,6 +115,6 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
                 .stream()
                 .filter(supplyOnProject -> (supplyOnProject).equals(supply))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(ResourceNotFoundException::new);
     }
 }

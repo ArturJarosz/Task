@@ -6,14 +6,16 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serial;
 import java.util.regex.Pattern;
 
 @Embeddable
 public class Email extends AbstractValueObject<Email> implements ValueObject<Email> {
+    @Serial
     private static final long serialVersionUID = -8861608245148282355L;
 
     private static final Pattern EMAIL_PATTERN = Pattern
-            .compile("^[\\w+_.?^-]+@+[\\w]+\\.+([\\w]{2,})");
+            .compile("^[\\w+_.?^-]+@+\\w+\\.+(\\w{2,})");
 
     @Column(name = "EMAIL")
     private String value;
@@ -56,5 +58,22 @@ public class Email extends AbstractValueObject<Email> implements ValueObject<Ema
     @Override
     public Email copy() {
         return new Email(this.value);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (object.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Email other = (Email) object;
+
+        return this.hasSameValueAs(other);
     }
 }

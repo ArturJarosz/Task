@@ -4,6 +4,7 @@ import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService
 import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.supervision.application.SupervisionApplicationService;
 import com.arturjarosz.task.supervision.application.SupervisionValidator;
@@ -67,7 +68,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         Optional<Supervision> maybeSupervision = this.supervisionRepository.findById(supervisionId);
         this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
         this.supervisionValidator.validateUpdateSupervision(supervisionDto);
-        Supervision supervision = maybeSupervision.get();
+        Supervision supervision = maybeSupervision.orElseThrow(ResourceNotFoundException::new);
         supervision.update(supervisionDto);
         this.projectFinancialSummaryApplicationService.recalculateSupervision(supervisionId,
                 supervision.getFinancialData().getId());
@@ -96,7 +97,8 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         LOG.debug("Retrieving supervision with id {}.", supervisionId);
         Optional<Supervision> maybeSupervision = this.supervisionRepository.findById(supervisionId);
         this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
-        return SupervisionDtoMapper.INSTANCE.supervisionToSupervisionDto(maybeSupervision.get());
+        return SupervisionDtoMapper.INSTANCE.supervisionToSupervisionDto(
+                maybeSupervision.orElseThrow(ResourceNotFoundException::new));
     }
 
     @Transactional
@@ -107,7 +109,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         Optional<Supervision> maybeSupervision = this.supervisionRepository.findById(supervisionId);
         this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
         this.supervisionVisitValidator.validateCreateSupervisionVisit(supervisionVisitDto);
-        Supervision supervision = maybeSupervision.get();
+        Supervision supervision = maybeSupervision.orElseThrow(ResourceNotFoundException::new);
         SupervisionVisit supervisionVisit = new SupervisionVisit(supervisionVisitDto.getDateOfVisit(),
                 supervisionVisitDto.getHoursCount(), supervisionVisitDto.getPayable());
         supervision.addSupervisionVisit(supervisionVisit);
@@ -136,7 +138,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
         this.supervisionVisitValidator.validateUpdateSupervisionVisit(supervisionVisitDto);
         this.supervisionVisitValidator.validateSupervisionHavingSupervisionVisit(supervisionId, supervisionVisitId);
-        Supervision supervision = maybeSupervision.get();
+        Supervision supervision = maybeSupervision.orElseThrow(ResourceNotFoundException::new);
         supervision.updateSupervisionVisit(supervisionVisitId, supervisionVisitDto);
         this.updateSupervisionHoursCount(supervision);
         this.projectFinancialSummaryApplicationService.recalculateSupervision(supervisionId,
@@ -167,7 +169,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         Optional<Supervision> maybeSupervision = this.supervisionRepository.findById(supervisionId);
         this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
         this.supervisionVisitValidator.validateSupervisionHavingSupervisionVisit(supervisionId, supervisionVisitId);
-        Supervision supervision = maybeSupervision.get();
+        Supervision supervision = maybeSupervision.orElseThrow(ResourceNotFoundException::new);
         supervision.removeSupervisionVisit(supervisionVisitId);
         this.updateSupervisionHoursCount(supervision);
         this.projectFinancialSummaryApplicationService.recalculateSupervision(supervisionId,
@@ -186,7 +188,11 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
 
 
     private Long getIdForCreatedSupervisionVisit(Supervision supervision, SupervisionVisit supervisionVisit) {
-        return supervision.getSupervisionVisits().stream().filter(visit -> visit.equals(supervisionVisit))
-                .map(AbstractEntity::getId).findFirst().orElse(null);
+        return supervision.getSupervisionVisits()
+                .stream()
+                .filter(visit -> visit.equals(supervisionVisit))
+                .map(AbstractEntity::getId)
+                .findFirst()
+                .orElseThrow(ResourceNotFoundException::new);
     }
 }

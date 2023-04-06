@@ -7,6 +7,7 @@ import com.arturjarosz.task.contractor.application.mapper.ContractorDtoMapper;
 import com.arturjarosz.task.contractor.infrastructure.ContractorRepository;
 import com.arturjarosz.task.contractor.model.Contractor;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
         Optional<Contractor> maybeContractor = this.contractorRepository.findById(contractorId);
         this.contractorValidator.validateContractorExistence(maybeContractor, contractorId);
         this.contractorValidator.validateUpdateContractorDto(contractorDto);
-        Contractor contractor = maybeContractor.get();
+        Contractor contractor = maybeContractor.orElseThrow(ResourceNotFoundException::new);
         contractor.update(contractorDto.getName(), contractorDto.getCategory(), contractorDto.getEmail(),
                 contractorDto.getTelephone(), contractorDto.getNote());
         this.contractorRepository.save(contractor);
@@ -67,7 +68,8 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
         LOG.debug("Loading Contractor with id {}.", contractorId);
         Optional<Contractor> maybeContractor = this.contractorRepository.findById(contractorId);
         this.contractorValidator.validateContractorExistence(maybeContractor, contractorId);
-        ContractorDto contractorDto = ContractorDtoMapper.INSTANCE.contractorToContractorDto(maybeContractor.get());
+        ContractorDto contractorDto = ContractorDtoMapper.INSTANCE.contractorToContractorDto(
+                maybeContractor.orElseThrow(ResourceNotFoundException::new));
         LOG.debug("Contractor with id {} loaded", contractorId);
         return contractorDto;
     }

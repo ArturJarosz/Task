@@ -15,6 +15,7 @@ import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +58,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateCreateTaskDto(taskDto);
         this.contractWorkflowValidator.validateContractAllowsForWorkObjectsCreation(projectId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         Task task = this.taskDomainService.createTask(project, stageId, taskDto);
         project = this.projectRepository.save(project);
         LOG.debug("Task created.");
@@ -72,7 +73,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         project.removeTaskFromStage(stageId, taskId);
         this.projectRepository.save(project);
         LOG.debug("Task removed.");
@@ -87,7 +88,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         this.taskValidator.validateUpdateTaskDto(taskDto);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         TaskInnerDto taskInnerDto = TaskDtoMapper.INSTANCE.updateDtoToInnerDto(taskDto);
         Task task = this.taskDomainService.updateTask(project, stageId, taskId, taskInnerDto);
         this.projectRepository.save(project);
@@ -104,7 +105,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.taskDomainService.updateTaskStatus(project, stageId, taskId, taskDto.getStatus());
         this.projectRepository.save(project);
         LOG.debug("Task status updated.");
@@ -126,7 +127,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         return project.getStages().stream().filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .flatMap(stageOnProject -> stageOnProject.getTasks().stream())
                 .map(TaskDtoMapper.INSTANCE::taskToTaskBasicDto).toList();
@@ -141,7 +142,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.taskDomainService.rejectTask(project, stageId, taskId);
         this.projectRepository.save(project);
         return TaskDtoMapper.INSTANCE.taskToTaskDto(this.getTaskById(project, stageId, taskId));
@@ -155,7 +156,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.taskDomainService.reopenTask(project, stageId, taskId);
         this.projectRepository.save(project);
         return TaskDtoMapper.INSTANCE.taskToTaskDto(this.getTaskById(project, stageId, taskId));

@@ -8,24 +8,21 @@ import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @Table(name = "PROJECT_FINANCIAL_DATA")
 @SequenceGenerator(name = "sequence_generator", sequenceName = "project_financial_data_sequence", allocationSize = 1)
 public class ProjectFinancialData extends AbstractAggregateRoot {
 
+    @Serial
+    private static final long serialVersionUID = -6717212464303174748L;
     @Column(name = "PROJECT_ID", nullable = false)
     private Long projectId;
 

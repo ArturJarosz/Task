@@ -2,12 +2,14 @@ package com.arturjarosz.task.supervision.model;
 
 import com.arturjarosz.task.finance.model.FinancialData;
 import com.arturjarosz.task.finance.model.PartialFinancialData;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.supervision.application.dto.SupervisionDto;
 import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,6 +18,7 @@ import java.util.Set;
 @SequenceGenerator(name = "sequence_generator", sequenceName = "supervision_sequence", allocationSize = 1)
 @Table(name = "SUPERVISION")
 public class Supervision extends AbstractAggregateRoot implements PartialFinancialData {
+    @Serial
     private static final long serialVersionUID = -1180515376945392460L;
 
     @Embedded
@@ -115,7 +118,9 @@ public class Supervision extends AbstractAggregateRoot implements PartialFinanci
     public SupervisionVisit updateSupervisionVisit(Long supervisionVisitId,
             SupervisionVisitDto supervisionVisitDto) {
         SupervisionVisit supervisionVisit = this.supervisionVisits.stream()
-                .filter(sv -> sv.getId().equals(supervisionVisitId)).findFirst().orElse(null);
+                .filter(sv -> sv.getId().equals(supervisionVisitId))
+                .findFirst()
+                .orElseThrow(ResourceNotFoundException::new);
         return supervisionVisit.update(supervisionVisitDto);
     }
 }

@@ -7,18 +7,15 @@ import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
+import java.io.Serial;
 import java.time.LocalDate;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @DiscriminatorValue(value = "CONTRACT")
 public class Contract extends AbstractAggregateRoot implements WorkflowAware<ContractStatus> {
+    @Serial
     private static final long serialVersionUID = -6156547903688654882L;
 
     @Embedded

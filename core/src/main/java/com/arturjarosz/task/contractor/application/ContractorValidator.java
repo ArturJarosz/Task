@@ -11,10 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 
 @RequiredArgsConstructor
 @Component
@@ -32,11 +29,7 @@ public class ContractorValidator {
     }
 
     public void validateUpdateContractorDto(ContractorDto contractorDto) {
-        assertNotNull(contractorDto, createMessageCode(ExceptionCodes.NULL, ContractorExceptionCodes.CONTRACTOR));
-        this.validateName(contractorDto.getName());
-        assertNotNull(contractorDto.getCategory(),
-                createMessageCode(ExceptionCodes.NULL, ContractorExceptionCodes.CONTRACTOR,
-                        ContractorExceptionCodes.CATEGORY));
+        this.validateCreateContractorDto(contractorDto);
     }
 
     private void validateName(String name) {

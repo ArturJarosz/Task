@@ -22,14 +22,14 @@ public interface ProjectApplicationService {
     ProjectDto getProject(Long projectId);
 
     /**
-     * Updates {@link com.arturjarosz.task.project.model.Project} of given Id by ProjectDto data.
+     * Updates {@link com.arturjarosz.task.project.model.Project} of given projectId by ProjectDto data.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
      */
     ProjectDto updateProject(Long projectId, ProjectDto projectDto);
 
     /**
-     * Removes {@link com.arturjarosz.task.project.model.Project} of given Id.
+     * Removes {@link com.arturjarosz.task.project.model.Project} of given projectId.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
      */

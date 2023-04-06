@@ -12,13 +12,10 @@ import com.arturjarosz.task.project.status.stage.validator.StageStatusTransition
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -30,7 +27,8 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
     private Map<String, List<StageStatusTransitionListener>> mapNameToStatusTransitionListeners;
 
     @Autowired
-    public StageWorkflowServiceImpl(ProjectWorkflowValidator projectWorkflowValidator, List<StageStatusTransitionListener> stageStatusTransitionListenerList,
+    public StageWorkflowServiceImpl(ProjectWorkflowValidator projectWorkflowValidator,
+            List<StageStatusTransitionListener> stageStatusTransitionListenerList,
             List<StageStatusTransitionValidator> transitionValidatorList) {
         this.projectWorkflowValidator = projectWorkflowValidator;
         this.mapNameToStatusTransitionListeners = new HashMap<>();
@@ -57,7 +55,7 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
         StageStatus oldStatus = stage.getStatus();
         StageStatusTransition statusTransition = this.getTransitionForStatuses(oldStatus, newStatus);
         BaseValidator.assertNotNull(statusTransition, BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID,
-                ProjectExceptionCodes.STAGE, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION),
+                        ProjectExceptionCodes.STAGE, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION),
                 oldStatus != null ? oldStatus.getStatusName() : "null", newStatus.getStatusName());
         this.beforeStatusChange(project, stage, statusTransition);
         this.changeStatus(stage, newStatus);
@@ -105,6 +103,6 @@ public class StageWorkflowServiceImpl implements StageWorkflowService {
                 .getId() == null;
         return project.getStages().stream()
                 .filter(stagePredicate)
-                .findFirst().orElse(null);
+                .findFirst().orElseThrow(ResourceNotFoundException::new);
     }
 }

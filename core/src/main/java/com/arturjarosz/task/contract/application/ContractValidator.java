@@ -9,9 +9,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 
 @Component
 public class ContractValidator {
@@ -66,10 +64,7 @@ public class ContractValidator {
     }
 
     public void validateTerminateContractDto(ContractDto contractDto) {
-        assertNotNull(contractDto, createMessageCode(ExceptionCodes.NULL, ContractExceptionCodes.PROJECT,
-                ContractExceptionCodes.CONTRACT));
-        assertNotNull(contractDto.getEndDate(), createMessageCode(ExceptionCodes.NULL, ContractExceptionCodes.CONTRACT,
-                ContractExceptionCodes.END_DATE));
+        this.validateCompleteContractDto(contractDto);
     }
 
     public void validateCompleteContractDto(ContractDto contractDto) {

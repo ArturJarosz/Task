@@ -5,7 +5,6 @@ import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService
 import com.arturjarosz.task.finance.model.FinancialData
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
-import com.arturjarosz.task.sharedkernel.model.AbstractEntity
 import com.arturjarosz.task.sharedkernel.model.Money
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import com.arturjarosz.task.supervision.application.SupervisionValidator
@@ -238,7 +237,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
                     return supervision
             } as Supervision) >> {
                 arguments ->
-                    Supervision supervisionToUpdate = arguments[0] as Supervision
+                    Supervision supervisionToUpdate = arguments[0 as String] as Supervision
                     supervisionToUpdate = this.injectMockedId(supervisionToUpdate, SUPERVISION_ID)
                     SupervisionVisit supervisionVisit = supervisionToUpdate.supervisionVisits.iterator().next()
                     this.injectMockedId(supervisionVisit, SUPERVISION_VISIT_ID)
@@ -450,7 +449,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
         }
     }
 
-    private AbstractEntity injectMockedId(AbstractEntity entity, Long id) {
+    private <T> T injectMockedId(T entity, Long id) {
         TestUtils.setFieldForObject(entity, "id", id)
         return entity
     }

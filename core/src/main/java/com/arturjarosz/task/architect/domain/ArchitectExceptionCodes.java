@@ -2,7 +2,7 @@ package com.arturjarosz.task.architect.domain;
 
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 
-public class ArchitectExceptionCodes {
+public final class ArchitectExceptionCodes {
 
     public static final String ARCHITECT = "architect";
     public static final String PERSON_NAME = "personName";

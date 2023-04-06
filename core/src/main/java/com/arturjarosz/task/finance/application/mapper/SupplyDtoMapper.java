@@ -3,7 +3,6 @@ package com.arturjarosz.task.finance.application.mapper;
 import com.arturjarosz.task.finance.application.dto.SupplyDto;
 import com.arturjarosz.task.finance.model.Supply;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -15,6 +14,6 @@ public interface SupplyDtoMapper {
                 supplyDto.getHasInvoice(), supplyDto.getPayable());
     }
 
-    @Mapping(source = "projectId", target = "projectId")
+    //@Mapping(source = "projectId", target = "projectId")
     SupplyDto supplyToSupplyDto(Supply supply, Long projectId);
 }

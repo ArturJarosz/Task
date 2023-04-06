@@ -39,7 +39,7 @@ public class SystemParametersInitializer implements DataInitializer {
 
     private void importSystemParametersFromFile() {
         List<SystemParameter> systemParameters = this.prepareSystemParameters(SYSTEM_PARAMETERS_PATH);
-        systemParameters.forEach(this.systemParameterRepository::save);
+        this.systemParameterRepository.saveAll(systemParameters);
     }
 
     private List<SystemParameter> prepareSystemParameters(String filename) {

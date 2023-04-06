@@ -3,22 +3,20 @@ package com.arturjarosz.task.finance.model;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serial;
 import java.time.LocalDate;
 
 /**
  * Object that represents financial data in every Entity that stores Money value and participates in Project value.
  */
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "financial_data_sequence", allocationSize = 1)
 @Table(name = "FINANCIAL_DATA")
 public class FinancialData extends AbstractAggregateRoot {
+    @Serial
     private static final long serialVersionUID = -7882045222253776404L;
 
     @Embedded
@@ -64,35 +62,35 @@ public class FinancialData extends AbstractAggregateRoot {
         return this.value;
     }
 
-    public boolean isHasInvoice() {
-        return this.hasInvoice;
+    public void setValue(Money value) {
+        this.value = value;
     }
 
-    public boolean isPayable() {
-        return this.payable;
+    public boolean isHasInvoice() {
+        return this.hasInvoice;
     }
 
     public void setHasInvoice(boolean hasInvoice) {
         this.hasInvoice = hasInvoice;
     }
 
-    public void setValue(Money value) {
-        this.value = value;
+    public boolean isPayable() {
+        return this.payable;
+    }
+
+    public void setPayable(boolean payable) {
+        this.payable = payable;
     }
 
     public LocalDate getPaymentDate() {
         return this.paymentDate;
     }
 
-    public boolean isPaid() {
-        return this.paid;
-    }
-
     public void setPaymentDate(LocalDate paymentDate) {
         this.paymentDate = paymentDate;
     }
 
-    public void setPayable(boolean payable) {
-        this.payable = payable;
+    public boolean isPaid() {
+        return this.paid;
     }
 }

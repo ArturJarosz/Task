@@ -303,15 +303,13 @@ class TaskTestIT extends BaseTestIT {
             ProjectDto projectDto = this.createProject()
             StageDto stageDto = this.createStage(projectDto.id)
             String taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
-            def taskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
-                            .header("Content-Type", "application/json")
-                            .content(taskRequestBody)
+            this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
+                    .header("Content-Type", "application/json")
+                    .content(taskRequestBody)
             ).andReturn().response
-            def taskResponse2 = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
-                            .header("Content-Type", "application/json")
-                            .content(taskRequestBody)
+            this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
+                    .header("Content-Type", "application/json")
+                    .content(taskRequestBody)
             ).andReturn().response
         when:
             def getTasksResponse = this.mockMvc.perform(MockMvcRequestBuilders.get(URI
@@ -355,7 +353,7 @@ class TaskTestIT extends BaseTestIT {
         return HOST + ":" + port + CLIENTS_URI
     }
 
-    private String createBasicProjectUri(){
+    private String createBasicProjectUri() {
         return HOST + ":" + port + PROJECTS_URI
     }
 }

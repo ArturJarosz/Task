@@ -19,21 +19,21 @@ public interface ArchitectApplicationService {
 
     /**
      * Removes {@link com.arturjarosz.task.architect.model.Architect} of given I.
-     * If entity with given Id does not exist then
+     * If entity with given architectId does not exist then
      * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
      */
     void removeArchitect(Long architectId);
 
     /**
      * Loads all architect data by given id.
-     * If entity with given Id does not exist then
+     * If entity with given architectId does not exist then
      * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
      */
     ArchitectDto getArchitect(Long architectId);
 
     /**
-     * Updates Architect of given Id with data provided in architectDto.
-     * If entity with given Id does not exist then
+     * Updates Architect of given architectId with data provided in architectDto.
+     * If entity with given architectId does not exist then
      * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
      */
     ArchitectDto updateArchitect(Long architectId, ArchitectDto architectDto);

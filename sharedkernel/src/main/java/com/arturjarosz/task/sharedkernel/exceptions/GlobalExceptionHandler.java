@@ -20,7 +20,6 @@ public class GlobalExceptionHandler {
 
     public static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    private static final String UNEXPECTED_ERROR = "Exception.unexpected";
     private final MessageSource messageSource;
 
     @Autowired

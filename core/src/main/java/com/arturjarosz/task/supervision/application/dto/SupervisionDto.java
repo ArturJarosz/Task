@@ -1,11 +1,17 @@
 package com.arturjarosz.task.supervision.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+@Data
+@NoArgsConstructor
 public class SupervisionDto implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6120237413436097370L;
 
     @JsonIgnore
@@ -29,79 +35,4 @@ public class SupervisionDto implements Serializable {
     private BigDecimal value;
     private String note;
 
-    public SupervisionDto() {
-        // needed by JPA
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Boolean getHasInvoice() {
-        return this.hasInvoice;
-    }
-
-    public void setHasInvoice(Boolean hasInvoice) {
-        this.hasInvoice = hasInvoice;
-    }
-
-    public BigDecimal getBaseNetRate() {
-        return this.baseNetRate;
-    }
-
-    public void setBaseNetRate(BigDecimal baseNetRate) {
-        this.baseNetRate = baseNetRate;
-    }
-
-    public BigDecimal getHourlyNetRate() {
-        return this.hourlyNetRate;
-    }
-
-    public void setHourlyNetRate(BigDecimal hourlyNetRate) {
-        this.hourlyNetRate = hourlyNetRate;
-    }
-
-    public BigDecimal getVisitNetRate() {
-        return this.visitNetRate;
-    }
-
-    public void setVisitNetRate(BigDecimal visitNetRate) {
-        this.visitNetRate = visitNetRate;
-    }
-
-    public Long getProjectId() {
-        return this.projectId;
-    }
-
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
-    }
-
-    public int getHoursCount() {
-        return this.hoursCount;
-    }
-
-    public void setHoursCount(int hoursCount) {
-        this.hoursCount = hoursCount;
-    }
-
-    public String getNote() {
-        return this.note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public BigDecimal getValue() {
-        return this.value;
-    }
-
-    public void setValue(BigDecimal value) {
-        this.value = value;
-    }
 }

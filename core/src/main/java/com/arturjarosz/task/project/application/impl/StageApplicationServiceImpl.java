@@ -12,6 +12,7 @@ import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateCreateStageDto(stageDto);
         this.contractWorkflowValidator.validateContractAllowsForWorkObjectsCreation(projectId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         Stage stage = this.stageDomainService.createStage(project, stageDto);
         project = this.projectRepository.save(project);
         LOG.debug("Stage for Project with id {} created.", projectId);
@@ -66,7 +67,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
 
         project.removeStage(stageId);
         this.projectRepository.save(project);
@@ -80,7 +81,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.stageValidator.validateUpdateStageDto(stageDto);
         Stage stage = this.stageDomainService.updateStage(project, stageId, stageDto);
         this.projectRepository.save(project);
@@ -112,7 +113,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.stageDomainService.rejectStage(project, stageId);
         this.projectRepository.save(project);
         return StageDtoMapper.INSTANCE.stageDtoFromStage(this.getStageById(project, stageId));
@@ -125,7 +126,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.stageDomainService.reopenStage(project, stageId);
         this.projectRepository.save(project);
         return StageDtoMapper.INSTANCE.stageDtoFromStage(this.getStageById(project, stageId));

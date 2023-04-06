@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serial;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 
@@ -16,6 +17,7 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertN
 
 @Embeddable
 public class Address extends AbstractValueObject<Address> implements ValueObject<Address> {
+    @Serial
     private static final long serialVersionUID = -4102560398759336232L;
 
     @Column(name = "POST_CODE")
@@ -115,9 +117,7 @@ public class Address extends AbstractValueObject<Address> implements ValueObject
     public boolean equals(Object o) {
         if (this == o) return true;
 
-        if (!(o instanceof Address)) return false;
-
-        Address address = (Address) o;
+        if (!(o instanceof Address address)) return false;
 
         return this.hasSameValueAs(address);
     }

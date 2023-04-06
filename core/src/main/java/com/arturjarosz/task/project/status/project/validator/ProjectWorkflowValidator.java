@@ -4,14 +4,13 @@ import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
 
 @Component
 public class ProjectWorkflowValidator {
@@ -25,7 +24,7 @@ public class ProjectWorkflowValidator {
     public void validateProjectAllowsForWorkObjectCreation(Project project) {
         ProjectWorkflow projectWorkflow = this.projectWorkflows.stream()
                 .filter(workflow -> workflow.getName().equals(project.getWorkflowName())).findFirst()
-                .orElse(null);
+                .orElseThrow(ResourceNotFoundException::new);
         assertNotNull(projectWorkflow, createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
                 ProjectExceptionCodes.WORKFLOW));
         assertIsTrue(projectWorkflow.getStatusesThatAllowCreatingWorkObjects()
@@ -34,10 +33,10 @@ public class ProjectWorkflowValidator {
                         ProjectExceptionCodes.CREATE));
     }
 
-    public void validateProjectAllowsForWorking(Project project){
+    public void validateProjectAllowsForWorking(Project project) {
         ProjectWorkflow projectWorkflow = this.projectWorkflows.stream()
                 .filter(workflow -> workflow.getName().equals(project.getWorkflowName())).findFirst()
-                .orElse(null);
+                .orElseThrow(ResourceNotFoundException::new);
         assertNotNull(projectWorkflow, createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
                 ProjectExceptionCodes.WORKFLOW));
         assertIsTrue(projectWorkflow.getStatusesThatAllowWorking()

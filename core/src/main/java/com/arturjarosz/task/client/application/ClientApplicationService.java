@@ -14,28 +14,28 @@ public interface ClientApplicationService {
     ClientDto createClient(ClientDto clientDto);
 
     /**
-     * Loads basic data for {@link com.arturjarosz.task.client.model.Client} by given Id.
+     * Loads basic data for {@link com.arturjarosz.task.client.model.Client} by given clientId.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
      */
     ClientDto getClientBasicData(Long clientId);
 
     /**
-     * Removes {@link com.arturjarosz.task.client.model.Client} by given Id.
+     * Removes {@link com.arturjarosz.task.client.model.Client} by given clientId.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
      */
     void removeClient(Long clientId);
 
     /**
-     * Loads all data for {@link com.arturjarosz.task.client.model.Client} by given Id.
+     * Loads all data for {@link com.arturjarosz.task.client.model.Client} by given clientId.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
      */
     ClientDto getClient(Long clientId);
 
     /**
-     * Updates {@link com.arturjarosz.task.client.model.Client} of given Id be data provided in ClientDto.
+     * Updates {@link com.arturjarosz.task.client.model.Client} of given clientId be data provided in ClientDto.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
      */

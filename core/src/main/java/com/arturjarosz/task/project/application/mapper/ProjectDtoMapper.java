@@ -49,11 +49,11 @@ public interface ProjectDtoMapper {
     @Mapping(source = "contract.offerValue", target = "contractDto.projectValue", qualifiedByName = "moneyToDouble")
     ProjectDto projectToProjectDto(Project project, Contract contract);
 
-    @Mapping(source = "project.projectType", target = "projectType")
-    @Mapping(source = "project.name", target = "name")
-    @Mapping(source = "project.startDate", target = "startDate")
-    @Mapping(source = "project.note", target = "note")
-    @Mapping(source = "project.id", target = "id")
+    @Mapping(source = "projectType", target = "projectType")
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "startDate", target = "startDate")
+    @Mapping(source = "note", target = "note")
+    @Mapping(source = "id", target = "id")
     ProjectDto projectToProjectDto(Project project);
 
     @Mapping(source = "project.projectType", target = "projectType")
@@ -70,7 +70,7 @@ public interface ProjectDtoMapper {
     ProjectDto projectToBasicProjectDto(ClientDto clientDto, ArchitectDto architectDto, Project project);
 
     @Named("moneyToDouble")
-    default Double moneyToDouble(Money value){
+    default Double moneyToDouble(Money value) {
         return value.getValue().doubleValue();
     }
 }

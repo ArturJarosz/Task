@@ -7,14 +7,17 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.time.LocalDate;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "supervision_visit_sequence", allocationSize = 1)
 @Table(name = "SUPERVISION_VISIT")
 public class SupervisionVisit extends AbstractEntity {
-
+    @Serial
     private static final long serialVersionUID = 6142572844344116972L;
+
     @Column(name = "DATE_OF_VISIT", nullable = false)
     private LocalDate dateOfVisit;
 

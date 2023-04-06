@@ -4,11 +4,13 @@ import com.arturjarosz.task.contractor.model.ContractorCategory;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 public class ContractorDto implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1761161251042111551L;
 
     private Long id;

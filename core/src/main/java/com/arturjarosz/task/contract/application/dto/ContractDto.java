@@ -4,12 +4,14 @@ import com.arturjarosz.task.contract.status.ContractStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 public class ContractDto implements Serializable {
+    @Serial
     private static final long serialVersionUID = 2871016534140942045L;
 
     private Double offerValue;

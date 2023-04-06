@@ -14,7 +14,7 @@ public interface SupplierApplicationService {
     CreatedEntityDto createSupplier(SupplierDto supplierDto);
 
     /**
-     * Update Supplier of given supplierId with data from SupplierDto. If Supplier does not exists or
+     * Update Supplier of given supplierId with data from SupplierDto. If Supplier does not exist or
      * data provided in dto are not correct an exception will be thrown.
      */
     void updateSupplier(Long supplierId, SupplierDto supplierDto);

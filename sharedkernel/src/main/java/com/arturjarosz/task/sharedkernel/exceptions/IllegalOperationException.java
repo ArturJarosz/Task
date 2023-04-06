@@ -1,7 +1,9 @@
 package com.arturjarosz.task.sharedkernel.exceptions;
 
-public class IllegalOperationException extends BaseRuntimeException {
+import java.io.Serial;
 
+public class IllegalOperationException extends BaseRuntimeException {
+    @Serial
     private static final long serialVersionUID = 6299214753231118497L;
 
     public IllegalOperationException() {

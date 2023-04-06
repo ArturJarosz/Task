@@ -38,7 +38,7 @@ class ContractorJobFinancialDataServiceImplTest extends Specification {
     def "getSummationStrategy should return correct strategy"() {
         given:
         when:
-            def strategy = this.contractorJobFinancialDataService.getSummationStrategy();
+            def strategy = this.contractorJobFinancialDataService.getSummationStrategy()
         then:
             strategy == SummationStrategy.ADD
     }
@@ -46,7 +46,7 @@ class ContractorJobFinancialDataServiceImplTest extends Specification {
     def "getType should return correct type"() {
         given:
         when:
-            def type = this.contractorJobFinancialDataService.getType();
+            def type = this.contractorJobFinancialDataService.getType()
         then:
             type == PartialFinancialDataType.CONTRACTOR_JOB
     }

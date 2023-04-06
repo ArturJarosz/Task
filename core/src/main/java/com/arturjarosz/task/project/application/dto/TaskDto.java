@@ -2,22 +2,26 @@ package com.arturjarosz.task.project.application.dto;
 
 import com.arturjarosz.task.project.model.TaskType;
 import com.arturjarosz.task.project.status.task.TaskStatus;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+@Data
+@NoArgsConstructor
 public class TaskDto implements Serializable {
 
+    public static final String END_DATE_FIELD = "endDate";
+    public static final String ID_FIELD = "id";
+    public static final String NAME_FIELD = "name";
+    public static final String NOTE_FIELD = "note";
+    public static final String START_DATE_FIELD = "startDate";
+    public static final String STATUS_FIELD = "status";
+    public static final String TASK_TYPE_FIELD = "type";
+    @Serial
     private static final long serialVersionUID = 6275436633825075027L;
-
-    public static final String END_DATE = "endDate";
-    public static final String ID = "id";
-    public static final String NAME = "name";
-    public static final String NOTE = "note";
-    public static final String START_DATE = "startDate";
-    public static final String STATUS = "status";
-    public static final String TASK_TYPE = "type";
-
     private Long id;
     private String name;
     private TaskType type;
@@ -26,63 +30,4 @@ public class TaskDto implements Serializable {
     private String note;
     private TaskStatus status;
 
-    public TaskDto() {
-        // needed by JPA
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public TaskType getType() {
-        return this.type;
-    }
-
-    public void setType(TaskType type) {
-        this.type = type;
-    }
-
-    public LocalDate getStartDate() {
-        return this.startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return this.endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public String getNote() {
-        return this.note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public TaskStatus getStatus() {
-        return this.status;
-    }
-
-    public void setStatus(TaskStatus status) {
-        this.status = status;
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }
