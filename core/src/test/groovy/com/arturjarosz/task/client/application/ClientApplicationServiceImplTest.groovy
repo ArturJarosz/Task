@@ -110,7 +110,7 @@ class ClientApplicationServiceImplTest extends Specification {
     def "getClient should load client from repository"() {
         given:
         when:
-            ClientDto clientDto = this.clientApplicationServiceImpl.getClient(EXISTING_PRIVATE_ID)
+            this.clientApplicationServiceImpl.getClient(EXISTING_PRIVATE_ID)
         then:
             1 * this.clientRepository.findById(EXISTING_PRIVATE_ID) >> Optional.of(privateClient)
     }
@@ -119,7 +119,7 @@ class ClientApplicationServiceImplTest extends Specification {
         given:
             ClientDto clientDto = this.prepareClientDtoForUpdate()
         when:
-            ClientDto updatedClientDto = this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
+            this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
         then:
             1 * this.clientValidator.validateClientExistence(_, EXISTING_PRIVATE_ID)
     }
@@ -128,7 +128,7 @@ class ClientApplicationServiceImplTest extends Specification {
         given:
             ClientDto clientDto = this.prepareClientDtoForUpdate()
         when:
-            ClientDto updatedClientDto = this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
+            this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
         then:
             1 * this.clientValidator.validateClientDtoPresence(_)
     }
@@ -137,7 +137,7 @@ class ClientApplicationServiceImplTest extends Specification {
         given:
             ClientDto clientDto = this.prepareClientDtoForUpdate()
         when:
-            ClientDto updatedClientDto = this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
+            this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
         then:
             1 * this.clientRepository.save(_)
     }
@@ -163,7 +163,7 @@ class ClientApplicationServiceImplTest extends Specification {
     def "getBasicClients should call loadAll on repository"() {
         given:
         when:
-            List<ClientDto> clientDtoList = this.clientApplicationServiceImpl.basicClients
+            this.clientApplicationServiceImpl.basicClients
         then:
             1 * this.clientRepository.findAll() >> Collections.singletonList(privateClient)
     }

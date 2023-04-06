@@ -4,12 +4,10 @@ package com.arturjarosz.task.finance.model;
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
-import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serial;
 
-@Data
 @Entity
 @Table(name = "PROJECT_FINANCIAL_PARTIAL_SUMMARY")
 @SequenceGenerator(name = "sequence_generator", sequenceName = "project_financial_partial_summary_sequence", allocationSize = 1)
@@ -62,5 +60,25 @@ public class ProjectFinancialPartialSummary extends AbstractEntity {
 
     public void setProjectFinancialSummaryId(Long projectFinancialSummaryId) {
         this.projectFinancialSummaryId = projectFinancialSummaryId;
+    }
+
+    public void setDataType(PartialFinancialDataType dataType) {
+        this.dataType = dataType;
+    }
+
+    public void setNetValue(Money netValue) {
+        this.netValue = netValue;
+    }
+
+    public void setGrossValue(Money grossValue) {
+        this.grossValue = grossValue;
+    }
+
+    public void setVatTax(Money vatTax) {
+        this.vatTax = vatTax;
+    }
+
+    public void setIncomeTax(Money incomeTax) {
+        this.incomeTax = incomeTax;
     }
 }

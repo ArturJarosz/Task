@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -18,6 +19,7 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertI
 
 @Embeddable
 public class Money extends AbstractValueObject<Money> implements ValueObject<Money>, Comparable<Money> {
+    @Serial
     private static final long serialVersionUID = -5524298857488493145L;
 
     @Column(name = "MONEY", precision = 5, scale = 2)
@@ -79,5 +81,23 @@ public class Money extends AbstractValueObject<Money> implements ValueObject<Mon
         assertIsTrue(other.value.equals(BigDecimal.ONE),
                 BaseValidator.createMessageCode(ModelExceptionCodes.ZERO, ModelExceptionCodes.DIVISOR));
         return new Money(this.value.divide(other.value, RoundingMode.HALF_UP));
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (object.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Money other = (Money) object;
+
+        return this.hasSameValueAs(other);
+
     }
 }

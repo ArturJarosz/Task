@@ -9,6 +9,7 @@ import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.contract.status.ContractStatusTransitionService;
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +52,7 @@ public class ContractServiceImpl implements ContractService {
 
         Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
-        Contract contract = maybeContract.get();
+        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         this.contractStatusTransitionService.rejectOffer(contract);
 
         LOG.debug("Contract with id {} rejected.", contractId);
@@ -66,7 +67,7 @@ public class ContractServiceImpl implements ContractService {
         Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         this.contractValidator.validateOffer(contractDto);
-        Contract contract = maybeContract.get();
+        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         contract.update(contractDto.getOfferValue(), contractDto.getDeadline());
         this.contractStatusTransitionService.makeNewOffer(contract);
 
@@ -81,7 +82,7 @@ public class ContractServiceImpl implements ContractService {
 
         Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
-        Contract contract = maybeContract.get();
+        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         this.contractStatusTransitionService.acceptOffer(contract);
 
         LOG.debug("Offer for contract with id {} accepted.", contractId);
@@ -96,7 +97,7 @@ public class ContractServiceImpl implements ContractService {
         Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         this.contractValidator.validateSignContractDto(contractDto);
-        Contract contract = maybeContract.get();
+        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         contract.sign(contractDto);
         this.contractStatusTransitionService.signContract(contract);
 
@@ -112,7 +113,7 @@ public class ContractServiceImpl implements ContractService {
         Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         this.contractValidator.validateTerminateContractDto(contractDto);
-        Contract contract = maybeContract.get();
+        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         contract.terminate(contractDto);
         this.contractStatusTransitionService.terminateContract(contract);
 
@@ -127,7 +128,7 @@ public class ContractServiceImpl implements ContractService {
 
         Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
-        Contract contract = maybeContract.get();
+        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         this.contractStatusTransitionService.resumeContract(contract);
         contract.resume();
 
@@ -143,7 +144,7 @@ public class ContractServiceImpl implements ContractService {
         Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         this.contractValidator.validateCompleteContractDto(contractDto);
-        Contract contract = maybeContract.get();
+        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         contract.complete(contractDto);
         this.contractStatusTransitionService.completeContract(contract);
 

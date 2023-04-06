@@ -2,7 +2,7 @@ package com.arturjarosz.task.systemparameter.domain;
 
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 
-public class SystemParameterExceptionCodes {
+public final class SystemParameterExceptionCodes {
     public static final String DECIMAL_NUMBER = "decimalNumber";
     public static final String ID = "id";
     public static final String NAME = "name";

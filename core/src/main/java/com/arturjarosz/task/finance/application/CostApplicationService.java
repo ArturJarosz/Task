@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CostApplicationService {
     /**
-     * Creates Cost from CostDto for project with given projectId and return its Id.
+     * Creates Cost from CostDto for project with given projectId and return its projectId.
      *
      * @param projectId id of Project
      * @param costDto   data of cost

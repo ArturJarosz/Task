@@ -1,6 +1,6 @@
 package com.arturjarosz.task.sharedkernel.exceptions;
 
-public class ExceptionCodes {
+public final class ExceptionCodes {
 
     public static final String NOT_FOR_INSTANTIATING = "This class should not be instantiated.";
 

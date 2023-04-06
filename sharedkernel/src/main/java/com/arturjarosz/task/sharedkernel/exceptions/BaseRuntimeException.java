@@ -2,11 +2,14 @@ package com.arturjarosz.task.sharedkernel.exceptions;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.io.Serial;
+
 /**
  * Basic class for all custom runtime exceptions
  */
 public class BaseRuntimeException extends RuntimeException {
 
+    @Serial
     private static final long serialVersionUID = -2333120646773512436L;
 
     private Object[] messageParameters;

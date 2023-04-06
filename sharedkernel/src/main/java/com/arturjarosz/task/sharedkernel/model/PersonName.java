@@ -5,9 +5,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serial;
 
 @Embeddable
 public class PersonName extends AbstractValueObject<PersonName> implements ValueObject<PersonName> {
+    @Serial
     private static final long serialVersionUID = 8563213541166171011L;
 
     @Column(name = "FIRST_NAME")
@@ -25,20 +27,20 @@ public class PersonName extends AbstractValueObject<PersonName> implements Value
         this.setLastName(lastName);
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public String getFirstName() {
         return this.firstName;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     public String getLastName() {
         return this.lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     @Override
@@ -55,5 +57,22 @@ public class PersonName extends AbstractValueObject<PersonName> implements Value
     @Override
     public PersonName copy() {
         return new PersonName(this.getFirstName(), this.getLastName());
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (object.getClass() != this.getClass()) {
+            return false;
+        }
+
+        PersonName other = (PersonName) object;
+
+        return this.hasSameValueAs(other);
     }
 }

@@ -5,13 +5,16 @@ import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
 import javax.persistence.*;
-import java.util.HashMap;
+import java.io.Serial;
+import java.util.EnumMap;
 import java.util.Map;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "project_financial_summary_sequence", allocationSize = 1)
 @Table(name = "PROJECT_FINANCIAL_SUMMARY")
 public class ProjectFinancialSummary extends AbstractAggregateRoot {
+    @Serial
     private static final long serialVersionUID = 4803569322363900378L;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -42,7 +45,7 @@ public class ProjectFinancialSummary extends AbstractAggregateRoot {
 
     public void updatePartialData(PartialFinancialDataType type, FinancialValueDto financialValueDto) {
         if (this.partialSummaries == null) {
-            this.partialSummaries = new HashMap<>();
+            this.partialSummaries = new EnumMap<>(PartialFinancialDataType.class);
         }
         if (this.partialSummaries.containsKey(type)) {
             ProjectFinancialPartialSummary partialSummary = this.partialSummaries.get(type);

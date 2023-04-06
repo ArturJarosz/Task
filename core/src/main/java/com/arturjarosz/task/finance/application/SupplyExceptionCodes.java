@@ -2,7 +2,7 @@ package com.arturjarosz.task.finance.application;
 
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 
-public class SupplyExceptionCodes {
+public final class SupplyExceptionCodes {
 
     public static final String NAME = "name";
     public static final String SUPPLIER = "supplier";

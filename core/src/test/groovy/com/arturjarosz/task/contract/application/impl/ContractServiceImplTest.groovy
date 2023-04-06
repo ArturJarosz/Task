@@ -42,7 +42,7 @@ class ContractServiceImplTest extends Specification {
         when:
             Contract contract = this.contractService.createContract(contractDto)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             contract == null
     }
 
@@ -53,7 +53,7 @@ class ContractServiceImplTest extends Specification {
         when:
             Contract contract = this.contractService.createContract(contractDto)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             contract == null
     }
 
@@ -81,7 +81,7 @@ class ContractServiceImplTest extends Specification {
         when:
             ContractDto contractDto = this.contractService.reject(NOT_EXISTING_CONTRACT_ID)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             0 * this.contractStatusTransitionService.rejectOffer(_ as Contract)
             contractDto == null
     }
@@ -104,7 +104,7 @@ class ContractServiceImplTest extends Specification {
         when:
             ContractDto contractDto = this.contractService.makeNewOffer(NOT_EXISTING_CONTRACT_ID, contractOfferDto)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             0 * this.contractStatusTransitionService.makeNewOffer(_ as Contract)
             contractDto == null
     }
@@ -116,7 +116,7 @@ class ContractServiceImplTest extends Specification {
         when:
             ContractDto contractDto = this.contractService.makeNewOffer(NOT_EXISTING_CONTRACT_ID, contractOfferDto)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             0 * this.contractStatusTransitionService.makeNewOffer(_ as Contract)
             contractDto == null
     }
@@ -140,7 +140,7 @@ class ContractServiceImplTest extends Specification {
         when:
             ContractDto contractDto = this.contractService.acceptOffer(NOT_EXISTING_CONTRACT_ID)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             0 * this.contractStatusTransitionService.acceptOffer(_ as Contract)
             contractDto == null
     }
@@ -163,7 +163,7 @@ class ContractServiceImplTest extends Specification {
         when:
             ContractDto contractDto = this.contractService.sign(NOT_EXISTING_CONTRACT_ID, signContractDto)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             0 * this.contractStatusTransitionService.signContract(_ as Contract)
             contractDto == null
     }
@@ -175,7 +175,7 @@ class ContractServiceImplTest extends Specification {
         when:
             ContractDto contractDto = this.contractService.sign(EXISTING_CONTRACT_ID, signContractDto)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             0 * this.contractStatusTransitionService.signContract(_ as Contract)
             contractDto == null
     }
@@ -203,7 +203,7 @@ class ContractServiceImplTest extends Specification {
         when:
             ContractDto contractDto = this.contractService.terminate(NOT_EXISTING_CONTRACT_ID, terminateContractDto)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             0 * this.contractStatusTransitionService.terminateContract(_ as Contract)
             contractDto == null
     }
@@ -215,7 +215,7 @@ class ContractServiceImplTest extends Specification {
         when:
             ContractDto contractDto = this.contractService.terminate(EXISTING_CONTRACT_ID, terminateContractDto)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             0 * this.contractStatusTransitionService.terminateContract(_ as Contract)
             contractDto == null
     }
@@ -239,7 +239,7 @@ class ContractServiceImplTest extends Specification {
         when:
             ContractDto contractDto = this.contractService.resume(NOT_EXISTING_CONTRACT_ID)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             0 * this.contractStatusTransitionService.resumeContract(NOT_EXISTING_CONTRACT_ID)
             contractDto == null
     }
@@ -263,7 +263,7 @@ class ContractServiceImplTest extends Specification {
         when:
             ContractDto contractDto = this.contractService.complete(NOT_EXISTING_CONTRACT_ID, completeContractDto)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             0 * this.contractStatusTransitionService.terminateContract(_ as Contract)
             contractDto == null
     }
@@ -275,7 +275,7 @@ class ContractServiceImplTest extends Specification {
         when:
             ContractDto contractDto = this.contractService.complete(EXISTING_CONTRACT_ID, completeContractDto)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             0 * this.contractStatusTransitionService.terminateContract(_ as Contract)
             contractDto == null
     }
@@ -324,10 +324,6 @@ class ContractServiceImplTest extends Specification {
             Contract contract ->
                 contract.changeStatus(ContractStatus.REJECTED)
         })
-    }
-
-    private mockContractValidatorThrowsAnExceptionOnWrongOfferData() {
-        this.contractValidator.validateOffer(_ as ContractDto) >> { throw new IllegalArgumentException() }
     }
 
     private mockContractStatusTransitionMakeNewOffer() {

@@ -45,10 +45,12 @@ public class ProjectFinancialSummaryServiceImpl implements ProjectFinancialSumma
     private final Map<PartialFinancialDataType, PartialFinancialDataService> typeToPartialFinancialDataServices;
 
     @Autowired
-    public ProjectFinancialSummaryServiceImpl(ProjectFinancialSummaryRepository projectFinancialSummaryRepository,
-            ProjectValidator projectValidator, FinancialDataQueryServiceImpl financialDataQueryService,
-            FinancialDataRepository financialDataRepository,
-            List<PartialFinancialDataService> partialFinancialDataServices) {
+    public ProjectFinancialSummaryServiceImpl(
+            @NonNull ProjectFinancialSummaryRepository projectFinancialSummaryRepository,
+            @NonNull ProjectValidator projectValidator,
+            @NonNull FinancialDataQueryServiceImpl financialDataQueryService,
+            @NonNull FinancialDataRepository financialDataRepository,
+            @NonNull List<PartialFinancialDataService> partialFinancialDataServices) {
         this.projectFinancialSummaryRepository = projectFinancialSummaryRepository;
         this.projectValidator = projectValidator;
         this.financialDataQueryService = financialDataQueryService;

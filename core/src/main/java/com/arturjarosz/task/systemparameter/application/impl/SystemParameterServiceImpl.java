@@ -1,6 +1,7 @@
 package com.arturjarosz.task.systemparameter.application.impl;
 
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.systemparameter.application.SystemParameterApplicationValidator;
 import com.arturjarosz.task.systemparameter.application.SystemParameterDtoMapper;
 import com.arturjarosz.task.systemparameter.application.SystemParameterService;
@@ -41,7 +42,7 @@ public class SystemParameterServiceImpl implements SystemParameterService {
         this.systemParameterApplicationValidator.validateParameterExistence(maybeSystemParameter,
                 systemParameterDto.getName());
         this.systemParameterValidatorService.validateOnUpdate(systemParameterDto);
-        SystemParameter systemParameter = maybeSystemParameter.get();
+        SystemParameter systemParameter = maybeSystemParameter.orElseThrow(ResourceNotFoundException::new);
         systemParameter.update(systemParameterDto);
         return SystemParameterDtoMapper.MAPPER.systemParameterToSystemParameterDto(systemParameter);
     }

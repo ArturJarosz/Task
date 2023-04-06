@@ -21,6 +21,7 @@ import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +46,10 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final ContractService contractService;
 
     @Autowired
-    public ProjectApplicationServiceImpl(ClientApplicationService clientApplicationService, ClientValidator clientValidator,
-            ArchitectApplicationService architectApplicationService, ArchitectValidator architectValidator, ProjectRepository projectRepository,
+    public ProjectApplicationServiceImpl(ClientApplicationService clientApplicationService,
+            ClientValidator clientValidator,
+            ArchitectApplicationService architectApplicationService, ArchitectValidator architectValidator,
+            ProjectRepository projectRepository,
             ProjectDomainService projectDomainService, ProjectValidator projectValidator,
             ProjectFinancialSummaryService projectFinancialSummaryService,
             ProjectFinancialDataService projectFinancialDataService, ContractService contractService) {
@@ -88,7 +91,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         LOG.debug("Loading Project with id {}.", projectId);
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         ClientDto clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
         ArchitectDto architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
         LOG.debug("Project with id {} loaded.", projectId);
@@ -102,7 +105,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.projectValidator.validateUpdateProjectDto(projectDto);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         project = this.projectDomainService.updateProject(project, projectDto);
         project = this.projectRepository.save(project);
         LOG.debug("Project with id {} updated", projectId);
@@ -126,7 +129,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         LOG.debug("Finishing Project with id {}.", projectId);
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         project = this.projectDomainService.finishProject(project, projectContractDto.getEndDate());
         this.projectRepository.save(project);
         LOG.debug("Project with id {} is finished.", projectId);
@@ -149,7 +152,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         LOG.debug("Rejecting Project with id {}.", projectId);
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         project = this.projectDomainService.rejectProject(project);
         this.projectRepository.save(project);
         return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
@@ -161,7 +164,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         LOG.debug("Reopening Project with id {}.", projectId);
         Optional<Project> maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
-        Project project = maybeProject.get();
+        Project project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         project = this.projectDomainService.reopenProject(project);
         this.projectRepository.save(project);
         return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);

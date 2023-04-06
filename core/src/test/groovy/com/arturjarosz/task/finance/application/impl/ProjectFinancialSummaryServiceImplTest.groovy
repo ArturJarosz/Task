@@ -49,7 +49,7 @@ class ProjectFinancialSummaryServiceImplTest extends Specification {
                         partialFinancialDataServices)
     }
 
-    def projectFinancialDataService;
+    def projectFinancialDataService
 
     def "createProjectFinancialData should call validateProjectExistence on projectValidator"() {
         given:
@@ -113,7 +113,7 @@ class ProjectFinancialSummaryServiceImplTest extends Specification {
             TotalProjectFinancialSummaryDto projectFinancialDataDto =
                     this.projectFinancialDataService.getTotalProjectFinancialSummary(NOT_EXISTING_PROJECT_ID)
         then:
-            Exception exception = thrown()
+            thrown(Exception)
             projectFinancialDataDto == null
     }
 

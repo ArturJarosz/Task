@@ -13,8 +13,8 @@ import org.mapstruct.factory.Mappers;
 public interface ContractDtoMapper {
     ContractDtoMapper INSTANCE = Mappers.getMapper(ContractDtoMapper.class);
 
-    @Mapping(source = "projectCreateDto.offerValue", target = "offerValue")
-    @Mapping(source = "projectCreateDto.deadline", target = "deadline")
+    @Mapping(source = "offerValue", target = "offerValue")
+    @Mapping(source = "deadline", target = "deadline")
     ContractDto projectDtoToContractDto(ProjectCreateDto projectCreateDto);
 
     @Mapping(source = "signingDate", target = "signingDate")
@@ -26,7 +26,7 @@ public interface ContractDtoMapper {
     ContractDto contractToContractDto(Contract contract);
 
     @Named("moneyToDouble")
-    default Double moneyToDouble(Money value){
+    default Double moneyToDouble(Money value) {
         return value.getValue().doubleValue();
     }
 }

@@ -5,13 +5,13 @@ import java.util.Collection;
 /**
  * Interface for all statuses on workflows.
  *
- * @param <TStatus>
+ * @param <T>
  */
-public interface Status<TStatus extends Status> {
+public interface Status<T extends Status> {
     /**
      * Collection of possible Statuses, that current status can transition to.
      */
-    Collection<TStatus> getPossibleStatusTransitions();
+    Collection<T> getPossibleStatusTransitions();
 
     String getStatusName();
 }

@@ -3,7 +3,7 @@ package com.arturjarosz.task.project.application;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalStateException;
 
-public class ProjectExceptionCodes {
+public final class ProjectExceptionCodes {
     //Entities
     public static final String ARCHITECT = "architect";
     public static final String CLIENT = "client";
@@ -46,7 +46,6 @@ public class ProjectExceptionCodes {
     public static final String OFFER = "value";
     public static final String COMPLETED = "completed";
     public static final String WORK = "work";
-
 
     private ProjectExceptionCodes() {
         throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);

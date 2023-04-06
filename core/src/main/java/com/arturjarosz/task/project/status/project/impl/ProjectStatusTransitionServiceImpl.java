@@ -81,16 +81,11 @@ public class ProjectStatusTransitionServiceImpl implements ProjectStatusTransiti
     public void reject(Project project) {
         ProjectStatus status = project.getStatus();
         switch (status) {
-            case TO_DO:
-                this.rejectNotStarted(project);
-                break;
-            case IN_PROGRESS:
-                this.rejectFromProgress(project);
-                break;
-            default:
-                throw new IllegalArgumentException(createMessageCode(ExceptionCodes.NOT_VALID,
-                        ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION),
-                        status, ProjectStatus.REJECTED);
+            case TO_DO -> this.rejectNotStarted(project);
+            case IN_PROGRESS -> this.rejectFromProgress(project);
+            default -> throw new IllegalArgumentException(createMessageCode(ExceptionCodes.NOT_VALID,
+                    ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION),
+                    status, ProjectStatus.REJECTED);
         }
     }
 

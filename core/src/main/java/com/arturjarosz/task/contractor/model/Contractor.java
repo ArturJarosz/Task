@@ -3,20 +3,18 @@ package com.arturjarosz.task.contractor.model;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Email;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serial;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "contractor_sequence", allocationSize = 1)
 @Table(name = "CONTRACTOR")
 public class Contractor extends AbstractAggregateRoot {
 
 
+    @Serial
+    private static final long serialVersionUID = -8552309774453189195L;
     @Column(name = "NAME", updatable = false)
     private String name;
 

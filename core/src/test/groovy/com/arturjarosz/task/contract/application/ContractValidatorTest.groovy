@@ -1,12 +1,13 @@
 package com.arturjarosz.task.contract.application
 
 import com.arturjarosz.task.contract.application.dto.ContractDto
+import com.arturjarosz.task.contract.model.Contract
 import spock.lang.Specification
 
 import java.time.LocalDate
 
 class ContractValidatorTest extends Specification {
-    private static final long CONTRACT_ID = 1L;
+    private static final long CONTRACT_ID = 1L
     private static final double OFFER_VALUE = 200.00
     private static final LocalDate FUTURE_DATE = LocalDate.of(2100, 01, 01)
     private static final LocalDate PAST_DATE = LocalDate.of(1900, 01, 01)
@@ -45,7 +46,7 @@ class ContractValidatorTest extends Specification {
 
     def "validateContractExistence should throw an exception when passed contract is null"() {
         given:
-            Optional<Object> maybeContract = Optional.ofNullable(null)
+            Optional<Contract> maybeContract = Optional.ofNullable(null)
         when:
             this.contractValidator.validateContractExistence(maybeContract, CONTRACT_ID)
         then:
@@ -104,7 +105,7 @@ class ContractValidatorTest extends Specification {
             new ContractDto() | null    | "isNull.contract.endDate"
     }
 
-    def "validateTerminateContractDto should not throw any exception on proper contractDto"(){
+    def "validateTerminateContractDto should not throw any exception on proper contractDto"() {
         given:
             ContractDto contractDto = new ContractDto(endDate: FUTURE_DATE)
         when:
@@ -127,7 +128,7 @@ class ContractValidatorTest extends Specification {
             new ContractDto() | null    | "isNull.contract.endDate"
     }
 
-    def "validateCompleteContractDto should not throw any exception on proper contractDto"(){
+    def "validateCompleteContractDto should not throw any exception on proper contractDto"() {
         given:
             ContractDto contractDto = new ContractDto(endDate: FUTURE_DATE)
         when:

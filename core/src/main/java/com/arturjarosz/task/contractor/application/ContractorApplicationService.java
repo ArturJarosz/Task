@@ -13,7 +13,7 @@ public interface ContractorApplicationService {
     CreatedEntityDto createContractor(ContractorDto contractorDto);
 
     /**
-     * Update Contractor of given contractorId with data from contractorDto. If contractor does not exists or
+     * Update Contractor of given contractorId with data from contractorDto. If contractor does not exist or
      * data provided in dto are not correct an exception will be thrown.
      */
     void updateContractor(Long contractorId, ContractorDto contractorDto);

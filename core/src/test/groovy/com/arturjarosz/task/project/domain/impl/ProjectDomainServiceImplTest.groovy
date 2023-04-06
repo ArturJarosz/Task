@@ -5,14 +5,11 @@ import com.arturjarosz.task.project.application.dto.ProjectDto
 import com.arturjarosz.task.project.domain.ProjectDataValidator
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
-import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
 import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionServiceImpl
-import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import com.arturjarosz.task.utils.ProjectBuilder
-import com.arturjarosz.task.utils.StageBuilder
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -38,7 +35,7 @@ class ProjectDomainServiceImplTest extends Specification {
         given:
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
         when:
-            Project project = this.projectDomainService.createProject(projectCreateDto, CONTRACT_ID)
+            this.projectDomainService.createProject(projectCreateDto, CONTRACT_ID)
         then:
             1 * this.projectStatusTransitionService.create(_ as Project)
     }
@@ -82,9 +79,8 @@ class ProjectDomainServiceImplTest extends Specification {
     def "finishProject should call endDateNotBeforeStartDate on projectDataValidator"() {
         given:
             Project project = this.prepareProjectInProgressWithStatus()
-            LocalDate today = LocalDate.now()
         when:
-            Project finishedProject = this.projectDomainService.finishProject(project, null)
+            this.projectDomainService.finishProject(project, null)
         then:
             1 * this.projectDataValidator.endDateNotBeforeStartDate(_ as LocalDate, _ as LocalDate)
     }
@@ -93,7 +89,7 @@ class ProjectDomainServiceImplTest extends Specification {
         given:
             Project project = Mock(Project)
         when:
-            Project finishedProject = this.projectDomainService.finishProject(project, null)
+            this.projectDomainService.finishProject(project, null)
         then:
             1 * project.finishProject(_)
     }
@@ -102,9 +98,8 @@ class ProjectDomainServiceImplTest extends Specification {
     def "finishProject should call completeWork on projectStatusTransitionService"() {
         given:
             Project project = this.prepareProjectInProgressWithStatus()
-            LocalDate today = LocalDate.now()
         when:
-            Project finishedProject = this.projectDomainService.finishProject(project, null)
+            this.projectDomainService.finishProject(project, null)
         then:
             1 * projectStatusTransitionService.complete(_ as Project)
     }
@@ -113,7 +108,6 @@ class ProjectDomainServiceImplTest extends Specification {
     def "finishProject should changeProject status to COMPLETED"() {
         given:
             Project project = this.prepareProjectInProgressWithStatus()
-            LocalDate today = LocalDate.now()
         when:
             Project finishedProject = this.projectDomainService.finishProject(project, null)
         then:
@@ -128,7 +122,7 @@ class ProjectDomainServiceImplTest extends Specification {
         given:
             Project project = this.prepareProjectWithStatus(ProjectStatus.TO_DO)
         when:
-            Project rejectedProject = this.projectDomainService.rejectProject(project)
+            this.projectDomainService.rejectProject(project)
         then:
             1 * this.projectStatusTransitionService.reject(_ as Project)
     }
@@ -168,13 +162,6 @@ class ProjectDomainServiceImplTest extends Specification {
                 .build()
     }
 
-    private Project prepareProjectWithStatusAndOffer(ProjectStatus status) {
-        return new ProjectBuilder()
-                .withName(NAME)
-                .withStatus(status)
-                .build()
-    }
-
     private Project prepareProjectInProgressWithStatus() {
         return new ProjectBuilder()
                 .withName(NAME)
@@ -192,19 +179,5 @@ class ProjectDomainServiceImplTest extends Specification {
     private ProjectDto prepareUpdateProjectDto() {
         ProjectDto projectDto = new ProjectDto(name: NEW_NAME, note: NEW_NOTE)
         return projectDto
-    }
-
-    private ProjectDto prepareProjectDto() {
-        LocalDate now = LocalDate.now()
-        ProjectDto projectDto = new ProjectDto(signingDate: now.minusDays(10),
-                startDate: now.plusDays(10), deadline: now.plusDays(50))
-        return projectDto
-    }
-
-    private Stage prepareStageWithStatus(StageStatus status) {
-        return new StageBuilder()
-                .withName(STAGE_NAME)
-                .withStatus(status)
-                .build()
     }
 }

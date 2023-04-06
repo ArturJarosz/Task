@@ -2,17 +2,11 @@ package com.arturjarosz.task.project.query.impl;
 
 import com.arturjarosz.task.contract.model.QContract;
 import com.arturjarosz.task.contract.status.ContractStatus;
-import com.arturjarosz.task.finance.model.QContractorJob;
-import com.arturjarosz.task.finance.model.QSupply;
 import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.dto.TaskDto;
 import com.arturjarosz.task.project.domain.dto.ProjectStatusData;
 import com.arturjarosz.task.project.domain.dto.StageStatusData;
-import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.project.model.QProject;
-import com.arturjarosz.task.project.model.QStage;
-import com.arturjarosz.task.project.model.QTask;
-import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.project.model.*;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
@@ -25,8 +19,6 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
 
     private static final QProject PROJECT = QProject.project;
     private static final QContract CONTRACT = QContract.contract;
-    private static final QContractorJob CONTRACTOR_JOB = QContractorJob.contractorJob;
-    private static final QSupply SUPPLY = QSupply.supply;
     private static final QStage STAGE = QStage.stage;
     private static final QTask TASK = QTask.task;
 
@@ -54,9 +46,11 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
         return this.query()
                 .from(TASK)
                 .where(TASK.id.eq(taskId))
-                .select(Projections.bean(TaskDto.class, TASK.id.as(TaskDto.ID), TASK.status.as(TaskDto.STATUS),
-                        TASK.name.as(TaskDto.NAME), TASK.startDate.as(TaskDto.START_DATE),
-                        TASK.endDate.as(TaskDto.END_DATE), TASK.note.as(TaskDto.NOTE), TASK.type.as(TaskDto.TASK_TYPE)))
+                .select(Projections.bean(TaskDto.class, TASK.id.as(TaskDto.ID_FIELD),
+                        TASK.status.as(TaskDto.STATUS_FIELD),
+                        TASK.name.as(TaskDto.NAME_FIELD), TASK.startDate.as(TaskDto.START_DATE_FIELD),
+                        TASK.endDate.as(TaskDto.END_DATE_FIELD), TASK.note.as(TaskDto.NOTE_FIELD),
+                        TASK.type.as(TaskDto.TASK_TYPE_FIELD)))
                 .fetchOne();
     }
 
@@ -66,9 +60,10 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
                 .from(PROJECT)
                 .leftJoin(PROJECT.stages, STAGE)
                 .where(PROJECT.id.eq(projectId))
-                .select(Projections.bean(StageDto.class, STAGE.id.as(StageDto.ID), STAGE.name.as(StageDto.NAME),
-                        STAGE.deadline.as(StageDto.DEADLINE), STAGE.stageType.as(StageDto.STAGE_TYPE),
-                        STAGE.status.as(StageDto.STATUS)))
+                .select(Projections.bean(StageDto.class, STAGE.id.as(StageDto.ID_FIELD),
+                        STAGE.name.as(StageDto.NAME_FIELD),
+                        STAGE.deadline.as(StageDto.DEADLINE_FIELD), STAGE.stageType.as(StageDto.STAGE_TYPE_FIELD),
+                        STAGE.status.as(StageDto.STATUS_FIELD)))
                 .fetch();
     }
 

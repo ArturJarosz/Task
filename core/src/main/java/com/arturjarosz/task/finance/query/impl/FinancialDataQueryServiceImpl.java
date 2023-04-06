@@ -93,8 +93,8 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .where(SUPERVISION.id.eq(supervisionId))
                 .join(SUPERVISION.supervisionVisits, SUPERVISION_VISIT)
                 .select(Projections.bean(SupervisionVisitFinancialDto.class,
-                        SUPERVISION_VISIT.payable.as(SupervisionVisitFinancialDto.PAYABLE),
-                        SUPERVISION_VISIT.hoursCount.as(SupervisionVisitFinancialDto.HOURS_COUNT)))
+                        SUPERVISION_VISIT.payable.as(SupervisionVisitFinancialDto.PAYABLE_FIELD),
+                        SUPERVISION_VISIT.hoursCount.as(SupervisionVisitFinancialDto.HOURS_COUNT_FIELD)))
                 .fetch();
     }
 

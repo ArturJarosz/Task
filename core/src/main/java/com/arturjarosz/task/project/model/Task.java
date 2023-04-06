@@ -6,18 +6,16 @@ import com.arturjarosz.task.project.status.task.TaskWorkflow;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serial;
 import java.time.LocalDate;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "task_sequence", allocationSize = 1)
 @Table(name = "TASK")
 public class Task extends AbstractEntity implements WorkflowAware<TaskStatus> {
+    @Serial
     private static final long serialVersionUID = 9208147376126632528L;
 
     @Column(name = "NAME", nullable = false)

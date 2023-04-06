@@ -8,6 +8,7 @@ import com.arturjarosz.task.client.infrastructure.repository.ClientRepository;
 import com.arturjarosz.task.client.model.Client;
 import com.arturjarosz.task.client.model.ClientType;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +65,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         this.clientValidator.validateClientExistence(maybeClient, clientId);
 
         LOG.debug("Client with id {} loaded.", clientId);
-        return ClientDtoMapper.INSTANCE.clientToClientDto(maybeClient.get());
+        return ClientDtoMapper.INSTANCE.clientToClientDto(maybeClient.orElseThrow(ResourceNotFoundException::new));
     }
 
     @Transactional
@@ -74,7 +75,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
         Optional<Client> maybeClient = this.clientRepository.findById(clientId);
         this.clientValidator.validateClientExistence(maybeClient, clientId);
-        Client client = maybeClient.get();
+        Client client = maybeClient.orElseThrow(ResourceNotFoundException::new);
         this.clientValidator.validateClientDtoPresence(clientDto);
         if (client.isPrivate()) {
             this.clientValidator.validatePrivateClient(clientDto);
@@ -114,6 +115,6 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     public ClientDto getClientBasicData(Long clientId) {
         Optional<Client> maybeClient = this.clientRepository.findById(clientId);
         this.clientValidator.validateClientExistence(maybeClient, clientId);
-        return ClientDtoMapper.INSTANCE.clientToClientBasicDto(maybeClient.get());
+        return ClientDtoMapper.INSTANCE.clientToClientBasicDto(maybeClient.orElseThrow(ResourceNotFoundException::new));
     }
 }

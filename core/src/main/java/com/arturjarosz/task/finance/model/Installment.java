@@ -4,21 +4,16 @@ import com.arturjarosz.task.finance.application.dto.InstallmentDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serial;
 import java.time.LocalDate;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "installment_sequence", allocationSize = 1)
 @Table(name = "INSTALLMENT")
-public class Installment extends AbstractEntity implements PartialFinancialData{
-
+public class Installment extends AbstractEntity implements PartialFinancialData {
+    @Serial
     private static final long serialVersionUID = -8420590861357070177L;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

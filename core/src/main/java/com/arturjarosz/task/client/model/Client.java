@@ -1,25 +1,17 @@
 package com.arturjarosz.task.client.model;
 
-import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
-import com.arturjarosz.task.sharedkernel.model.Address;
-import com.arturjarosz.task.sharedkernel.model.Email;
-import com.arturjarosz.task.sharedkernel.model.Money;
-import com.arturjarosz.task.sharedkernel.model.PersonName;
+import com.arturjarosz.task.sharedkernel.model.*;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serial;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "client_sequence", allocationSize = 1)
 @Table(name = "CLIENT")
 public class Client extends AbstractAggregateRoot {
 
+    @Serial
     private static final long serialVersionUID = 5821492165714199395L;
 
     @Embedded

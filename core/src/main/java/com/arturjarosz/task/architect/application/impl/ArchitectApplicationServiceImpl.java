@@ -8,6 +8,7 @@ import com.arturjarosz.task.architect.application.mapper.ArchitectDtoMapper;
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository;
 import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectDto;
-import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectExistence;
-import static com.arturjarosz.task.architect.application.ArchitectValidator.validateBasicArchitectDto;
+import static com.arturjarosz.task.architect.application.ArchitectValidator.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -59,7 +58,8 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
         validateArchitectExistence(maybeArchitect, architectId);
 
         LOG.debug("architect with id {} loaded", architectId);
-        return ArchitectDtoMapper.INSTANCE.architectToArchitectDto(maybeArchitect.get());
+        return ArchitectDtoMapper.INSTANCE.architectToArchitectDto(maybeArchitect.orElseThrow(
+                ResourceNotFoundException::new));
     }
 
     @Transactional
@@ -70,7 +70,8 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
         Optional<Architect> maybeArchitect = this.architectRepository.findById(architectId);
         validateArchitectExistence(maybeArchitect, architectId);
         validateArchitectDto(architectDto);
-        Architect architect = maybeArchitect.get();
+        Architect architect = maybeArchitect.orElseThrow(
+                ResourceNotFoundException::new);
         architect.updateArchitectName(architectDto.getFirstName(), architectDto.getLastName());
         architect = this.architectRepository.save(architect);
 

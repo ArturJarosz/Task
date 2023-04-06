@@ -137,7 +137,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     def "Contract in ACCEPTED status allows creating project work objects"() {
         given:
             ProjectDto projectDto = this.createProject()
-            ContractDto contractDto = this.acceptContractOffer(projectDto.contractDto.id)
+            this.acceptContractOffer(projectDto.contractDto.id)
             String stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         when:
             def stageResponse = this.mockMvc.perform(
@@ -153,7 +153,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     def "Contract in ACCEPTED status allows working on project"() {
         given:
             ProjectDto projectDto = this.createProject()
-            ContractDto contractDto = this.acceptContractOffer(projectDto.contractDto.id)
+            this.acceptContractOffer(projectDto.contractDto.id)
             StageDto createdStageDto = this.createStage(projectDto.id)
             TaskDto createdTaskDto = this.createTask(projectDto.id, createdStageDto.id)
         when:

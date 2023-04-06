@@ -7,24 +7,18 @@ import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serial;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "project_sequence", allocationSize = 1)
 @Table(name = "PROJECT")
 public class Project extends AbstractAggregateRoot implements WorkflowAware<ProjectStatus> {
+    @Serial
     private static final long serialVersionUID = 5437961881026141924L;
 
     @Column(name = "NAME", nullable = false)

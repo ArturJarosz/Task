@@ -61,7 +61,7 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.mockContractServiceCreateContract()
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
         when:
-            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto)
+            this.projectApplicationService.createProject(projectCreateDto)
 
         then:
             1 * this.projectValidator.validateProjectBasicDto(_)
@@ -73,7 +73,7 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.mockContractServiceCreateContract()
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
         when:
-            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto)
+            this.projectApplicationService.createProject(projectCreateDto)
         then:
             1 * this.architectValidator.validateArchitectExistence(_)
     }
@@ -84,7 +84,7 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.mockContractServiceCreateContract()
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
         when:
-            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto)
+            this.projectApplicationService.createProject(projectCreateDto)
         then:
             1 * this.clientValidator.validateClientExistence(_)
     }
@@ -95,7 +95,7 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.mockContractServiceCreateContract()
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
         when:
-            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto)
+            this.projectApplicationService.createProject(projectCreateDto)
         then:
             1 * this.projectDomainService.createProject(_, CONTRACT_ID)
     }
@@ -105,7 +105,7 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.mockContractServiceCreateContract()
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
         when:
-            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto)
+            this.projectApplicationService.createProject(projectCreateDto)
         then:
             1 * this.projectRepository.save(_) >> this.prepareNewlyCreatedProject()
     }
@@ -116,7 +116,7 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.mockContractServiceCreateContract()
             ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
         when:
-            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto)
+            this.projectApplicationService.createProject(projectCreateDto)
         then:
             1 * this.projectFinancialDataApplicationService.createProjectFinancialSummary(NEW_PROJECT_ID)
     }
@@ -136,7 +136,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoad()
         when:
-            ProjectDto projectDto = this.projectApplicationService.getProject(EXISTING_PROJECT_ID)
+            this.projectApplicationService.getProject(EXISTING_PROJECT_ID)
         then:
             1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, EXISTING_PROJECT_ID)
     }
@@ -154,7 +154,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoad()
         when:
-            ProjectDto projectDto = this.projectApplicationService.getProject(EXISTING_PROJECT_ID)
+            this.projectApplicationService.getProject(EXISTING_PROJECT_ID)
         then:
             1 * this.clientApplicationService.getClientBasicData(CLIENT_ID)
     }
@@ -163,7 +163,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoad()
         when:
-            ProjectDto projectDto = this.projectApplicationService.getProject(EXISTING_PROJECT_ID)
+            this.projectApplicationService.getProject(EXISTING_PROJECT_ID)
         then:
             1 * this.architectApplicationService.getArchitect(ARCHITECT_ID)
     }
@@ -172,8 +172,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             ProjectDto projectDto = this.prepareUpdateProjectDto()
         when:
-            ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
-                    projectDto)
+            this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
             1 * this.projectRepository.findById(EXISTING_PROJECT_ID) >> Optional.of(this.prepareExistingProject())
     }
@@ -183,8 +182,7 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.mockProjectRepositoryLoad()
             ProjectDto projectDto = this.prepareUpdateProjectDto()
         when:
-            ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
-                    projectDto)
+            this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
             1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, EXISTING_PROJECT_ID)
     }
@@ -194,8 +192,7 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.mockProjectRepositoryLoad()
             ProjectDto projectDto = this.prepareUpdateProjectDto()
         when:
-            ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
-                    projectDto)
+            this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
             1 * this.projectValidator.validateUpdateProjectDto(projectDto)
     }
@@ -205,8 +202,7 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.mockProjectRepositoryLoad()
             ProjectDto projectDto = this.prepareUpdateProjectDto()
         when:
-            ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
-                    projectDto)
+            this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
             1 * this.projectDomainService.updateProject(_, projectDto)
     }
@@ -216,8 +212,7 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.mockProjectRepositoryLoad()
             ProjectDto projectDto = this.prepareUpdateProjectDto()
         when:
-            ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
-                    projectDto)
+            this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
             1 * this.projectRepository.save(_)
     }

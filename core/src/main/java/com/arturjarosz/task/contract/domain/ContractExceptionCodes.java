@@ -3,7 +3,7 @@ package com.arturjarosz.task.contract.domain;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalStateException;
 
-public class ContractExceptionCodes {
+public final class ContractExceptionCodes {
 
     public static final String CONTRACT = "contract";
     public static final String DEADLINE = "deadline";

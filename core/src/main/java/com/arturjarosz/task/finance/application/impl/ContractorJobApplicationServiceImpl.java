@@ -10,6 +10,7 @@ import com.arturjarosz.task.finance.model.ProjectFinancialData;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -104,7 +105,6 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         return financialData.getContractorJobs()
                 .stream()
                 .filter(contractorJobOnProject -> contractorJobOnProject.equals(contractorJob))
-                .findFirst()
-                .orElse(null);
+                .findAny().orElseThrow((ResourceNotFoundException::new));
     }
 }
