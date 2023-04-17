@@ -16,24 +16,24 @@ class ClientTestIT extends BaseTestIT {
     private static final long NOT_EXISTING_CLIENT_ID = 2000
     private static final ObjectMapper MAPPER = new ObjectMapper()
 
-    private final ClientDto privateClient =
+    final ClientDto privateClient =
             MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/privateClient.json').file),
                     ClientDto.class)
-    private final ClientDto corporateClient =
+    final ClientDto corporateClient =
             MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/corporateClient.json').file),
                     ClientDto.class)
-    private final ClientDto privateClientNotProper =
+    final ClientDto privateClientNotProper =
             MAPPER.readValue(new File(
                     getClass().classLoader.getResource('json/client/privateClientNotProper.json').file),
                     ClientDto.class)
-    private final ClientDto corporateClientNotProper =
+    final ClientDto corporateClientNotProper =
             MAPPER.readValue(new File(
                     getClass().classLoader.getResource('json/client/corporateClientNotProper.json').file),
                     ClientDto.class)
-    private final ClientDto updateClient =
+    final ClientDto updateClient =
             MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/updateClient.json').file),
                     ClientDto.class)
-    private final ClientDto updateClientNotProper =
+    final ClientDto updateClientNotProper =
             MAPPER.readValue(new File(
                     getClass().classLoader.getResource('json/client/updateClientNotProper.json').file), ClientDto.class)
 
