@@ -43,7 +43,7 @@ public class TaskValidator {
     }
 
     public void validateUpdateTaskDto(TaskDto taskDto) {
-        this.validateUpdateTaskDto(taskDto);
+        this.validateCreateTaskDto(taskDto);
     }
 
     private void validateName(String name) {
