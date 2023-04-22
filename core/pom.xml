@@ -195,7 +195,6 @@
                         <classpathElement>com.arturjarosz.task.configuration.ConfigurationIT</classpathElement>
                     </additionalClasspathElements>
                     <skipTests>false</skipTests>
-                    <testFailureIgnore>true</testFailureIgnore>
                 </configuration>
             </plugin>
         </plugins>
