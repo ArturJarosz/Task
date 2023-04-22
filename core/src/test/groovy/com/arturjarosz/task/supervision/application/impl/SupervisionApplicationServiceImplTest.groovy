@@ -237,7 +237,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
                     return supervision
             } as Supervision) >> {
                 arguments ->
-                    Supervision supervisionToUpdate = arguments[0 as String] as Supervision
+                    Supervision supervisionToUpdate = arguments[0] as Supervision
                     supervisionToUpdate = this.injectMockedId(supervisionToUpdate, SUPERVISION_ID)
                     SupervisionVisit supervisionVisit = supervisionToUpdate.supervisionVisits.iterator().next()
                     this.injectMockedId(supervisionVisit, SUPERVISION_VISIT_ID)
