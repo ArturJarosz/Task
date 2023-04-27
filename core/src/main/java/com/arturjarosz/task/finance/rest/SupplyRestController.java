@@ -31,7 +31,7 @@ public class SupplyRestController {
     public ResponseEntity<SupplyDto> createSupply(@PathVariable("projectId") Long projectId,
             @RequestBody SupplyDto supplyDto) {
         SupplyDto createdSupplyDto = this.supplyApplicationService.createSupply(projectId, supplyDto);
-        HttpHeaders headers = new HttpHeadersBuilder().withLocation("projects/{projectId}/supplies/{supplyId}",
+        HttpHeaders headers = new HttpHeadersBuilder().withLocation("/projects/{projectId}/supplies/{supplyId}",
                 projectId, createdSupplyDto.getId()).build();
         return new ResponseEntity<>(createdSupplyDto, headers, HttpStatus.CREATED);
     }
