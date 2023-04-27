@@ -55,7 +55,7 @@ public class SupplyValidator {
     public void validateSupplyOnProjectExistence(Long projectId, Long supplyId) {
         assertIsTrue(this.financialDataQueryService.doesSupplyForProjectExists(projectId, supplyId),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
-                        SupplyExceptionCodes.SUPPLY), projectId, supplyId);
+                        SupplyExceptionCodes.SUPPLY), supplyId, projectId);
     }
 
     public void validateUpdateSupplyDto(SupplyDto supplyDto) {
