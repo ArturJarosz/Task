@@ -1,6 +1,5 @@
 package com.arturjarosz.task.supplier.application;
 
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import com.arturjarosz.task.supplier.application.dto.SupplierDto;
 
 import java.util.List;
@@ -11,7 +10,7 @@ public interface SupplierApplicationService {
      * Create new Supplier based on data form SupplierDto. If data provided in SupplierDto are not correct
      * an exception will be thrown.
      */
-    CreatedEntityDto createSupplier(SupplierDto supplierDto);
+    SupplierDto createSupplier(SupplierDto supplierDto);
 
     /**
      * Update Supplier of given supplierId with data from SupplierDto. If Supplier does not exist or

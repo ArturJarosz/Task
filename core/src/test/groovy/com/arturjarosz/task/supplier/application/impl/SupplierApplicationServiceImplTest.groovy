@@ -34,6 +34,19 @@ class SupplierApplicationServiceImplTest extends Specification {
             1 * this.supplierValidator.validateCreateSupplierDto(supplierDto)
     }
 
+    def "createSupplier should return created Supplier"() {
+        given:
+            def supplierDto = new SupplierDto(name: NAME, category: CATEGORY)
+
+        when:
+            def createdSupplier = this.supplierApplicationService.createSupplier(supplierDto)
+
+        then:
+            createdSupplier != null
+            createdSupplier.name == NAME
+            createdSupplier.category == CATEGORY
+    }
+
     def "updateSupplier should save created supplier"() {
         given:
             def supplierDto = new SupplierDto(name: NAME, category: CATEGORY)
