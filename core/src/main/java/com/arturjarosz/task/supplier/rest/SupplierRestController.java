@@ -1,8 +1,9 @@
 package com.arturjarosz.task.supplier.rest;
 
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
 import com.arturjarosz.task.supplier.application.SupplierApplicationService;
 import com.arturjarosz.task.supplier.application.dto.SupplierDto;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,22 +19,25 @@ import java.util.List;
 
 @RestController
 @RequestMapping("suppliers")
-public class SupplierRestService {
+public class SupplierRestController {
 
     private final SupplierApplicationService supplierApplicationService;
 
-    public SupplierRestService(SupplierApplicationService supplierApplicationService) {
+    public SupplierRestController(SupplierApplicationService supplierApplicationService) {
         this.supplierApplicationService = supplierApplicationService;
     }
 
     @PostMapping("")
-    public ResponseEntity<CreatedEntityDto> createSupplier(@RequestBody SupplierDto supplierDto) {
-        return new ResponseEntity<>(this.supplierApplicationService.createSupplier(supplierDto), HttpStatus.CREATED);
+    public ResponseEntity<SupplierDto> createSupplier(@RequestBody SupplierDto supplierDto) {
+        SupplierDto supplier = this.supplierApplicationService.createSupplier(supplierDto);
+        HttpHeaders headers = new HttpHeadersBuilder().withLocation("/suppliers/{supplierId}",
+                supplier.getId()).build();
+        return new ResponseEntity<>(supplier, headers, HttpStatus.CREATED);
     }
 
     @PutMapping("{supplierId}")
     public ResponseEntity<Void> updateSupplier(@PathVariable("supplierId") Long supplierId,
-                                               @RequestBody SupplierDto supplierDto) {
+            @RequestBody SupplierDto supplierDto) {
         this.supplierApplicationService.updateSupplier(supplierId, supplierDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }

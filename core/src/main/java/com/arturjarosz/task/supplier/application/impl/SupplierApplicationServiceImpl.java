@@ -2,7 +2,6 @@ package com.arturjarosz.task.supplier.application.impl;
 
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import com.arturjarosz.task.supplier.application.SupplierApplicationService;
 import com.arturjarosz.task.supplier.application.SupplierValidator;
 import com.arturjarosz.task.supplier.application.dto.SupplierDto;
@@ -30,13 +29,14 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
 
     @Transactional
     @Override
-    public CreatedEntityDto createSupplier(SupplierDto supplierDto) {
+    public SupplierDto createSupplier(SupplierDto supplierDto) {
         LOG.debug("Creating Supplier.");
+
         this.supplierValidator.validateCreateSupplierDto(supplierDto);
         Supplier supplier = SupplierDtoMapper.INSTANCE.supplierDtoToSupplier(supplierDto);
         this.supplierRepository.save(supplier);
         LOG.debug("Supplier created.");
-        return new CreatedEntityDto(supplier.getId());
+        return SupplierDtoMapper.INSTANCE.supplierToSupplierDto(supplier);
     }
 
     @Transactional
@@ -51,6 +51,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
         supplier.update(supplierDto.getName(), supplierDto.getCategory(), supplierDto.getEmail(),
                 supplierDto.getTelephone(), supplierDto.getNote());
         this.supplierRepository.save(supplier);
+
         LOG.debug("Supplier with id {} updated.", supplierId);
     }
 
@@ -58,15 +59,18 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     @Override
     public void deleteSupplier(Long supplierId) {
         LOG.debug("Loading Supplier with id {}", supplierId);
+
         this.supplierValidator.validateSupplierExistence(supplierId);
         this.supplierValidator.validateSupplierHasNoSupply(supplierId);
         this.supplierRepository.deleteById(supplierId);
+
         LOG.debug("Supplier with id {} deleted.", supplierId);
     }
 
     @Override
     public SupplierDto getSupplier(Long supplierId) {
         LOG.debug("Loading Supplier with id {}", supplierId);
+
         Optional<Supplier> maybeSupplier = this.supplierRepository.findById(supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
         Supplier supplier = maybeSupplier.orElseThrow(ResourceNotFoundException::new);
