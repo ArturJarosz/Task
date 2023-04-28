@@ -36,10 +36,10 @@ public class SupplierRestController {
     }
 
     @PutMapping("{supplierId}")
-    public ResponseEntity<Void> updateSupplier(@PathVariable("supplierId") Long supplierId,
+    public ResponseEntity<SupplierDto> updateSupplier(@PathVariable("supplierId") Long supplierId,
             @RequestBody SupplierDto supplierDto) {
-        this.supplierApplicationService.updateSupplier(supplierId, supplierDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        var updatedSupplier = this.supplierApplicationService.updateSupplier(supplierId, supplierDto);
+        return new ResponseEntity<>(updatedSupplier, HttpStatus.OK);
     }
 
     @DeleteMapping("{supplierId}")

@@ -41,7 +41,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
 
     @Transactional
     @Override
-    public void updateSupplier(Long supplierId, SupplierDto supplierDto) {
+    public SupplierDto updateSupplier(Long supplierId, SupplierDto supplierDto) {
         LOG.debug("Updating Supplier with id {}.", supplierId);
 
         Optional<Supplier> maybeSupplier = this.supplierRepository.findById(supplierId);
@@ -53,6 +53,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
         this.supplierRepository.save(supplier);
 
         LOG.debug("Supplier with id {} updated.", supplierId);
+        return SupplierDtoMapper.INSTANCE.supplierToSupplierDto(supplier);
     }
 
     @Transactional
