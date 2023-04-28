@@ -9,7 +9,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @Component
 public class SupplierValidator {
@@ -37,7 +40,7 @@ public class SupplierValidator {
     public void validateSupplierExistence(Long supplierId) {
         Optional<Supplier> maybeSupplier = this.supplierRepository.findById(supplierId);
         assertIsTrue(maybeSupplier.isPresent(),
-                createMessageCode(ExceptionCodes.NOT_EXIST, SupplierExceptionCodes.SUPPLIER));
+                createMessageCode(ExceptionCodes.NOT_EXIST, SupplierExceptionCodes.SUPPLIER), supplierId);
     }
 
     public void validateSupplierHasNoSupply(Long supplierId) {
