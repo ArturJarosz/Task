@@ -13,4 +13,4 @@ public enum SupplierCategory {
     SupplierCategory(String name) {
         this.name = name;
     }
-    }
+}
