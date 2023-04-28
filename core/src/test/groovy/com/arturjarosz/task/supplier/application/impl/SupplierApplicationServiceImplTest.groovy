@@ -106,6 +106,25 @@ class SupplierApplicationServiceImplTest extends Specification {
             })
     }
 
+    def "updateSupplier should return updated object"() {
+        given:
+            def updateSupplierDto = new SupplierDto(name: UPDATED_NAME, category: UPDATED_CATEGORY,
+                    email: UPDATED_EMAIL,
+                    telephone: TELEPHONE, note: NOTE)
+            this.mockSupplierRepositoryLoad(SUPPLIER_ID)
+
+        when:
+            def updatedSupplier = this.supplierApplicationService.updateSupplier(SUPPLIER_ID, updateSupplierDto)
+
+        then:
+            updatedSupplier != null
+            updatedSupplier.name == UPDATED_NAME
+            updatedSupplier.email == UPDATED_EMAIL
+            updatedSupplier.category == UPDATED_CATEGORY
+            updatedSupplier.note == NOTE
+            updatedSupplier.telephone == TELEPHONE
+    }
+
     def "deleteSupplier should call validateSupplierExistence on supplierValidator"() {
         given:
             this.mockSupplierRepositoryLoad(SUPPLIER_ID)
