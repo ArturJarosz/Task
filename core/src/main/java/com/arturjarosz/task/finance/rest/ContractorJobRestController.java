@@ -31,7 +31,7 @@ public class ContractorJobRestController {
         ContractorJobDto createdContractorJobDto = this.contractorJobApplicationService.createContractorJob(projectId,
                 contractorJobDto);
         HttpHeaders headers = new HttpHeadersBuilder().withLocation(
-                        "projects/{projectId}/contractorJobs/{contractorJobId}", projectId, createdContractorJobDto.getId())
+                        "/projects/{projectId}/contractorJobs/{contractorJobId}", projectId, createdContractorJobDto.getId())
                 .build();
         return new ResponseEntity<>(createdContractorJobDto, headers, HttpStatus.CREATED);
     }
