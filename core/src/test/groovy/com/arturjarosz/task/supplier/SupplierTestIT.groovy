@@ -42,12 +42,15 @@ class SupplierTestIT extends BaseTestIT {
             response.status == HttpStatus.CREATED.value()
         and:
             def createdSupplier = MAPPER.readValue(response.contentAsString, SupplierDto)
+            createdSupplier != null
+            createdSupplier.category == createSupplierDto.category
+            createdSupplier.name == createSupplierDto.name
         and:
             response.getHeader(LOCATION) == "$SUPPLIERS_URI/${createdSupplier.id}"
     }
 
     @Transactional
-    def "Creating new supplier with not correct dto should return code 400 and exception body"() {
+    def "Creating new supplier with not correct dto should return code 400 and error message"() {
         given:
             def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(incorrectCreateSupplierDto)
         when:
@@ -127,11 +130,9 @@ class SupplierTestIT extends BaseTestIT {
     @Transactional
     def "Deleting existing supplier should return code 200"() {
         given:
-            println("base url = ")
             def createdSupplier = createSupplier()
-            def supplierId = createdSupplier.id
         when:
-            def response = this.mockMvc.perform(MockMvcRequestBuilders.delete("$SUPPLIERS_URI/$supplierId"))
+            def response = this.mockMvc.perform(MockMvcRequestBuilders.delete("$SUPPLIERS_URI/$createdSupplier.id"))
                     .andReturn().response
         then:
             response.status == HttpStatus.OK.value()
@@ -184,7 +185,6 @@ class SupplierTestIT extends BaseTestIT {
         def response = this.mockMvc.perform(MockMvcRequestBuilders.post("$SUPPLIERS_URI")
                 .header(CONTENT_TYPE, APPLICATION_JSON)
                 .content(requestBody)).andReturn().response
-        response.status == HttpStatus.CREATED.value()
         return MAPPER.readValue(response.contentAsString, SupplierDto)
     }
 
