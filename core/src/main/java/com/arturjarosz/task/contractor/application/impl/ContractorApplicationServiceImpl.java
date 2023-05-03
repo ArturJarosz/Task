@@ -8,7 +8,6 @@ import com.arturjarosz.task.contractor.infrastructure.ContractorRepository;
 import com.arturjarosz.task.contractor.model.Contractor;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,13 +29,13 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
 
     @Transactional
     @Override
-    public CreatedEntityDto createContractor(ContractorDto contractorDto) {
+    public ContractorDto createContractor(ContractorDto contractorDto) {
         LOG.debug("Creating Contractor.");
         this.contractorValidator.validateCreateContractorDto(contractorDto);
         Contractor contractor = ContractorDtoMapper.INSTANCE.createContractorDtoToContractor(contractorDto);
         this.contractorRepository.save(contractor);
         LOG.debug("Contractor created.");
-        return new CreatedEntityDto(contractor.getId());
+        return ContractorDtoMapper.INSTANCE.contractorToContractorDto(contractor);
     }
 
     @Transactional

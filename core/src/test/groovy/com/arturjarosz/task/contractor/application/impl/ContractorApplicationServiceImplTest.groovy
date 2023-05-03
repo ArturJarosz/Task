@@ -23,17 +23,14 @@ class ContractorApplicationServiceImplTest extends Specification {
     def contractorValidator = Mock(ContractorValidator)
 
     @Subject
-    def contractorApplicationService = new ContractorApplicationServiceImpl(
-            contractorRepository as ContractorRepository, contractorValidator)
+    def contractorApplicationService = new ContractorApplicationServiceImpl(contractorRepository as ContractorRepository, contractorValidator)
 
 
     def "createContractor should call validateCreateContractorDto from contractorValidator"() {
         given:
             def contractorDto = new ContractorDto(name: NAME, category: CATEGORY)
-
         when:
             this.contractorApplicationService.createContractor(contractorDto)
-
         then:
             1 * this.contractorValidator.validateCreateContractorDto(contractorDto)
     }
@@ -41,12 +38,21 @@ class ContractorApplicationServiceImplTest extends Specification {
     def "createContract should save created contractor"() {
         given:
             def contractorDto = new ContractorDto(name: NAME, category: CATEGORY)
-
         when:
             this.contractorApplicationService.createContractor(contractorDto)
-
         then:
             1 * this.contractorRepository.save(_ as Contractor)
+    }
+
+    def "createContractor should return created contractor"() {
+        given:
+            def contractorDto = new ContractorDto(name: NAME, category: CATEGORY)
+        when:
+            def createdContractor = this.contractorApplicationService.createContractor(contractorDto)
+        then:
+            createdContractor != null
+            createdContractor.name == NAME
+            createdContractor.category == CATEGORY
     }
 
     def "updateContractor should call validateContractorExistence on contractorValidator"() {
