@@ -15,7 +15,7 @@ public interface ContractorApplicationService {
      * Update Contractor of given contractorId with data from contractorDto. If contractor does not exist or
      * data provided in dto are not correct an exception will be thrown.
      */
-    void updateContractor(Long contractorId, ContractorDto contractorDto);
+    ContractorDto updateContractor(Long contractorId, ContractorDto contractorDto);
 
     /**
      * Remove Contractor with given contractorId. If Contractor does not exist, or has ContractorJobs, new exception

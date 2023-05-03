@@ -36,10 +36,10 @@ public class ContractorRestService {
     }
 
     @PutMapping("{contractorId}")
-    public ResponseEntity<Void> updateContractor(@PathVariable("contractorId") Long contractorId,
+    public ResponseEntity<ContractorDto> updateContractor(@PathVariable("contractorId") Long contractorId,
             @RequestBody ContractorDto contractorDto) {
-        this.contractorApplicationService.updateContractor(contractorId, contractorDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        ContractorDto updatedContractor = this.contractorApplicationService.updateContractor(contractorId, contractorDto);
+        return new ResponseEntity<>(updatedContractor, HttpStatus.OK);
     }
 
     @DeleteMapping("{contractorId}")

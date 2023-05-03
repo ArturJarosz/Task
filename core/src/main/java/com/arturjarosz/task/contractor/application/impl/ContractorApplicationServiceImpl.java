@@ -40,7 +40,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
 
     @Transactional
     @Override
-    public void updateContractor(Long contractorId, ContractorDto contractorDto) {
+    public ContractorDto updateContractor(Long contractorId, ContractorDto contractorDto) {
         LOG.debug("Updating Contractor with id {}", contractorId);
         Optional<Contractor> maybeContractor = this.contractorRepository.findById(contractorId);
         this.contractorValidator.validateContractorExistence(maybeContractor, contractorId);
@@ -50,6 +50,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
                 contractorDto.getTelephone(), contractorDto.getNote());
         this.contractorRepository.save(contractor);
         LOG.debug("Contractor with id {} updated", contractorId);
+        return ContractorDtoMapper.INSTANCE.contractorToContractorDto(contractor);
     }
 
     @Transactional

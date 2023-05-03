@@ -103,6 +103,25 @@ class ContractorApplicationServiceImplTest extends Specification {
             })
     }
 
+    def "updateContractor should return updated contractorDto"() {
+        given:
+            def updateContractorDto = new ContractorDto(name: UPDATED_NAME, category: UPDATED_CATEGORY,
+                    email: UPDATED_EMAIL,
+                    telephone: TELEPHONE, note: NOTE)
+            this.mockContractorRepositoryLoad(CONTRACTOR_ID)
+
+        when:
+            def updatedContractor = this.contractorApplicationService.updateContractor(CONTRACTOR_ID, updateContractorDto)
+        then:
+            with(updatedContractor) {
+                name == updateContractorDto.name
+                category == updateContractorDto.category
+                email == updateContractorDto.email
+                telephone == updateContractorDto.telephone
+                note == updateContractorDto.note
+            }
+    }
+
     def "deleteContractor should call validateContractorExistence on contractorValidator"() {
         given:
             this.mockContractorRepositoryLoad(CONTRACTOR_ID)
