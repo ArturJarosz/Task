@@ -10,7 +10,6 @@ import com.arturjarosz.task.finance.model.ProjectFinancialData;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +51,6 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         LOG.debug("ContractorJob for Project with id {} created", projectId);
         ContractorJobDto createdContractorJobDto = ContractorJobDtoMapper.INSTANCE.contractorJobToContractorJobDto(
                 contractorJob, projectId);
-        createdContractorJobDto.setId(this.getCreatedContractorJob(financialData, contractorJob).getId());
         return createdContractorJobDto;
     }
 
@@ -99,12 +97,5 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         this.projectFinancialDataRepository.save(financialData);
         this.projectFinanceAwareObjectService.onRemove(projectId);
         LOG.debug("ContractorJob with id {} removed from Project with id {}", contractorJobId, projectId);
-    }
-
-    private ContractorJob getCreatedContractorJob(ProjectFinancialData financialData, ContractorJob contractorJob) {
-        return financialData.getContractorJobs()
-                .stream()
-                .filter(contractorJobOnProject -> contractorJobOnProject.equals(contractorJob))
-                .findAny().orElseThrow((ResourceNotFoundException::new));
     }
 }

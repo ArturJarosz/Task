@@ -33,7 +33,7 @@ public class ContractorJobRestController {
         HttpHeaders headers = new HttpHeadersBuilder().withLocation(
                         "projects/{projectId}/contractorJobs/{contractorJobId}", projectId, createdContractorJobDto.getId())
                 .build();
-        return new ResponseEntity<>(contractorJobDto, headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(createdContractorJobDto, headers, HttpStatus.CREATED);
     }
 
     @DeleteMapping("{projectId}/contractorJobs/{contractorJobId}")
