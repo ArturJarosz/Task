@@ -44,7 +44,7 @@ class SupplyTestIT extends BaseTestIT {
     private MockMvc mockMvc
 
     @Transactional
-    def "creating supplier with wrong input data should return code 400 and error message"() {
+    def "creating supply with wrong input data should return code 400 and error message"() {
         given:
             def project = createProject()
             createSupplyDto.supplierId = NOT_EXISTING_SUPPLIER_ID
@@ -56,7 +56,7 @@ class SupplyTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
             errorMessage.message == "Supplier with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist."
     }
 
@@ -91,7 +91,7 @@ class SupplyTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
             errorMessage.message == "Supply with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist in Project with id ${project.id}."
     }
 
@@ -110,7 +110,7 @@ class SupplyTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
             errorMessage.message == "Supply name was not provided."
     }
 
@@ -144,7 +144,7 @@ class SupplyTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
             errorMessage.message == "Supply with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist in Project with id ${project.id}."
     }
 
@@ -174,7 +174,7 @@ class SupplyTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
             errorMessage.message == "Supply with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist in Project with id ${project.id}."
     }
 
@@ -196,16 +196,16 @@ class SupplyTestIT extends BaseTestIT {
         given:
             def project = createProject()
             def supplier = createSupplier()
-            def supply1 = createSupply(project.id, supplier.id)
-            def supply2 = createSupply(project.id, supplier.id)
-            def supply3 = createSupply(project.id, supplier.id)
+            createSupply(project.id, supplier.id)
+            createSupply(project.id, supplier.id)
+            createSupply(project.id, supplier.id)
         when:
             def response = this.mockMvc.perform(MockMvcRequestBuilders.get("$PROJECTS_URI/${NOT_EXISTING_PROJECT_ID}$SUPPLIES_URI"))
                     .andReturn().response
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
             errorMessage.message == "Project with id ${String.format("%,d", NOT_EXISTING_PROJECT_ID)} does not exist."
     }
 
@@ -214,9 +214,9 @@ class SupplyTestIT extends BaseTestIT {
         given:
             def project = createProject()
             def supplier = createSupplier()
-            def supply1 = createSupply(project.id, supplier.id)
-            def supply2 = createSupply(project.id, supplier.id)
-            def supply3 = createSupply(project.id, supplier.id)
+            createSupply(project.id, supplier.id)
+            createSupply(project.id, supplier.id)
+            createSupply(project.id, supplier.id)
         when:
             def response = this.mockMvc.perform(MockMvcRequestBuilders.get("$PROJECTS_URI/${project.id}$SUPPLIES_URI"))
                     .andReturn().response
