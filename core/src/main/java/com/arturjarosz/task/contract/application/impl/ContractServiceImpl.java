@@ -10,11 +10,11 @@ import com.arturjarosz.task.contract.status.ContractStatusTransitionService;
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Slf4j

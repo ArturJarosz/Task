@@ -2,8 +2,13 @@ package com.arturjarosz.task.finance.model;
 
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
-import javax.persistence.*;
 import java.io.Serial;
 import java.time.LocalDate;
 

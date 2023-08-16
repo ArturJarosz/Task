@@ -7,7 +7,6 @@ import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionS
 import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.utils.ProjectBuilder
 import com.arturjarosz.task.utils.StageBuilder
-import com.google.common.collect.Sets
 import spock.lang.Specification
 
 class StageReopenToInProgressListenerTest extends Specification {
@@ -18,7 +17,7 @@ class StageReopenToInProgressListenerTest extends Specification {
     def "Reopening the only stage to IN_PROGRESS on project in TO_DO should change project status to IN_PROGRESS"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.REJECTED)
-            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.TO_DO, Sets.newHashSet(stage))
+            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.TO_DO, Set.of(stage))
         when:
             stage.changeStatus(StageStatus.IN_PROGRESS)
             this.stageReopenToInProgressListener.onStageStatusChange(project)
@@ -33,7 +32,7 @@ class StageReopenToInProgressListenerTest extends Specification {
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.TO_DO,
-                            Sets.newHashSet(stage, stage2, stage3))
+                            Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.IN_PROGRESS)
             this.stageReopenToInProgressListener.onStageStatusChange(project)
@@ -48,7 +47,7 @@ class StageReopenToInProgressListenerTest extends Specification {
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,
-                            Sets.newHashSet(stage, stage2, stage3))
+                            Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.IN_PROGRESS)
             this.stageReopenToInProgressListener.onStageStatusChange(project)
@@ -63,7 +62,7 @@ class StageReopenToInProgressListenerTest extends Specification {
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.DONE,
-                            Sets.newHashSet(stage, stage2, stage3))
+                            Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.IN_PROGRESS)
             this.stageReopenToInProgressListener.onStageStatusChange(project)

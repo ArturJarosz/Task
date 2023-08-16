@@ -3,8 +3,15 @@ package com.arturjarosz.task.finance.model;
 import com.arturjarosz.task.finance.application.dto.InstallmentDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
-import javax.persistence.*;
 import java.io.Serial;
 import java.time.LocalDate;
 

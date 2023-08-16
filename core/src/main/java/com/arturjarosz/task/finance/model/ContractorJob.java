@@ -2,13 +2,14 @@ package com.arturjarosz.task.finance.model;
 
 import com.arturjarosz.task.finance.application.dto.ContractorJobDto;
 import com.arturjarosz.task.sharedkernel.model.Money;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import java.io.Serial;
 import java.math.BigDecimal;
 
 @Entity
@@ -16,6 +17,9 @@ import java.math.BigDecimal;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "COOPERATOR_JOB")
 public class ContractorJob extends CooperatorJob implements PartialFinancialData {
+
+    @Serial
+    private static final long serialVersionUID = -1136428951751738340L;
 
     protected ContractorJob() {
     }
@@ -25,7 +29,7 @@ public class ContractorJob extends CooperatorJob implements PartialFinancialData
     }
 
     @Transient
-    public long getContractorId(){
+    public long getContractorId() {
         return this.getCooperatorId();
     }
 

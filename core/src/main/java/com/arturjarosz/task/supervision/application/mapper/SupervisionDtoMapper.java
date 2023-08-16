@@ -6,11 +6,12 @@ import com.arturjarosz.task.supervision.model.Supervision;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 import java.math.BigDecimal;
 
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SupervisionDtoMapper {
     SupervisionDtoMapper INSTANCE = Mappers.getMapper(SupervisionDtoMapper.class);
 
@@ -19,7 +20,7 @@ public interface SupervisionDtoMapper {
     SupervisionDto supervisionToSupervisionDto(Supervision supervision);
 
     @Named("moneyToBigDecimal")
-    default BigDecimal moneyToBigDecimal(Money money){
+    default BigDecimal moneyToBigDecimal(Money money) {
         return money.getValue();
     }
 

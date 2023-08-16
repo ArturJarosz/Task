@@ -8,9 +8,10 @@ import com.arturjarosz.task.sharedkernel.model.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ClientDtoMapper {
 
     ClientDtoMapper INSTANCE = Mappers.getMapper(ClientDtoMapper.class);

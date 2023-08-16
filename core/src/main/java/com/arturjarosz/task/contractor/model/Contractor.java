@@ -2,8 +2,14 @@ package com.arturjarosz.task.contractor.model;
 
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Email;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
-import javax.persistence.*;
 import java.io.Serial;
 
 @SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code

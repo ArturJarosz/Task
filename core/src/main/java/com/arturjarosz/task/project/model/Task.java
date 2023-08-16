@@ -5,8 +5,13 @@ import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.project.status.task.TaskWorkflow;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
-import javax.persistence.*;
 import java.io.Serial;
 import java.time.LocalDate;
 

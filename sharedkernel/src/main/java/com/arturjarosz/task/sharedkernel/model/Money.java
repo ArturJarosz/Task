@@ -1,11 +1,11 @@
 package com.arturjarosz.task.sharedkernel.model;
 
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
