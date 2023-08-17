@@ -2,8 +2,8 @@ package com.arturjarosz.task.finance.model;
 
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.io.Serial;
 import java.math.BigDecimal;
 import java.time.LocalDate;

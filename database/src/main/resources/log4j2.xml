@@ -3,7 +3,9 @@
 
     <Properties>
         <Property name="log-path">archive</Property>
-        <Property name="logging-pattern-colored">%date{DEFAULT} %highlight{%5p} [%15t]%x - %style{%c{1.}.(%M):%L}{White, Dim} - %m%n</Property>
+        <Property name="logging-pattern-colored">%date{DEFAULT} %highlight{%5p} [%15t]%x - %style{%c{1.}.(%M):%L}{White,
+            Dim} - %m%n
+        </Property>
         <!--due to problems with extra character related to colors, when saving logs to files, patterns for files should not contain styles-->
         <Property name="logging-pattern">%date{DEFAULT} %5p [%15t]%x - %c{1.}.(%M):%L - %m%n</Property>
         <Property name="additive-logging">false</Property>
@@ -22,7 +24,7 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="liquibase" level="debug" additivity="${additive-logging}">
+        <Logger name="liquibase" level="info" additivity="${additive-logging}">
             <AppenderRef ref="LiquibaseFileAppender"/>
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>

@@ -4,9 +4,10 @@ import com.arturjarosz.task.supplier.application.dto.SupplierDto;
 import com.arturjarosz.task.supplier.model.Supplier;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SupplierDtoMapper {
 
     SupplierDtoMapper INSTANCE = Mappers.getMapper(SupplierDtoMapper.class);

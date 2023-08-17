@@ -2,8 +2,14 @@ package com.arturjarosz.task.finance.model;
 
 import com.arturjarosz.task.finance.application.dto.SupplyDto;
 import com.arturjarosz.task.sharedkernel.model.Money;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
-import javax.persistence.*;
+import java.io.Serial;
 import java.math.BigDecimal;
 
 @Entity
@@ -11,6 +17,9 @@ import java.math.BigDecimal;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "COOPERATOR_JOB")
 public class Supply extends CooperatorJob implements PartialFinancialData {
+
+    @Serial
+    private static final long serialVersionUID = 7163934162317209832L;
 
     protected Supply() {
     }

@@ -4,9 +4,10 @@ import com.arturjarosz.task.contractor.application.dto.ContractorDto;
 import com.arturjarosz.task.contractor.model.Contractor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ContractorDtoMapper {
 
     ContractorDtoMapper INSTANCE = Mappers.getMapper(ContractorDtoMapper.class);

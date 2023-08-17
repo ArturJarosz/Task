@@ -1,0 +1,47 @@
+openapi: 3.0.3
+
+info:
+  title: Task by Artur Jarosz
+  description: ""
+  contact:
+    email: info-task@gmail.com
+  version: 0.6.0-SNAPSHOT
+
+tags:
+  - name: pets
+    description: pets apis and models
+
+paths:
+  /pets/client/{clientId}:
+    get:
+      tags:
+        - pets
+      summary: Get all pets
+      operationId: getAllPets
+      parameters:
+        - name: "clientId"
+          in: "path"
+          description: "A unique identifier for the client"
+          required: true
+          style: "simple"
+          explode: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pet"
+
+components:
+  schemas:
+    Pet:
+      description: Some pet
+      type: object
+      properties:
+        name:
+          type: string
+        owner:
+          type: string

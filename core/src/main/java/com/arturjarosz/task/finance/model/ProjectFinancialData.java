@@ -6,9 +6,16 @@ import com.arturjarosz.task.finance.application.dto.InstallmentDto;
 import com.arturjarosz.task.finance.application.dto.SupplyDto;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
 import java.io.Serial;
 import java.math.BigDecimal;
 import java.time.LocalDate;

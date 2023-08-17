@@ -5,9 +5,10 @@ import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.status.stage.StageWorkflow;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface StageDtoMapper {
     StageDtoMapper INSTANCE = Mappers.getMapper(StageDtoMapper.class);
 

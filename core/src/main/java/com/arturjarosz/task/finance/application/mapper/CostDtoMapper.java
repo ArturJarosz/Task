@@ -4,9 +4,10 @@ import com.arturjarosz.task.finance.model.Cost;
 import com.arturjarosz.task.project.application.dto.CostDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CostDtoMapper {
     CostDtoMapper INSTANCE = Mappers.getMapper(CostDtoMapper.class);
 

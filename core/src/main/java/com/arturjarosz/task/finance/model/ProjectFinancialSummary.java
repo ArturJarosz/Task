@@ -3,8 +3,8 @@ package com.arturjarosz.task.finance.model;
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.io.Serial;
 import java.util.EnumMap;
 import java.util.Map;

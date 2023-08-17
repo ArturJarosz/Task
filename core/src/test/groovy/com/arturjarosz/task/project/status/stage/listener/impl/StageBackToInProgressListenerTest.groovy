@@ -7,7 +7,6 @@ import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionS
 import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.utils.ProjectBuilder
 import com.arturjarosz.task.utils.StageBuilder
-import com.google.common.collect.Sets
 import spock.lang.Specification
 
 class StageBackToInProgressListenerTest extends Specification {
@@ -18,7 +17,7 @@ class StageBackToInProgressListenerTest extends Specification {
     def "Changing status from DONE to IN_PROGRESS of the only stage on project in DONE status pushes project back to IN_PROGRESS"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.DONE)
-            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.DONE, Sets.newHashSet(stage))
+            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.DONE, Set.of(stage))
         when:
             stage.changeStatus(StageStatus.IN_PROGRESS)
             this.stageBackToInProgress.onStageStatusChange(project)
@@ -33,7 +32,7 @@ class StageBackToInProgressListenerTest extends Specification {
             def stage3 = this.createStageWithStatus(StageStatus.DONE)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.DONE,
-                            Sets.newHashSet(stage, stage2, stage3))
+                            Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.IN_PROGRESS)
             this.stageBackToInProgress.onStageStatusChange(project)
@@ -48,7 +47,7 @@ class StageBackToInProgressListenerTest extends Specification {
             def stage3 = this.createStageWithStatus(StageStatus.IN_PROGRESS)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,
-                            Sets.newHashSet(stage, stage2, stage3))
+                            Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.IN_PROGRESS)
             this.stageBackToInProgress.onStageStatusChange(project)

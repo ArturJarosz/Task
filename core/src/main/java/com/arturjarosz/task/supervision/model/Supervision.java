@@ -7,8 +7,8 @@ import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.supervision.application.dto.SupervisionDto;
 import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.HashSet;

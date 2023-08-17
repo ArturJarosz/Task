@@ -4,12 +4,11 @@ import com.arturjarosz.task.configuration.BaseTestIT
 import com.arturjarosz.task.contractor.application.dto.ContractorDto
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-
-import javax.transaction.Transactional
 
 class ContractorTestIT extends BaseTestIT {
 

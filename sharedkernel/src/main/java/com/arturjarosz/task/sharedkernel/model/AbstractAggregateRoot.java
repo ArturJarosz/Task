@@ -1,6 +1,7 @@
 package com.arturjarosz.task.sharedkernel.model;
 
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.MappedSuperclass;
+
 import java.io.Serial;
 
 /**

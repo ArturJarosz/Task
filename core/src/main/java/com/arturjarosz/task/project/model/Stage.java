@@ -5,8 +5,8 @@ import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.project.status.stage.StageWorkflow;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
 import java.io.Serial;
 import java.time.LocalDate;
 import java.util.ArrayList;

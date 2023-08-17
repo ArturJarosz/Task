@@ -7,7 +7,6 @@ import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionS
 import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.utils.ProjectBuilder
 import com.arturjarosz.task.utils.StageBuilder
-import com.google.common.collect.Sets
 import spock.lang.Specification
 
 class StageCreateListenerTest extends Specification {
@@ -15,10 +14,10 @@ class StageCreateListenerTest extends Specification {
     def projectStatusTransitionService = Mock(ProjectStatusTransitionServiceImpl)
     def stageCreateListener = new StageCreateListener(projectStatusTransitionService)
 
-    def "Creating new stage on project in TO_DO status should not change project status"(){
+    def "Creating new stage on project in TO_DO status should not change project status"() {
         given:
             def stage = this.createStageWithStatus(null)
-            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.TO_DO, Sets.newHashSet(stage))
+            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.TO_DO, Set.of(stage))
         when:
             stage.changeStatus(StageStatus.TO_DO)
             this.stageCreateListener.onStageStatusChange(project)
@@ -26,10 +25,10 @@ class StageCreateListenerTest extends Specification {
             0 * projectStatusTransitionService._
     }
 
-    def "Creating new stage on project in IN_PROGRESS status should not change project status"(){
+    def "Creating new stage on project in IN_PROGRESS status should not change project status"() {
         given:
             def stage = this.createStageWithStatus(null)
-            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Sets.newHashSet(stage))
+            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Set.of(stage))
         when:
             stage.changeStatus(StageStatus.TO_DO)
             this.stageCreateListener.onStageStatusChange(project)
@@ -37,10 +36,10 @@ class StageCreateListenerTest extends Specification {
             0 * projectStatusTransitionService._
     }
 
-    def "Creating new stage on project in DONE status should reopen project"(){
+    def "Creating new stage on project in DONE status should reopen project"() {
         given:
             def stage = this.createStageWithStatus(null)
-            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.DONE, Sets.newHashSet(stage))
+            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.DONE, Set.of(stage))
         when:
             stage.changeStatus(StageStatus.TO_DO)
             this.stageCreateListener.onStageStatusChange(project)
