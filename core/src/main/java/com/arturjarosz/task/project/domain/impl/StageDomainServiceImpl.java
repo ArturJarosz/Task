@@ -1,10 +1,11 @@
 package com.arturjarosz.task.project.domain.impl;
 
-import com.arturjarosz.task.project.application.dto.StageDto;
+import com.arturjarosz.task.dto.StageDto;
 import com.arturjarosz.task.project.application.mapper.StageDtoMapper;
 import com.arturjarosz.task.project.domain.StageDomainService;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.project.model.StageType;
 import com.arturjarosz.task.project.status.stage.StageStatusTransitionService;
 import com.arturjarosz.task.project.status.stage.StageWorkflow;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
@@ -17,14 +18,14 @@ public class StageDomainServiceImpl implements StageDomainService {
 
     @Autowired
     public StageDomainServiceImpl(StageWorkflow stageWorkflow,
-                                  StageStatusTransitionService stageStatusTransitionService) {
+            StageStatusTransitionService stageStatusTransitionService) {
         this.stageWorkflow = stageWorkflow;
         this.stageStatusTransitionService = stageStatusTransitionService;
     }
 
     @Override
     public Stage createStage(Project project, StageDto stageDto) {
-        Stage stage = StageDtoMapper.INSTANCE.stageCreateDtoToStage(stageDto, this.stageWorkflow);
+        var stage = StageDtoMapper.INSTANCE.stageCreateDtoToStage(stageDto, this.stageWorkflow);
         project.addStage(stage);
         this.stageStatusTransitionService.createStage(project, stage.getId());
         return stage;
@@ -32,7 +33,8 @@ public class StageDomainServiceImpl implements StageDomainService {
 
     @Override
     public Stage updateStage(Project project, Long stageId, StageDto stageDto) {
-        return project.updateStage(stageId, stageDto.getName(), stageDto.getNote(), stageDto.getStageType(),
+        return project.updateStage(stageId, stageDto.getName(), stageDto.getNote(),
+                StageType.valueOf(stageDto.getType().name()),
                 stageDto.getDeadline());
     }
 

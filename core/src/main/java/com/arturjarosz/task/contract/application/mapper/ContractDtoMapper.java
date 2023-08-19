@@ -1,8 +1,8 @@
 package com.arturjarosz.task.contract.application.mapper;
 
-import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.contract.model.Contract;
-import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
+import com.arturjarosz.task.dto.ContractDto;
+import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

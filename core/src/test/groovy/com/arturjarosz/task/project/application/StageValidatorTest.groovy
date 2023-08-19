@@ -1,13 +1,13 @@
 package com.arturjarosz.task.project.application
 
+import com.arturjarosz.task.dto.StageDto
+import com.arturjarosz.task.dto.StageTypeDto
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.Installment
 import com.arturjarosz.task.finance.model.ProjectFinancialData
-import com.arturjarosz.task.project.application.dto.StageDto
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
-import com.arturjarosz.task.project.model.StageType
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import com.arturjarosz.task.utils.ProjectBuilder
@@ -39,7 +39,7 @@ class StageValidatorTest extends Specification {
 
     def "validateCreateStageDto should throw an exception, when passed stageDto is null"() {
         given:
-            StageDto stageDto = null
+            def stageDto = null
         when:
             this.stageValidator.validateCreateStageDto(stageDto)
         then:
@@ -49,7 +49,7 @@ class StageValidatorTest extends Specification {
 
     def "validateCreateStageDto should throw an exception, on null name in passed stageDto"() {
         given:
-            StageDto stageDto = new StageDto(stageType: StageType.VISUALISATIONS)
+            def stageDto = new StageDto(type: StageTypeDto.VISUALISATIONS)
         when:
             this.stageValidator.validateCreateStageDto(stageDto)
         then:
@@ -59,7 +59,7 @@ class StageValidatorTest extends Specification {
 
     def "validateCreateStageDto should throw an exception, on empty name in passed stageDto"() {
         given:
-            StageDto stageDto = new StageDto(name: "", stageType: StageType.VISUALISATIONS)
+            def stageDto = new StageDto(name: "", type: StageTypeDto.VISUALISATIONS)
         when:
             this.stageValidator.validateCreateStageDto(stageDto)
         then:
@@ -69,7 +69,7 @@ class StageValidatorTest extends Specification {
 
     def "validateCreateStageDto should throw an exception, on null stage type in passed stageDto"() {
         given:
-            StageDto stageDto = new StageDto(name: STAGE_NAME)
+            def stageDto = new StageDto(name: STAGE_NAME)
         when:
             this.stageValidator.validateCreateStageDto(stageDto)
         then:
@@ -79,7 +79,7 @@ class StageValidatorTest extends Specification {
 
     def "validateCreateStageDto should not throw any exception on proper stageDto"() {
         given:
-            StageDto stageDto = new StageDto(name: STAGE_NAME, stageType: StageType.VISUALISATIONS)
+            def stageDto = new StageDto(name: STAGE_NAME, type: StageTypeDto.VISUALISATIONS)
         when:
             this.stageValidator.validateCreateStageDto(stageDto)
         then:
@@ -88,7 +88,7 @@ class StageValidatorTest extends Specification {
 
     def "validateUpdateStageDto should throw an exception, when passed stageDto is null"() {
         given:
-            StageDto stageDto = null
+            def stageDto = null
         when:
             this.stageValidator.validateUpdateStageDto(stageDto)
         then:
@@ -98,7 +98,7 @@ class StageValidatorTest extends Specification {
 
     def "validateUpdateStageDto should throw an exception, on null name in passed stageDto"() {
         given:
-            StageDto stageDto = new StageDto(stageType: StageType.VISUALISATIONS)
+            def stageDto = new StageDto(type: StageTypeDto.VISUALISATIONS)
         when:
             this.stageValidator.validateUpdateStageDto(stageDto)
         then:
@@ -108,7 +108,7 @@ class StageValidatorTest extends Specification {
 
     def "validateUpdateStageDto should throw an exception, on empty name in passed stageDto"() {
         given:
-            StageDto stageDto = new StageDto(name: "", stageType: StageType.VISUALISATIONS)
+            def stageDto = new StageDto(name: "", type: StageTypeDto.VISUALISATIONS)
         when:
             this.stageValidator.validateUpdateStageDto(stageDto)
         then:
@@ -118,7 +118,7 @@ class StageValidatorTest extends Specification {
 
     def "validateUpdateStageDto should throw an exception, on null stage type in passed stageDto"() {
         given:
-            StageDto stageDto = new StageDto(name: STAGE_NAME)
+            def stageDto = new StageDto(name: STAGE_NAME)
         when:
             this.stageValidator.validateUpdateStageDto(stageDto)
         then:
@@ -128,7 +128,7 @@ class StageValidatorTest extends Specification {
 
     def "validateUpdateStageDto should not throw any exception on proper stageDto"() {
         given:
-            StageDto stageDto = new StageDto(name: STAGE_NAME, stageType: StageType.VISUALISATIONS)
+            def stageDto = new StageDto(name: STAGE_NAME, type: StageTypeDto.VISUALISATIONS)
         when:
             this.stageValidator.validateUpdateStageDto(stageDto)
         then:

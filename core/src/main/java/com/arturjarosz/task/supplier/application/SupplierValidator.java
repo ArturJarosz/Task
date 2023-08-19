@@ -1,7 +1,7 @@
 package com.arturjarosz.task.supplier.application;
 
+import com.arturjarosz.task.dto.SupplierDto;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
-import com.arturjarosz.task.supplier.application.dto.SupplierDto;
 import com.arturjarosz.task.supplier.domain.SupplierExceptionCodes;
 import com.arturjarosz.task.supplier.infrastructure.SupplierRepository;
 import com.arturjarosz.task.supplier.model.Supplier;

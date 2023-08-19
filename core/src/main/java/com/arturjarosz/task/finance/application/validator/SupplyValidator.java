@@ -1,7 +1,7 @@
 package com.arturjarosz.task.finance.application.validator;
 
+import com.arturjarosz.task.dto.SupplyDto;
 import com.arturjarosz.task.finance.application.SupplyExceptionCodes;
-import com.arturjarosz.task.finance.application.dto.SupplyDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;

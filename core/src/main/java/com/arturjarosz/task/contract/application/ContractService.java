@@ -1,7 +1,7 @@
 package com.arturjarosz.task.contract.application;
 
-import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.contract.model.Contract;
+import com.arturjarosz.task.dto.ContractDto;
 
 public interface ContractService {
 

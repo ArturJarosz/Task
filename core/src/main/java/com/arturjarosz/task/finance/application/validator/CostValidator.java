@@ -1,9 +1,9 @@
 package com.arturjarosz.task.finance.application.validator;
 
+import com.arturjarosz.task.dto.CostDto;
 import com.arturjarosz.task.finance.model.Cost;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
-import com.arturjarosz.task.project.application.dto.CostDto;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import lombok.NonNull;

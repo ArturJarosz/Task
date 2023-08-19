@@ -2,20 +2,18 @@ package com.arturjarosz.task.contract.application.impl;
 
 import com.arturjarosz.task.contract.application.ContractService;
 import com.arturjarosz.task.contract.application.ContractValidator;
-import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.contract.application.mapper.ContractDtoMapper;
 import com.arturjarosz.task.contract.intrastructure.ContractRepository;
 import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.contract.status.ContractStatusTransitionService;
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow;
+import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,7 +35,7 @@ public class ContractServiceImpl implements ContractService {
         LOG.debug("Creating contract.");
 
         this.contractValidator.validateOffer(contractDto);
-        Contract contract = new Contract(contractDto.getOfferValue(), contractDto.getDeadline(), this.contractWorkflow);
+        var contract = new Contract(contractDto.getOfferValue(), contractDto.getDeadline(), this.contractWorkflow);
         this.contractStatusTransitionService.createOffer(contract);
         contract = this.contractRepository.save(contract);
 
@@ -50,9 +48,9 @@ public class ContractServiceImpl implements ContractService {
     public ContractDto reject(Long contractId) {
         LOG.debug("Rejecting contract with id {}", contractId);
 
-        Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
+        var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
-        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
+        var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         this.contractStatusTransitionService.rejectOffer(contract);
 
         LOG.debug("Contract with id {} rejected.", contractId);
@@ -64,10 +62,10 @@ public class ContractServiceImpl implements ContractService {
     public ContractDto makeNewOffer(Long contractId, ContractDto contractDto) {
         LOG.debug("Making new offer for contract with id {}", contractId);
 
-        Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
+        var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         this.contractValidator.validateOffer(contractDto);
-        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
+        var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         contract.update(contractDto.getOfferValue(), contractDto.getDeadline());
         this.contractStatusTransitionService.makeNewOffer(contract);
 
@@ -80,9 +78,9 @@ public class ContractServiceImpl implements ContractService {
     public ContractDto acceptOffer(Long contractId) {
         LOG.debug("Accepting offer for contract with id {}.", contractId);
 
-        Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
+        var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
-        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
+        var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         this.contractStatusTransitionService.acceptOffer(contract);
 
         LOG.debug("Offer for contract with id {} accepted.", contractId);
@@ -94,10 +92,10 @@ public class ContractServiceImpl implements ContractService {
     public ContractDto sign(Long contractId, ContractDto contractDto) {
         LOG.debug("Signing contract with id {}.", contractId);
 
-        Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
+        var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         this.contractValidator.validateSignContractDto(contractDto);
-        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
+        var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         contract.sign(contractDto);
         this.contractStatusTransitionService.signContract(contract);
 
@@ -110,10 +108,10 @@ public class ContractServiceImpl implements ContractService {
     public ContractDto terminate(Long contractId, ContractDto contractDto) {
         LOG.debug("Terminating contract with id {}.", contractId);
 
-        Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
+        var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         this.contractValidator.validateTerminateContractDto(contractDto);
-        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
+        var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         contract.terminate(contractDto);
         this.contractStatusTransitionService.terminateContract(contract);
 
@@ -126,9 +124,9 @@ public class ContractServiceImpl implements ContractService {
     public ContractDto resume(Long contractId) {
         LOG.debug("Resuming contract with id {}.", contractId);
 
-        Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
+        var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
-        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
+        var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         this.contractStatusTransitionService.resumeContract(contract);
         contract.resume();
 
@@ -141,10 +139,10 @@ public class ContractServiceImpl implements ContractService {
     public ContractDto complete(Long contractId, ContractDto contractDto) {
         LOG.debug("Completing contract with id {}.", contractId);
 
-        Optional<Contract> maybeContract = this.contractRepository.findById(contractId);
+        var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         this.contractValidator.validateCompleteContractDto(contractDto);
-        Contract contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
+        var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         contract.complete(contractDto);
         this.contractStatusTransitionService.completeContract(contract);
 

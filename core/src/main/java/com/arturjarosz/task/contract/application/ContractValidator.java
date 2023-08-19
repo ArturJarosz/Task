@@ -1,15 +1,17 @@
 package com.arturjarosz.task.contract.application;
 
-import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.contract.domain.ContractExceptionCodes;
 import com.arturjarosz.task.contract.model.Contract;
+import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @Component
 public class ContractValidator {

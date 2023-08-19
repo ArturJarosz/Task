@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.application.validator;
 
-import com.arturjarosz.task.finance.application.dto.InstallmentDto;
+import com.arturjarosz.task.dto.InstallmentDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;

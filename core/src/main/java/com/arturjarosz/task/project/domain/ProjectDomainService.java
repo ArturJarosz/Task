@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.domain;
 
-import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
-import com.arturjarosz.task.project.application.dto.ProjectDto;
+import com.arturjarosz.task.dto.ProjectCreateDto;
+import com.arturjarosz.task.dto.ProjectDto;
 import com.arturjarosz.task.project.model.Project;
 
 import java.time.LocalDate;

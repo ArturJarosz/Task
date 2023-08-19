@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.application;
 
-import com.arturjarosz.task.project.application.dto.CostDto;
+import com.arturjarosz.task.dto.CostDto;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package com.arturjarosz.task.finance.application.validator;
 
 import com.arturjarosz.task.contractor.domain.ContractorExceptionCodes;
 import com.arturjarosz.task.contractor.query.ContractorQueryService;
-import com.arturjarosz.task.finance.application.dto.ContractorJobDto;
+import com.arturjarosz.task.dto.ContractorJobDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;

@@ -2,15 +2,22 @@ package com.arturjarosz.task.project.query.impl;
 
 import com.arturjarosz.task.contract.model.QContract;
 import com.arturjarosz.task.contract.status.ContractStatus;
-import com.arturjarosz.task.project.application.dto.StageDto;
-import com.arturjarosz.task.project.application.dto.TaskDto;
+import com.arturjarosz.task.dto.StageDto;
+import com.arturjarosz.task.dto.TaskDto;
+import com.arturjarosz.task.project.application.mapper.StageFields;
+import com.arturjarosz.task.project.application.mapper.TaskDtoMapper;
 import com.arturjarosz.task.project.domain.dto.ProjectStatusData;
 import com.arturjarosz.task.project.domain.dto.StageStatusData;
-import com.arturjarosz.task.project.model.*;
+import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.model.QProject;
+import com.arturjarosz.task.project.model.QStage;
+import com.arturjarosz.task.project.model.QTask;
+import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
 import com.querydsl.core.types.Projections;
+import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
@@ -21,6 +28,7 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     private static final QContract CONTRACT = QContract.contract;
     private static final QStage STAGE = QStage.stage;
     private static final QTask TASK = QTask.task;
+    private static final TaskDtoMapper TASK_DTO_MAPPER = Mappers.getMapper(TaskDtoMapper.class);
 
     public ProjectQueryServiceImpl() {
         super(PROJECT);
@@ -43,15 +51,12 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
 
     @Override
     public TaskDto getTaskByTaskId(Long taskId) {
-        return this.query()
+        var task = this.query()
                 .from(TASK)
                 .where(TASK.id.eq(taskId))
-                .select(Projections.bean(TaskDto.class, TASK.id.as(TaskDto.ID_FIELD),
-                        TASK.status.as(TaskDto.STATUS_FIELD),
-                        TASK.name.as(TaskDto.NAME_FIELD), TASK.startDate.as(TaskDto.START_DATE_FIELD),
-                        TASK.endDate.as(TaskDto.END_DATE_FIELD), TASK.note.as(TaskDto.NOTE_FIELD),
-                        TASK.type.as(TaskDto.TASK_TYPE_FIELD)))
+                .select(TASK)
                 .fetchOne();
+        return TASK_DTO_MAPPER.taskToTaskDto(task);
     }
 
     @Override
@@ -60,10 +65,10 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
                 .from(PROJECT)
                 .leftJoin(PROJECT.stages, STAGE)
                 .where(PROJECT.id.eq(projectId))
-                .select(Projections.bean(StageDto.class, STAGE.id.as(StageDto.ID_FIELD),
-                        STAGE.name.as(StageDto.NAME_FIELD),
-                        STAGE.deadline.as(StageDto.DEADLINE_FIELD), STAGE.stageType.as(StageDto.STAGE_TYPE_FIELD),
-                        STAGE.status.as(StageDto.STATUS_FIELD)))
+                .select(Projections.bean(StageDto.class, STAGE.id.as(StageFields.ID_FIELD),
+                        STAGE.name.as(StageFields.NAME_FIELD),
+                        STAGE.deadline.as(StageFields.DEADLINE_FIELD), STAGE.stageType.as(StageFields.STAGE_TYPE_FIELD),
+                        STAGE.status.as(StageFields.STATUS_FIELD)))
                 .fetch();
     }
 
@@ -102,4 +107,5 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     public Boolean doesProjectExistByProjectId(Long projectId) {
         return this.queryFromAggregate().where(PROJECT.id.eq(projectId)).fetchCount() > 0;
     }
+
 }

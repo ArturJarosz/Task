@@ -1,15 +1,27 @@
 package com.arturjarosz.task.finance.query.impl;
 
-import com.arturjarosz.task.finance.application.dto.ContractorJobDto;
-import com.arturjarosz.task.finance.application.dto.InstallmentDto;
-import com.arturjarosz.task.finance.application.dto.SupplyDto;
-import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialSummaryDto;
+import com.arturjarosz.task.dto.ContractorJobDto;
+import com.arturjarosz.task.dto.CostDto;
+import com.arturjarosz.task.dto.InstallmentDto;
+import com.arturjarosz.task.dto.SupplyDto;
+import com.arturjarosz.task.dto.TotalProjectFinancialSummaryDto;
+import com.arturjarosz.task.finance.application.mapper.ContractorJobFields;
+import com.arturjarosz.task.finance.application.mapper.CostFields;
+import com.arturjarosz.task.finance.application.mapper.InstallmentFields;
+import com.arturjarosz.task.finance.application.mapper.SupplyFields;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
-import com.arturjarosz.task.finance.model.*;
+import com.arturjarosz.task.finance.model.PartialFinancialDataType;
+import com.arturjarosz.task.finance.model.QContractorJob;
+import com.arturjarosz.task.finance.model.QCost;
+import com.arturjarosz.task.finance.model.QFinancialData;
+import com.arturjarosz.task.finance.model.QInstallment;
+import com.arturjarosz.task.finance.model.QProjectFinancialData;
+import com.arturjarosz.task.finance.model.QProjectFinancialPartialSummary;
+import com.arturjarosz.task.finance.model.QProjectFinancialSummary;
+import com.arturjarosz.task.finance.model.QSupply;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
-import com.arturjarosz.task.project.application.dto.CostDto;
 import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
 import com.arturjarosz.task.supervision.model.QSupervision;
@@ -47,31 +59,31 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     }
 
     private static QBean<CostDto> costToCostDto() {
-        return Projections.bean(CostDto.class, COST.id.as(CostDto.ID_FIELD),
-                COST.financialData.value.value.as(CostDto.VALUE_FIELD), COST.name.as(CostDto.NAME_FIELD),
-                COST.date.as(CostDto.DATE_FIELD), COST.note.as(CostDto.NOTE_FIELD),
-                COST.category.as(CostDto.CATEGORY_FIELD), COST.financialData.hasInvoice.as(CostDto.HAS_INVOICE_FIELD),
-                COST.financialData.paid.as(CostDto.IS_PAID_FIELD));
+        return Projections.bean(CostDto.class, COST.id.as(CostFields.ID_FIELD),
+                COST.financialData.value.value.as(CostFields.VALUE_FIELD), COST.name.as(CostFields.NAME_FIELD),
+                COST.date.as(CostFields.DATE_FIELD), COST.note.as(CostFields.NOTE_FIELD),
+                COST.category.as(CostFields.CATEGORY_FIELD), COST.financialData.hasInvoice.as(CostFields.HAS_INVOICE_FIELD),
+                COST.financialData.paid.as(CostFields.IS_PAID_FIELD));
     }
 
     private static QBean<ContractorJobDto> contractorJobToContractorJobDto() {
-        return Projections.bean(ContractorJobDto.class, CONTRACTOR_JOB.id.as(ContractorJobDto.ID_FIELD),
-                CONTRACTOR_JOB.name.as(ContractorJobDto.NAME_FILED),
-                CONTRACTOR_JOB.note.as(ContractorJobDto.NOTE_FILED),
-                CONTRACTOR_JOB.financialData.paid.as(ContractorJobDto.PAID_FIELD),
-                CONTRACTOR_JOB.financialData.hasInvoice.as(ContractorJobDto.HAS_INVOICE_FILED),
-                CONTRACTOR_JOB.financialData.value.value.as(ContractorJobDto.VALUE_FILED),
-                CONTRACTOR_JOB.financialData.payable.as(ContractorJobDto.PAYABLE_FILED),
-                CONTRACTOR_JOB.cooperatorId.as(ContractorJobDto.CONTRACTOR_ID_FILED));
+        return Projections.bean(ContractorJobDto.class, CONTRACTOR_JOB.id.as(ContractorJobFields.ID_FIELD),
+                CONTRACTOR_JOB.name.as(ContractorJobFields.NAME_FILED),
+                CONTRACTOR_JOB.note.as(ContractorJobFields.NOTE_FILED),
+                CONTRACTOR_JOB.financialData.paid.as(ContractorJobFields.PAID_FIELD),
+                CONTRACTOR_JOB.financialData.hasInvoice.as(ContractorJobFields.HAS_INVOICE_FILED),
+                CONTRACTOR_JOB.financialData.value.value.as(ContractorJobFields.VALUE_FILED),
+                CONTRACTOR_JOB.financialData.payable.as(ContractorJobFields.PAYABLE_FILED),
+                CONTRACTOR_JOB.cooperatorId.as(ContractorJobFields.CONTRACTOR_ID_FILED));
     }
 
     private static QBean<SupplyDto> supplyToSupplyDto() {
-        return Projections.bean(SupplyDto.class, SUPPLY.id.as(SupplyDto.ID_FIELD), SUPPLY.name.as(SupplyDto.NAME_FILED),
-                SUPPLY.note.as(SupplyDto.NOTE_FILED), SUPPLY.financialData.paid.as(SupplyDto.PAID_FIELD),
-                SUPPLY.financialData.hasInvoice.as(SupplyDto.HAS_INVOICE_FILED),
-                SUPPLY.financialData.value.value.as(SupplyDto.VALUE_FILED),
-                SUPPLY.financialData.payable.as(SupplyDto.PAYABLE_FILED),
-                SUPPLY.cooperatorId.as(SupplyDto.SUPPLIER_ID_FILED));
+        return Projections.bean(SupplyDto.class, SUPPLY.id.as(SupplyFields.ID_FIELD), SUPPLY.name.as(SupplyFields.NAME_FILED),
+                SUPPLY.note.as(SupplyFields.NOTE_FILED), SUPPLY.financialData.paid.as(SupplyFields.PAID_FIELD),
+                SUPPLY.financialData.hasInvoice.as(SupplyFields.HAS_INVOICE_FILED),
+                SUPPLY.financialData.value.value.as(SupplyFields.VALUE_FILED),
+                SUPPLY.financialData.payable.as(SupplyFields.PAYABLE_FILED),
+                SUPPLY.cooperatorId.as(SupplyFields.SUPPLIER_ID_FILED));
     }
 
     @Override
@@ -191,12 +203,12 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .leftJoin(PROJECT_FINANCIAL_DATA)
                 .on(INSTALLMENT.projectFinancialDataId.eq(PROJECT_FINANCIAL_DATA.id))
                 .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
-                .select(Projections.bean(InstallmentDto.class, INSTALLMENT.id.as(InstallmentDto.ID_FIELD),
-                        INSTALLMENT.financialData.value.value.as(InstallmentDto.VALUE_FIELD),
-                        INSTALLMENT.note.as(InstallmentDto.NOTE_FIELD),
-                        INSTALLMENT.financialData.paid.as(InstallmentDto.IS_PAID_FIELD),
-                        INSTALLMENT.financialData.hasInvoice.as(InstallmentDto.HAS_INVOICE_FIELD),
-                        INSTALLMENT.financialData.paymentDate.as(InstallmentDto.PAYMENT_DATE)))
+                .select(Projections.bean(InstallmentDto.class, INSTALLMENT.id.as(InstallmentFields.ID_FIELD),
+                        INSTALLMENT.financialData.value.value.as(InstallmentFields.VALUE_FIELD),
+                        INSTALLMENT.note.as(InstallmentFields.NOTE_FIELD),
+                        INSTALLMENT.financialData.paid.as(InstallmentFields.IS_PAID_FIELD),
+                        INSTALLMENT.financialData.hasInvoice.as(InstallmentFields.HAS_INVOICE_FIELD),
+                        INSTALLMENT.financialData.paymentDate.as(InstallmentFields.PAYMENT_DATE)))
                 .fetch();
     }
 

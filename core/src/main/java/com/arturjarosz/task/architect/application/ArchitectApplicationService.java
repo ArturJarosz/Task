@@ -1,24 +1,24 @@
 package com.arturjarosz.task.architect.application;
 
-import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
-import com.arturjarosz.task.architect.application.dto.ArchitectDto;
+import com.arturjarosz.task.architect.model.Architect;
+import com.arturjarosz.task.dto.ArchitectDto;
 
 import java.util.List;
 
 public interface ArchitectApplicationService {
 
     /**
-     * Creates {@link com.arturjarosz.task.architect.model.Architect} from given {@link ArchitectBasicDto}.
+     * Creates {@link Architect} from given {@link ArchitectDto}.
      * When not all data provided, then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException}
      * is thrown.
      *
-     * @param architectBasicDto dto with necessary data to creat new architect.
+     * @param architectDto dto with necessary data to creat new architect.
      * @return CreatedEntityDto with newly created Architect id.
      */
-    ArchitectDto createArchitect(ArchitectBasicDto architectBasicDto);
+    ArchitectDto createArchitect(ArchitectDto architectDto);
 
     /**
-     * Removes {@link com.arturjarosz.task.architect.model.Architect} of given I.
+     * Removes {@link Architect} of given I.
      * If entity with given architectId does not exist then
      * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
      */
@@ -41,5 +41,5 @@ public interface ArchitectApplicationService {
     /**
      * Loads list of basic architect data or all existing architects.
      */
-    List<ArchitectBasicDto> getBasicArchitects();
+    List<ArchitectDto> getArchitects();
 }

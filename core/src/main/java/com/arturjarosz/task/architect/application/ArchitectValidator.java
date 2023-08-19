@@ -1,10 +1,9 @@
 package com.arturjarosz.task.architect.application;
 
-import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
-import com.arturjarosz.task.architect.application.dto.ArchitectDto;
 import com.arturjarosz.task.architect.domain.ArchitectExceptionCodes;
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository;
 import com.arturjarosz.task.architect.model.Architect;
+import com.arturjarosz.task.dto.ArchitectDto;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
@@ -31,13 +30,6 @@ public class ArchitectValidator {
     @NonNull
     private final ProjectQueryService projectQueryService;
 
-    public static void validateBasicArchitectDto(ArchitectBasicDto architectBasicDto) {
-        assertIsTrue(architectBasicDto != null,
-                createMessageCode(ExceptionCodes.NULL, ArchitectExceptionCodes.ARCHITECT));
-        validateName(architectBasicDto.getFirstName(), ArchitectExceptionCodes.FIRST_NAME);
-        validateName(architectBasicDto.getLastName(), ArchitectExceptionCodes.LAST_NAME);
-    }
-
     public static void validateArchitectDto(ArchitectDto architectDto) {
         assertIsTrue(architectDto != null, createMessageCode(ExceptionCodes.NULL, ArchitectExceptionCodes.ARCHITECT));
         validateName(architectDto.getFirstName(), ArchitectExceptionCodes.FIRST_NAME);
@@ -58,7 +50,7 @@ public class ArchitectValidator {
     }
 
     public void validateArchitectExistence(Long architectId) {
-        Optional<Architect> architect = this.architectRepository.findById(architectId);
+        var architect = this.architectRepository.findById(architectId);
         validateArchitectExistence(architect, architectId);
     }
 

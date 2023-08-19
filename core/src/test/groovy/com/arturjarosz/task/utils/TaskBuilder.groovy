@@ -12,7 +12,7 @@ class TaskBuilder extends AbstractBuilder<Task, TaskBuilder> {
     private static final String TYPE = "type"
 
     TaskBuilder() {
-        super(Task.class)
+        super(Task)
     }
 
     TaskBuilder withId(Long id) {

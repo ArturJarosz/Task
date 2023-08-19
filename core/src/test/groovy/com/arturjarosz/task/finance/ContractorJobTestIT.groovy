@@ -1,12 +1,7 @@
 package com.arturjarosz.task.finance
 
-import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
-import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.configuration.BaseTestIT
-import com.arturjarosz.task.contractor.application.dto.ContractorDto
-import com.arturjarosz.task.finance.application.dto.ContractorJobDto
-import com.arturjarosz.task.project.application.dto.ProjectCreateDto
-import com.arturjarosz.task.project.application.dto.ProjectDto
+import com.arturjarosz.task.dto.*
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
 import com.arturjarosz.task.utils.TestsHelper
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -21,7 +16,7 @@ class ContractorJobTestIT extends BaseTestIT {
     static final String CLIENTS_URI = "/clients"
     static final String PROJECTS_URI = "/projects"
     static final String CONTRACTORS_URI = "/contractors"
-    static final String CONTRACTOR_JOBS_URI = "/contractorJobs"
+    static final String CONTRACTOR_JOBS_URI = "/contractor-jobs"
 
     static final NOT_EXISTING_CONTRACTOR_JOB_ID = Integer.MAX_VALUE
 
@@ -30,7 +25,7 @@ class ContractorJobTestIT extends BaseTestIT {
     static final APPLICATION_JSON = "application/json"
     static final String LOCATION = "Location"
 
-    def architectDto = createObjectFromJson('json/architect/architect.json', ArchitectBasicDto)
+    def architectDto = createObjectFromJson('json/architect/architect.json', ArchitectDto)
     def privateClientDto = createObjectFromJson('json/client/privateClient.json', ClientDto)
     def projectDto = createObjectFromJson('json/project/properProject.json', ProjectCreateDto)
     def createContractorDto = createObjectFromJson("json/contractor/createContractor.json", ContractorDto)
@@ -55,7 +50,7 @@ class ContractorJobTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Name of the contractorJob was not specified."
     }
 
@@ -92,7 +87,7 @@ class ContractorJobTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Project with id ${project.id} does not have a contractorJob with id ${String.format("%,d", NOT_EXISTING_CONTRACTOR_JOB_ID)}."
     }
 
@@ -111,7 +106,7 @@ class ContractorJobTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Name of the contractorJob was not specified."
     }
 
@@ -145,7 +140,7 @@ class ContractorJobTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Project with id ${project.id} does not have a contractorJob with id ${String.format("%,d", NOT_EXISTING_CONTRACTOR_JOB_ID)}."
     }
 
@@ -164,7 +159,7 @@ class ContractorJobTestIT extends BaseTestIT {
             def fetchContractorJobResponse = this.mockMvc.perform(MockMvcRequestBuilders.get("$PROJECTS_URI/${project.id}$CONTRACTOR_JOBS_URI/${contractorJob.id}"))
                     .andReturn().response
             fetchContractorJobResponse.status == HttpStatus.BAD_REQUEST.value()
-            def errorMessage = MAPPER.readValue(fetchContractorJobResponse.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(fetchContractorJobResponse.contentAsString, ErrorMessage)
             errorMessage.message == "Project with id ${project.id} does not have a contractorJob with id ${String.format("%,d", contractorJob.id)}."
     }
 
@@ -178,7 +173,7 @@ class ContractorJobTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Project with id ${project.id} does not have a contractorJob with id ${String.format("%,d", NOT_EXISTING_CONTRACTOR_JOB_ID)}."
     }
 

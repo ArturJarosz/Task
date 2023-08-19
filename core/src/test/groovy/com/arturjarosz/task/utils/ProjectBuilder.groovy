@@ -23,7 +23,7 @@ class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
     private static final String STATUS = "status"
 
     ProjectBuilder() {
-        super(Project.class)
+        super(Project)
     }
 
     ProjectBuilder withEndDate(LocalDate endDate) {

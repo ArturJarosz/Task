@@ -22,7 +22,7 @@ class StageBuilder extends AbstractBuilder<Stage, StageBuilder> {
     private static final String TASKS = "tasks"
 
     StageBuilder() {
-        super(Stage.class)
+        super(Stage)
     }
 
     StageBuilder setStatusField(String fieldName, Object fieldValue) {

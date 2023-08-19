@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.application.mapper;
 
-import com.arturjarosz.task.finance.application.dto.InstallmentDto;
+import com.arturjarosz.task.dto.InstallmentDto;
 import com.arturjarosz.task.finance.model.Installment;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import org.mapstruct.Mapper;

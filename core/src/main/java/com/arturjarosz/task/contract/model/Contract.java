@@ -1,8 +1,8 @@
 package com.arturjarosz.task.contract.model;
 
-import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.contract.status.ContractStatus;
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow;
+import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
@@ -13,6 +13,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.Getter;
 
 import java.io.Serial;
 import java.time.LocalDate;
@@ -24,19 +25,24 @@ public class Contract extends AbstractAggregateRoot implements WorkflowAware<Con
     @Serial
     private static final long serialVersionUID = -6156547903688654882L;
 
+    @Getter
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "VALUE"))
     private Money offerValue;
 
+    @Getter
     @Column(name = "SIGNING_DATE")
     private LocalDate signingDate;
 
+    @Getter
     @Column(name = "DEADLINE")
     private LocalDate deadline;
 
+    @Getter
     @Column(name = "START_DATE")
     private LocalDate startDate;
 
+    @Getter
     @Column(name = "END_DATE")
     private LocalDate endDate;
 
@@ -57,22 +63,6 @@ public class Contract extends AbstractAggregateRoot implements WorkflowAware<Con
         this.deadline = deadline;
     }
 
-    public LocalDate getSigningDate() {
-        return this.signingDate;
-    }
-
-    public LocalDate getDeadline() {
-        return this.deadline;
-    }
-
-    public LocalDate getStartDate() {
-        return this.startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return this.endDate;
-    }
-
     @Override
     public ContractStatus getStatus() {
         return this.status;
@@ -91,10 +81,6 @@ public class Contract extends AbstractAggregateRoot implements WorkflowAware<Con
     public void update(Double offerValue, LocalDate deadline) {
         this.offerValue = new Money(offerValue);
         this.deadline = deadline;
-    }
-
-    public Money getOfferValue() {
-        return this.offerValue;
     }
 
     public void sign(ContractDto contractDto) {

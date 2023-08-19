@@ -1,9 +1,9 @@
 package com.arturjarosz.task.project.application
 
-import com.arturjarosz.task.project.application.dto.TaskDto
+import com.arturjarosz.task.dto.TaskDto
+import com.arturjarosz.task.dto.TaskTypeDto
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
-import com.arturjarosz.task.project.model.TaskType
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.utils.StageBuilder
@@ -11,10 +11,10 @@ import com.arturjarosz.task.utils.TaskBuilder
 import spock.lang.Specification
 
 class TaskValidatorTest extends Specification {
-    private static final STAGE_ID = 2L
-    private static final TASK_ID = 1l
-    private static final String NAME = "name"
-    private static final TaskType TASK_TYPE = TaskType.RENDER
+    static final STAGE_ID = 2L
+    static final TASK_ID = 1l
+    static final String NAME = "name"
+    static final TaskTypeDto TASK_TYPE = TaskTypeDto.RENDER
 
     def projectQueryService = Mock(ProjectQueryServiceImpl)
 
@@ -33,7 +33,7 @@ class TaskValidatorTest extends Specification {
 
     def "when taskDto name is null, validateCreateTaskDto should throw an exception with specific error message"() {
         given:
-            TaskDto taskDto = new TaskDto(name: null, type: TASK_TYPE)
+            def taskDto = new TaskDto(name: null, type: TASK_TYPE)
         when:
             this.taskValidator.validateCreateTaskDto(taskDto)
         then:
@@ -43,7 +43,7 @@ class TaskValidatorTest extends Specification {
 
     def "when taskDto name is empty, validateCreateTaskDto should throw an exception with specific error message"() {
         given:
-            TaskDto taskDto = new TaskDto(name: "", type: TASK_TYPE)
+            def taskDto = new TaskDto(name: "", type: TASK_TYPE)
         when:
             this.taskValidator.validateCreateTaskDto(taskDto)
         then:
@@ -53,7 +53,7 @@ class TaskValidatorTest extends Specification {
 
     def "when taskDto type is null, validateCreateTaskDto should throw an exception with specific error message"() {
         given:
-            TaskDto taskDto = new TaskDto(name: NAME, type: null)
+            def taskDto = new TaskDto(name: NAME, type: null)
         when:
             this.taskValidator.validateCreateTaskDto(taskDto)
         then:
@@ -82,7 +82,7 @@ class TaskValidatorTest extends Specification {
 
     def "when taskDto name is null, validateUpdateTaskDto should throw an exception with specific error message"() {
         given:
-            TaskDto taskDto = new TaskDto(name: null, type: TASK_TYPE)
+            def taskDto = new TaskDto(name: null, type: TASK_TYPE)
         when:
             this.taskValidator.validateUpdateTaskDto(taskDto)
         then:
@@ -92,7 +92,7 @@ class TaskValidatorTest extends Specification {
 
     def "when taskDto name is empty, validateUpdateTaskDto should throw an exception with specific error message"() {
         given:
-            TaskDto taskDto = new TaskDto(name: "", type: TASK_TYPE)
+            def taskDto = new TaskDto(name: "", type: TASK_TYPE)
         when:
             this.taskValidator.validateUpdateTaskDto(taskDto)
         then:

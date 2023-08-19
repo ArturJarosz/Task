@@ -1,6 +1,6 @@
 {
   "name": "",
-  "stageType": "VISUALISATIONS",
+  "type": "VISUALISATIONS",
   "note": "some note about stage",
   "deadline": "2021-09-12"
 }

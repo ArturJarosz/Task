@@ -1,15 +1,15 @@
 package com.arturjarosz.task.systemparameter.domain.impl
 
-import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto
+import com.arturjarosz.task.dto.SystemParameterDto
 import com.arturjarosz.task.systemparameter.domain.validator.SystemParameterValidator
 import com.arturjarosz.task.systemparameter.query.impl.SystemParameterQueryServiceImpl
 import spock.lang.Specification
 
 class SystemParameterValidatorServiceImplTest extends Specification {
-    private static final String PARAMETER_NAME_1 = "parameter1"
-    private static final String PARAMETER_NAME_2 = "parameter2"
-    private static final String PARAMETER_NAME_3 = "parameter3"
-    private static final List<String> PARAMETERS = Arrays.asList(PARAMETER_NAME_1, PARAMETER_NAME_2, PARAMETER_NAME_3)
+    static final String PARAMETER_NAME_1 = "parameter1"
+    static final String PARAMETER_NAME_2 = "parameter2"
+    static final String PARAMETER_NAME_3 = "parameter3"
+    static final List<String> PARAMETERS = Arrays.asList(PARAMETER_NAME_1, PARAMETER_NAME_2, PARAMETER_NAME_3)
 
     def systemParameterQueryService = Mock(SystemParameterQueryServiceImpl) {
         getSystemParametersNames() >> PARAMETERS
@@ -73,7 +73,7 @@ class SystemParameterValidatorServiceImplTest extends Specification {
 
     def "validateOnUpdate should throw an exception when parameter has no validator"() {
         given:
-            SystemParameterDto systemParameterDto = new SystemParameterDto(name: PARAMETER_NAME_3)
+            def systemParameterDto = new SystemParameterDto(name: PARAMETER_NAME_3)
             def parameterValidatorServiceImpl = new SystemParameterValidatorServiceImpl(notFullListOfValidators,
                     systemParameterQueryServiceNotFullList)
         when:
@@ -85,7 +85,7 @@ class SystemParameterValidatorServiceImplTest extends Specification {
 
     def "validateOnUpdate should call validate on validator for parameter"() {
         given:
-            SystemParameterDto systemParameterDto = new SystemParameterDto(name: PARAMETER_NAME_1)
+            def systemParameterDto = new SystemParameterDto(name: PARAMETER_NAME_1)
         when:
             this.systemParameterValidatorService.validateOnUpdate(systemParameterDto)
         then:

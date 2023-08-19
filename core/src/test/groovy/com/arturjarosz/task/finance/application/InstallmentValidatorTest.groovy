@@ -1,7 +1,6 @@
 package com.arturjarosz.task.finance.application
 
-
-import com.arturjarosz.task.finance.application.dto.InstallmentDto
+import com.arturjarosz.task.dto.InstallmentDto
 import com.arturjarosz.task.finance.application.validator.InstallmentValidator
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
@@ -11,13 +10,13 @@ import java.time.LocalDate
 
 class InstallmentValidatorTest extends Specification {
 
-    private static final String NOTE = "note"
-    private static final BigDecimal VALUE = new BigDecimal("20.0")
-    private static final LocalDate PAY_DATE = LocalDate.now()
-    private static final LocalDate FUTURE_PAY_DATE = LocalDate.now().plusDays(100)
-    private static final LocalDate PAST_PAY_DATE = LocalDate.now().minusDays(100)
-    private static final Long INSTALLMENT_ID = 1L
-    private static final Long NOT_EXISTING_INSTALLMENT_ID = 2L
+    static final String NOTE = "note"
+    static final BigDecimal VALUE = new BigDecimal("20.0")
+    static final LocalDate PAY_DATE = LocalDate.now()
+    static final LocalDate FUTURE_PAY_DATE = LocalDate.now().plusDays(100)
+    static final LocalDate PAST_PAY_DATE = LocalDate.now().minusDays(100)
+    static final Long INSTALLMENT_ID = 1L
+    static final Long NOT_EXISTING_INSTALLMENT_ID = 2L
 
     def financialDataQueryService = Mock(FinancialDataQueryService)
 
@@ -40,7 +39,7 @@ class InstallmentValidatorTest extends Specification {
 
     def "when value in installment is null, validateCreateInstallmentDto should throw an exception with specific message"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto(value: null)
+            def installmentDto = new InstallmentDto(value: null)
         when:
             installmentValidator.validateCreateInstallmentDto(installmentDto)
         then:
@@ -50,7 +49,7 @@ class InstallmentValidatorTest extends Specification {
 
     def "when dto is correct, validateCreateInstallmentDto should not throw any exception"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto(value: VALUE, note: NOTE, paymentDate: PAY_DATE)
+            def installmentDto = new InstallmentDto(value: VALUE, note: NOTE, paymentDate: PAY_DATE)
         when:
             installmentValidator.validateCreateInstallmentDto(installmentDto)
         then:
@@ -59,7 +58,7 @@ class InstallmentValidatorTest extends Specification {
 
     def "when payDate is future, validatePayDateNotFuture should throw an exception with specific message"() {
         given:
-            LocalDate futureDate = LocalDate.now().plusDays(2)
+            def futureDate = LocalDate.now().plusDays(2)
         when:
             installmentValidator.validatePayDateNotFuture(futureDate)
         then:
@@ -82,9 +81,9 @@ class InstallmentValidatorTest extends Specification {
 
     def "validateUpdateInstallmentDto should throw exception if paid and paidDate in the future"() {
         given:
-            def installentDto = new InstallmentDto(paymentDate: FUTURE_PAY_DATE, value: VALUE)
+            def installmentDto = new InstallmentDto(paymentDate: FUTURE_PAY_DATE, value: VALUE)
         when:
-            installmentValidator.validateUpdateInstallmentDto(installentDto, true)
+            installmentValidator.validateUpdateInstallmentDto(installmentDto, true)
         then:
             Exception exception = thrown()
             exception.message == "notValid.installment.payDate"
@@ -92,18 +91,18 @@ class InstallmentValidatorTest extends Specification {
 
     def "validateUpdateInstallmentDto should not throw any exception if is paid and paidDate not in the future and correct data"() {
         given:
-            def installentDto = new InstallmentDto(paymentDate: PAST_PAY_DATE, value: VALUE)
+            def installmentDto = new InstallmentDto(paymentDate: PAST_PAY_DATE, value: VALUE)
         when:
-            installmentValidator.validateUpdateInstallmentDto(installentDto, true)
+            installmentValidator.validateUpdateInstallmentDto(installmentDto, true)
         then:
             noExceptionThrown()
     }
 
     def "validateUpdateInstallmentDto should not throw any exception if not paid and correct data"() {
         given:
-            def installentDto = new InstallmentDto(paymentDate: PAST_PAY_DATE, value: VALUE)
+            def installmentDto = new InstallmentDto(paymentDate: PAST_PAY_DATE, value: VALUE)
         when:
-            installmentValidator.validateUpdateInstallmentDto(installentDto, false)
+            installmentValidator.validateUpdateInstallmentDto(installmentDto, false)
         then:
             noExceptionThrown()
     }

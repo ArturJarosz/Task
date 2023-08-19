@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.application;
 
-import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialSummaryDto;
+import com.arturjarosz.task.dto.TotalProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.model.ProjectFinancialSummary;
 import com.arturjarosz.task.project.model.Project;
 
@@ -17,7 +17,6 @@ public interface ProjectFinancialSummaryService {
     void recalculateSupervision(Long supervisionId, Long supervisionFinancialData);
 
     /**
-     *
      * Recalculated {@link ProjectFinancialSummary} for {@link Project} with given projectId.
      */
     void recalculateProjectFinancialSummary(long projectId);

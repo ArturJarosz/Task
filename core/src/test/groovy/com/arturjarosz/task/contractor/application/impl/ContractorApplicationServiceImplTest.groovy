@@ -2,18 +2,19 @@ package com.arturjarosz.task.contractor.application.impl
 
 import com.arturjarosz.task.contract.intrastructure.ContractRepository
 import com.arturjarosz.task.contractor.application.ContractorValidator
-import com.arturjarosz.task.contractor.application.dto.ContractorDto
 import com.arturjarosz.task.contractor.infrastructure.ContractorRepository
 import com.arturjarosz.task.contractor.model.Contractor
 import com.arturjarosz.task.contractor.model.ContractorCategory
+import com.arturjarosz.task.dto.ContractorCategoryDto
+import com.arturjarosz.task.dto.ContractorDto
 import spock.lang.Specification
 import spock.lang.Subject
 
 class ContractorApplicationServiceImplTest extends Specification {
     final static String NAME = "name"
     final static String UPDATED_NAME = "updated_name"
-    final static ContractorCategory CATEGORY = ContractorCategory.ARTIST
-    final static ContractorCategory UPDATED_CATEGORY = ContractorCategory.CARPENTER
+    final static ContractorCategoryDto CATEGORY = ContractorCategoryDto.ARTIST
+    final static ContractorCategoryDto UPDATED_CATEGORY = ContractorCategoryDto.CARPENTER
     final static String UPDATED_EMAIL = "email@email.com"
     final static String TELEPHONE = "123456789"
     final static String NOTE = "note"
@@ -96,7 +97,7 @@ class ContractorApplicationServiceImplTest extends Specification {
         then:
             1 * this.contractorRepository.save({ Contractor contractor ->
                 contractor.name == UPDATED_NAME
-                contractor.category == UPDATED_CATEGORY
+                contractor.category == ContractorCategory.valueOf(UPDATED_CATEGORY.name())
                 contractor.email == UPDATED_EMAIL
                 contractor.telephone == TELEPHONE
                 contractor.note == NOTE
@@ -179,6 +180,6 @@ class ContractorApplicationServiceImplTest extends Specification {
     }
 
     private void mockContractorRepositoryLoad(Long contractorId) {
-        this.contractorRepository.findById(contractorId) >> Optional.of(new Contractor(NAME, CATEGORY))
+        this.contractorRepository.findById(contractorId) >> Optional.of(new Contractor(NAME, ContractorCategory.valueOf(CATEGORY.name())))
     }
 }

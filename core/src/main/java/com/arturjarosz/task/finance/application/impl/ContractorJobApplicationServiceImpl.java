@@ -1,12 +1,10 @@
 package com.arturjarosz.task.finance.application.impl;
 
+import com.arturjarosz.task.dto.ContractorJobDto;
 import com.arturjarosz.task.finance.application.ContractorJobApplicationService;
-import com.arturjarosz.task.finance.application.dto.ContractorJobDto;
 import com.arturjarosz.task.finance.application.mapper.ContractorJobDtoMapper;
 import com.arturjarosz.task.finance.application.validator.ContractorJobValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
-import com.arturjarosz.task.finance.model.ContractorJob;
-import com.arturjarosz.task.finance.model.ProjectFinancialData;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
@@ -40,33 +38,29 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         this.contractorJobValidator.validateCreateContractorJobDto(contractorJobDto);
         this.contractorJobValidator.validateContractorExistence(contractorJobDto.getContractorId());
 
-        ProjectFinancialData financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(
-                projectId);
+        var financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
 
-        ContractorJob contractorJob = ContractorJobDtoMapper.INSTANCE.contractorJobDtoToContractorJob(contractorJobDto);
+        var contractorJob = ContractorJobDtoMapper.INSTANCE.contractorJobDtoToContractorJob(contractorJobDto);
         financialData.addContractorJob(contractorJob);
 
         this.projectFinanceAwareObjectService.onCreate(projectId);
         this.projectFinancialDataRepository.save(financialData);
         LOG.debug("ContractorJob for Project with id {} created", projectId);
-        ContractorJobDto createdContractorJobDto = ContractorJobDtoMapper.INSTANCE.contractorJobToContractorJobDto(
-                contractorJob, projectId);
+        var createdContractorJobDto = ContractorJobDtoMapper.INSTANCE.contractorJobToContractorJobDto(contractorJob, projectId);
         return createdContractorJobDto;
     }
 
     @Transactional
     @Override
-    public ContractorJobDto updateContractorJob(Long projectId, Long contractorJobId,
-            ContractorJobDto contractorJobDto) {
+    public ContractorJobDto updateContractorJob(Long projectId, Long contractorJobId, ContractorJobDto contractorJobDto) {
         LOG.debug("Updating ContractorJob with id {} from Project with id {}", contractorJobId, projectId);
 
         this.projectValidator.validateProjectExistence(projectId);
         this.contractorJobValidator.validateContractorJobOnProjectExistence(projectId, contractorJobId);
         this.contractorJobValidator.validateUpdateContractorJobDto(contractorJobDto);
-        ProjectFinancialData financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(
-                projectId);
+        var financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
 
-        ContractorJob contractorJob = financialData.updateContractorJob(contractorJobId, contractorJobDto);
+        var contractorJob = financialData.updateContractorJob(contractorJobId, contractorJobDto);
         this.projectFinancialDataRepository.save(financialData);
         this.projectFinanceAwareObjectService.onUpdate(projectId);
 
@@ -78,7 +72,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
     public ContractorJobDto getContractorJob(Long projectId, Long contractorJobId) {
         LOG.debug("Loading ContractorJob with id {} for Project with id {}", contractorJobId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        ContractorJobDto contractorJobDto = this.financialDataQueryService.getContractorJobById(contractorJobId);
+        var contractorJobDto = this.financialDataQueryService.getContractorJobById(contractorJobId);
         this.contractorJobValidator.validateContractorJobExistence(contractorJobDto, projectId, contractorJobId);
         return contractorJobDto;
     }
@@ -90,8 +84,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
 
         this.projectValidator.validateProjectExistence(projectId);
         this.contractorJobValidator.validateContractorJobOnProjectExistence(projectId, contractorJobId);
-        ProjectFinancialData financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(
-                projectId);
+        var financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
 
         financialData.removeContractorJob(contractorJobId);
         this.projectFinancialDataRepository.save(financialData);

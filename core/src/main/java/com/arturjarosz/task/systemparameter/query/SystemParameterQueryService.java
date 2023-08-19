@@ -1,6 +1,6 @@
 package com.arturjarosz.task.systemparameter.query;
 
-import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto;
+import com.arturjarosz.task.dto.SystemParameterDto;
 
 import java.util.List;
 

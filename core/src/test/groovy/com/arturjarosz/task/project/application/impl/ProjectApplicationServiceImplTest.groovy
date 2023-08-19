@@ -4,20 +4,20 @@ import com.arturjarosz.task.architect.application.ArchitectValidator
 import com.arturjarosz.task.architect.application.impl.ArchitectApplicationServiceImpl
 import com.arturjarosz.task.client.application.ClientValidator
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
-import com.arturjarosz.task.contract.application.dto.ContractDto
 import com.arturjarosz.task.contract.application.impl.ContractServiceImpl
 import com.arturjarosz.task.contract.model.Contract
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow
 import com.arturjarosz.task.contract.utils.ContractBuilder
+import com.arturjarosz.task.dto.ContractDto
+import com.arturjarosz.task.dto.ProjectCreateDto
+import com.arturjarosz.task.dto.ProjectDto
+import com.arturjarosz.task.dto.ProjectTypeDto
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService
 import com.arturjarosz.task.finance.application.impl.ProjectFinancialSummaryServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
-import com.arturjarosz.task.project.application.dto.ProjectCreateDto
-import com.arturjarosz.task.project.application.dto.ProjectDto
 import com.arturjarosz.task.project.domain.impl.ProjectDomainServiceImpl
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
-import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.sharedkernel.model.Money
 import com.arturjarosz.task.utils.ProjectBuilder
@@ -26,18 +26,18 @@ import spock.lang.Specification
 import java.time.LocalDate
 
 class ProjectApplicationServiceImplTest extends Specification {
-    private static final String NEW_PROJECT_NAME = "newProjectName"
-    private static final String PROJECT_NAME = "projectName"
-    private static final String NEW_PROJECT_NOTE = "newProjectNote"
-    private static final Long ARCHITECT_ID = 1L
-    private static final Long CLIENT_ID = 10L
-    private static final Long EXISTING_PROJECT_ID = 100L
-    private static final Long NEW_PROJECT_ID = 101L
-    private static final Long CONTRACT_ID = 1000L
-    private static final LocalDate PROJECT_DEADLINE = LocalDate.parse("2022-10-10")
-    private static final LocalDate PROJECT_END_DATE = LocalDate.parse("2022-05-02")
-    private static final LocalDate PROJECT_START_DATE = LocalDate.parse("2022-01-01")
-    private static final Double PROJECT_VALUE = 5000.0
+    static final String NEW_PROJECT_NAME = "newProjectName"
+    static final String PROJECT_NAME = "projectName"
+    static final String NEW_PROJECT_NOTE = "newProjectNote"
+    static final Long ARCHITECT_ID = 1L
+    static final Long CLIENT_ID = 10L
+    static final Long EXISTING_PROJECT_ID = 100L
+    static final Long NEW_PROJECT_ID = 101L
+    static final Long CONTRACT_ID = 1000L
+    static final LocalDate PROJECT_DEADLINE = LocalDate.parse("2022-10-10")
+    static final LocalDate PROJECT_END_DATE = LocalDate.parse("2022-05-02")
+    static final LocalDate PROJECT_START_DATE = LocalDate.parse("2022-01-01")
+    static final Double PROJECT_VALUE = 5000.0
 
     def clientApplicationService = Mock(ClientApplicationServiceImpl)
     def clientValidator = Mock(ClientValidator)
@@ -59,7 +59,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositorySaveNewProject()
             this.mockContractServiceCreateContract()
-            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
+            def projectCreateDto = this.prepareCreateProjectDto()
         when:
             this.projectApplicationService.createProject(projectCreateDto)
 
@@ -71,7 +71,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositorySaveNewProject()
             this.mockContractServiceCreateContract()
-            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
+            def projectCreateDto = this.prepareCreateProjectDto()
         when:
             this.projectApplicationService.createProject(projectCreateDto)
         then:
@@ -82,7 +82,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositorySaveNewProject()
             this.mockContractServiceCreateContract()
-            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
+            def projectCreateDto = this.prepareCreateProjectDto()
         when:
             this.projectApplicationService.createProject(projectCreateDto)
         then:
@@ -93,7 +93,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositorySaveNewProject()
             this.mockContractServiceCreateContract()
-            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
+            def projectCreateDto = this.prepareCreateProjectDto()
         when:
             this.projectApplicationService.createProject(projectCreateDto)
         then:
@@ -103,7 +103,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def "createProject should call save on projectRepository"() {
         given:
             this.mockContractServiceCreateContract()
-            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
+            def projectCreateDto = this.prepareCreateProjectDto()
         when:
             this.projectApplicationService.createProject(projectCreateDto)
         then:
@@ -114,7 +114,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositorySaveNewProject()
             this.mockContractServiceCreateContract()
-            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
+            def projectCreateDto = this.prepareCreateProjectDto()
         when:
             this.projectApplicationService.createProject(projectCreateDto)
         then:
@@ -124,9 +124,9 @@ class ProjectApplicationServiceImplTest extends Specification {
     def "createProject should return newly created project"() {
         given:
             this.mockContractServiceCreateContract()
-            ProjectCreateDto projectCreateDto = this.prepareCreateProjectDto()
+            def projectCreateDto = this.prepareCreateProjectDto()
         when:
-            ProjectDto createdProjectDto = this.projectApplicationService.createProject(projectCreateDto)
+            def createdProjectDto = this.projectApplicationService.createProject(projectCreateDto)
         then:
             1 * this.projectRepository.save(_) >> this.prepareNewProject()
             createdProjectDto.name == PROJECT_NAME
@@ -145,7 +145,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoad()
         when:
-            ProjectDto projectDto = this.projectApplicationService.getProject(EXISTING_PROJECT_ID)
+            def projectDto = this.projectApplicationService.getProject(EXISTING_PROJECT_ID)
         then:
             projectDto.id == EXISTING_PROJECT_ID
     }
@@ -170,7 +170,7 @@ class ProjectApplicationServiceImplTest extends Specification {
 
     def "updateProject should call load on projectRepository"() {
         given:
-            ProjectDto projectDto = this.prepareUpdateProjectDto()
+            def projectDto = this.prepareUpdateProjectDto()
         when:
             this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
@@ -180,7 +180,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def "updateProject should call validateProjectExistence on projectValidator"() {
         given:
             this.mockProjectRepositoryLoad()
-            ProjectDto projectDto = this.prepareUpdateProjectDto()
+            def projectDto = this.prepareUpdateProjectDto()
         when:
             this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
@@ -190,7 +190,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def "updateProject should call validateUpdateProjectDto on project validator"() {
         given:
             this.mockProjectRepositoryLoad()
-            ProjectDto projectDto = this.prepareUpdateProjectDto()
+            def projectDto = this.prepareUpdateProjectDto()
         when:
             this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
@@ -200,7 +200,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def "updateProject should call update on projectDomainService"() {
         given:
             this.mockProjectRepositoryLoad()
-            ProjectDto projectDto = this.prepareUpdateProjectDto()
+            def projectDto = this.prepareUpdateProjectDto()
         when:
             this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
@@ -210,7 +210,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def "updateProject should call save on projectRepository"() {
         given:
             this.mockProjectRepositoryLoad()
-            ProjectDto projectDto = this.prepareUpdateProjectDto()
+            def projectDto = this.prepareUpdateProjectDto()
         when:
             this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
@@ -219,12 +219,12 @@ class ProjectApplicationServiceImplTest extends Specification {
 
     def "updateProject should return project with updatedData"() {
         given:
-            ProjectDto projectDto = this.prepareUpdateProjectDto()
+            def projectDto = this.prepareUpdateProjectDto()
             this.mockProjectRepositoryLoad()
             this.mockProjectDomainServiceUpdate()
             this.mockProjectRepositorySaveUpdated()
         when:
-            ProjectDto updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
+            def updatedProjectDto = this.projectApplicationService.updateProject(EXISTING_PROJECT_ID,
                     projectDto)
         then:
             updatedProjectDto.id == EXISTING_PROJECT_ID
@@ -252,7 +252,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoad()
             this.mockProjectDomainServiceFinish()
-            ProjectDto projectContractDto = this.prepareProjectDtoForFinish()
+            def projectContractDto = this.prepareProjectDtoForFinish()
         when:
             this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto)
         then:
@@ -263,7 +263,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoad()
             this.mockProjectDomainServiceFinish()
-            ProjectDto projectContractDto = this.prepareProjectDtoForFinish()
+            def projectContractDto = this.prepareProjectDtoForFinish()
         when:
             this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto)
         then:
@@ -274,7 +274,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoad()
             this.mockProjectDomainServiceFinish()
-            ProjectDto projectContractDto = this.prepareProjectDtoForFinish()
+            def projectContractDto = this.prepareProjectDtoForFinish()
         when:
             this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto)
         then:
@@ -285,7 +285,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoad()
             this.mockProjectDomainServiceFinish()
-            ProjectDto projectContractDto = this.prepareProjectDtoForFinish()
+            def projectContractDto = this.prepareProjectDtoForFinish()
         when:
             this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto)
         then:
@@ -377,13 +377,13 @@ class ProjectApplicationServiceImplTest extends Specification {
     }
 
     private ProjectCreateDto prepareCreateProjectDto() {
-        ProjectCreateDto projectCreateDto = new ProjectCreateDto(name: PROJECT_NAME, architectId: ARCHITECT_ID,
-                clientId: CLIENT_ID, projectType: ProjectType.CONCEPT, offerValue: PROJECT_VALUE)
+        def projectCreateDto = new ProjectCreateDto(name: PROJECT_NAME, architectId: ARCHITECT_ID,
+                clientId: CLIENT_ID, type: ProjectTypeDto.CONCEPT, offerValue: PROJECT_VALUE)
         return projectCreateDto
     }
 
     private ProjectDto prepareUpdateProjectDto() {
-        ProjectDto projectDto = new ProjectDto(id: EXISTING_PROJECT_ID, name: NEW_PROJECT_NAME, note: NEW_PROJECT_NOTE)
+        def projectDto = new ProjectDto(id: EXISTING_PROJECT_ID, name: NEW_PROJECT_NAME, note: NEW_PROJECT_NOTE)
         return projectDto
     }
 
@@ -444,8 +444,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     }
 
     private ProjectDto prepareProjectDtoForFinish() {
-        ProjectDto projectDto = new ProjectDto(endDate: PROJECT_END_DATE)
-        return projectDto
+        return new ProjectDto(endDate: PROJECT_END_DATE)
     }
 
     private void mockProjectRepositoryLoad() {
@@ -457,17 +456,17 @@ class ProjectApplicationServiceImplTest extends Specification {
     }
 
     private void mockProjectRepositorySaveUpdated() {
-        Project project = this.prepareUpdatedProject()
+        def project = this.prepareUpdatedProject()
         this.projectRepository.save(_ as Project) >> project
     }
 
     private void mockProjectDomainServiceUpdate() {
-        Project project = this.prepareUpdatedProject()
+        def project = this.prepareUpdatedProject()
         this.projectDomainService.updateProject(_ as Project, _ as ProjectDto) >> project
     }
 
     private void mockProjectDomainServiceFinish() {
-        Project project = this.prepareFinishedProject()
+        def project = this.prepareFinishedProject()
         this.projectDomainService.finishProject(_ as Project, _ as LocalDate) >> project
     }
 

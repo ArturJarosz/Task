@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.application.impl
 
-import com.arturjarosz.task.finance.application.dto.SupplyDto
+import com.arturjarosz.task.dto.SupplyDto
 import com.arturjarosz.task.finance.application.validator.SupplyValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.ProjectFinancialData
@@ -12,21 +12,21 @@ import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import spock.lang.Specification
 
 class SupplyApplicationServiceImplTest extends Specification {
-    private static final String NAME = "name"
-    private static final String NEW_NAME = "newName"
-    private static final String NEW_NOTE = "newNote"
-    private static final long PROJECT_WITH_SUPPLY_ID = 1L
-    private static final long PROJECT_WITHOUT_SUPPLY_ID = 2L
-    private static final long NOT_EXISTING_PROJECT_ID = 3L
-    private static final long SUPPLIER_ID = 10L
-    private static final long NOT_EXISTING_SUPPLIER_ID = 11L
-    private static final long SUPPLY_ID = 100L
-    private static final BigDecimal VALUE = new BigDecimal("100.0")
-    private static final BigDecimal NEW_VALUE = new BigDecimal("200.0")
-    private static final boolean HAS_INVOICE = true
-    private static final boolean NEW_HAS_INVOICE = false
-    private static final boolean PAYABLE = true
-    private static final boolean NEW_PAYABLE = false
+    static final String NAME = "name"
+    static final String NEW_NAME = "newName"
+    static final String NEW_NOTE = "newNote"
+    static final long PROJECT_WITH_SUPPLY_ID = 1L
+    static final long PROJECT_WITHOUT_SUPPLY_ID = 2L
+    static final long NOT_EXISTING_PROJECT_ID = 3L
+    static final long SUPPLIER_ID = 10L
+    static final long NOT_EXISTING_SUPPLIER_ID = 11L
+    static final long SUPPLY_ID = 100L
+    static final BigDecimal VALUE = new BigDecimal("100.0")
+    static final BigDecimal NEW_VALUE = new BigDecimal("200.0")
+    static final boolean HAS_INVOICE = true
+    static final boolean NEW_HAS_INVOICE = false
+    static final boolean PAYABLE = true
+    static final boolean NEW_PAYABLE = false
 
     def projectValidator = Mock(ProjectValidator)
     def supplyValidator = Mock(SupplyValidator)
@@ -55,7 +55,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "createSupply should not create supply if project validation fails"() {
         given:
-            SupplyDto supplyDto = this.prepareCreateSupplyDto(SUPPLIER_ID)
+            def supplyDto = this.prepareCreateSupplyDto(SUPPLIER_ID)
         when:
             this.supplyApplicationService.createSupply(NOT_EXISTING_PROJECT_ID, supplyDto)
         then:
@@ -66,7 +66,7 @@ class SupplyApplicationServiceImplTest extends Specification {
     def "createSupply should not create supply if createSupplyDto validation fails"() {
         given:
             mockValidatingSupplyJobDtoThrowsException()
-            SupplyDto supplyDto = this.prepareCreateSupplyDto(SUPPLIER_ID)
+            def supplyDto = this.prepareCreateSupplyDto(SUPPLIER_ID)
         when:
             this.supplyApplicationService.createSupply(PROJECT_WITH_SUPPLY_ID, supplyDto)
         then:
@@ -76,7 +76,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "createSupply should not create supply if supplier existence validation fails"() {
         given:
-            SupplyDto supplyDto = this.prepareCreateSupplyDto(NOT_EXISTING_SUPPLIER_ID)
+            def supplyDto = this.prepareCreateSupplyDto(NOT_EXISTING_SUPPLIER_ID)
         when:
             this.supplyApplicationService.createSupply(PROJECT_WITH_SUPPLY_ID, supplyDto)
         then:
@@ -86,7 +86,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "createSupply should add supply to project financial data and save it via repository"() {
         given:
-            SupplyDto supplyDto = this.prepareCreateSupplyDto(SUPPLIER_ID)
+            def supplyDto = this.prepareCreateSupplyDto(SUPPLIER_ID)
         when:
             this.supplyApplicationService.createSupply(PROJECT_WITHOUT_SUPPLY_ID, supplyDto)
         then:
@@ -98,7 +98,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "createSupply should call onCreate on projectFinanceAwareObjectService"() {
         given:
-            SupplyDto supplyDto = this.prepareCreateSupplyDto(SUPPLIER_ID)
+            def supplyDto = this.prepareCreateSupplyDto(SUPPLIER_ID)
         when:
             this.supplyApplicationService.createSupply(PROJECT_WITHOUT_SUPPLY_ID, supplyDto)
         then:
@@ -107,7 +107,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "updateSupply should not update supply if project validation fails"() {
         given:
-            SupplyDto supplyDto = this.prepareUpdateSupplyDto()
+            def supplyDto = this.prepareUpdateSupplyDto()
         when:
             this.supplyApplicationService.updateSupply(PROJECT_WITHOUT_SUPPLY_ID, SUPPLY_ID, supplyDto)
         then:
@@ -117,7 +117,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "updateSupply should not update supply if supply on project existence fails"() {
         given:
-            SupplyDto supplyDto = this.prepareUpdateSupplyDto()
+            def supplyDto = this.prepareUpdateSupplyDto()
         when:
             this.supplyApplicationService.updateSupply(PROJECT_WITHOUT_SUPPLY_ID, SUPPLY_ID, supplyDto)
         then:
@@ -127,7 +127,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "updateSupply should not update supply if update supply dto fails"() {
         given:
-            SupplyDto supplyDto = this.prepareUpdateSupplyDto()
+            def supplyDto = this.prepareUpdateSupplyDto()
             mockValidatingUpdateSupplyDtoThrowsException()
         when:
             this.supplyApplicationService.updateSupply(PROJECT_WITH_SUPPLY_ID, SUPPLY_ID, supplyDto)
@@ -138,9 +138,9 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "updateSupply should update data on supply"() {
         given:
-            SupplyDto supplyDto = this.prepareUpdateSupplyDto()
+            def supplyDto = this.prepareUpdateSupplyDto()
         when:
-            SupplyDto updatedSupply =
+            def updatedSupply =
                     this.supplyApplicationService.updateSupply(PROJECT_WITH_SUPPLY_ID, SUPPLY_ID, supplyDto)
         then:
             updatedSupply.note == NEW_NOTE
@@ -152,7 +152,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     def "updateSupply should call onUpdate on projectFinanceAwareObjectService"() {
         given:
-            SupplyDto supplyDto = this.prepareUpdateSupplyDto()
+            def supplyDto = this.prepareUpdateSupplyDto()
         when:
             this.supplyApplicationService.updateSupply(PROJECT_WITH_SUPPLY_ID, SUPPLY_ID, supplyDto)
         then:
@@ -180,7 +180,7 @@ class SupplyApplicationServiceImplTest extends Specification {
     def "getSupply should return correct supply"() {
         given:
         when:
-            SupplyDto supply = this.supplyApplicationService.getSupply(PROJECT_WITH_SUPPLY_ID, SUPPLY_ID)
+            def supply = this.supplyApplicationService.getSupply(PROJECT_WITH_SUPPLY_ID, SUPPLY_ID)
         then:
             null != supply
             supply.id == SUPPLY_ID
@@ -241,25 +241,25 @@ class SupplyApplicationServiceImplTest extends Specification {
     }
 
     private SupplyDto prepareCreateSupplyDto(Long supplierId) {
-        SupplyDto supplyDto = new SupplyDto(hasInvoice: HAS_INVOICE, payable: PAYABLE, supplierId: supplierId,
+        def supplyDto = new SupplyDto(hasInvoice: HAS_INVOICE, payable: PAYABLE, supplierId: supplierId,
                 value: VALUE)
         return supplyDto
     }
 
     private SupplyDto prepareUpdateSupplyDto() {
-        SupplyDto supplyDto = new SupplyDto(hasInvoice: NEW_HAS_INVOICE, payable: NEW_PAYABLE, supplierId: SUPPLIER_ID,
+        def supplyDto = new SupplyDto(hasInvoice: NEW_HAS_INVOICE, payable: NEW_PAYABLE, supplierId: SUPPLIER_ID,
                 value: NEW_VALUE, name: NEW_NAME, note: NEW_NOTE)
         return supplyDto
     }
 
     private Supply prepareSupply(long supplyId) {
-        Supply supply = new Supply(NAME, SUPPLIER_ID, VALUE, true, true)
+        def supply = new Supply(NAME, SUPPLIER_ID, VALUE, true, true)
         TestUtils.setFieldForObject(supply, "id", supplyId)
         return supply
     }
 
     private SupplyDto prepareSupplyDto(long supplyId) {
-        SupplyDto supplyDto = new SupplyDto()
+        def supplyDto = new SupplyDto()
         supplyDto.id = supplyId
         return supplyDto
     }
@@ -270,12 +270,12 @@ class SupplyApplicationServiceImplTest extends Specification {
     }
 
     private ProjectFinancialData prepareProjectFinancialDataWithoutSupply() {
-        def projectFinancialData = new ProjectFinancialData()
+        def projectFinancialData = new ProjectFinancialData(PROJECT_WITHOUT_SUPPLY_ID)
         return projectFinancialData
     }
 
     private ProjectFinancialData prepareProjectFinancialDataWithSupply() {
-        def projectFinancialData = new ProjectFinancialData()
+        def projectFinancialData = new ProjectFinancialData(PROJECT_WITH_SUPPLY_ID)
         def supply = new Supply(NAME, SUPPLIER_ID, VALUE, HAS_INVOICE, PAYABLE)
         TestUtils.setFieldForObject(supply, "id", SUPPLY_ID)
         projectFinancialData.addSupply(supply)

@@ -1,7 +1,7 @@
 package com.arturjarosz.task.systemparameter.model;
 
+import com.arturjarosz.task.dto.SystemParameterDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
-import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

@@ -1,7 +1,7 @@
 package com.arturjarosz.task.supervision.model;
 
+import com.arturjarosz.task.dto.SupervisionVisitDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
-import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.SequenceGenerator;

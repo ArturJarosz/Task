@@ -15,7 +15,7 @@ import spock.lang.Specification
 @Testcontainers
 @AutoConfigureMockMvc
 class BaseTestIT extends Specification {
-    private static final Logger LOG = LoggerFactory.getLogger(BaseTestIT.class)
+    static final Logger LOG = LoggerFactory.getLogger(BaseTestIT.class)
     protected static final String HOST = "http://localhost"
     protected static String baseUrl;
 

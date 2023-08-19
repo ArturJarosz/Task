@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.application.impl
 
-import com.arturjarosz.task.finance.application.dto.ContractorJobDto
+import com.arturjarosz.task.dto.ContractorJobDto
 import com.arturjarosz.task.finance.application.validator.ContractorJobValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.ContractorJob
@@ -12,19 +12,19 @@ import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import spock.lang.Specification
 
 class ContractorJobApplicationServiceImplTest extends Specification {
-    private static final EXISTING_CONTRACTOR_JOB_ID = 1L
-    private static final NOT_EXISTING_CONTRACTOR_JOB_ID = 2L
-    private static final CONTRACTOR_ID = 20L
-    private static final NOT_EXISING_CONTRACTOR_ID = 21L
-    private static final PROJECT_WITHOUT_CONTRACTOR_JOB_ID = 30L
-    private static final PROJECT_WITH_CONTRACTOR_JOB_ID = 31L
-    private static final NOT_EXISTING_PROJECT_ID = 32L
-    private static final BigDecimal VALUE = new BigDecimal("100.0")
-    private static final BigDecimal NEW_VALUE = new BigDecimal("200.0")
-    private static final String NAME = "name"
-    private static final String NEW_NAME = "newName"
-    private static final String NOTE = "note"
-    private static final String NEW_NOTE = "newNote"
+    static final EXISTING_CONTRACTOR_JOB_ID = 1L
+    static final NOT_EXISTING_CONTRACTOR_JOB_ID = 2L
+    static final CONTRACTOR_ID = 20L
+    static final NOT_EXISING_CONTRACTOR_ID = 21L
+    static final PROJECT_WITHOUT_CONTRACTOR_JOB_ID = 30L
+    static final PROJECT_WITH_CONTRACTOR_JOB_ID = 31L
+    static final NOT_EXISTING_PROJECT_ID = 32L
+    static final BigDecimal VALUE = new BigDecimal("100.0")
+    static final BigDecimal NEW_VALUE = new BigDecimal("200.0")
+    static final String NAME = "name"
+    static final String NEW_NAME = "newName"
+    static final String NOTE = "note"
+    static final String NEW_NOTE = "newNote"
 
     def contractorJobValidator = Mock(ContractorJobValidator)
     def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectServiceImpl)
@@ -48,7 +48,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     def "createContractorJob should not create contractorJob if project validation fails"() {
         given:
-            ContractorJobDto contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
+            def contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
         when:
             this.contractorJobApplicationService.createContractorJob(NOT_EXISTING_PROJECT_ID, contractorJobDto)
         then:
@@ -59,7 +59,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def "createContractorJob should not create contractorJob if contractorJobDto validation fails"() {
         given:
             mockValidatingContractorJobDtoThrowsException()
-            ContractorJobDto contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
+            def contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
         when:
             this.contractorJobApplicationService.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
                     contractorJobDto)
@@ -71,7 +71,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def "createContractorJob should not create contractorJob if validating contractor existence fails"() {
         given:
             mockValidatorContractorExistenceThrowsException()
-            ContractorJobDto contractorJobDto = this.prepareContractorJobDto(NOT_EXISING_CONTRACTOR_ID)
+            def contractorJobDto = this.prepareContractorJobDto(NOT_EXISING_CONTRACTOR_ID)
         when:
             this.contractorJobApplicationService.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
                     contractorJobDto)
@@ -82,7 +82,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     def "createContractorJob should call save on projectRepository"() {
         given:
-            ContractorJobDto contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
+            def contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
         when:
             this.contractorJobApplicationService.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
                     contractorJobDto)
@@ -92,7 +92,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     def "createContractorJob should add newly created contractorJob to projectFinancialData"() {
         given:
-            ContractorJobDto contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
+            def contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
         when:
             this.contractorJobApplicationService.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
                     contractorJobDto)
@@ -105,7 +105,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     def "createContractorJob should call onCreate on projectFinanceAwareObjectService"() {
         given:
-            ContractorJobDto contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
+            def contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
         when:
             this.contractorJobApplicationService.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
                     contractorJobDto)
@@ -157,7 +157,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     def "updateContractorJob should not update contractorJob if validating project existence fails"() {
         given:
-            ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate()
+            def contractorJobDto = this.prepareContractorJobDtoForUpdate()
         when:
             this.contractorJobApplicationService.updateContractorJob(NOT_EXISTING_PROJECT_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
@@ -169,7 +169,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def "updateContractorJob should not update contractorJob if validation of contractorJob existence in project fails"() {
         given:
             this.mockValidatingContractorJobOnProjectExistenceThrowsException()
-            ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate()
+            def contractorJobDto = this.prepareContractorJobDtoForUpdate()
         when:
             this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
@@ -181,7 +181,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def "updateContractorJob should not update contractorJob if validation of contractorJobDto fails"() {
         given:
             this.mockValidatingUpdateContractorJobDtoThrowsException()
-            ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate()
+            def contractorJobDto = this.prepareContractorJobDtoForUpdate()
         when:
             this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
@@ -192,7 +192,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     def "updateContractorJob should update contractorJob"() {
         given:
-            ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate()
+            def contractorJobDto = this.prepareContractorJobDtoForUpdate()
         when:
             def updatedContractorJob =
                     this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
@@ -205,7 +205,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     def "updateContractorJob should save updated contractorJob"() {
         given:
-            ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate()
+            def contractorJobDto = this.prepareContractorJobDtoForUpdate()
         when:
             this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
@@ -215,7 +215,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     def "updateContractorJob should call onUpdate on projectFinanceAwareObjectService"() {
         given:
-            ContractorJobDto contractorJobDto = this.prepareContractorJobDtoForUpdate()
+            def contractorJobDto = this.prepareContractorJobDtoForUpdate()
         when:
             this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
@@ -226,7 +226,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def "getContractorJob should fail when project existence fails"() {
         given:
         when:
-            ContractorJobDto contractorJobDto = this.contractorJobApplicationService
+            def contractorJobDto = this.contractorJobApplicationService
                     .getContractorJob(NOT_EXISTING_PROJECT_ID, EXISTING_CONTRACTOR_JOB_ID)
         then:
             thrown(IllegalArgumentException)
@@ -237,7 +237,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         given:
             mockValidationContractorJobExistenceFails()
         when:
-            ContractorJobDto contractorJobDto = this.contractorJobApplicationService
+            def contractorJobDto = this.contractorJobApplicationService
                     .getContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID, NOT_EXISTING_CONTRACTOR_JOB_ID)
         then:
             thrown(IllegalArgumentException)
@@ -247,20 +247,20 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def "getContractorJob should return contractorJobDto"() {
         given:
         when:
-            ContractorJobDto contractorJobDto = this.contractorJobApplicationService
+            def contractorJobDto = this.contractorJobApplicationService
                     .getContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID)
         then:
             contractorJobDto != null
     }
 
     private ContractorJobDto prepareContractorJobDto(Long contractorId) {
-        ContractorJobDto contractorJobDto = new ContractorJobDto(name: NAME, note: NOTE, value: VALUE,
+        def contractorJobDto = new ContractorJobDto(name: NAME, note: NOTE, value: VALUE,
                 contractorId: contractorId, id: EXISTING_CONTRACTOR_JOB_ID, hasInvoice: true, payable: true)
         return contractorJobDto
     }
 
     private ContractorJobDto prepareContractorJobDtoForUpdate() {
-        ContractorJobDto contractorJobDto = new ContractorJobDto(name: NEW_NAME, note: NEW_NOTE, value: NEW_VALUE,
+        def contractorJobDto = new ContractorJobDto(name: NEW_NAME, note: NEW_NOTE, value: NEW_VALUE,
                 contractorId: CONTRACTOR_ID, id: EXISTING_CONTRACTOR_JOB_ID, hasInvoice: true, payable: true)
         return contractorJobDto
     }
@@ -294,8 +294,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     }
 
     private ProjectFinancialData prepareProjectFinancialDataWithoutContractorJob() {
-        def projectFinancialData = new ProjectFinancialData(PROJECT_WITHOUT_CONTRACTOR_JOB_ID)
-        return projectFinancialData
+        return new ProjectFinancialData(PROJECT_WITHOUT_CONTRACTOR_JOB_ID)
     }
 
     private void mockValidationContractorJobExistenceFails() {

@@ -1,14 +1,14 @@
 package com.arturjarosz.task.project.application.impl
 
 import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator
+import com.arturjarosz.task.dto.StageDto
+import com.arturjarosz.task.dto.StageTypeDto
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
-import com.arturjarosz.task.project.application.dto.StageDto
 import com.arturjarosz.task.project.domain.StageDomainService
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
-import com.arturjarosz.task.project.model.StageType
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.status.task.TaskStatus
@@ -20,15 +20,15 @@ import spock.lang.Specification
 import java.time.LocalDate
 
 class StageApplicationServiceImplTest extends Specification {
-    private static final Long PROJECT_ID = 1l
-    private static final Long PROJECT_WITH_STAGE_ID = 2L
-    private static final Long STAGE_ID = 5L
-    private static final Long STAGE_WITH_TASKS_IN_TODO_ID = 10L
-    private static final Long STAGE_WITH_TASKS_IN_DIFFERENT_STATUSES = 20L
-    private static final String NEW_STAGE_NAME = "newStageName"
-    private static final String NEW_STAGE_NOTE = "newStageNote"
-    private static final StageType NEW_STAGE_TYPE = StageType.FUNCTIONAL_LAYOUT
-    private static final LocalDate NEW_DEADLINE_DATE = LocalDate.of(2022, 12, 12)
+    static final Long PROJECT_ID = 1l
+    static final Long PROJECT_WITH_STAGE_ID = 2L
+    static final Long STAGE_ID = 5L
+    static final Long STAGE_WITH_TASKS_IN_TODO_ID = 10L
+    static final Long STAGE_WITH_TASKS_IN_DIFFERENT_STATUSES = 20L
+    static final String NEW_STAGE_NAME = "newStageName"
+    static final String NEW_STAGE_NOTE = "newStageNote"
+    static final StageTypeDto NEW_STAGE_TYPE = StageTypeDto.FUNCTIONAL_LAYOUT
+    static final LocalDate NEW_DEADLINE_DATE = LocalDate.of(2022, 12, 12)
 
     def projectQueryService = Mock(ProjectQueryServiceImpl)
     def projectValidator = Mock(ProjectValidator)
@@ -43,7 +43,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "createStage should call validateProjectExistence on projectValidator"() {
         given:
             this.mockProjectRepositoryLoad()
-            StageDto stageDto = new StageDto()
+            def stageDto = new StageDto()
             this.mockProjectRepositorySaveProjectWithStage()
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto)
@@ -54,7 +54,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "createStage should call validateCreateStageDto on stageValidator"() {
         given:
             this.mockProjectRepositoryLoad()
-            StageDto stageDto = new StageDto()
+            def stageDto = new StageDto()
             this.mockProjectRepositorySaveProjectWithStage()
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto)
@@ -65,7 +65,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "createStage should call validateContractAllowsForWorkObjectsCreation on contractWorkflowValidator"() {
         given:
             this.mockProjectRepositoryLoad()
-            StageDto stageDto = new StageDto()
+            def stageDto = new StageDto()
             this.mockProjectRepositorySaveProjectWithStage()
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto)
@@ -75,7 +75,7 @@ class StageApplicationServiceImplTest extends Specification {
 
     def "createStage should load project from projectRepository"() {
         given:
-            StageDto stageDto = new StageDto()
+            def stageDto = new StageDto()
             this.mockProjectRepositorySaveProjectWithStage()
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto)
@@ -86,7 +86,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "createStage should call createStage on stageDomainService"() {
         given:
             this.mockProjectRepositoryLoad()
-            StageDto stageDto = new StageDto()
+            def stageDto = new StageDto()
             this.mockProjectRepositorySaveProjectWithStage()
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto)
@@ -97,7 +97,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "createStage should save project with repository"() {
         given:
             this.mockProjectRepositoryLoad()
-            StageDto stageDto = new StageDto()
+            def stageDto = new StageDto()
         when:
             this.stageApplicationService.createStage(PROJECT_ID, stageDto)
         then:
@@ -155,7 +155,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "updateStage should call validateProjectExistence on projectValidator"() {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
-            StageDto stageDto = this.prepareStageDtoForUpdate()
+            def stageDto = this.prepareStageDtoForUpdate()
         when:
             this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
@@ -165,7 +165,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "updateStage should call validateExistenceOfStageInProject"() {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
-            StageDto stageDto = this.prepareStageDtoForUpdate()
+            def stageDto = this.prepareStageDtoForUpdate()
         when:
             this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
@@ -175,7 +175,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "updateStage should load project from projectRepository"() {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
-            StageDto stageDto = this.prepareStageDtoForUpdate()
+            def stageDto = this.prepareStageDtoForUpdate()
         when:
             this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
@@ -185,7 +185,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "updateStage should call validateUpdateStageDto from stageValidator"() {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
-            StageDto stageDto = this.prepareStageDtoForUpdate()
+            def stageDto = this.prepareStageDtoForUpdate()
         when:
             this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
@@ -195,7 +195,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "updateStage should save project with projectRepository"() {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
-            StageDto stageDto = this.prepareStageDtoForUpdate()
+            def stageDto = this.prepareStageDtoForUpdate()
         when:
             this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
@@ -205,7 +205,7 @@ class StageApplicationServiceImplTest extends Specification {
     def "updateStage should call updateStage on stageDomainService"() {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
-            StageDto stageDto = this.prepareStageDtoForUpdate()
+            def stageDto = this.prepareStageDtoForUpdate()
         when:
             this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
@@ -353,7 +353,6 @@ class StageApplicationServiceImplTest extends Specification {
             1 * this.projectRepository.save(_ as Project)
     }
 
-
     // mocks
     private void mockProjectRepositoryLoad() {
         this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProject())
@@ -400,7 +399,7 @@ class StageApplicationServiceImplTest extends Specification {
     }
 
     private StageDto prepareStageDtoForUpdate() {
-        StageDto stageDto = new StageDto(name: NEW_STAGE_NAME, note: NEW_STAGE_NOTE, stageType: NEW_STAGE_TYPE,
+        StageDto stageDto = new StageDto(name: NEW_STAGE_NAME, note: NEW_STAGE_NOTE, type: NEW_STAGE_TYPE,
                 deadline: NEW_DEADLINE_DATE)
         return stageDto
     }

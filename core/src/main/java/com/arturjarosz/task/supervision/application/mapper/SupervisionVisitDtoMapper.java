@@ -1,6 +1,6 @@
 package com.arturjarosz.task.supervision.application.mapper;
 
-import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto;
+import com.arturjarosz.task.dto.SupervisionVisitDto;
 import com.arturjarosz.task.supervision.model.SupervisionVisit;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;

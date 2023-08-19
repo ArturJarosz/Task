@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.application;
 
-import com.arturjarosz.task.finance.application.dto.ContractorJobDto;
+import com.arturjarosz.task.dto.ContractorJobDto;
 
 public interface ContractorJobApplicationService {
     /**

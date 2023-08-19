@@ -1,11 +1,11 @@
 package com.arturjarosz.task.systemparameter.domain.validator;
 
+import com.arturjarosz.task.dto.SystemParameterDto;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.systemparameter.domain.SystemParameterExceptionCodes;
 import com.arturjarosz.task.systemparameter.domain.SystemParameters;
-import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto;
 import com.arturjarosz.task.systemparameter.query.SystemParameterQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ public class VatTaxValidator extends AbstractSystemParameterValidator implements
     @Override
     public void validate(String name) {
         super.validate(name);
-        SystemParameterDto systemProperty = this.systemParameterQueryService.getSystemPropertyByName(name);
+        var systemProperty = this.systemParameterQueryService.getSystemPropertyByName(name);
         assertNotNull(systemProperty,
                 createMessageCode(ExceptionCodes.NOT_EXIST, SystemParameterExceptionCodes.SYSTEM_PARAMETER));
         this.validateValue(systemProperty.getValue());
@@ -42,7 +42,7 @@ public class VatTaxValidator extends AbstractSystemParameterValidator implements
 
     private void validateValue(String textValue) {
         try {
-            BigDecimal value = new BigDecimal(textValue);
+            var value = new BigDecimal(textValue);
             assertIsTrue((new BigDecimal("0.0").compareTo(value) <= 0 && new BigDecimal("1.0").compareTo(value) >= 0),
                     createMessageCode(ExceptionCodes.NOT_VALID, SystemParameterExceptionCodes.SYSTEM_PARAMETER,
                             SystemParameterExceptionCodes.VAT_TAX, SystemParameterExceptionCodes.VALUE));

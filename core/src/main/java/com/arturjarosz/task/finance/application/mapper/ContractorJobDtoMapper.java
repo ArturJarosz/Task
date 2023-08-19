@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.application.mapper;
 
-import com.arturjarosz.task.finance.application.dto.ContractorJobDto;
+import com.arturjarosz.task.dto.ContractorJobDto;
 import com.arturjarosz.task.finance.model.ContractorJob;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

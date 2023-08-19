@@ -1,13 +1,8 @@
 package com.arturjarosz.task.finance
 
-import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
-import com.arturjarosz.task.client.application.dto.ClientDto
 import com.arturjarosz.task.configuration.BaseTestIT
-import com.arturjarosz.task.finance.application.dto.SupplyDto
-import com.arturjarosz.task.project.application.dto.ProjectCreateDto
-import com.arturjarosz.task.project.application.dto.ProjectDto
+import com.arturjarosz.task.dto.*
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
-import com.arturjarosz.task.supplier.application.dto.SupplierDto
 import com.arturjarosz.task.utils.TestsHelper
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.transaction.Transactional
@@ -32,7 +27,7 @@ class SupplyTestIT extends BaseTestIT {
     static final APPLICATION_JSON = "application/json"
     static final String LOCATION = "Location"
 
-    def architectDto = createObjectFromJson('json/architect/architect.json', ArchitectBasicDto)
+    def architectDto = createObjectFromJson('json/architect/architect.json', ArchitectDto)
     def privateClientDto = createObjectFromJson('json/client/privateClient.json', ClientDto)
     def projectDto = createObjectFromJson('json/project/properProject.json', ProjectCreateDto)
     def createSupplierDto = createObjectFromJson("json/supplier/createSupplierDto.json", SupplierDto)
@@ -55,7 +50,7 @@ class SupplyTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Supplier with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist."
     }
 
@@ -90,7 +85,7 @@ class SupplyTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Supply with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist in Project with id ${project.id}."
     }
 
@@ -109,7 +104,7 @@ class SupplyTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Supply name was not provided."
     }
 
@@ -143,7 +138,7 @@ class SupplyTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Supply with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist in Project with id ${project.id}."
     }
 
@@ -173,7 +168,7 @@ class SupplyTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Supply with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist in Project with id ${project.id}."
     }
 
@@ -204,7 +199,7 @@ class SupplyTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Project with id ${String.format("%,d", NOT_EXISTING_PROJECT_ID)} does not exist."
     }
 

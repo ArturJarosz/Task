@@ -1,23 +1,21 @@
 package com.arturjarosz.task.supplier.application.impl;
 
+import com.arturjarosz.task.dto.SupplierDto;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.supplier.application.SupplierApplicationService;
 import com.arturjarosz.task.supplier.application.SupplierValidator;
-import com.arturjarosz.task.supplier.application.dto.SupplierDto;
 import com.arturjarosz.task.supplier.application.mapper.SupplierDtoMapper;
 import com.arturjarosz.task.supplier.infrastructure.SupplierRepository;
-import com.arturjarosz.task.supplier.model.Supplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.arturjarosz.task.supplier.model.SupplierCategory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
+@Slf4j
 @ApplicationService
 public class SupplierApplicationServiceImpl implements SupplierApplicationService {
-    private static final Logger LOG = LoggerFactory.getLogger(SupplierApplicationServiceImpl.class);
 
     private final SupplierRepository supplierRepository;
     private final SupplierValidator supplierValidator;
@@ -33,7 +31,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
         LOG.debug("Creating Supplier.");
 
         this.supplierValidator.validateCreateSupplierDto(supplierDto);
-        Supplier supplier = SupplierDtoMapper.INSTANCE.supplierDtoToSupplier(supplierDto);
+        var supplier = SupplierDtoMapper.INSTANCE.supplierDtoToSupplier(supplierDto);
         this.supplierRepository.save(supplier);
         LOG.debug("Supplier created.");
         return SupplierDtoMapper.INSTANCE.supplierToSupplierDto(supplier);
@@ -44,11 +42,12 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     public SupplierDto updateSupplier(Long supplierId, SupplierDto supplierDto) {
         LOG.debug("Updating Supplier with id {}.", supplierId);
 
-        Optional<Supplier> maybeSupplier = this.supplierRepository.findById(supplierId);
+        var maybeSupplier = this.supplierRepository.findById(supplierId);
         this.supplierValidator.validateSupplierExistence(maybeSupplier, supplierId);
         this.supplierValidator.validateUpdateSupplierDto(supplierDto);
-        Supplier supplier = maybeSupplier.orElseThrow(ResourceNotFoundException::new);
-        supplier.update(supplierDto.getName(), supplierDto.getCategory(), supplierDto.getEmail(),
+        var supplier = maybeSupplier.orElseThrow(ResourceNotFoundException::new);
+        supplier.update(supplierDto.getName(), SupplierCategory.valueOf(supplierDto.getCategory().name()),
+                supplierDto.getEmail(),
                 supplierDto.getTelephone(), supplierDto.getNote());
         this.supplierRepository.save(supplier);
 
@@ -72,10 +71,10 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     public SupplierDto getSupplier(Long supplierId) {
         LOG.debug("Loading Supplier with id {}", supplierId);
 
-        Optional<Supplier> maybeSupplier = this.supplierRepository.findById(supplierId);
+        var maybeSupplier = this.supplierRepository.findById(supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
-        Supplier supplier = maybeSupplier.orElseThrow(ResourceNotFoundException::new);
-        SupplierDto supplierDto = SupplierDtoMapper.INSTANCE.supplierToSupplierDto(supplier);
+        var supplier = maybeSupplier.orElseThrow(ResourceNotFoundException::new);
+        var supplierDto = SupplierDtoMapper.INSTANCE.supplierToSupplierDto(supplier);
         LOG.debug("Supplier with id {} loaded.", supplierId);
         return supplierDto;
     }

@@ -1,7 +1,7 @@
 package com.arturjarosz.task.finance.application.impl
 
+import com.arturjarosz.task.dto.InstallmentDto
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService
-import com.arturjarosz.task.finance.application.dto.InstallmentDto
 import com.arturjarosz.task.finance.application.validator.InstallmentValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.Installment
@@ -59,7 +59,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "createInstallment should not create installment if project existence validation fails"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto(value: VALUE)
+            def installmentDto = new InstallmentDto(value: VALUE)
         when:
             installmentApplicationService
                     .createInstallment(NOT_EXISTING_PROJECT_ID, STAGE_WITHOUT_INSTALLMENT_ID, installmentDto)
@@ -70,7 +70,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "createInstallment should not create installment if stage existence in project validation fails"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto(value: VALUE)
+            def installmentDto = new InstallmentDto(value: VALUE)
         when:
             this.installmentApplicationService.createInstallment(PROJECT_ID, NOT_EXISTING_STAGE_ID, installmentDto)
         then:
@@ -80,7 +80,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "createInstallment should not create installment if stage not having installment validation fails"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto(value: VALUE)
+            def installmentDto = new InstallmentDto(value: VALUE)
         when:
             this.installmentApplicationService.createInstallment(PROJECT_ID, STAGE_WITH_INSTALLMENT_ID,
                     installmentDto)
@@ -91,7 +91,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "createInstallment should not create installment if installmentDto validation fails"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto()
+            def installmentDto = new InstallmentDto()
             mockValidateInstallmentDtoThrowsException()
         when:
             this.installmentApplicationService.createInstallment(PROJECT_ID, STAGE_ID, installmentDto)
@@ -102,7 +102,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "createInstallment should add installment to projectFinancialData and return created installment"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto(value: VALUE, hasInvoice: true)
+            def installmentDto = new InstallmentDto(value: VALUE, hasInvoice: true)
         when:
             def createdInstallment =
                     this.installmentApplicationService.createInstallment(PROJECT_ID, STAGE_WITHOUT_INSTALLMENT_ID,
@@ -118,7 +118,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "updateInstallment should not update installment if project existence validation fails"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto(value: VALUE)
+            def installmentDto = new InstallmentDto(value: VALUE)
         when:
             this.installmentApplicationService.
                     updateInstallment(NOT_EXISTING_PROJECT_ID, STAGE_ID, installmentDto)
@@ -129,7 +129,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "updateInstallment should not update installment if installment existence validation fails"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto(value: VALUE)
+            def installmentDto = new InstallmentDto(value: VALUE)
         when:
             this.installmentApplicationService.
                     updateInstallment(PROJECT_ID, NOT_EXISTING_INSTALLMENT_ID, installmentDto)
@@ -140,7 +140,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "updateInstallment should update installment if dto is correct and both project and installment exist"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto(value: NEW_VALUE, hasInvoice: true)
+            def installmentDto = new InstallmentDto(value: NEW_VALUE, hasInvoice: true)
         when:
             this.installmentApplicationService.
                     updateInstallment(PROJECT_WITH_INSTALLMENT_ID, INSTALLMENT_ID, installmentDto)
@@ -176,7 +176,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "payInstallment should not pay installment if project existence validation fails"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto(paymentDate: LocalDate.now().minusDays(1))
+            def installmentDto = new InstallmentDto(paymentDate: LocalDate.now().minusDays(1))
         when:
             this.installmentApplicationService.payInstallment(NOT_EXISTING_PROJECT_ID,
                     INSTALLMENT_ID, installmentDto)
@@ -187,7 +187,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "payInstallment should not pay installment if installmentDto validation fails"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto(paymentDate: LocalDate.now().minusDays(1))
+            def installmentDto = new InstallmentDto(paymentDate: LocalDate.now().minusDays(1))
         when:
             this.installmentApplicationService.payInstallment(NOT_EXISTING_PROJECT_ID,
                     INSTALLMENT_ID, installmentDto)
@@ -198,7 +198,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "payInstallment should change installment status to paid if dto is correct and both project and stage exist"() {
         given:
-            InstallmentDto installmentDto = new InstallmentDto(paymentDate: LocalDate.now().minusDays(2))
+            def installmentDto = new InstallmentDto(paymentDate: LocalDate.now().minusDays(2))
         when:
             this.installmentApplicationService.payInstallment(PROJECT_WITH_INSTALLMENT_ID,
                     INSTALLMENT_ID, installmentDto)
@@ -241,7 +241,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
     def "getInstallment should return installment when both project and installment exist"() {
         given:
         when:
-            InstallmentDto resultInstallment =
+            def resultInstallment =
                     this.installmentApplicationService.getInstallment(PROJECT_WITH_INSTALLMENT_ID, INSTALLMENT_ID)
         then:
             noExceptionThrown()

@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.model;
 
-import com.arturjarosz.task.finance.application.dto.InstallmentDto;
+import com.arturjarosz.task.dto.InstallmentDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import jakarta.persistence.CascadeType;
@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Getter;
 
 import java.io.Serial;
 import java.time.LocalDate;
@@ -27,13 +28,15 @@ public class Installment extends AbstractEntity implements PartialFinancialData 
     @JoinColumn(name = "FINANCIAL_DATA_ID", referencedColumnName = "ID", nullable = false)
     private FinancialData financialData;
 
+    @Getter
     @Column(name = "PROJECT_FINANCIAL_DATA_ID", insertable = false, updatable = false)
     private Long projectFinancialDataId;
 
+    @Getter
     @Column(name = "STAGE_ID", nullable = false)
     private Long stageId;
 
-
+    @Getter
     @Column(name = "NOTE")
     private String note;
 
@@ -76,23 +79,12 @@ public class Installment extends AbstractEntity implements PartialFinancialData 
         return this.financialData.getPaymentDate();
     }
 
-    public String getNote() {
-        return this.note;
-    }
-
     public boolean isHasInvoice() {
         return this.financialData.isHasInvoice();
-    }
-
-    public Long getStageId() {
-        return this.stageId;
     }
 
     public void setStageId(Long stageId) {
         this.stageId = stageId;
     }
 
-    public Long getProjectFinancialDataId() {
-        return this.projectFinancialDataId;
-    }
 }

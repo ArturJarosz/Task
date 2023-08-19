@@ -1,7 +1,7 @@
 package com.arturjarosz.task.supervision.application.mapper;
 
+import com.arturjarosz.task.dto.SupervisionDto;
 import com.arturjarosz.task.sharedkernel.model.Money;
-import com.arturjarosz.task.supervision.application.dto.SupervisionDto;
 import com.arturjarosz.task.supervision.model.Supervision;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
