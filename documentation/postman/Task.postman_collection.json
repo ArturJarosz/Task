@@ -125,7 +125,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"firstName\": \"Johnny\",\n    \"lastName\": \"Bravo\",\n    \"contact\": {\n        \"address\": {\n            \"city\": \"New York\",\n            \"postCode\": \"1NYEC3\",\n            \"street\": \"High Street\",\n            \"houseNumber\": \"102\",\n            \"flatNumber\": \"1\"\n        },\n        \"email\": \"johhnybravo@example.com\",\n        \"telephone\": \"604258789\"\n    },\n    \"additionalData\": {\n        \"note\": \"some additional informations about client\"\n    }\n}",
+							"raw": "{\n    \"firstName\": \"Johnny\",\n    \"lastName\": \"Bravo\",\n    \"contact\": {\n        \"address\": {\n            \"city\": \"New York\",\n            \"postCode\": \"1NYEC3\",\n            \"street\": \"High Street\",\n            \"houseNumber\": \"102\",\n            \"flatNumber\": \"1\"\n        },\n        \"email\": \"johhnybravo@example.com\",\n        \"telephone\": \"604258789\"\n    },\n    \"note\": \"some additional informations about client\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
