@@ -1,10 +1,10 @@
 package com.arturjarosz.task.client.application;
 
-import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.client.domain.ClientExceptionCodes;
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository;
 import com.arturjarosz.task.client.model.Client;
 import com.arturjarosz.task.client.model.ClientType;
+import com.arturjarosz.task.dto.ClientDto;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
@@ -39,7 +39,7 @@ public class ClientValidator {
         assertIsTrue(clientDto != null, createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT));
         assertIsTrue(clientDto.getClientType() != null,
                 createMessageCode(ExceptionCodes.NULL, ClientExceptionCodes.CLIENT, ClientExceptionCodes.CLIENT_TYPE));
-        if (clientDto.getClientType().equals(ClientType.CORPORATE)) {
+        if (ClientType.CORPORATE.equals(ClientType.valueOf(clientDto.getClientType().name()))) {
             this.validateCorporateClient(clientDto);
         } else {
             this.validatePrivateClient(clientDto);
@@ -67,7 +67,7 @@ public class ClientValidator {
     }
 
     public void validateClientExistence(Long clientId) {
-        Optional<Client> maybeClient = this.clientRepository.findById(clientId);
+        var maybeClient = this.clientRepository.findById(clientId);
         this.validateClientExistence(maybeClient, clientId);
     }
 

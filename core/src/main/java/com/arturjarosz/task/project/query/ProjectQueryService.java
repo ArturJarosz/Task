@@ -1,8 +1,8 @@
 package com.arturjarosz.task.project.query;
 
 import com.arturjarosz.task.contract.status.ContractStatus;
-import com.arturjarosz.task.project.application.dto.StageDto;
-import com.arturjarosz.task.project.application.dto.TaskDto;
+import com.arturjarosz.task.dto.StageDto;
+import com.arturjarosz.task.dto.TaskDto;
 import com.arturjarosz.task.project.domain.dto.ProjectStatusData;
 import com.arturjarosz.task.project.domain.dto.StageStatusData;
 import com.arturjarosz.task.project.model.Project;

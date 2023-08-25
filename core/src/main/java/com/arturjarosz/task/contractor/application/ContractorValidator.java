@@ -1,9 +1,9 @@
 package com.arturjarosz.task.contractor.application;
 
-import com.arturjarosz.task.contractor.application.dto.ContractorDto;
 import com.arturjarosz.task.contractor.domain.ContractorExceptionCodes;
 import com.arturjarosz.task.contractor.infrastructure.ContractorRepository;
 import com.arturjarosz.task.contractor.model.Contractor;
+import com.arturjarosz.task.dto.ContractorDto;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.*;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @RequiredArgsConstructor
 @Component

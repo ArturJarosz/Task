@@ -1,6 +1,6 @@
 package com.arturjarosz.task.supplier.application;
 
-import com.arturjarosz.task.supplier.application.dto.SupplierDto;
+import com.arturjarosz.task.dto.SupplierDto;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.arturjarosz.task.finance.application
 
 import com.arturjarosz.task.contractor.query.impl.ContractorQueryServiceImpl
-import com.arturjarosz.task.finance.application.dto.ContractorJobDto
+import com.arturjarosz.task.dto.ContractorJobDto
 import com.arturjarosz.task.finance.application.validator.ContractorJobValidator
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
@@ -9,11 +9,11 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 class ContractorJobValidatorTest extends Specification {
-    private static final Long EXISTING_CONTRACTOR_ID = 1L
-    private static final Long NOT_EXISTING_CONTRACTOR_ID = 9L
-    private static final Long EXISTING_CONTRACTOR_JOB_ID = 10L
-    private static final Long NOT_EXISTING_CONTRACTOR_JOB_ID = 11L
-    private static final Long PROJECT_ID = 20L
+    static final Long EXISTING_CONTRACTOR_ID = 1L
+    static final Long NOT_EXISTING_CONTRACTOR_ID = 9L
+    static final Long EXISTING_CONTRACTOR_JOB_ID = 10L
+    static final Long NOT_EXISTING_CONTRACTOR_JOB_ID = 11L
+    static final Long PROJECT_ID = 20L
 
     def contractorQueryService = Mock(ContractorQueryServiceImpl)
     def financialDataQueryService = Mock(FinancialDataQueryService)
@@ -48,7 +48,7 @@ class ContractorJobValidatorTest extends Specification {
     @Unroll
     def "validateContractorExistence throws an exception with proper exception message"() {
         given:
-            ContractorJobDto contractorJobDto = contractorJob
+            def contractorJobDto = contractorJob
             if (contractorJobDto != null) {
                 contractorJobDto.name = contractorJobName
                 contractorJobDto.contractorId = contractorJobId
@@ -76,7 +76,7 @@ class ContractorJobValidatorTest extends Specification {
     @Unroll
     def "validateUpdateContractorJobDto throws an exception with proper exception message"() {
         given:
-            ContractorJobDto contractorJobDto = contractorJob
+            def contractorJobDto = contractorJob
             if (contractorJobDto != null) {
                 contractorJobDto.name = contractorJobName
                 contractorJobDto.value = contractorJobValue

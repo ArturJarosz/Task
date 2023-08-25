@@ -1,7 +1,7 @@
 package com.arturjarosz.task.contractor.application.mapper;
 
-import com.arturjarosz.task.contractor.application.dto.ContractorDto;
 import com.arturjarosz.task.contractor.model.Contractor;
+import com.arturjarosz.task.dto.ContractorDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;

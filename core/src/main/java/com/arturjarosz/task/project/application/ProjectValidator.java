@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.application;
 
-import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
-import com.arturjarosz.task.project.application.dto.ProjectDto;
+import com.arturjarosz.task.dto.ProjectCreateDto;
+import com.arturjarosz.task.dto.ProjectDto;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
@@ -46,7 +46,7 @@ public class ProjectValidator {
         assertNotNull(projectCreateDto.getArchitectId(),
                 BaseValidator.createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
                         ProjectExceptionCodes.ARCHITECT));
-        assertNotNull(projectCreateDto.getProjectType(),
+        assertNotNull(projectCreateDto.getType(),
                 BaseValidator.createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
                         ProjectExceptionCodes.TYPE));
     }

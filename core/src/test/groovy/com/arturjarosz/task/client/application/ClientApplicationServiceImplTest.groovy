@@ -1,37 +1,37 @@
 package com.arturjarosz.task.client.application
 
-import com.arturjarosz.task.client.application.dto.AddressDto
-import com.arturjarosz.task.client.application.dto.ClientDto
-import com.arturjarosz.task.client.application.dto.ContactDto
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
+import com.arturjarosz.task.dto.AddressDto
+import com.arturjarosz.task.dto.ClientDto
+import com.arturjarosz.task.dto.ClientTypeDto
+import com.arturjarosz.task.dto.ContactDto
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.PersonName
 import spock.lang.Specification
 
 class ClientApplicationServiceImplTest extends Specification {
 
-    private static final String FIRST_NAME = "firstName"
-    private static final String NEW_FIRST_NAME = "newFirstName"
-    private static final String LAST_NAME = "lastName"
-    private static final String NEW_LAST_NAME = "newLastName"
-    private static final String COMPANY_NAME = "companyName"
-    private static final String NEW_EMAIL = "newEmail@test.pl"
-    private static final String NEW_CITY = "newCity"
-    private static final String NEW_STREET = "newStreet"
-    private static final String NEW_POST_CODE = "11-111"
-    private static final String NEW_HOUSE_NUMBER = "2"
-    private static final String NEW_FLAT_NUMBER = "20"
-    private static final String NEW_NOTE = "note2"
-    private static final String NEW_TELEPHONE = "22334455"
-    private static final Long EXISTING_PRIVATE_ID = 1L
+    static final String FIRST_NAME = "firstName"
+    static final String NEW_FIRST_NAME = "newFirstName"
+    static final String LAST_NAME = "lastName"
+    static final String NEW_LAST_NAME = "newLastName"
+    static final String COMPANY_NAME = "companyName"
+    static final String NEW_EMAIL = "newEmail@test.pl"
+    static final String NEW_CITY = "newCity"
+    static final String NEW_STREET = "newStreet"
+    static final String NEW_POST_CODE = "11-111"
+    static final String NEW_HOUSE_NUMBER = "2"
+    static final String NEW_FLAT_NUMBER = "20"
+    static final String NEW_NOTE = "note2"
+    static final String NEW_TELEPHONE = "22334455"
+    static final Long EXISTING_PRIVATE_ID = 1L
 
-    private Client privateClient = new Client(new PersonName(FIRST_NAME, LAST_NAME), COMPANY_NAME,
-            ClientType.PRIVATE)
+    Client privateClient = new Client(new PersonName(FIRST_NAME, LAST_NAME), COMPANY_NAME, ClientType.PRIVATE)
 
-    def clientRepository = Mock(ClientRepository.class) {
+    def clientRepository = Mock(ClientRepository) {
         findById(EXISTING_PRIVATE_ID) >> { return Optional.of(privateClient) }
         findAll() >> { return Collections.singletonList(privateClient) }
 
@@ -45,7 +45,7 @@ class ClientApplicationServiceImplTest extends Specification {
 
     def "createClient should validate clientBasicDto"() {
         given:
-            ClientDto clientDto = this.prepareProperPrivateClint()
+            def clientDto = this.prepareProperPrivateClint()
         when:
             clientApplicationServiceImpl.createClient(clientDto)
         then:
@@ -54,7 +54,7 @@ class ClientApplicationServiceImplTest extends Specification {
 
     def "when ClientDto with private client type passed client of private type should be created"() {
         given:
-            ClientDto clientDto = this.prepareProperPrivateClint()
+            def clientDto = this.prepareProperPrivateClint()
         when:
             clientApplicationServiceImpl.createClient(clientDto)
         then:
@@ -65,7 +65,7 @@ class ClientApplicationServiceImplTest extends Specification {
 
     def "when client with corporate client type passed corporate client should be created"() {
         given:
-            ClientDto clientDto = this.prepareProperCorporateClient()
+            def clientDto = this.prepareProperCorporateClient()
         when:
             clientApplicationServiceImpl.createClient(clientDto)
         then:
@@ -76,7 +76,7 @@ class ClientApplicationServiceImplTest extends Specification {
 
     def "createClient should call repository cave on proper ClientDto"() {
         given:
-            ClientDto clientDto = this.prepareProperPrivateClint()
+            def clientDto = this.prepareProperPrivateClint()
         when:
             clientApplicationServiceImpl.createClient(clientDto)
         then:
@@ -117,7 +117,7 @@ class ClientApplicationServiceImplTest extends Specification {
 
     def "updateClient should call validateClientExistence"() {
         given:
-            ClientDto clientDto = this.prepareClientDtoForUpdate()
+            def clientDto = this.prepareClientDtoForUpdate()
         when:
             this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
         then:
@@ -126,7 +126,7 @@ class ClientApplicationServiceImplTest extends Specification {
 
     def "updateClient should call validateClientDtoPresence"() {
         given:
-            ClientDto clientDto = this.prepareClientDtoForUpdate()
+            def clientDto = this.prepareClientDtoForUpdate()
         when:
             this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
         then:
@@ -135,7 +135,7 @@ class ClientApplicationServiceImplTest extends Specification {
 
     def "updateClient should call save on repository"() {
         given:
-            ClientDto clientDto = this.prepareClientDtoForUpdate()
+            def clientDto = this.prepareClientDtoForUpdate()
         when:
             this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
         then:
@@ -144,26 +144,29 @@ class ClientApplicationServiceImplTest extends Specification {
 
     def "updateClient should replace client data"() {
         given:
-            ClientDto clientDto = this.prepareClientDtoForUpdate()
+            def clientDto = this.prepareClientDtoForUpdate()
         when:
-            ClientDto updatedClientDto = this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
+            def updatedClientDto = this.clientApplicationServiceImpl.updateClient(EXISTING_PRIVATE_ID, clientDto)
         then:
-            updatedClientDto.firstName == NEW_FIRST_NAME
-            updatedClientDto.lastName == NEW_LAST_NAME
-            updatedClientDto.contact.email == NEW_EMAIL
-            updatedClientDto.note == NEW_NOTE
-            updatedClientDto.contact.telephone == NEW_TELEPHONE
-            updatedClientDto.contact.address.city == NEW_CITY
-            updatedClientDto.contact.address.flatNumber == NEW_FLAT_NUMBER
-            updatedClientDto.contact.address.houseNumber == NEW_HOUSE_NUMBER
-            updatedClientDto.contact.address.postCode == NEW_POST_CODE
-            updatedClientDto.contact.address.street == NEW_STREET
+            with(updatedClientDto) {
+                firstName == NEW_FIRST_NAME
+                lastName == NEW_LAST_NAME
+                contact.email == NEW_EMAIL
+                note == NEW_NOTE
+                contact.telephone == NEW_TELEPHONE
+                contact.address.city == NEW_CITY
+                contact.address.flatNumber == NEW_FLAT_NUMBER
+                contact.address.houseNumber == NEW_HOUSE_NUMBER
+                contact.address.postCode == NEW_POST_CODE
+                contact.address.street == NEW_STREET
+            }
+
     }
 
     def "getBasicClients should call loadAll on repository"() {
         given:
         when:
-            this.clientApplicationServiceImpl.basicClients
+            this.clientApplicationServiceImpl.clients
         then:
             1 * this.clientRepository.findAll() >> Collections.singletonList(privateClient)
     }
@@ -171,38 +174,36 @@ class ClientApplicationServiceImplTest extends Specification {
     def "getBasicClients should return list of clients"() {
         given:
         when:
-            List<ClientDto> clientDtoList = this.clientApplicationServiceImpl.basicClients
+            List<ClientDto> clientDtoList = this.clientApplicationServiceImpl.clients
         then:
             clientDtoList.size() == 1
     }
 
     private ClientDto prepareProperPrivateClint() {
-        ClientDto clientDto = new ClientDto(firstName: FIRST_NAME, lastName: LAST_NAME, clientType: ClientType.PRIVATE)
+        def clientDto = new ClientDto(firstName: FIRST_NAME, lastName: LAST_NAME, clientType: ClientTypeDto.PRIVATE)
         return clientDto
     }
 
     private ClientDto prepareProperCorporateClient() {
-        ClientDto clientDto = new ClientDto(companyName: COMPANY_NAME, clientType: ClientType.CORPORATE)
+        def clientDto = new ClientDto(companyName: COMPANY_NAME, clientType: ClientTypeDto.CORPORATE)
         return clientDto
     }
 
     private ClientDto prepareClientDtoForUpdate() {
-        AddressDto addressDto = prepareAddressDto()
-        ContactDto contactDto = prepareContactDto(addressDto)
-        ClientDto clientDto = new ClientDto(clientType: ClientType.PRIVATE, firstName: NEW_FIRST_NAME,
+        def addressDto = prepareAddressDto()
+        def contactDto = prepareContactDto(addressDto)
+        def clientDto = new ClientDto(clientType: ClientTypeDto.PRIVATE, firstName: NEW_FIRST_NAME,
                 lastName: NEW_LAST_NAME, contact: contactDto, note: NEW_NOTE)
         return clientDto
     }
 
     private ContactDto prepareContactDto(AddressDto addressDto) {
-        ContactDto contactDto = new ContactDto(address: addressDto, email: NEW_EMAIL, telephone: NEW_TELEPHONE)
-        return contactDto
+        return new ContactDto(address: addressDto, email: NEW_EMAIL, telephone: NEW_TELEPHONE)
     }
 
     private AddressDto prepareAddressDto() {
-        AddressDto addressDto = new AddressDto(city: NEW_CITY, houseNumber: NEW_HOUSE_NUMBER,
+        return new AddressDto(city: NEW_CITY, houseNumber: NEW_HOUSE_NUMBER,
                 flatNumber: NEW_FLAT_NUMBER, postCode: NEW_POST_CODE, street: NEW_STREET)
-        return addressDto
     }
 
 }

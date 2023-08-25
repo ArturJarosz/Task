@@ -1,7 +1,8 @@
 package com.arturjarosz.task.project.application.mapper;
 
-import com.arturjarosz.task.project.application.dto.TaskDto;
+import com.arturjarosz.task.dto.TaskDto;
 import com.arturjarosz.task.project.model.Task;
+import com.arturjarosz.task.project.model.TaskType;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.status.task.TaskWorkflow;
 import org.mapstruct.Mapper;
@@ -14,7 +15,7 @@ public interface TaskDtoMapper {
     TaskDtoMapper INSTANCE = Mappers.getMapper(TaskDtoMapper.class);
 
     default Task createDtoToTask(TaskDto taskDto, TaskWorkflow taskWorkflow) {
-        return new Task(taskDto.getName(), taskDto.getType(), taskWorkflow);
+        return new Task(taskDto.getName(), TaskType.valueOf(taskDto.getType().name()), taskWorkflow);
     }
 
     @Mapping(source = "name", target = "name")

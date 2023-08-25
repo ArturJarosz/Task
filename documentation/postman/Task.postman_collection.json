@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "41972c0c-6fcd-46ed-a7f7-cb3ecf21a88e",
+		"_postman_id": "fcf77448-5280-46c2-abb6-9bf4fb5fcfa5",
 		"name": "Task",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11530659"
 	},
 	"item": [
 		{
@@ -855,7 +856,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/updateStatus",
+									"raw": "{{taskAddress}}/projects/{{projectId}}/stages/{{stageId}}/tasks/{{taskId}}/status",
 									"host": [
 										"{{taskAddress}}"
 									],
@@ -866,7 +867,7 @@
 										"{{stageId}}",
 										"tasks",
 										"{{taskId}}",
-										"updateStatus"
+										"status"
 									]
 								}
 							},
@@ -1037,14 +1038,14 @@
 											}
 										},
 										"url": {
-											"raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits",
+											"raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervision-visits",
 											"host": [
 												"{{taskAddress}}"
 											],
 											"path": [
 												"supervisions",
 												"{{supervisionId}}",
-												"supervisionVisits"
+												"supervision-visits"
 											]
 										}
 									},
@@ -1065,14 +1066,15 @@
 											}
 										},
 										"url": {
-											"raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits{{supervisionVisitId}}",
+											"raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervision-visits/{{supervisionVisitId}}",
 											"host": [
 												"{{taskAddress}}"
 											],
 											"path": [
 												"supervisions",
 												"{{supervisionId}}",
-												"supervisionVisits{{supervisionVisitId}}"
+												"supervision-visits",
+												"{{supervisionVisitId}}"
 											]
 										}
 									},
@@ -1084,14 +1086,14 @@
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits/{{supervisionVisitId}}",
+											"raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervision-visits/{{supervisionVisitId}}",
 											"host": [
 												"{{taskAddress}}"
 											],
 											"path": [
 												"supervisions",
 												"{{supervisionId}}",
-												"supervisionVisits",
+												"supervision-visits",
 												"{{supervisionVisitId}}"
 											]
 										}
@@ -1104,14 +1106,14 @@
 										"method": "PUT",
 										"header": [],
 										"url": {
-											"raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervisionVisits/{{supervisionVisitId}}",
+											"raw": "{{taskAddress}}/supervisions/{{supervisionId}}/supervision-visits/{{supervisionVisitId}}",
 											"host": [
 												"{{taskAddress}}"
 											],
 											"path": [
 												"supervisions",
 												"{{supervisionId}}",
-												"supervisionVisits",
+												"supervision-visits",
 												"{{supervisionVisitId}}"
 											]
 										}
@@ -1197,13 +1199,11 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{taskAddress}}/projects/{{projectId}}/supervisions",
+									"raw": "{{taskAddress}}/supervisions",
 									"host": [
 										"{{taskAddress}}"
 									],
 									"path": [
-										"projects",
-										"{{projectId}}",
 										"supervisions"
 									]
 								}
@@ -1332,14 +1332,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{taskAddress}}/projects/{{projectId}}/contractorJobs",
+									"raw": "{{taskAddress}}/projects/{{projectId}}/contractor-jobs",
 									"host": [
 										"{{taskAddress}}"
 									],
 									"path": [
 										"projects",
 										"{{projectId}}",
-										"contractorJobs"
+										"contractor-jobs"
 									]
 								}
 							},
@@ -1360,14 +1360,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{taskAddress}}/projects/{{projectId}}/contractorJob/{{contractorJobId}}",
+									"raw": "{{taskAddress}}/projects/{{projectId}}/contractor-jobs/{{contractorJobId}}",
 									"host": [
 										"{{taskAddress}}"
 									],
 									"path": [
 										"projects",
 										"{{projectId}}",
-										"contractorJob",
+										"contractor-jobs",
 										"{{contractorJobId}}"
 									]
 								}
@@ -1380,14 +1380,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{taskAddress}}/projects/{{projectId}}/contractorJobs/{{contractorJobId}}",
+									"raw": "{{taskAddress}}/projects/{{projectId}}/contractor-jobs/{{contractorJobId}}",
 									"host": [
 										"{{taskAddress}}"
 									],
 									"path": [
 										"projects",
 										"{{projectId}}",
-										"contractorJobs",
+										"contractor-jobs",
 										"{{contractorJobId}}"
 									]
 								}
@@ -1400,14 +1400,14 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{taskAddress}}/projects/{{projectId}}/contractorJobs/{{contractorJobs}}",
+									"raw": "{{taskAddress}}/projects/{{projectId}}/contractor-jobs/{{contractorJobs}}",
 									"host": [
 										"{{taskAddress}}"
 									],
 									"path": [
 										"projects",
 										"{{projectId}}",
-										"contractorJobs",
+										"contractor-jobs",
 										"{{contractorJobs}}"
 									]
 								}
@@ -1801,12 +1801,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{taskAddress}}/systemParameters/{{systemParameterId}}",
+							"raw": "{{taskAddress}}/system-parameters/{{systemParameterId}}",
 							"host": [
 								"{{taskAddress}}"
 							],
 							"path": [
-								"systemParameters",
+								"system-parameters",
 								"{{systemParameterId}}"
 							]
 						}
@@ -1819,12 +1819,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{taskAddress}}/systemParameters/{{systemParameterId}}",
+							"raw": "{{taskAddress}}/system-parameters/{{systemParameterId}}",
 							"host": [
 								"{{taskAddress}}"
 							],
 							"path": [
-								"systemParameters",
+								"system-parameters",
 								"{{systemParameterId}}"
 							]
 						}
@@ -1837,12 +1837,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{taskAddress}}/systemParameters",
+							"raw": "{{taskAddress}}/system-parameters",
 							"host": [
 								"{{taskAddress}}"
 							],
 							"path": [
-								"systemParameters"
+								"system-parameters"
 							]
 						}
 					},
@@ -1915,14 +1915,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{taskAddress}}/contracts/{{contractId}}/newOffer",
+							"raw": "{{taskAddress}}/contracts/{{contractId}}/new-offer",
 							"host": [
 								"{{taskAddress}}"
 							],
 							"path": [
 								"contracts",
 								"{{contractId}}",
-								"newOffer"
+								"new-offer"
 							]
 						}
 					},
@@ -1934,14 +1934,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{taskAddress}}/contracts/{{contractId}}/acceptOffer",
+							"raw": "{{taskAddress}}/contracts/{{contractId}}/accept-offer",
 							"host": [
 								"{{taskAddress}}"
 							],
 							"path": [
 								"contracts",
 								"{{contractId}}",
-								"acceptOffer"
+								"accept-offer"
 							]
 						}
 					},

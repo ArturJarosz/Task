@@ -1,6 +1,6 @@
 package com.arturjarosz.task.supervision.query;
 
-import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto;
+import com.arturjarosz.task.dto.SupervisionVisitDto;
 
 public interface SupervisionQueryService {
 

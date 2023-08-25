@@ -1,5 +1,7 @@
 package com.arturjarosz.task.finance.application.impl
 
+import com.arturjarosz.task.dto.CostCategoryDto
+import com.arturjarosz.task.dto.CostDto
 import com.arturjarosz.task.finance.application.validator.CostValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.Cost
@@ -7,7 +9,6 @@ import com.arturjarosz.task.finance.model.CostCategory
 import com.arturjarosz.task.finance.model.ProjectFinancialData
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
 import com.arturjarosz.task.project.application.ProjectValidator
-import com.arturjarosz.task.project.application.dto.CostDto
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import spock.lang.Specification
@@ -16,20 +17,20 @@ import java.time.LocalDate
 
 class CostApplicationServiceImplTest extends Specification {
 
-    private final static BigDecimal VALUE = new BigDecimal("100.0")
-    private final static BigDecimal NEW_VALUE = new BigDecimal("120.0")
-    private final static Long COST_ID = 100L
-    private final static Long NOT_EXISTING_COST_ID = 101L
-    private final static Long PROJECT_WITHOUT_COST_ID = 1L
-    private final static Long NOT_EXISTING_PROJECT_ID = 2L
-    private final static Long PROJECT_WITH_COST_ID = 3L
-    private final static String NAME = "name"
-    private final static String NEW_NAME = "newName"
-    private final static String NOTE = "note"
-    private final static String NEW_NOTE = "newNote"
+    final static BigDecimal VALUE = new BigDecimal("100.0")
+    final static BigDecimal NEW_VALUE = new BigDecimal("120.0")
+    final static Long COST_ID = 100L
+    final static Long NOT_EXISTING_COST_ID = 101L
+    final static Long PROJECT_WITHOUT_COST_ID = 1L
+    final static Long NOT_EXISTING_PROJECT_ID = 2L
+    final static Long PROJECT_WITH_COST_ID = 3L
+    final static String NAME = "name"
+    final static String NEW_NAME = "newName"
+    final static String NOTE = "note"
+    final static String NEW_NOTE = "newNote"
 
-    private final static LocalDate DATE = LocalDate.now()
-    private final static LocalDate NEW_DATE = LocalDate.now().minusDays(20)
+    final static LocalDate DATE = LocalDate.now()
+    final static LocalDate NEW_DATE = LocalDate.now().minusDays(20)
 
     def projectValidator = Mock(ProjectValidator)
     def costValidator = Mock(CostValidator)
@@ -54,7 +55,7 @@ class CostApplicationServiceImplTest extends Specification {
 
     def "createCost should not create cost if project existence validation fails"() {
         given:
-            CostDto costDto = this.prepareCostDto()
+            def costDto = this.prepareCostDto()
         when:
             this.projectCostApplicationService.createCost(NOT_EXISTING_PROJECT_ID, costDto)
         then:
@@ -65,7 +66,7 @@ class CostApplicationServiceImplTest extends Specification {
     def "createCost should not create cost if costDto validation fails"() {
         given:
             mockValidatingCreateCostDtoThrowsException()
-            CostDto costDto = this.prepareCostDto()
+            def costDto = this.prepareCostDto()
         when:
             this.projectCostApplicationService.createCost(PROJECT_WITHOUT_COST_ID, costDto)
         then:
@@ -76,7 +77,7 @@ class CostApplicationServiceImplTest extends Specification {
     def "createCost should call save on projectFinancialDataRepository"() {
         given:
             mockSaveProjectFinancialData(null)
-            CostDto costDto = this.prepareCostDto()
+            def costDto = this.prepareCostDto()
         when:
             this.projectCostApplicationService.createCost(PROJECT_WITHOUT_COST_ID, costDto)
         then:
@@ -86,7 +87,7 @@ class CostApplicationServiceImplTest extends Specification {
     def "createCost should add cost to project"() {
         given:
             mockSaveProjectFinancialData(null)
-            CostDto costDto = this.prepareCostDto()
+            def costDto = this.prepareCostDto()
         when:
             this.projectCostApplicationService.createCost(PROJECT_WITHOUT_COST_ID, costDto)
         then:
@@ -99,7 +100,7 @@ class CostApplicationServiceImplTest extends Specification {
     def "createCost should call onCreate from projectFinanceAwareObjectService"() {
         given:
             mockSaveProjectFinancialData(null)
-            CostDto costDto = this.prepareCostDto()
+            def costDto = this.prepareCostDto()
         when:
             this.projectCostApplicationService.createCost(PROJECT_WITHOUT_COST_ID, costDto)
         then:
@@ -180,7 +181,7 @@ class CostApplicationServiceImplTest extends Specification {
 
     def "updateCost should not update cost if project existence validation fails"() {
         given:
-            CostDto costDto = this.prepareUpdateCostDto()
+            def costDto = this.prepareUpdateCostDto()
         when:
             def updatedCost = this.projectCostApplicationService.updateCost(NOT_EXISTING_PROJECT_ID, COST_ID, costDto)
         then:
@@ -190,7 +191,7 @@ class CostApplicationServiceImplTest extends Specification {
 
     def "updateCost should not update cost if cost existence validation fails"() {
         given:
-            CostDto costDto = this.prepareUpdateCostDto()
+            def costDto = this.prepareUpdateCostDto()
         when:
             def updatedCost =
                     this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, NOT_EXISTING_COST_ID, costDto)
@@ -201,7 +202,7 @@ class CostApplicationServiceImplTest extends Specification {
 
     def "update should not update cost if costDto validation fails"() {
         given:
-            CostDto costDto = this.prepareUpdateCostDto()
+            def costDto = this.prepareUpdateCostDto()
             mockValidatingUpdateCostThrowsException()
         when:
             this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto)
@@ -211,7 +212,7 @@ class CostApplicationServiceImplTest extends Specification {
 
     def "update cost should update cost data"() {
         given:
-            CostDto costDto = this.prepareUpdateCostDto()
+            def costDto = this.prepareUpdateCostDto()
         when:
             this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto)
         then:
@@ -227,7 +228,7 @@ class CostApplicationServiceImplTest extends Specification {
 
     def "update cost should return updated cost"() {
         given:
-            CostDto costDto = this.prepareUpdateCostDto()
+            def costDto = this.prepareUpdateCostDto()
         when:
             def updatedCostDt = this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto)
         then:
@@ -247,17 +248,17 @@ class CostApplicationServiceImplTest extends Specification {
     }
 
     private CostDto prepareUpdateCostDto() {
-        CostDto updateCostDto = new CostDto(note: NEW_NOTE, value: NEW_VALUE, date: NEW_DATE, name: NEW_NAME)
+        def updateCostDto = new CostDto(note: NEW_NOTE, value: NEW_VALUE, date: NEW_DATE, name: NEW_NAME, category: CostCategoryDto.FUEL)
         return updateCostDto
     }
 
     private CostDto prepareCostDto() {
-        CostDto costDto = new CostDto(name: NAME, date: DATE, category: CostCategory.FUEL, value: VALUE, note: NOTE)
+        def costDto = new CostDto(name: NAME, date: DATE, category: CostCategoryDto.FUEL, value: VALUE, note: NOTE)
         return costDto
     }
 
     private ProjectFinancialData prepareProjectFinancialDataWithCost(Long projectId) {
-        ProjectFinancialData financialData = new ProjectFinancialData(projectId)
+        def financialData = new ProjectFinancialData(projectId)
         def cost = new Cost(NAME, VALUE, CostCategory.FUEL, DATE, NOTE, true, true)
         TestUtils.setFieldForObject(cost, "id", COST_ID)
         financialData.addCost(cost)
@@ -265,12 +266,11 @@ class CostApplicationServiceImplTest extends Specification {
     }
 
     private ProjectFinancialData prepareProjectFinancialDataWithoutCost(Long projectId) {
-        ProjectFinancialData financialData = new ProjectFinancialData(projectId)
-        return financialData
+        return new ProjectFinancialData(projectId)
     }
 
     private void mockSaveProjectFinancialData(Long projectId) {
-        ProjectFinancialData financialData = this.prepareProjectFinancialDataWithCost(projectId)
+        def financialData = this.prepareProjectFinancialDataWithCost(projectId)
         this.projectFinancialDataRepository.save(_ as ProjectFinancialData) >> {
             Cost cost = financialData.costs.iterator().next()
             TestUtils.setFieldForObject(cost, "id", COST_ID)

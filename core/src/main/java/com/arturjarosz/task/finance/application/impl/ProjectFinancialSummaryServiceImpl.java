@@ -1,17 +1,15 @@
 package com.arturjarosz.task.finance.application.impl;
 
+import com.arturjarosz.task.dto.TotalProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto;
-import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService;
 import com.arturjarosz.task.finance.domain.SummationStrategy;
 import com.arturjarosz.task.finance.infrastructure.FinancialDataRepository;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialSummaryRepository;
-import com.arturjarosz.task.finance.model.FinancialData;
 import com.arturjarosz.task.finance.model.PartialFinancialData;
 import com.arturjarosz.task.finance.model.PartialFinancialDataType;
 import com.arturjarosz.task.finance.model.ProjectFinancialSummary;
-import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl;
 import com.arturjarosz.task.project.application.ProjectValidator;
@@ -62,19 +60,19 @@ public class ProjectFinancialSummaryServiceImpl implements ProjectFinancialSumma
     @Override
     public ProjectFinancialSummary createProjectFinancialSummary(Long projectId) {
         this.projectValidator.validateProjectExistence(projectId);
-        ProjectFinancialSummary projectFinancialSummary = new ProjectFinancialSummary(projectId);
+        var projectFinancialSummary = new ProjectFinancialSummary(projectId);
         projectFinancialSummary = this.projectFinancialSummaryRepository.save(projectFinancialSummary);
         return projectFinancialSummary;
     }
 
     @Override
     public void recalculateSupervision(Long supervisionId, Long supervisionFinancialDataId) {
-        SupervisionRatesDto supervisionRatesDto = this.financialDataQueryService.getSupervisionRatesDto(supervisionId);
+        var supervisionRatesDto = this.financialDataQueryService.getSupervisionRatesDto(supervisionId);
         List<SupervisionVisitFinancialDto> supervisionVisitFinancialDtos = this.financialDataQueryService.getVisitsFinancialDto(
                 supervisionId);
-        FinancialData financialData = this.financialDataRepository.getById(supervisionFinancialDataId);
+        var financialData = this.financialDataRepository.getReferenceById(supervisionFinancialDataId);
 
-        BigDecimal value = new BigDecimal("0");
+        var value = new BigDecimal("0");
         value = value.add(BigDecimal.valueOf(supervisionRatesDto.getBaseNetRate().doubleValue()));
 
         if (supervisionVisitFinancialDtos != null) {
@@ -95,17 +93,16 @@ public class ProjectFinancialSummaryServiceImpl implements ProjectFinancialSumma
 
     @Override
     public void recalculateProjectFinancialSummary(long projectId) {
-        ProjectFinancialSummary projectFinancialSummary = this.projectFinancialSummaryRepository.findProjectFinancialSummaryByProjectId(
+        var projectFinancialSummary = this.projectFinancialSummaryRepository.findProjectFinancialSummaryByProjectId(
                 projectId);
-        FinancialValueDto totalFinancialData = new FinancialValueDto();
+        var totalFinancialData = new FinancialValueDto();
 
-        Map<PartialFinancialDataType, FinancialValueDto> typeToFinancialValue = this.typeToPartialFinancialDataServices.values()
-                .stream()
-                .collect(Collectors.toMap(PartialFinancialDataService::getType,
+        var typeToFinancialValue = this.typeToPartialFinancialDataServices.values().stream().collect(
+                Collectors.toMap(PartialFinancialDataService::getType,
                         service -> service.getPartialFinancialData(projectId)));
 
-        typeToFinancialValue.put(PartialFinancialDataType.TOTAL, this.recalculateTotalProjectValue(typeToFinancialValue,
-                totalFinancialData));
+        typeToFinancialValue.put(PartialFinancialDataType.TOTAL,
+                this.recalculateTotalProjectValue(typeToFinancialValue, totalFinancialData));
 
         for (Map.Entry<PartialFinancialDataType, FinancialValueDto> entry : typeToFinancialValue.entrySet()) {
             projectFinancialSummary.updatePartialData(entry.getKey(), entry.getValue());
@@ -116,7 +113,7 @@ public class ProjectFinancialSummaryServiceImpl implements ProjectFinancialSumma
 
     @Override
     public void removeFinancialSummaryForProject(Long projectId) {
-        ProjectFinancialSummary projectFinancialSummary = this.projectFinancialSummaryRepository.findProjectFinancialSummaryByProjectId(
+        var projectFinancialSummary = this.projectFinancialSummaryRepository.findProjectFinancialSummaryByProjectId(
                 projectId);
         this.projectFinancialSummaryRepository.deleteById(projectFinancialSummary.getId());
     }

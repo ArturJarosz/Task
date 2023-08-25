@@ -1,12 +1,9 @@
 package com.arturjarosz.task.architect.application.mapper;
 
-import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
-import com.arturjarosz.task.architect.application.dto.ArchitectDto;
 import com.arturjarosz.task.architect.model.Architect;
-import com.arturjarosz.task.sharedkernel.model.Money;
+import com.arturjarosz.task.dto.ArchitectDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
@@ -17,19 +14,10 @@ public interface ArchitectDtoMapper {
 
     @Mapping(source = "personName.firstName", target = "firstName")
     @Mapping(source = "personName.lastName", target = "lastName")
-    @Mapping(target = "projectsValue", source = "projectsValue", qualifiedByName = "moneyToDouble")
     ArchitectDto architectToArchitectDto(Architect architect);
 
     @Mapping(source = "firstName", target = "personName.firstName")
     @Mapping(source = "lastName", target = "personName.lastName")
-    Architect architectBasicDtoToArchitect(ArchitectBasicDto architectBasicDto);
+    Architect architectDtoToArchitect(ArchitectDto architectDto);
 
-    @Mapping(source = "personName.firstName", target = "firstName")
-    @Mapping(source = "personName.lastName", target = "lastName")
-    ArchitectBasicDto architectToArchitectBasicDto(Architect architect);
-
-    @Named("moneyToDouble")
-    default double moneyToDouble(Money money) {
-        return money.getValue().doubleValue();
-    }
 }

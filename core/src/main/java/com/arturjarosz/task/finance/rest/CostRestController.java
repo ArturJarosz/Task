@@ -1,61 +1,50 @@
 package com.arturjarosz.task.finance.rest;
 
+import com.arturjarosz.task.dto.CostDto;
 import com.arturjarosz.task.finance.application.CostApplicationService;
-import com.arturjarosz.task.project.application.dto.CostDto;
+import com.arturjarosz.task.rest.CostApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("projects")
-public class CostRestController {
+public class CostRestController implements CostApi {
 
     @NonNull
     private final CostApplicationService costApplicationService;
 
-    @PostMapping("{projectId}/costs")
-    public ResponseEntity<CostDto> createCost(@PathVariable("projectId") Long projectId,
-                                              @RequestBody CostDto costDto) {
-        CostDto createdCostDto = this.costApplicationService.createCost(projectId, costDto);
-        HttpHeaders headers = new HttpHeadersBuilder()
+    @Override
+    public ResponseEntity<CostDto> createCost(CostDto costDto, Long projectId) {
+        var createdCostDto = this.costApplicationService.createCost(projectId, costDto);
+        var headers = new HttpHeadersBuilder()
                 .withLocation("/projects/{projectId}/costs/{costId}", projectId, createdCostDto.getId())
                 .build();
         return new ResponseEntity<>(createdCostDto, headers, HttpStatus.CREATED);
     }
 
-    @GetMapping("costs/{costId}")
-    public ResponseEntity<CostDto> getCost(@PathVariable("costId") Long costId) {
+    @Override
+    public ResponseEntity<CostDto> getCost(Long costId) {
         return new ResponseEntity<>(this.costApplicationService.getCost(costId), HttpStatus.OK);
     }
 
-    @GetMapping("{projectId}/costs")
-    public ResponseEntity<List<CostDto>> getCostsForProject(@PathVariable("projectId") Long projectId) {
+    @Override
+    public ResponseEntity<List<CostDto>> getCostsForProject(Long projectId) {
         return new ResponseEntity<>(this.costApplicationService.getCosts(projectId), HttpStatus.OK);
     }
 
-    @PutMapping("{projectId}/costs/{costId}")
-    public ResponseEntity<CostDto> updateCost(@PathVariable("projectId") Long projectId,
-                                              @PathVariable("costId") Long costId, @RequestBody CostDto costDto) {
+    @Override
+    public ResponseEntity<CostDto> updateCost(CostDto costDto, Long projectId, Long costId) {
         return new ResponseEntity<>(this.costApplicationService.updateCost(projectId, costId, costDto), HttpStatus.OK);
     }
 
-    @DeleteMapping("{projectId}/costs/{costId}")
-    public ResponseEntity<Void> deleteCost(@PathVariable("projectId") Long projectId,
-                                           @PathVariable("costId") Long costId) {
+    @Override
+    public ResponseEntity<Void> deleteCost(Long projectId, Long costId) {
         this.costApplicationService.deleteCost(projectId, costId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

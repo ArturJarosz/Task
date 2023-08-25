@@ -1,7 +1,7 @@
 package com.arturjarosz.task.supervision.application;
 
-import com.arturjarosz.task.supervision.application.dto.SupervisionDto;
-import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto;
+import com.arturjarosz.task.dto.SupervisionDto;
+import com.arturjarosz.task.dto.SupervisionVisitDto;
 
 public interface SupervisionApplicationService {
 

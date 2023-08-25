@@ -1,6 +1,7 @@
 package com.arturjarosz.task.client.application;
 
-import com.arturjarosz.task.client.application.dto.ClientDto;
+
+import com.arturjarosz.task.dto.ClientDto;
 
 import java.util.List;
 
@@ -44,5 +45,5 @@ public interface ClientApplicationService {
     /**
      * Loads list of basic clients data or all existing clients.
      */
-    List<ClientDto> getBasicClients();
+    List<ClientDto> getClients();
 }

@@ -1,6 +1,6 @@
 package com.arturjarosz.task.contractor.application;
 
-import com.arturjarosz.task.contractor.application.dto.ContractorDto;
+import com.arturjarosz.task.dto.ContractorDto;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.application;
 
-import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
-import com.arturjarosz.task.project.application.dto.ProjectDto;
+import com.arturjarosz.task.dto.ProjectCreateDto;
+import com.arturjarosz.task.dto.ProjectDto;
 
 import java.util.List;
 

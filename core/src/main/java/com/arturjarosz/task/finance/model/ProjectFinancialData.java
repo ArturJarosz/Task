@@ -1,9 +1,9 @@
 package com.arturjarosz.task.finance.model;
 
 
-import com.arturjarosz.task.finance.application.dto.ContractorJobDto;
-import com.arturjarosz.task.finance.application.dto.InstallmentDto;
-import com.arturjarosz.task.finance.application.dto.SupplyDto;
+import com.arturjarosz.task.dto.ContractorJobDto;
+import com.arturjarosz.task.dto.InstallmentDto;
+import com.arturjarosz.task.dto.SupplyDto;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import jakarta.persistence.CascadeType;
@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Getter;
 import org.hibernate.annotations.Where;
 
 import java.io.Serial;
@@ -30,6 +31,7 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
 
     @Serial
     private static final long serialVersionUID = -6717212464303174748L;
+    @Getter
     @Column(name = "PROJECT_ID", nullable = false)
     private Long projectId;
 
@@ -37,15 +39,18 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
     @JoinColumn(name = "PROJECT_FINANCIAL_DATA_ID", nullable = false)
     private Set<Cost> costs;
 
+    @Getter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_FINANCIAL_DATA_ID", nullable = false)
     private Set<Installment> installments;
 
+    @Getter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_FINANCIAL_DATA_ID", nullable = false)
     @Where(clause = "TYPE = 'CONTRACTOR_JOB'")
     private Set<ContractorJob> contractorJobs;
 
+    @Getter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_FINANCIAL_DATA_ID", nullable = false)
     @Where(clause = "TYPE = 'SUPPLY'")
@@ -57,10 +62,6 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
 
     public ProjectFinancialData(Long projectId) {
         this.projectId = projectId;
-    }
-
-    public Long getProjectId() {
-        return this.projectId;
     }
 
     public void setProjectId(Long projectId) {
@@ -112,10 +113,6 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
         this.installments.removeIf(installment -> installment.getId().equals(installmentId));
     }
 
-    public Set<Installment> getInstallments() {
-        return this.installments;
-    }
-
     public void addContractorJob(ContractorJob contractorJob) {
         if (this.contractorJobs == null) {
             this.contractorJobs = new HashSet<>();
@@ -128,10 +125,6 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
             this.supplies = new HashSet<>();
         }
         this.supplies.add(supply);
-    }
-
-    public Set<ContractorJob> getContractorJobs() {
-        return this.contractorJobs;
     }
 
     public void removeContractorJob(Long contractorJobId) {
@@ -154,10 +147,6 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
                 .orElseThrow(IllegalArgumentException::new);
         supply.update(supplyDto);
         return supply;
-    }
-
-    public Set<Supply> getSupplies() {
-        return this.supplies;
     }
 
     public void removeSupply(Long supplyId) {

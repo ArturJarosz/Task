@@ -1,13 +1,14 @@
 package com.arturjarosz.task.supervision.model;
 
+import com.arturjarosz.task.dto.SupervisionDto;
+import com.arturjarosz.task.dto.SupervisionVisitDto;
 import com.arturjarosz.task.finance.model.FinancialData;
 import com.arturjarosz.task.finance.model.PartialFinancialData;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
-import com.arturjarosz.task.supervision.application.dto.SupervisionDto;
-import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -33,19 +34,23 @@ public class Supervision extends AbstractAggregateRoot implements PartialFinanci
     @AttributeOverride(name = "value", column = @Column(name = "VISIT_NET_RATE", nullable = false))
     private Money visitNetRate;
 
+    @Getter
     @Column(name = "HOURS_COUNT")
     private int hoursCount;
 
+    @Getter
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "FINANCIAL_DATA_ID", referencedColumnName = "ID")
     private FinancialData financialData;
 
     private String note;
 
+    @Getter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "SUPERVISION_ID")
     private Set<SupervisionVisit> supervisionVisits;
 
+    @Getter
     @Column(name = "PROJECT_ID", nullable = false)
     private Long projectId;
 
@@ -84,16 +89,8 @@ public class Supervision extends AbstractAggregateRoot implements PartialFinanci
         return this.visitNetRate.getValue();
     }
 
-    public int getHoursCount() {
-        return this.hoursCount;
-    }
-
     public void setHoursCount(int hoursCount) {
         this.hoursCount = hoursCount;
-    }
-
-    public FinancialData getFinancialData() {
-        return this.financialData;
     }
 
     public void addSupervisionVisit(SupervisionVisit supervisionVisit) {
@@ -105,14 +102,6 @@ public class Supervision extends AbstractAggregateRoot implements PartialFinanci
 
     public void removeSupervisionVisit(Long supervisionVisitId) {
         this.supervisionVisits.removeIf(supervisionVisit -> supervisionVisit.getId().equals(supervisionVisitId));
-    }
-
-    public Set<SupervisionVisit> getSupervisionVisits() {
-        return this.supervisionVisits;
-    }
-
-    public Long getProjectId() {
-        return this.projectId;
     }
 
     public SupervisionVisit updateSupervisionVisit(Long supervisionVisitId,

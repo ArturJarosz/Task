@@ -1,7 +1,7 @@
 package com.arturjarosz.task.data;
 
 import com.arturjarosz.task.architect.application.ArchitectApplicationService;
-import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
+import com.arturjarosz.task.dto.ArchitectDto;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,12 +34,12 @@ public class ArchitectsInitializer implements DataInitializer {
     }
 
     private void importArchitectsFromFile() {
-        List<ArchitectBasicDto> architectBasicDtos = this.prepareArchitects("architectsSample.json");
-        architectBasicDtos.forEach(this.architectApplicationService::createArchitect);
+        List<ArchitectDto> architectDtos = this.prepareArchitects("architectsSample.json");
+        architectDtos.forEach(this.architectApplicationService::createArchitect);
     }
 
-    private List<ArchitectBasicDto> prepareArchitects(String filename) {
-        ObjectMapper mapper = new ObjectMapper();
+    private List<ArchitectDto> prepareArchitects(String filename) {
+        var mapper = new ObjectMapper();
         BaseValidator.assertNotEmpty(filename, "File name cannot be empty.");
         try (InputStream inputStream = ArchitectsInitializer.class.getClassLoader().getResourceAsStream(filename)) {
             return mapper.readValue(inputStream, new TypeReference<>() {

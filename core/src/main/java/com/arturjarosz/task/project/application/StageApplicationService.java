@@ -1,6 +1,6 @@
 package com.arturjarosz.task.project.application;
 
-import com.arturjarosz.task.project.application.dto.StageDto;
+import com.arturjarosz.task.dto.StageDto;
 
 import java.util.List;
 

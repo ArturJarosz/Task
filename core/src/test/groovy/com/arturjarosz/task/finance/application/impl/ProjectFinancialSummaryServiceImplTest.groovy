@@ -1,7 +1,7 @@
 package com.arturjarosz.task.finance.application.impl
 
+import com.arturjarosz.task.dto.TotalProjectFinancialSummaryDto
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto
-import com.arturjarosz.task.finance.application.dto.TotalProjectFinancialSummaryDto
 import com.arturjarosz.task.finance.domain.PartialFinancialDataService
 import com.arturjarosz.task.finance.infrastructure.FinancialDataRepository
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialSummaryRepository
@@ -18,22 +18,21 @@ import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import spock.lang.Specification
 
 class ProjectFinancialSummaryServiceImplTest extends Specification {
-    private static final Long PROJECT_ID = 1L
-    private static final Long NOT_EXISTING_PROJECT_ID = 2L
-    private static final Long SUPERVISION_ID = 10L
-    private static final Long SUPERVISION_FINANCIAL_DATA_ID = 100L
-    private static final Long PROJECT_FINANCIAL_DATA_ID = 1000L
-    private static final BigDecimal SUPERVISION_VALUE = new BigDecimal("1200.0")
-    private static final BigDecimal BASE_NET_RATE = new BigDecimal("600.0")
-    private static final int HOURS_COUNT_PAYABLE_VISIT = 4
-    private static final int HOURS_COUNT_NOT_PAYABLE_VISIT = 5
-    private static final BigDecimal HOURLY_RATE = new BigDecimal("100.0")
-    private static final BigDecimal VISIT_RATE = new BigDecimal("200.0")
-
-    private static final BigDecimal COST_GROSS_VALUE = new BigDecimal("100")
-    private static final BigDecimal COST_NET_VALUE = new BigDecimal("80")
-    private static final BigDecimal COST_VAT_TAX_VALUE = new BigDecimal("15")
-    private static final BigDecimal COST_INCOME_TAX_VALUE = new BigDecimal("5")
+    static final Long PROJECT_ID = 1L
+    static final Long NOT_EXISTING_PROJECT_ID = 2L
+    static final Long SUPERVISION_ID = 10L
+    static final Long SUPERVISION_FINANCIAL_DATA_ID = 100L
+    static final Long PROJECT_FINANCIAL_DATA_ID = 1000L
+    static final BigDecimal SUPERVISION_VALUE = new BigDecimal("1200.0")
+    static final BigDecimal BASE_NET_RATE = new BigDecimal("600.0")
+    static final int HOURS_COUNT_PAYABLE_VISIT = 4
+    static final int HOURS_COUNT_NOT_PAYABLE_VISIT = 5
+    static final BigDecimal HOURLY_RATE = new BigDecimal("100.0")
+    static final BigDecimal VISIT_RATE = new BigDecimal("200.0")
+    static final BigDecimal COST_GROSS_VALUE = new BigDecimal("100")
+    static final BigDecimal COST_NET_VALUE = new BigDecimal("80")
+    static final BigDecimal COST_VAT_TAX_VALUE = new BigDecimal("15")
+    static final BigDecimal COST_INCOME_TAX_VALUE = new BigDecimal("5")
 
     def projectFinancialDataRepository = Mock(ProjectFinancialSummaryRepository)
     def projectValidator = Mock(ProjectValidator)
@@ -71,8 +70,7 @@ class ProjectFinancialSummaryServiceImplTest extends Specification {
         given:
             mockProjectFinancialDataRepositorySave()
         when:
-            ProjectFinancialSummary projectFinancialData = this.projectFinancialDataService
-                    .createProjectFinancialSummary(PROJECT_ID)
+            def projectFinancialData = this.projectFinancialDataService.createProjectFinancialSummary(PROJECT_ID)
         then:
             projectFinancialData.projectId == PROJECT_ID
     }
@@ -110,7 +108,7 @@ class ProjectFinancialSummaryServiceImplTest extends Specification {
         given:
             this.mockValidateProjectExistenceOnNotExistingProject()
         when:
-            TotalProjectFinancialSummaryDto projectFinancialDataDto =
+            def projectFinancialDataDto =
                     this.projectFinancialDataService.getTotalProjectFinancialSummary(NOT_EXISTING_PROJECT_ID)
         then:
             thrown(Exception)
@@ -121,19 +119,19 @@ class ProjectFinancialSummaryServiceImplTest extends Specification {
         given:
             this.mockLoadTotalProjectFinancialData()
         when:
-            TotalProjectFinancialSummaryDto projectFinancialDataDto =
+            def projectFinancialDataDto =
                     this.projectFinancialDataService.getTotalProjectFinancialSummary(PROJECT_ID)
         then:
             projectFinancialDataDto != null
     }
 
     private void mockProjectFinancialDataRepositorySave() {
-        ProjectFinancialSummary projectFinancialData = new ProjectFinancialSummary(PROJECT_ID)
+        def projectFinancialData = new ProjectFinancialSummary(PROJECT_ID)
         1 * this.projectFinancialDataRepository.save(_ as ProjectFinancialSummary) >> projectFinancialData
     }
 
     private void mockFinancialDataGetSupervisionRates() {
-        SupervisionRatesDto supervisionRatesDto = new SupervisionRatesDto()
+        def supervisionRatesDto = new SupervisionRatesDto()
         supervisionRatesDto.hourlyNetRate = HOURLY_RATE
         supervisionRatesDto.baseNetRate = BASE_NET_RATE
         supervisionRatesDto.visitNetRate = VISIT_RATE
@@ -142,11 +140,11 @@ class ProjectFinancialSummaryServiceImplTest extends Specification {
 
     private void mockFinancialDataQueryServiceGetVisitsFinancialDto() {
         List<SupervisionVisitFinancialDto> supervisionVisitFinancialDtos = new ArrayList<>()
-        SupervisionVisitFinancialDto supervisionVisitFinancialDto = new SupervisionVisitFinancialDto()
+        def supervisionVisitFinancialDto = new SupervisionVisitFinancialDto()
         supervisionVisitFinancialDto.hoursCount = HOURS_COUNT_PAYABLE_VISIT
         supervisionVisitFinancialDto.payable = true
         supervisionVisitFinancialDtos.add(supervisionVisitFinancialDto)
-        SupervisionVisitFinancialDto notPayableSupervisionVisitFinancialDto = new SupervisionVisitFinancialDto()
+        def notPayableSupervisionVisitFinancialDto = new SupervisionVisitFinancialDto()
         notPayableSupervisionVisitFinancialDto.hoursCount = HOURS_COUNT_NOT_PAYABLE_VISIT
         notPayableSupervisionVisitFinancialDto.payable = false
         supervisionVisitFinancialDtos.add(notPayableSupervisionVisitFinancialDto)
@@ -154,8 +152,8 @@ class ProjectFinancialSummaryServiceImplTest extends Specification {
     }
 
     private void mockFinancialDataRepositoryLoad() {
-        FinancialData financialData = new FinancialData(new Money(0), true, true)
-        1 * this.financialDataRepository.getById(SUPERVISION_FINANCIAL_DATA_ID) >> financialData
+        def financialData = new FinancialData(new Money(0), true, true)
+        1 * this.financialDataRepository.getReferenceById(SUPERVISION_FINANCIAL_DATA_ID) >> financialData
     }
 
     private void mockLoadProjectFinancialDataWithProjectId() {
@@ -164,13 +162,13 @@ class ProjectFinancialSummaryServiceImplTest extends Specification {
     }
 
     private ProjectFinancialSummary buildProjectFinancialData(long projectId, long id) {
-        ProjectFinancialSummary projectFinancialData = new ProjectFinancialSummary(projectId)
+        def projectFinancialData = new ProjectFinancialSummary(projectId)
         TestUtils.setFieldForObject(projectFinancialData, "id", id)
         return projectFinancialData
     }
 
     private void mockCostProvidePartialFinancialData() {
-        FinancialValueDto costsValue = new FinancialValueDto(grossValue: COST_GROSS_VALUE, netValue: COST_NET_VALUE,
+        def costsValue = new FinancialValueDto(grossValue: COST_GROSS_VALUE, netValue: COST_NET_VALUE,
                 vatTax: COST_VAT_TAX_VALUE, incomeTax: COST_INCOME_TAX_VALUE)
         partialFinancialDataService.getPartialFinancialData(PROJECT_ID) >> costsValue
     }

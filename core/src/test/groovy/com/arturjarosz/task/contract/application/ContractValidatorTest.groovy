@@ -1,23 +1,23 @@
 package com.arturjarosz.task.contract.application
 
-import com.arturjarosz.task.contract.application.dto.ContractDto
 import com.arturjarosz.task.contract.model.Contract
+import com.arturjarosz.task.dto.ContractDto
 import spock.lang.Specification
 
 import java.time.LocalDate
 
 class ContractValidatorTest extends Specification {
-    private static final long CONTRACT_ID = 1L
-    private static final double OFFER_VALUE = 200.00
-    private static final LocalDate FUTURE_DATE = LocalDate.of(2100, 01, 01)
-    private static final LocalDate PAST_DATE = LocalDate.of(1900, 01, 01)
-    private static final LocalDate PAST_DATE_2 = LocalDate.of(1800, 01, 01)
+    static final long CONTRACT_ID = 1L
+    static final double OFFER_VALUE = 200.00
+    static final LocalDate FUTURE_DATE = LocalDate.of(2100, 01, 01)
+    static final LocalDate PAST_DATE = LocalDate.of(1900, 01, 01)
+    static final LocalDate PAST_DATE_2 = LocalDate.of(1800, 01, 01)
 
     def contractValidator = new ContractValidator()
 
     def "validateOffer should throw an exception with proper exception message when dto is not correct"() {
         given:
-            ContractDto contractDto = givenContractDto
+            def contractDto = givenContractDto
             if (contractDto != null) {
                 contractDto.offerValue = givenOfferValue as Double
                 contractDto.deadline = givenDeadline
@@ -37,7 +37,7 @@ class ContractValidatorTest extends Specification {
 
     def "validateOffer show not throw any exception when contractDto has proper data"() {
         given:
-            ContractDto contractDto = new ContractDto(offerValue: OFFER_VALUE, deadline: FUTURE_DATE)
+            def contractDto = new ContractDto(offerValue: OFFER_VALUE, deadline: FUTURE_DATE)
         when:
             this.contractValidator.validateOffer(contractDto)
         then:
@@ -56,7 +56,7 @@ class ContractValidatorTest extends Specification {
 
     def "validateSignContractDto should throw an exception with proper exception message when dto is not correct"() {
         given:
-            ContractDto contractDto = givenContractDto
+            def contractDto = givenContractDto
             if (contractDto != null) {
                 contractDto.offerValue = offerValue
                 contractDto.signingDate = signingDate
@@ -83,7 +83,7 @@ class ContractValidatorTest extends Specification {
 
     def "validateSignContractDto should not throw any exception on proper contractDto"() {
         given:
-            ContractDto contractDto = new ContractDto(offerValue: OFFER_VALUE, signingDate: PAST_DATE_2,
+            def contractDto = new ContractDto(offerValue: OFFER_VALUE, signingDate: PAST_DATE_2,
                     deadline: FUTURE_DATE, startDate: PAST_DATE)
         when:
             this.contractValidator.validateSignContractDto(contractDto)
@@ -107,7 +107,7 @@ class ContractValidatorTest extends Specification {
 
     def "validateTerminateContractDto should not throw any exception on proper contractDto"() {
         given:
-            ContractDto contractDto = new ContractDto(endDate: FUTURE_DATE)
+            def contractDto = new ContractDto(endDate: FUTURE_DATE)
         when:
             this.contractValidator.validateTerminateContractDto(contractDto)
         then:
@@ -116,7 +116,7 @@ class ContractValidatorTest extends Specification {
 
     def "validateCompleteContractDto should throw and exception with proper exception message when contractDto is not correct"() {
         given:
-            ContractDto contractDto = givenContractDto
+            def contractDto = givenContractDto
         when:
             this.contractValidator.validateCompleteContractDto(contractDto)
         then:
@@ -130,7 +130,7 @@ class ContractValidatorTest extends Specification {
 
     def "validateCompleteContractDto should not throw any exception on proper contractDto"() {
         given:
-            ContractDto contractDto = new ContractDto(endDate: FUTURE_DATE)
+            def contractDto = new ContractDto(endDate: FUTURE_DATE)
         when:
             this.contractValidator.validateCompleteContractDto(contractDto)
         then:

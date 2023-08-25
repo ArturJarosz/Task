@@ -1,10 +1,10 @@
 package com.arturjarosz.task.project.application.mapper;
 
-import com.arturjarosz.task.architect.application.dto.ArchitectDto;
-import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.contract.model.Contract;
-import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
-import com.arturjarosz.task.project.application.dto.ProjectDto;
+import com.arturjarosz.task.dto.ArchitectDto;
+import com.arturjarosz.task.dto.ClientDto;
+import com.arturjarosz.task.dto.ProjectCreateDto;
+import com.arturjarosz.task.dto.ProjectDto;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
 import com.arturjarosz.task.sharedkernel.model.Money;
@@ -22,10 +22,11 @@ public interface ProjectDtoMapper {
     @Mapping(target = "projectWorkflow", source = "projectWorkflow")
     @Mapping(source = "projectCreateDto.name", target = "name")
     @Mapping(source = "contractId", target = "contractId")
+    @Mapping(source = "projectCreateDto.type", target = "projectType")
     Project projectCreateDtoToProject(ProjectCreateDto projectCreateDto, Long contractId,
             ProjectWorkflow projectWorkflow);
 
-    @Mapping(source = "project.projectType", target = "projectType")
+    @Mapping(source = "project.projectType", target = "type")
     @Mapping(source = "project.name", target = "name")
     @Mapping(source = "project.startDate", target = "startDate")
     @Mapping(source = "project.note", target = "note")
@@ -38,26 +39,26 @@ public interface ProjectDtoMapper {
     @Mapping(source = "architectDto", target = "architect")
     ProjectDto projectToProjectDto(ClientDto clientDto, ArchitectDto architectDto, Project project);
 
-    @Mapping(source = "project.projectType", target = "projectType")
+    @Mapping(source = "project.projectType", target = "type")
     @Mapping(source = "project.name", target = "name")
     @Mapping(source = "project.startDate", target = "startDate")
     @Mapping(source = "project.note", target = "note")
     @Mapping(source = "project.id", target = "id")
-    @Mapping(source = "contract.id", target = "contractDto.id")
-    @Mapping(source = "contract.status", target = "contractDto.contractStatus")
+    @Mapping(source = "contract.id", target = "contract.id")
+    @Mapping(source = "contract.status", target = "contract.status")
     @Mapping(source = "project.status", target = "status")
     @Mapping(source = "project.endDate", target = "endDate")
-    @Mapping(source = "contract.offerValue", target = "contractDto.projectValue", qualifiedByName = "moneyToDouble")
+    @Mapping(source = "contract.offerValue", target = "contract.projectValue", qualifiedByName = "moneyToDouble")
     ProjectDto projectToProjectDto(Project project, Contract contract);
 
-    @Mapping(source = "projectType", target = "projectType")
+    @Mapping(source = "projectType", target = "type")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "startDate", target = "startDate")
     @Mapping(source = "note", target = "note")
     @Mapping(source = "id", target = "id")
     ProjectDto projectToProjectDto(Project project);
 
-    @Mapping(source = "project.projectType", target = "projectType")
+    @Mapping(source = "project.projectType", target = "type")
     @Mapping(source = "project.name", target = "name")
     @Mapping(source = "project.id", target = "id")
     @Mapping(source = "project.startDate", target = "startDate", ignore = true)

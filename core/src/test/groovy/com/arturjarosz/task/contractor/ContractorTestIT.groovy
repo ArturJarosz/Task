@@ -1,7 +1,7 @@
 package com.arturjarosz.task.contractor
 
 import com.arturjarosz.task.configuration.BaseTestIT
-import com.arturjarosz.task.contractor.application.dto.ContractorDto
+import com.arturjarosz.task.dto.ContractorDto
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.transaction.Transactional
@@ -55,7 +55,7 @@ class ContractorTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Contractor category has to be specified."
     }
 
@@ -91,7 +91,7 @@ class ContractorTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Contractor with id ${String.format("%,d", NOT_EXISTING_CONTRACTOR_ID)} does not exist."
     }
 
@@ -108,7 +108,7 @@ class ContractorTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Name of the Contractor has to be specified."
     }
 
@@ -121,7 +121,7 @@ class ContractorTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Contractor with id ${String.format("%,d", NOT_EXISTING_CONTRACTOR_ID)} does not exist."
     }
 
@@ -138,7 +138,7 @@ class ContractorTestIT extends BaseTestIT {
             def fetchContractorResponse = this.mockMvc.perform(MockMvcRequestBuilders.get("$CONTRACTORS_URI/${createdContractor.id}"))
                     .andReturn().response
             fetchContractorResponse.status == HttpStatus.BAD_REQUEST.value()
-            ErrorMessage errorMessage = MAPPER.readValue(fetchContractorResponse.contentAsString, ErrorMessage.class)
+            ErrorMessage errorMessage = MAPPER.readValue(fetchContractorResponse.contentAsString, ErrorMessage)
             errorMessage.message == "Contractor with id ${String.format("%,d", createdContractor.id)} does not exist."
     }
 
@@ -151,7 +151,7 @@ class ContractorTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Contractor with id ${String.format("%,d", NOT_EXISTING_CONTRACTOR_ID)} does not exist."
     }
 

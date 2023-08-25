@@ -1,8 +1,8 @@
 package com.arturjarosz.task.supplier
 
 import com.arturjarosz.task.configuration.BaseTestIT
+import com.arturjarosz.task.dto.SupplierDto
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
-import com.arturjarosz.task.supplier.application.dto.SupplierDto
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -59,7 +59,7 @@ class SupplierTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Name of Supplier cannot be empty."
     }
 
@@ -92,7 +92,7 @@ class SupplierTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Supplier with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist."
     }
 
@@ -109,7 +109,7 @@ class SupplierTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Name of Supplier cannot be empty."
     }
 
@@ -122,7 +122,7 @@ class SupplierTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Supplier with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist."
     }
 
@@ -147,7 +147,7 @@ class SupplierTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Supplier with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist."
     }
 

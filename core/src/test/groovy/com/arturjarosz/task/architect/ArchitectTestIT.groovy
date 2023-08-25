@@ -1,8 +1,8 @@
 package com.arturjarosz.task.architect
 
-import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
-import com.arturjarosz.task.architect.application.dto.ArchitectDto
+
 import com.arturjarosz.task.configuration.BaseTestIT
+import com.arturjarosz.task.dto.ArchitectDto
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,21 +16,21 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 class ArchitectTestIT extends BaseTestIT {
-    private static final String FIRST_NAME = "First Name"
-    private static final String LAST_NAME = "Last Name"
-    private static final String NEW_FIRST_NAME = "New Name"
-    private static final String NEW_LAST_NAME = "New Last Name"
-    private static final String ARCHITECTS_URI = "/architects"
-    private static final ObjectMapper MAPPER = new ObjectMapper()
+    static final String FIRST_NAME = "First Name"
+    static final String LAST_NAME = "Last Name"
+    static final String NEW_FIRST_NAME = "New Name"
+    static final String NEW_LAST_NAME = "New Last Name"
+    static final String ARCHITECTS_URI = "/architects"
+    static final ObjectMapper MAPPER = new ObjectMapper()
 
     @Autowired
-    private MockMvc mockMvc
+    MockMvc mockMvc
 
     @Transactional
     def "Creating Architect with proper DTO should return created architect and 201 code"() {
         given:
-            ArchitectBasicDto architectBasicDto = this.prepareArchitectBasicDto(FIRST_NAME, LAST_NAME)
-            String requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
+            def requestArchitectDto = this.prepareArchitectDto(FIRST_NAME, LAST_NAME)
+            def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(requestArchitectDto)
         when:
             def response = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
@@ -40,7 +40,7 @@ class ArchitectTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.CREATED.value()
         and:
-            ArchitectDto architectDto = MAPPER.readValue(response.contentAsString, ArchitectDto.class)
+            ArchitectDto architectDto = MAPPER.readValue(response.contentAsString, ArchitectDto)
             architectDto.firstName == FIRST_NAME
             architectDto.lastName == LAST_NAME
         and:
@@ -51,8 +51,8 @@ class ArchitectTestIT extends BaseTestIT {
     @Transactional
     def "Creating Architect with not proper DTO should return code 400 and not create new Architect"() {
         given:
-            ArchitectBasicDto architectBasicDto = this.prepareArchitectBasicDto(null, LAST_NAME)
-            String requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
+            def architectDto = this.prepareArchitectDto(null, LAST_NAME)
+            def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectDto)
         when:
             def response = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
@@ -67,14 +67,14 @@ class ArchitectTestIT extends BaseTestIT {
     @Transactional
     def "Removing existing Architect will return code 200 and remove it from database"() {
         given:
-            ArchitectBasicDto architectBasicDto = this.prepareArchitectBasicDto(FIRST_NAME, LAST_NAME)
-            String requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
+            def requestArchitectDto = this.prepareArchitectDto(FIRST_NAME, LAST_NAME)
+            def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(requestArchitectDto)
             def createdArchitectString = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
                             .header("Content-Type", "application/json")
                             .content(requestBody)
             ).andReturn().response.contentAsString
-            ArchitectDto architectDto = MAPPER.readValue(createdArchitectString, ArchitectDto.class)
+            def architectDto = MAPPER.readValue(createdArchitectString, ArchitectDto)
         when:
             def response = this.mockMvc.perform(
                     MockMvcRequestBuilders
@@ -97,21 +97,21 @@ class ArchitectTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Architect with id 2,000 does not exist."
     }
 
     @Transactional
     def "Calling /get with existing Architect id should return ArchitectDto with proper data"() {
         given:
-            ArchitectBasicDto architectBasicDto = this.prepareArchitectBasicDto(FIRST_NAME, LAST_NAME)
-            String requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
+            def architectDto = this.prepareArchitectDto(FIRST_NAME, LAST_NAME)
+            def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectDto)
             def createdArchitectString = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
                             .header("Content-Type", "application/json")
                             .content(requestBody)
             ).andReturn().response.contentAsString
-            ArchitectDto createdArchitectDto = MAPPER.readValue(createdArchitectString, ArchitectDto.class)
+            def createdArchitectDto = MAPPER.readValue(createdArchitectString, ArchitectDto)
         when:
             def response = this.mockMvc.perform(
                     MockMvcRequestBuilders
@@ -121,7 +121,7 @@ class ArchitectTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.OK.value()
         and:
-            ArchitectDto architect = MAPPER.readValue(response.contentAsString, ArchitectDto.class)
+            def architect = MAPPER.readValue(response.contentAsString, ArchitectDto)
             architect.firstName == FIRST_NAME
             architect.lastName == LAST_NAME
     }
@@ -138,23 +138,23 @@ class ArchitectTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Architect with id 2,000 does not exist."
     }
 
     @Transactional
     def "Updating existing Architect with proper data should update Architect and return updated ArchitectDto"() {
         given:
-            ArchitectBasicDto architectBasicDto = this.prepareArchitectBasicDto(FIRST_NAME, LAST_NAME)
+            def architectDto = this.prepareArchitectDto(FIRST_NAME, LAST_NAME)
             String requestBodyCreate =
-                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectDto)
             def createdArchitectString = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
                             .header("Content-Type", "application/json")
                             .content(requestBodyCreate)
             ).andReturn().response.contentAsString
-            ArchitectDto createdArchitectDto = MAPPER.readValue(createdArchitectString, ArchitectDto.class)
-            ArchitectDto updateArchitectDto = this.prepareArchitectDto(NEW_FIRST_NAME, NEW_LAST_NAME)
+            def createdArchitectDto = MAPPER.readValue(createdArchitectString, ArchitectDto)
+            def updateArchitectDto = this.prepareArchitectDto(NEW_FIRST_NAME, NEW_LAST_NAME)
             String requestBodyUpdate =
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateArchitectDto)
         when:
@@ -167,7 +167,7 @@ class ArchitectTestIT extends BaseTestIT {
         then:
             updatedArchitectString.status == HttpStatus.OK.value()
         and:
-            ArchitectDto architect = MAPPER.readValue(updatedArchitectString.contentAsString, ArchitectDto.class)
+            def architect = MAPPER.readValue(updatedArchitectString.contentAsString, ArchitectDto)
             architect.firstName == NEW_FIRST_NAME
             architect.lastName == NEW_LAST_NAME
     }
@@ -175,16 +175,16 @@ class ArchitectTestIT extends BaseTestIT {
     @Transactional
     def "Updating existing Architect with not proper data should not update Architect and return error message"() {
         given:
-            ArchitectBasicDto architectBasicDto = this.prepareArchitectBasicDto(FIRST_NAME, LAST_NAME)
+            def architectDto = this.prepareArchitectDto(FIRST_NAME, LAST_NAME)
             String requestBodyCreate =
-                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectBasicDto)
+                    MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectDto)
             def createdArchitectString = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
                             .header("Content-Type", "application/json")
                             .content(requestBodyCreate)
             ).andReturn().response.contentAsString
-            ArchitectDto createdArchitectDto = MAPPER.readValue(createdArchitectString, ArchitectDto.class)
-            ArchitectDto updateArchitectDto = this.prepareArchitectDto("", NEW_LAST_NAME)
+            def createdArchitectDto = MAPPER.readValue(createdArchitectString, ArchitectDto)
+            def updateArchitectDto = this.prepareArchitectDto("", NEW_LAST_NAME)
             String requestBodyUpdate =
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateArchitectDto)
         when:
@@ -197,14 +197,14 @@ class ArchitectTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Architect first name cannot be empty."
     }
 
     @Transactional
     def "Updating not existing Architect should return error message"() {
         given:
-            ArchitectDto updateArchitectDto = this.prepareArchitectDto("", NEW_LAST_NAME)
+            def updateArchitectDto = this.prepareArchitectDto("", NEW_LAST_NAME)
             String requestBodyUpdate =
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateArchitectDto)
         when:
@@ -217,7 +217,7 @@ class ArchitectTestIT extends BaseTestIT {
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
-            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage.class)
+            def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Architect with id 2,000 does not exist."
     }
 
@@ -232,18 +232,12 @@ class ArchitectTestIT extends BaseTestIT {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
         then:
             response.statusCode() == HttpStatus.OK.value()
-            List<ArchitectBasicDto> architects = MAPPER.readValue(response.body(), List<ArchitectBasicDto>.class)
+            List<ArchitectDto> architects = MAPPER.readValue(response.body(), List<ArchitectDto>)
             architects.isEmpty()
     }
 
 
-    private ArchitectBasicDto prepareArchitectBasicDto(String firstName, String lastName) {
-        ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(firstName: firstName, lastName: lastName)
-        return architectBasicDto
-    }
-
     private ArchitectDto prepareArchitectDto(String firstName, String lastName) {
-        ArchitectDto architectDto = new ArchitectDto(firstName: firstName, lastName: lastName)
-        return architectDto
+        return new ArchitectDto(firstName: firstName, lastName: lastName)
     }
 }

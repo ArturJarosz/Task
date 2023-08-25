@@ -1,7 +1,7 @@
 package com.arturjarosz.task.data;
 
 import com.arturjarosz.task.client.application.ClientApplicationService;
-import com.arturjarosz.task.client.application.dto.ClientDto;
+import com.arturjarosz.task.dto.ClientDto;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

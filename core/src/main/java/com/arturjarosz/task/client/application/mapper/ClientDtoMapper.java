@@ -1,9 +1,9 @@
 package com.arturjarosz.task.client.application.mapper;
 
-import com.arturjarosz.task.client.application.dto.AddressDto;
-import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.client.model.Client;
-import com.arturjarosz.task.client.model.ClientType;
+import com.arturjarosz.task.dto.AddressDto;
+import com.arturjarosz.task.dto.ClientDto;
+import com.arturjarosz.task.dto.ClientTypeDto;
 import com.arturjarosz.task.sharedkernel.model.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,7 +24,6 @@ public interface ClientDtoMapper {
     @Mapping(source = "address", target = "contact.address")
     @Mapping(source = "note", target = "note")
     @Mapping(source = "telephone", target = "contact.telephone")
-    @Mapping(target = "projectValue", source = ".", qualifiedByName = "getProjectsValue")
     ClientDto clientToClientDto(Client client);
 
     @Mapping(target = "clientType", source = ".", qualifiedByName = "deductClientType")
@@ -34,11 +33,11 @@ public interface ClientDtoMapper {
     ClientDto clientToClientBasicDto(Client client);
 
     @Named("deductClientType")
-    default ClientType deductClientType(Client client) {
+    default ClientTypeDto deductClientType(Client client) {
         if (client.isPrivate()) {
-            return ClientType.PRIVATE;
+            return ClientTypeDto.PRIVATE;
         }
-        return ClientType.CORPORATE;
+        return ClientTypeDto.CORPORATE;
     }
 
     @Named("getEmailValue")
@@ -47,11 +46,6 @@ public interface ClientDtoMapper {
             return null;
         }
         return client.getEmail().getValue();
-    }
-
-    @Named("getProjectsValue")
-    default Double getProjectsValue(Client client) {
-        return client.getProjectsValue().getValue().doubleValue();
     }
 
     @Named("addressDtoToAddress")

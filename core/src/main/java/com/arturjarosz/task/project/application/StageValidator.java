@@ -1,9 +1,9 @@
 package com.arturjarosz.task.project.application;
 
+import com.arturjarosz.task.dto.StageDto;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.model.Installment;
 import com.arturjarosz.task.finance.model.ProjectFinancialData;
-import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
@@ -68,7 +68,7 @@ public class StageValidator {
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.NAME));
         assertNotEmpty(stageDto.getName(),
                 createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.NAME));
-        assertNotNull(stageDto.getStageType(),
+        assertNotNull(stageDto.getType(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TYPE));
     }
 

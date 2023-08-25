@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.model;
 
-import com.arturjarosz.task.finance.application.dto.ContractorJobDto;
+import com.arturjarosz.task.dto.ContractorJobDto;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
