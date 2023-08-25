@@ -107,6 +107,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             updateContractResponse.status == HttpStatus.OK.value()
             def contractDto = MAPPER.readValue(updateContractResponse.contentAsString, ContractDto)
             contractDto.status == ContractStatusDto.ACCEPTED
+            contractDto.id != null
     }
 
     @Transactional
@@ -153,6 +154,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             updateContractResponse.status == HttpStatus.OK.value()
             def contractDto = MAPPER.readValue(updateContractResponse.contentAsString, ContractDto)
             contractDto.status == ContractStatusDto.REJECTED
+            contractDto.id != null
     }
 
     @Transactional
@@ -220,6 +222,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def contractDto = MAPPER.readValue(newOfferContractResponse.contentAsString, ContractDto)
             contractDto.status == ContractStatusDto.OFFER
             contractDto.offerValue == NEW_OFFER
+            contractDto.id != null
     }
 
     @Transactional
@@ -303,6 +306,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             signContractResponse.status == HttpStatus.OK.value()
             def contractDto = MAPPER.readValue(signContractResponse.contentAsString, ContractDto)
             contractDto.status == ContractStatusDto.SIGNED
+            contractDto.id != null
     }
 
     @Transactional
@@ -356,6 +360,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             terminateContractResponse.status == HttpStatus.OK.value()
             def contractDto = MAPPER.readValue(terminateContractResponse.contentAsString, ContractDto)
             contractDto.status == ContractStatusDto.TERMINATED
+            contractDto.id != null
     }
 
     @Transactional
@@ -436,6 +441,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             completeContractResponse.status == HttpStatus.OK.value()
             def contractDto = MAPPER.readValue(completeContractResponse.contentAsString, ContractDto)
             contractDto.status == ContractStatusDto.COMPLETED
+            contractDto.id != null
     }
 
     @Transactional

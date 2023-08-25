@@ -2847,6 +2847,9 @@ components:
     Contract:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         offerValue:
           type: number
           format: double
