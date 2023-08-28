@@ -33,8 +33,10 @@ public class Email extends AbstractValueObject<Email> implements ValueObject<Ema
     }
 
     public void setValue(String value) {
-        BaseValidator.assertIsTrue(this.isValid(value),
-                BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID, ModelExceptionCodes.EMAIL), value);
+        if (value != null) {
+            BaseValidator.assertIsTrue(this.isValid(value),
+                    BaseValidator.createMessageCode(ExceptionCodes.NOT_VALID, ModelExceptionCodes.EMAIL), value);
+        }
         this.value = value;
     }
 
