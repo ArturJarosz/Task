@@ -4,9 +4,8 @@ import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.ClientValidator;
 import com.arturjarosz.task.client.application.mapper.ClientDtoMapper;
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository;
-import com.arturjarosz.task.client.model.Client;
-import com.arturjarosz.task.client.model.ClientType;
 import com.arturjarosz.task.dto.ClientDto;
+import com.arturjarosz.task.dto.ClientTypeDto;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import lombok.NonNull;
@@ -32,12 +31,14 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
         this.clientValidator.validateClientBasicDto(clientDto);
         var clientType = clientDto.getClientType();
-        Client client;
-        if (ClientType.CORPORATE.equals(ClientType.valueOf(clientType.name()))) {
-            client = Client.createCorporateClient(clientDto.getCompanyName());
+
+        if (clientType == ClientTypeDto.CORPORATE) {
+            this.clientValidator.validateCorporateClient(clientDto);
         } else {
-            client = Client.createPrivateClient(clientDto.getFirstName(), clientDto.getLastName());
+            this.clientValidator.validatePrivateClient(clientDto);
         }
+
+        var client = ClientDtoMapper.INSTANCE.clientDtoToClient(clientDto);
         client = this.clientRepository.save(client);
 
         LOG.debug("Client created");
@@ -76,44 +77,30 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         this.clientValidator.validateClientExistence(maybeClient, clientId);
         var client = maybeClient.orElseThrow(ResourceNotFoundException::new);
         this.clientValidator.validateClientDtoPresence(clientDto);
+
         if (client.isPrivate()) {
             this.clientValidator.validatePrivateClient(clientDto);
-            client.updatePersonName(clientDto.getFirstName(), clientDto.getLastName());
+            client = ClientDtoMapper.INSTANCE.clientDtoToPrivateClient(clientDto);
         } else {
             this.clientValidator.validateCorporateClient(clientDto);
-            client.updateCompanyName(clientDto.getCompanyName());
+            client = ClientDtoMapper.INSTANCE.clientDtoToCorporateClient(clientDto);
         }
-        if (clientDto.getContact() != null) {
-            this.updateClientContact(clientDto, client);
-        }
-        if (clientDto.getNote() != null) {
-            client.updateNote(clientDto.getNote());
-        }
+
         this.clientRepository.save(client);
 
         LOG.debug("Client with id {} updated.", clientId);
         return ClientDtoMapper.INSTANCE.clientToClientDto(client);
     }
 
-    private void updateClientContact(ClientDto clientDto, Client client) {
-        if (clientDto.getContact().getAddress() != null) {
-            client.updateAddress(ClientDtoMapper.INSTANCE.addressDtoToAddress(clientDto.getContact().getAddress()));
-        }
-        if (clientDto.getContact().getEmail() != null) {
-            client.updateEmail(clientDto.getContact().getEmail());
-        }
-        client.updateTelephone(clientDto.getContact().getTelephone());
-    }
-
     @Override
     public List<ClientDto> getClients() {
-        return this.clientRepository.findAll().stream().map(ClientDtoMapper.INSTANCE::clientToClientBasicDto).toList();
+        return this.clientRepository.findAll().stream().map(ClientDtoMapper.INSTANCE::clientToClientDto).toList();
     }
 
     @Override
     public ClientDto getClientBasicData(Long clientId) {
         var maybeClient = this.clientRepository.findById(clientId);
         this.clientValidator.validateClientExistence(maybeClient, clientId);
-        return ClientDtoMapper.INSTANCE.clientToClientBasicDto(maybeClient.orElseThrow(ResourceNotFoundException::new));
+        return ClientDtoMapper.INSTANCE.clientToClientDto(maybeClient.orElseThrow(ResourceNotFoundException::new));
     }
 }
