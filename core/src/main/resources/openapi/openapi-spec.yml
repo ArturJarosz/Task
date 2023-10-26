@@ -10,6 +10,8 @@ tags:
     description: Architect API and models
   - name: client
     description: Client API and models
+  - name: configuration
+    description: Configuration of the application
   - name: contract
     description: Contract API and models
   - name: contractor
@@ -291,6 +293,21 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
+
+  /configuration:
+    get:
+      tags:
+        - configuration
+      summary: Gets application configuration
+      operationId: getConfiguration
+      responses:
+        200:
+          description: Application configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationConfiguration"
+
 
   /contracts/{contractId}/reject:
     post:
@@ -3320,3 +3337,51 @@ components:
       properties:
         message:
           type: string
+
+    ConfigurationEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+
+    ApplicationConfiguration:
+      type: object
+      properties:
+        supplierTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        contractorTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        contractStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        projectTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        projectStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        stageTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        stageStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        taskTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        taskStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
