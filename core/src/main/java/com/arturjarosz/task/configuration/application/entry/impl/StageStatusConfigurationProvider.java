@@ -1,19 +1,18 @@
 package com.arturjarosz.task.configuration.application.entry.impl;
 
-import com.arturjarosz.task.configuration.application.entry.EntryProvider;
-import com.arturjarosz.task.contract.status.ContractStatus;
+import com.arturjarosz.task.configuration.application.entry.ConfigurationProvider;
 import com.arturjarosz.task.dto.ApplicationConfigurationDto;
 import com.arturjarosz.task.dto.ConfigurationEntryDto;
+import com.arturjarosz.task.project.status.stage.StageStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
 @Component
-public class ContractStatusEntryProvider implements EntryProvider {
-
+public class StageStatusConfigurationProvider implements ConfigurationProvider {
     @Override
     public ApplicationConfigurationDto addConfigurationEntry(ApplicationConfigurationDto configurationDto) {
-        configurationDto.setContractStatuses(Arrays.stream(ContractStatus.values())
+        configurationDto.setStageStatuses(Arrays.stream(StageStatus.values())
                 .map(category -> new ConfigurationEntryDto()
                         .id(category.name())
                         .label(this.createLabel(category.name()))

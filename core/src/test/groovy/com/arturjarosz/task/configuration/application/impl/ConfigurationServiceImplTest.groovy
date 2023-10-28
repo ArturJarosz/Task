@@ -1,6 +1,6 @@
 package com.arturjarosz.task.configuration.application.impl
 
-import com.arturjarosz.task.configuration.application.entry.EntryProvider
+import com.arturjarosz.task.configuration.application.entry.ConfigurationProvider
 import com.arturjarosz.task.dto.ApplicationConfigurationDto
 import com.arturjarosz.task.dto.ConfigurationEntryDto
 import spock.lang.Specification
@@ -19,7 +19,7 @@ class ConfigurationServiceImplTest extends Specification {
     }
 }
 
-class TestProvider1 implements EntryProvider {
+class TestProvider1 implements ConfigurationProvider {
     static final CONTRACTOR_TYPE_1 = "Contractor Type 1"
     static final CONTRACTOR_TYPE_2 = "Contractor Type 2"
 
@@ -31,7 +31,7 @@ class TestProvider1 implements EntryProvider {
     }
 }
 
-class TestProvider2 implements EntryProvider {
+class TestProvider2 implements ConfigurationProvider {
     static final SUPPLIER_TYPE_1 = "Supplier Type 1"
     static final SUPPLIER_TYPE_2 = "Supplier Type 2"
 
