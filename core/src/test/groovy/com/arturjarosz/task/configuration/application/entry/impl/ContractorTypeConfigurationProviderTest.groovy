@@ -3,9 +3,9 @@ package com.arturjarosz.task.configuration.application.entry.impl
 import com.arturjarosz.task.dto.ApplicationConfigurationDto
 import spock.lang.Specification
 
-class ContractorTypeEntryProviderTest extends Specification {
+class ContractorTypeConfigurationProviderTest extends Specification {
 
-    def subject = new ContractorTypeEntryProvider()
+    def subject = new ContractorTypeConfigurationProvider()
 
     def "addConfigurationEntry should add contractorTypes to application configuration"() {
         given:

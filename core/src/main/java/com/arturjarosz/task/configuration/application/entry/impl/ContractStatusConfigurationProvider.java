@@ -1,6 +1,6 @@
 package com.arturjarosz.task.configuration.application.entry.impl;
 
-import com.arturjarosz.task.configuration.application.entry.EntryProvider;
+import com.arturjarosz.task.configuration.application.entry.ConfigurationProvider;
 import com.arturjarosz.task.contract.status.ContractStatus;
 import com.arturjarosz.task.dto.ApplicationConfigurationDto;
 import com.arturjarosz.task.dto.ConfigurationEntryDto;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 
 @Component
-public class ContractStatusEntryProvider implements EntryProvider {
+public class ContractStatusConfigurationProvider implements ConfigurationProvider {
 
     @Override
     public ApplicationConfigurationDto addConfigurationEntry(ApplicationConfigurationDto configurationDto) {

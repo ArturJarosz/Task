@@ -1,22 +1,22 @@
 package com.arturjarosz.task.configuration.application.entry.impl;
 
-import com.arturjarosz.task.configuration.application.entry.EntryProvider;
+import com.arturjarosz.task.client.model.ClientType;
+import com.arturjarosz.task.configuration.application.entry.ConfigurationProvider;
 import com.arturjarosz.task.dto.ApplicationConfigurationDto;
 import com.arturjarosz.task.dto.ConfigurationEntryDto;
-import com.arturjarosz.task.project.model.TaskType;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
 @Component
-public class TaskTypeEntryProvider implements EntryProvider {
+public class ClientTypeConfigurationProvider implements ConfigurationProvider {
 
     @Override
     public ApplicationConfigurationDto addConfigurationEntry(ApplicationConfigurationDto configurationDto) {
-        configurationDto.setTaskTypes(Arrays.stream(TaskType.values())
-                .map(category -> new ConfigurationEntryDto()
-                        .id(category.name())
-                        .label(this.createLabel(category.name()))
+        configurationDto.setClientTypes(Arrays.stream(ClientType.values())
+                .map(type -> new ConfigurationEntryDto()
+                        .id(type.name())
+                        .label(this.createLabel(type.name()))
                 ).toList());
         return configurationDto;
     }

@@ -3,11 +3,11 @@ package com.arturjarosz.task.configuration.application.entry.impl
 import com.arturjarosz.task.dto.ApplicationConfigurationDto
 import spock.lang.Specification
 
-class ProjectTypeEntryProviderTest extends Specification {
+class ProjectTypeConfigurationProviderTest extends Specification {
 
-    def subject = new ProjectTypeEntryProvider()
+    def subject = new ProjectTypeConfigurationProvider()
 
-    def "addConfigurationEntry should add contractorTypes to application configuration"() {
+    def "addConfigurationEntry should add project types to application configuration"() {
         given:
             def configuration = new ApplicationConfigurationDto()
         when:

@@ -3385,3 +3385,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ConfigurationEntry"
+        clientTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"

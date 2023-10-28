@@ -3,17 +3,18 @@ package com.arturjarosz.task.configuration.application.entry.impl
 import com.arturjarosz.task.dto.ApplicationConfigurationDto
 import spock.lang.Specification
 
-class TaskStatusEntryProviderTest extends Specification {
-    def subject = new TaskStatusEntryProvider()
+class StageTypeConfigurationProviderTest extends Specification {
 
-    def "addConfigurationEntry should add contractorTypes to application configuration"() {
+    def subject = new StageTypeConfigurationProvider()
+
+    def "addConfigurationEntry should add stage types to application configuration"() {
         given:
             def configuration = new ApplicationConfigurationDto()
         when:
             def result = subject.addConfigurationEntry(configuration)
         then:
-            result.taskStatuses != null
-            result.taskStatuses[0].id != null
-            result.taskStatuses[0].label != null
+            result.stageTypes != null
+            result.stageTypes[0].id != null
+            result.stageTypes[0].label != null
     }
 }

@@ -2,7 +2,7 @@ package com.arturjarosz.task.configuration.application.entry;
 
 import com.arturjarosz.task.dto.ApplicationConfigurationDto;
 
-public interface EntryProvider {
+public interface ConfigurationProvider {
     ApplicationConfigurationDto addConfigurationEntry(ApplicationConfigurationDto configurationDto);
 
     default String createLabel(String name) {
