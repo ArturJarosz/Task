@@ -1,13 +1,17 @@
 package com.arturjarosz.task.project.application.mapper;
 
 import com.arturjarosz.task.dto.TaskDto;
+import com.arturjarosz.task.dto.TaskStatusDto;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.TaskType;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.status.task.TaskWorkflow;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 @Mapper
 public interface TaskDtoMapper {
@@ -33,5 +37,13 @@ public interface TaskDtoMapper {
     @Mapping(target = "endDate", ignore = true)
     TaskDto taskToTaskBasicDto(Task task);
 
+    @Mapping(source = "task", target = "nextStatuses", qualifiedByName = "getNextStatuses")
     TaskDto taskToTaskDto(Task task);
+
+    @Named("getNextStatuses")
+    default List<TaskStatusDto> getNextStatuses(Task task) {
+        return task.getStatus().getPossibleStatusTransitions().stream()
+                .map(status -> TaskStatusDto.fromValue(status.getStatusName()))
+                .toList();
+    }
 }

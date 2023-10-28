@@ -92,6 +92,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         return StageDtoMapper.INSTANCE.stageDtoFromStage(stage);
     }
 
+    @Transactional
     @Override
     public StageDto getStage(Long projectId, Long stageId) {
         LOG.debug("Loading Stage with id {} for Project with id {}.", stageId, projectId);

@@ -6,6 +6,7 @@ import com.arturjarosz.task.client.application.ClientValidator
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
 import com.arturjarosz.task.contract.application.impl.ContractServiceImpl
 import com.arturjarosz.task.contract.model.Contract
+import com.arturjarosz.task.contract.status.ContractStatus
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow
 import com.arturjarosz.task.contract.utils.ContractBuilder
 import com.arturjarosz.task.dto.ContractDto
@@ -60,6 +61,7 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.mockProjectRepositorySaveNewProject()
             this.mockContractServiceCreateContract()
             def projectCreateDto = this.prepareCreateProjectDto()
+
         when:
             this.projectApplicationService.createProject(projectCreateDto)
 
@@ -289,9 +291,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto)
         then:
-            1 * this.projectRepository.save({
-                Project project ->
-                    project.endDate == PROJECT_END_DATE
+            1 * this.projectRepository.save({ Project project -> project.endDate == PROJECT_END_DATE
             })
     }
 
@@ -475,13 +475,14 @@ class ProjectApplicationServiceImplTest extends Specification {
     }
 
     private Project prepareNewlyCreatedProject() {
-        return new ProjectBuilder().withId(NEW_PROJECT_ID)
+        return new ProjectBuilder().withId(NEW_PROJECT_ID).withStatus(ProjectStatus.TO_DO)
                 .build()
     }
 
     private void mockContractServiceCreateContract() {
         this.contractService.createContract(_ as ContractDto) >> new ContractBuilder()
                 .withId(CONTRACT_ID)
+                .withStatus(ContractStatus.OFFER)
                 .withContractValue(new Money(PROJECT_VALUE)).build()
     }
 }

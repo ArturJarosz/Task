@@ -3,8 +3,10 @@ package com.arturjarosz.task.project.application.mapper;
 import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.dto.ArchitectDto;
 import com.arturjarosz.task.dto.ClientDto;
+import com.arturjarosz.task.dto.ContractStatusDto;
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
+import com.arturjarosz.task.dto.ProjectStatusDto;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
 import com.arturjarosz.task.sharedkernel.model.Money;
@@ -13,6 +15,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ProjectDtoMapper {
@@ -37,6 +41,7 @@ public interface ProjectDtoMapper {
     @Mapping(source = "clientDto.companyName", target = "client.companyName")
     @Mapping(source = "clientDto.clientType", target = "client.clientType")
     @Mapping(source = "architectDto", target = "architect")
+    @Mapping(source = "project", target = "nextStatuses", qualifiedByName = "getNextStatuses")
     ProjectDto projectToProjectDto(ClientDto clientDto, ArchitectDto architectDto, Project project);
 
     @Mapping(source = "project.projectType", target = "type")
@@ -49,6 +54,8 @@ public interface ProjectDtoMapper {
     @Mapping(source = "project.status", target = "status")
     @Mapping(source = "project.endDate", target = "endDate")
     @Mapping(source = "contract.offerValue", target = "contract.projectValue", qualifiedByName = "moneyToDouble")
+    @Mapping(source = "project", target = "nextStatuses", qualifiedByName = "getNextStatuses")
+    @Mapping(source = "contract", target = "contract.nextStatuses", qualifiedByName = "getNextContractStatuses")
     ProjectDto projectToProjectDto(Project project, Contract contract);
 
     @Mapping(source = "projectType", target = "type")
@@ -56,6 +63,7 @@ public interface ProjectDtoMapper {
     @Mapping(source = "startDate", target = "startDate")
     @Mapping(source = "note", target = "note")
     @Mapping(source = "id", target = "id")
+    @Mapping(source = "project", target = "nextStatuses", qualifiedByName = "getNextStatuses")
     ProjectDto projectToProjectDto(Project project);
 
     @Mapping(source = "project.projectType", target = "type")
@@ -74,5 +82,19 @@ public interface ProjectDtoMapper {
     @Named("moneyToDouble")
     default Double moneyToDouble(Money value) {
         return value.getValue().doubleValue();
+    }
+
+    @Named("getNextStatuses")
+    default List<ProjectStatusDto> getNextStatuses(Project project) {
+        return project.getStatus().getPossibleStatusTransitions().stream()
+                .map(status -> ProjectStatusDto.fromValue(status.getStatusName()))
+                .toList();
+    }
+
+    @Named("getNextContractStatuses")
+    default List<ContractStatusDto> getNextContractStatuses(Contract contract) {
+        return contract.getStatus().getPossibleStatusTransitions().stream()
+                .map(status -> ContractStatusDto.fromValue(status.getStatusName()))
+                .toList();
     }
 }

@@ -119,6 +119,8 @@ class TaskTestIT extends BaseTestIT {
             createdTaskDto.id != null
             createdTaskDto.name == properTaskDto.name
             createdTaskDto.type == properTaskDto.type
+        and:
+            !createdTaskDto.nextStatuses.empty
     }
 
     @Transactional
@@ -241,6 +243,8 @@ class TaskTestIT extends BaseTestIT {
             def updatedTaskDto = MAPPER.readValue(taskUpdateResponse.contentAsString, TaskDto)
             updatedTaskDto.name == properTaskUpdateDto.name
             updatedTaskDto.note == properTaskUpdateDto.note
+        and:
+            !createdTaskDto.nextStatuses.empty
     }
 
     @Transactional
@@ -281,6 +285,8 @@ class TaskTestIT extends BaseTestIT {
         and:
             def getTaskDto = MAPPER.readValue(getTaskResponse.contentAsString, TaskDto)
             getTaskDto.id == createdTaskDto.id
+        and:
+            !createdTaskDto.nextStatuses.empty
     }
 
     @Transactional
