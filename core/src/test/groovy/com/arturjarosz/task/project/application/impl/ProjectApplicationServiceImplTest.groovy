@@ -6,13 +6,8 @@ import com.arturjarosz.task.client.application.ClientValidator
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
 import com.arturjarosz.task.contract.application.impl.ContractServiceImpl
 import com.arturjarosz.task.contract.model.Contract
-import com.arturjarosz.task.contract.status.ContractStatus
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow
-import com.arturjarosz.task.contract.utils.ContractBuilder
-import com.arturjarosz.task.dto.ContractDto
-import com.arturjarosz.task.dto.ProjectCreateDto
-import com.arturjarosz.task.dto.ProjectDto
-import com.arturjarosz.task.dto.ProjectTypeDto
+import com.arturjarosz.task.dto.*
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService
 import com.arturjarosz.task.finance.application.impl.ProjectFinancialSummaryServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
@@ -20,7 +15,6 @@ import com.arturjarosz.task.project.domain.impl.ProjectDomainServiceImpl
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.status.project.ProjectStatus
-import com.arturjarosz.task.sharedkernel.model.Money
 import com.arturjarosz.task.utils.ProjectBuilder
 import spock.lang.Specification
 
@@ -480,9 +474,9 @@ class ProjectApplicationServiceImplTest extends Specification {
     }
 
     private void mockContractServiceCreateContract() {
-        this.contractService.createContract(_ as ContractDto) >> new ContractBuilder()
-                .withId(CONTRACT_ID)
-                .withStatus(ContractStatus.OFFER)
-                .withContractValue(new Money(PROJECT_VALUE)).build()
+        this.contractService.createContract(_ as ContractDto) >> new ContractDto()
+                .id(CONTRACT_ID)
+                .status(ContractStatusDto.OFFER)
+                .offerValue(PROJECT_VALUE)
     }
 }

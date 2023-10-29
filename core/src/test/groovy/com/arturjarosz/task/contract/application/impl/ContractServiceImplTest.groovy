@@ -66,13 +66,12 @@ class ContractServiceImplTest extends Specification {
             def contract = this.contractService.createContract(contractDto)
         then:
             noExceptionThrown()
-            1 * this.contractRepository.save({
-                def savedContract ->
-                    savedContract.deadline == DEADLINE
-                    savedContract.getOfferValue().getValue().doubleValue() == OFFER_VALUE
-                    savedContract.status == ContractStatus.OFFER
-            }) >> new ContractBuilder().withId(EXISTING_CONTRACT_ID).withStatus(ContractStatus.OFFER).build()
-            contract.status == ContractStatus.OFFER
+            1 * this.contractRepository.save({ def savedContract ->
+                savedContract.deadline == DEADLINE
+                savedContract.getOfferValue().getValue().doubleValue() == OFFER_VALUE
+                savedContract.status == ContractStatus.OFFER
+            }) >> new ContractBuilder().withId(EXISTING_CONTRACT_ID).withStatus(ContractStatus.OFFER).withContractValue(new Money(OFFER_VALUE)).build()
+            contract.status == ContractStatusDto.OFFER
             contract.id == EXISTING_CONTRACT_ID
     }
 
@@ -304,9 +303,7 @@ class ContractServiceImplTest extends Specification {
     }
 
     private void mockContractStatusTransitionServiceCreateOfferReturnContractWithOfferStatus() {
-        1 * this.contractStatusTransitionService.createOffer({
-            Contract contract ->
-                contract.changeStatus(ContractStatus.OFFER)
+        1 * this.contractStatusTransitionService.createOffer({ Contract contract -> contract.changeStatus(ContractStatus.OFFER)
         })
     }
 
@@ -321,23 +318,17 @@ class ContractServiceImplTest extends Specification {
     }
 
     private mockContractStatusTransitionServiceRejectOffer() {
-        1 * this.contractStatusTransitionService.rejectOffer({
-            Contract contract ->
-                contract.changeStatus(ContractStatus.REJECTED)
+        1 * this.contractStatusTransitionService.rejectOffer({ Contract contract -> contract.changeStatus(ContractStatus.REJECTED)
         })
     }
 
     private mockContractStatusTransitionMakeNewOffer() {
-        1 * this.contractStatusTransitionService.makeNewOffer({
-            Contract contract ->
-                contract.changeStatus(ContractStatus.OFFER)
+        1 * this.contractStatusTransitionService.makeNewOffer({ Contract contract -> contract.changeStatus(ContractStatus.OFFER)
         })
     }
 
     private mockContractStatusTransitionAcceptOffer() {
-        1 * this.contractStatusTransitionService.acceptOffer({
-            Contract contract ->
-                contract.changeStatus(ContractStatus.ACCEPTED)
+        1 * this.contractStatusTransitionService.acceptOffer({ Contract contract -> contract.changeStatus(ContractStatus.ACCEPTED)
         })
     }
 
@@ -346,35 +337,26 @@ class ContractServiceImplTest extends Specification {
     }
 
     private mockContractStatusTransitionSign() {
-        1 * this.contractStatusTransitionService.signContract({
-            Contract contract ->
-                contract.changeStatus(ContractStatus.SIGNED)
+        1 * this.contractStatusTransitionService.signContract({ Contract contract -> contract.changeStatus(ContractStatus.SIGNED)
         })
     }
 
     private mockContractValidatorThrowsAnExceptionOnWrongTerminateData() {
-        this.contractValidator.validateTerminateContractDto(
-                _ as ContractDto) >> { throw new IllegalArgumentException() }
+        this.contractValidator.validateTerminateContractDto(_ as ContractDto) >> { throw new IllegalArgumentException() }
     }
 
     private mockContractStatusTransitionTerminate() {
-        1 * this.contractStatusTransitionService.terminateContract({
-            Contract contract ->
-                contract.changeStatus(ContractStatus.TERMINATED)
+        1 * this.contractStatusTransitionService.terminateContract({ Contract contract -> contract.changeStatus(ContractStatus.TERMINATED)
         })
     }
 
     private mockContractStatusTransitionResume() {
-        1 * this.contractStatusTransitionService.resumeContract({
-            Contract contract ->
-                contract.changeStatus(ContractStatus.SIGNED)
+        1 * this.contractStatusTransitionService.resumeContract({ Contract contract -> contract.changeStatus(ContractStatus.SIGNED)
         })
     }
 
     private mockContractStatusTransitionComplete() {
-        1 * this.contractStatusTransitionService.completeContract({
-            Contract contract ->
-                contract.changeStatus(ContractStatus.COMPLETED)
+        1 * this.contractStatusTransitionService.completeContract({ Contract contract -> contract.changeStatus(ContractStatus.COMPLETED)
         })
     }
 }

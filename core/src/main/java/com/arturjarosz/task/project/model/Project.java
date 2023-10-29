@@ -178,4 +178,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         this.status = status;
     }
 
+    public long getContractId() {
+        return this.contractId;
+    }
 }

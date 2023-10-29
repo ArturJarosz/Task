@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.application.mapper;
 import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.dto.ArchitectDto;
 import com.arturjarosz.task.dto.ClientDto;
+import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.dto.ContractStatusDto;
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
@@ -33,8 +34,10 @@ public interface ProjectDtoMapper {
     @Mapping(source = "project.projectType", target = "type")
     @Mapping(source = "project.name", target = "name")
     @Mapping(source = "project.startDate", target = "startDate")
+    @Mapping(source = "project.endDate", target = "endDate")
     @Mapping(source = "project.note", target = "note")
     @Mapping(source = "project.id", target = "id")
+    @Mapping(source = "project.status", target = "status")
     @Mapping(source = "clientDto.id", target = "client.id")
     @Mapping(source = "clientDto.firstName", target = "client.firstName")
     @Mapping(source = "clientDto.lastName", target = "client.lastName")
@@ -42,21 +45,20 @@ public interface ProjectDtoMapper {
     @Mapping(source = "clientDto.clientType", target = "client.clientType")
     @Mapping(source = "architectDto", target = "architect")
     @Mapping(source = "project", target = "nextStatuses", qualifiedByName = "getNextStatuses")
-    ProjectDto projectToProjectDto(ClientDto clientDto, ArchitectDto architectDto, Project project);
+    @Mapping(source = "contractDto", target = "contract")
+    ProjectDto projectToProjectDto(ClientDto clientDto, ArchitectDto architectDto, Project project,
+            ContractDto contractDto);
 
     @Mapping(source = "project.projectType", target = "type")
     @Mapping(source = "project.name", target = "name")
     @Mapping(source = "project.startDate", target = "startDate")
     @Mapping(source = "project.note", target = "note")
     @Mapping(source = "project.id", target = "id")
-    @Mapping(source = "contract.id", target = "contract.id")
-    @Mapping(source = "contract.status", target = "contract.status")
     @Mapping(source = "project.status", target = "status")
     @Mapping(source = "project.endDate", target = "endDate")
-    @Mapping(source = "contract.offerValue", target = "contract.projectValue", qualifiedByName = "moneyToDouble")
     @Mapping(source = "project", target = "nextStatuses", qualifiedByName = "getNextStatuses")
-    @Mapping(source = "contract", target = "contract.nextStatuses", qualifiedByName = "getNextContractStatuses")
-    ProjectDto projectToProjectDto(Project project, Contract contract);
+    @Mapping(source = "contract", target = "contract")
+    ProjectDto projectToProjectDto(Project project, ContractDto contract);
 
     @Mapping(source = "projectType", target = "type")
     @Mapping(source = "name", target = "name")
