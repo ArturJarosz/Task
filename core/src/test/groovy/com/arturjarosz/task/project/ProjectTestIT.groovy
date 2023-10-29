@@ -59,6 +59,11 @@ class ProjectTestIT extends BaseTestIT {
         and:
             !projectDto.nextStatuses.empty
             !projectDto.contract.nextStatuses.empty
+        and:
+            projectDto.contract.id != null
+            projectDto.contract.offerValue != null
+            projectDto.contract.status != null
+            projectDto.contract.nextStatuses != null
     }
 
     @Transactional
@@ -157,6 +162,11 @@ class ProjectTestIT extends BaseTestIT {
         and:
             !projectDto.nextStatuses.empty
             !projectDto.contract.nextStatuses.empty
+        and:
+            projectDto.contract.id != null
+            projectDto.contract.offerValue != null
+            projectDto.contract.status != null
+            projectDto.contract.nextStatuses != null
     }
 
     @Transactional

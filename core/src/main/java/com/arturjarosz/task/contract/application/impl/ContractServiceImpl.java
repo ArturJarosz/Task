@@ -31,7 +31,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Transactional
     @Override
-    public Contract createContract(ContractDto contractDto) {
+    public ContractDto createContract(ContractDto contractDto) {
         LOG.debug("Creating contract.");
 
         this.contractValidator.validateOffer(contractDto);
@@ -40,7 +40,7 @@ public class ContractServiceImpl implements ContractService {
         contract = this.contractRepository.save(contract);
 
         LOG.debug("Contract with id {} created", contract.getId());
-        return contract;
+        return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
     }
 
     @Transactional
@@ -147,6 +147,17 @@ public class ContractServiceImpl implements ContractService {
         this.contractStatusTransitionService.completeContract(contract);
 
         LOG.debug("Contract with id {} has been completed.", contractId);
+        return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
+    }
+
+    @Override
+    public ContractDto getContractForProject(Long contractId) {
+        LOG.debug("Getting contract with id {}", contractId);
+
+        var maybeContract = this.contractRepository.findById(contractId);
+        this.contractValidator.validateContractExistence(maybeContract, contractId);
+        var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
+
         return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
     }
 

@@ -3090,7 +3090,7 @@ components:
         status:
           $ref: "#/components/schemas/ProjectStatus"
         contract:
-          $ref: "#/components/schemas/ProjectContract"
+          $ref: "#/components/schemas/Contract"
         nextStatuses:
           type: array
           items:
@@ -3118,21 +3118,6 @@ components:
         - REJECTED
         - DONE
         - COMPLETED
-
-    ProjectContract:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        projectValue:
-          type: number
-          format: double
-        status:
-          $ref: "#/components/schemas/ContractStatus"
-        nextStatuses:
-          items:
-            $ref: "#/components/schemas/ContractStatus"
 
     ProjectCreate:
       type: object

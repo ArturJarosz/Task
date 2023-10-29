@@ -17,47 +17,39 @@ import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @ApplicationService
 public class ProjectApplicationServiceImpl implements ProjectApplicationService {
     public static final Logger LOG = LoggerFactory.getLogger(ProjectApplicationServiceImpl.class);
 
+    @NonNull
     private final ClientApplicationService clientApplicationService;
+    @NonNull
     private final ClientValidator clientValidator;
+    @NonNull
     private final ArchitectApplicationService architectApplicationService;
+    @NonNull
     private final ArchitectValidator architectValidator;
+    @NonNull
     private final ProjectRepository projectRepository;
+    @NonNull
     private final ProjectDomainService projectDomainService;
+    @NonNull
     private final ProjectValidator projectValidator;
+    @NonNull
     private final ProjectFinancialSummaryService projectFinancialSummaryService;
+    @NonNull
     private final ProjectFinancialDataService projectFinancialDataService;
+    @NonNull
     private final ContractService contractService;
-
-    @Autowired
-    public ProjectApplicationServiceImpl(ClientApplicationService clientApplicationService,
-            ClientValidator clientValidator,
-            ArchitectApplicationService architectApplicationService, ArchitectValidator architectValidator,
-            ProjectRepository projectRepository,
-            ProjectDomainService projectDomainService, ProjectValidator projectValidator,
-            ProjectFinancialSummaryService projectFinancialSummaryService,
-            ProjectFinancialDataService projectFinancialDataService, ContractService contractService) {
-        this.clientApplicationService = clientApplicationService;
-        this.clientValidator = clientValidator;
-        this.architectApplicationService = architectApplicationService;
-        this.architectValidator = architectValidator;
-        this.projectRepository = projectRepository;
-        this.projectDomainService = projectDomainService;
-        this.projectValidator = projectValidator;
-        this.projectFinancialSummaryService = projectFinancialSummaryService;
-        this.projectFinancialDataService = projectFinancialDataService;
-        this.contractService = contractService;
-    }
 
     @Transactional
     @Override
@@ -89,9 +81,10 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         var clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
         var architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
+        var contractDto = this.contractService.getContractForProject(project.getContractId());
 
         LOG.debug("Project with id {} loaded.", projectId);
-        return ProjectDtoMapper.INSTANCE.projectToProjectDto(clientDto, architectDto, project);
+        return ProjectDtoMapper.INSTANCE.projectToProjectDto(clientDto, architectDto, project, contractDto);
     }
 
     @Transactional
