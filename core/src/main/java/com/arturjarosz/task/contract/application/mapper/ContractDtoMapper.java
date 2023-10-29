@@ -2,6 +2,7 @@ package com.arturjarosz.task.contract.application.mapper;
 
 import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.dto.ContractDto;
+import com.arturjarosz.task.dto.ContractStatusDto;
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import org.mapstruct.Mapper;
@@ -9,6 +10,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ContractDtoMapper {
@@ -24,10 +27,18 @@ public interface ContractDtoMapper {
     @Mapping(target = "offerValue", source = "offerValue", qualifiedByName = "moneyToDouble")
     @Mapping(source = "startDate", target = "startDate")
     @Mapping(source = "endDate", target = "endDate")
+    @Mapping(source = "contract", target = "nextStatuses", qualifiedByName = "getNextStatuses")
     ContractDto contractToContractDto(Contract contract);
 
     @Named("moneyToDouble")
     default Double moneyToDouble(Money value) {
         return value.getValue().doubleValue();
+    }
+
+    @Named("getNextStatuses")
+    default List<ContractStatusDto> getNextStatuses(Contract contract) {
+        return contract.getStatus().getPossibleStatusTransitions().stream()
+                .map(status -> ContractStatusDto.fromValue(status.getStatusName()))
+                .toList();
     }
 }

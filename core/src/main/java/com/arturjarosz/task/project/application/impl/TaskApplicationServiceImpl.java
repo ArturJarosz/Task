@@ -119,6 +119,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         return TaskDtoMapper.INSTANCE.taskToTaskDto(this.getTaskById(project, stageId, taskId));
     }
 
+    @Transactional
     @Override
     public TaskDto getTask(Long projectId, Long stageId, Long taskId) {
         LOG.debug("Loading Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);

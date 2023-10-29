@@ -2884,6 +2884,9 @@ components:
           format: date
         status:
           $ref: "#/components/schemas/ContractStatus"
+        nextStatuses:
+          items:
+            $ref: "#/components/schemas/ContractStatus"
 
     ContractStatus:
       type: string
@@ -3088,6 +3091,10 @@ components:
           $ref: "#/components/schemas/ProjectStatus"
         contract:
           $ref: "#/components/schemas/ProjectContract"
+        nextStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectStatus"
 
     Projects:
       type: array
@@ -3123,6 +3130,9 @@ components:
           format: double
         status:
           $ref: "#/components/schemas/ContractStatus"
+        nextStatuses:
+          items:
+            $ref: "#/components/schemas/ContractStatus"
 
     ProjectCreate:
       type: object
@@ -3174,6 +3184,10 @@ components:
           type: integer
         status:
           $ref: "#/components/schemas/StageStatus"
+        nextStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/StageStatus"
 
     Stages:
       type: array
@@ -3216,6 +3230,10 @@ components:
           type: string
         status:
           $ref: "#/components/schemas/TaskStatus"
+        nextStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/TaskStatus"
 
     Tasks:
       type: array

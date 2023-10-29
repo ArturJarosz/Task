@@ -11,6 +11,7 @@ import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
+import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.project.status.task.TaskStatus
 import com.arturjarosz.task.utils.ProjectBuilder
 import com.arturjarosz.task.utils.StageBuilder
@@ -146,9 +147,7 @@ class StageApplicationServiceImplTest extends Specification {
         when:
             this.stageApplicationService.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
-            1 * this.projectRepository.save({
-                Project project ->
-                    project.stages.size() == 0
+            1 * this.projectRepository.save({ Project project -> project.stages.size() == 0
             })
     }
 
@@ -395,7 +394,7 @@ class StageApplicationServiceImplTest extends Specification {
     }
 
     private Stage prepareStage() {
-        return new StageBuilder().withId(STAGE_ID).build()
+        return new StageBuilder().withId(STAGE_ID).withStatus(StageStatus.TO_DO).build()
     }
 
     private StageDto prepareStageDtoForUpdate() {

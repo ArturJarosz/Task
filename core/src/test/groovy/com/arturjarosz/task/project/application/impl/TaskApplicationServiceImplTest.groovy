@@ -519,6 +519,7 @@ class TaskApplicationServiceImplTest extends Specification {
         return new TaskBuilder()
                 .withId(TASK_ID)
                 .withName(TASK_NAME)
+                .withStatus(TaskStatus.TO_DO)
                 .build()
     }
 

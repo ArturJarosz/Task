@@ -63,6 +63,8 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
         and:
             def projectDto = MAPPER.readValue(projectResponse.contentAsString, ProjectDto)
             projectDto.contract.status == ContractStatusDto.OFFER
+        and:
+            !projectDto.contract.nextStatuses.empty
     }
 
     @Transactional
@@ -108,6 +110,8 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def contractDto = MAPPER.readValue(updateContractResponse.contentAsString, ContractDto)
             contractDto.status == ContractStatusDto.ACCEPTED
             contractDto.id != null
+        and:
+            !contractDto.nextStatuses.empty
     }
 
     @Transactional
@@ -155,6 +159,8 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def contractDto = MAPPER.readValue(updateContractResponse.contentAsString, ContractDto)
             contractDto.status == ContractStatusDto.REJECTED
             contractDto.id != null
+        and:
+            !contractDto.nextStatuses.empty
     }
 
     @Transactional
@@ -307,6 +313,8 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def contractDto = MAPPER.readValue(signContractResponse.contentAsString, ContractDto)
             contractDto.status == ContractStatusDto.SIGNED
             contractDto.id != null
+        and:
+            !contractDto.nextStatuses.empty
     }
 
     @Transactional
@@ -361,6 +369,8 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def contractDto = MAPPER.readValue(terminateContractResponse.contentAsString, ContractDto)
             contractDto.status == ContractStatusDto.TERMINATED
             contractDto.id != null
+        and:
+            !contractDto.nextStatuses.empty
     }
 
     @Transactional
@@ -442,6 +452,8 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def contractDto = MAPPER.readValue(completeContractResponse.contentAsString, ContractDto)
             contractDto.status == ContractStatusDto.COMPLETED
             contractDto.id != null
+        and:
+            contractDto.nextStatuses.empty
     }
 
     @Transactional

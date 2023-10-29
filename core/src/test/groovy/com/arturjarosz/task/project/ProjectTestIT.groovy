@@ -56,6 +56,9 @@ class ProjectTestIT extends BaseTestIT {
             ProjectDto projectDto = MAPPER.readValue(projectResponse.contentAsString, ProjectDto)
         and: "Return project location header"
             projectResponse.getHeader("Location") == PROJECTS_URI + "/" + projectDto.id
+        and:
+            !projectDto.nextStatuses.empty
+            !projectDto.contract.nextStatuses.empty
     }
 
     @Transactional
@@ -151,6 +154,9 @@ class ProjectTestIT extends BaseTestIT {
             def projectDto = MAPPER.readValue(creatingProjectResponse.contentAsString, ProjectDto)
             createdProject.name == projectDto.name
             createdProject.id == projectDto.id
+        and:
+            !projectDto.nextStatuses.empty
+            !projectDto.contract.nextStatuses.empty
     }
 
     @Transactional
@@ -197,6 +203,9 @@ class ProjectTestIT extends BaseTestIT {
             createdProject.name == projectDto.name
             createdProject.note == projectDto.note
             createdProject.type == projectDto.type
+        and:
+            !projectDto.nextStatuses.empty
+            !projectDto.contract.nextStatuses.empty
     }
 
     @Transactional
