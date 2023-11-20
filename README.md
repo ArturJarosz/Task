@@ -6,12 +6,8 @@ Task project
 
 #### Building and running tests on last PR or commit
 
-[![PR build and tests](https://github.com/ArturJarosz/Task/actions/workflows/maven.yml/badge.svg?event=push)](https://github.com/ArturJarosz/Task/actions/workflows/maven.yml)
+[![Workflow without publishing](https://github.com/ArturJarosz/Task/actions/workflows/build%20and%20test.yml/badge.svg)](https://github.com/ArturJarosz/Task/actions/workflows/build%20and%20test.yml)
 
-#### Building database from Liquibase changeset
+#### Building, running tests, building maven artifacts and publishing to artifactory
 
-[![](https://github.com/ArturJarosz/Task/actions/workflows/db_test.yml/badge.svg)](https://github.com/ArturJarosz/Task/actions/workflows/db_test.yml)
-
-#### Building and publishing Maven artifacts
-
-[![.github/workflows/publish.yml](https://github.com/ArturJarosz/Task/actions/workflows/publish.yml/badge.svg)](https://github.com/ArturJarosz/Task/actions/workflows/publish.yml)
+[![Publish artifact](https://github.com/ArturJarosz/Task/actions/workflows/publish.yml/badge.svg)](https://github.com/ArturJarosz/Task/actions/workflows/publish.yml)
