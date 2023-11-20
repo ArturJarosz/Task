@@ -262,4 +262,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Artur Jarosz Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/ArturJarosz/Task</url>
+        </repository>
+    </distributionManagement>
+
+
 </project>

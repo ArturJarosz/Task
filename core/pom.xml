@@ -240,7 +240,7 @@
                     <additionalClasspathElements>
                         <classpathElement>com.arturjarosz.task.configuration.ConfigurationIT</classpathElement>
                     </additionalClasspathElements>
-                    <skipTests>false</skipTests>
+                    <skipTests>${skip.tests}</skipTests>
                 </configuration>
             </plugin>
             <plugin>
@@ -301,4 +301,22 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>publish</id>
+            <properties>
+                <skip.tests>true</skip.tests>
+            </properties>
+        </profile>
+        <profile>
+            <id>tests</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <skip.tests>false</skip.tests>
+            </properties>
+        </profile>
+    </profiles>
 </project>
