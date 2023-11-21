@@ -1,33 +1,37 @@
-name: Workflow without publishing
+name: Workflow without publishing one job
 
 # This should ignore branches, that are connected with publishing artifacts and should run only on working ones.
 on:
   push:
-    branches:
-      - ZADNA
+    branches-ignore:
+      - develop
+      - 'release/**'
 
 env:
   JAVA_VERSION: 17
   JAVA_DISTRIBUTION: 'zulu'
 
 jobs:
-  build:
+  Build-and-Test:
     runs-on: ubuntu-latest
     steps:
-      - name: Printing git information
-        run: echo "git is - ${{toJson(github)}} "
+      - run: echo "Job triggered by a ${{ github.event_name }} event."
+      - run: echo "Runner ${{ runner.os }}"
+      - run: echo "Branch ${{ github.ref }}"
+      - name: echo "All git properties"
+        run: echo "git is - ${{ toJson(github) }} "
       - uses: actions/checkout@v4
       - name: Generate build number
         uses: einaregilsson/build-number@v3
         with:
           token: ${{secrets.ACCESS_TOKEN}}
-      - name: displaying build number
+      - name: Displaying build number
         run: echo "Build number $BUILD_NUMBER started."
-      - name: Set up JDK version ${{env.JAVA_VERSION}}
+      - name: Set up JDK version ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v2
         with:
-          java-version: ${{env.JAVA_VERSION}}
-          distribution: ${{env.JAVA_DISTRIBUTION}}
+          java-version: ${{ env.JAVA_VERSION}}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
@@ -36,18 +40,6 @@ jobs:
       - name: Run maven verify
         run: mvn verify
       - run: echo " This job's status is ${{ job.status }}."
-
-  liquibase_test:
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK version ${{env.JAVA_VERSION}}
-        uses: actions/setup-java@v2
-        with:
-          java-version: ${{env.JAVA_VERSION}}
-          distribution: ${{env.JAVA_DISTRIBUTION}}
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
