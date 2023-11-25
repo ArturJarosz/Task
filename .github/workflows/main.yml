@@ -1,0 +1,33 @@
+name: Clean Maven Registry
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run every day at midnight
+
+jobs:
+  clean-registry:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '17'
+
+    - name: Authenticate with GitHub Package Registry
+      run: echo "//maven.pkg.github.com/:_authToken=\${{ secrets.GITHUB_TOKEN }}" >> ~/.m2/settings.xml
+
+    - name: Clean Maven Registry
+      run: |
+        mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.2:purge-local-repository \
+          -DreResolve=false \
+          -DactTransitively=false \
+          -DsnapshotsOnly=true \  # Only include SNAPSHOT artifacts
+          -Dverbose=true \ # print all removed artifacts
+          -DreleasesOnly=false \  # Exclude release artifacts
+          -DdaysElapsed=1
+          
