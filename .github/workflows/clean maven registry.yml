@@ -24,9 +24,16 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION}}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
-
-      - name: Print settings.xml
-        run: cat ~/.m2/settings.xml
+      #      - name: checking where
+      #        run: |
+      #          pwd
+      #          ls -l
+      #
+      #      - name: Run script to remove packages
+      #        env:
+      #          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      #        run: |
+      #          ./.github/workflows/scripts/remove-packages.sh
 
       #      - name: Clean Maven Registry
       #        run: |
@@ -37,12 +44,20 @@ jobs:
       #          -Dverbose=true \
       #          -DreleasesOnly=false \
       #          -DdaysElapsed=1
-
-      - name: Cleaning maven registry
-        uses: actions/delete-package-versions@v4
+      - name: Remove packages
+        uses: jackhowa/delete-github-package-versions@v0.4.9
         with:
-          owner: 'ArturJarosz'
-          package-name: 'com.arturjarosz.task-database'
-          package-type: 'maven'
-          token: ${{ secrets.ACCESS_TOKEN }}
-          num-old-versions-to-delete: 5
+          names: |
+            com.arturjarosz.task-database
+          version-pattern: "^\\d+\\.\\d+\\.\\d+-SNAPSHOT\\d+$"
+
+
+#      - name: Delete old snapshots
+#        uses: joshdk/github-packages-delete@v3.3.0
+#        with:
+#          token: ${{ secrets.ACCESS_TOKEN }}
+#          repository: ArturJarosz/Task
+#          keep: 2 # Change this number to the number of latest snapshots you want to keep
+#          package-type: maven
+#          package-name: task-database
+#          package-version: SNAPSHOT
