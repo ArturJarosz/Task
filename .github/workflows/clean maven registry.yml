@@ -1,0 +1,48 @@
+name: Clean Maven Registry
+
+env:
+  JAVA_VERSION: 17
+  JAVA_DISTRIBUTION: 'zulu'
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run every day at midnight
+  push:
+    branches:
+      - 'TA-**'
+
+jobs:
+  clean-registry:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK - new
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JAVA_VERSION}}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+
+      - name: Print settings.xml
+        run: cat ~/.m2/settings.xml
+
+      #      - name: Clean Maven Registry
+      #        run: |
+      #          mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.2:purge-local-repository \
+      #          -DreResolve=false \
+      #          -DactTransitively=false \
+      #          -DsnapshotsOnly=true \
+      #          -Dverbose=true \
+      #          -DreleasesOnly=false \
+      #          -DdaysElapsed=1
+
+      - name: Cleaning maven registry
+        uses: actions/delete-package-versions@v4
+        with:
+          owner: 'ArturJarosz'
+          package-name: 'com.arturjarosz.task-database'
+          package-type: 'maven'
+          token: ${{ secrets.ACCESS_TOKEN }}
+          num-old-versions-to-delete: 5
