@@ -62,7 +62,8 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
         return Projections.bean(CostDto.class, COST.id.as(CostFields.ID_FIELD),
                 COST.financialData.value.value.as(CostFields.VALUE_FIELD), COST.name.as(CostFields.NAME_FIELD),
                 COST.date.as(CostFields.DATE_FIELD), COST.note.as(CostFields.NOTE_FIELD),
-                COST.category.as(CostFields.CATEGORY_FIELD), COST.financialData.hasInvoice.as(CostFields.HAS_INVOICE_FIELD),
+                COST.category.as(CostFields.CATEGORY_FIELD),
+                COST.financialData.hasInvoice.as(CostFields.HAS_INVOICE_FIELD),
                 COST.financialData.paid.as(CostFields.IS_PAID_FIELD));
     }
 
@@ -78,7 +79,8 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     }
 
     private static QBean<SupplyDto> supplyToSupplyDto() {
-        return Projections.bean(SupplyDto.class, SUPPLY.id.as(SupplyFields.ID_FIELD), SUPPLY.name.as(SupplyFields.NAME_FILED),
+        return Projections.bean(SupplyDto.class, SUPPLY.id.as(SupplyFields.ID_FIELD),
+                SUPPLY.name.as(SupplyFields.NAME_FILED),
                 SUPPLY.note.as(SupplyFields.NOTE_FILED), SUPPLY.financialData.paid.as(SupplyFields.PAID_FIELD),
                 SUPPLY.financialData.hasInvoice.as(SupplyFields.HAS_INVOICE_FILED),
                 SUPPLY.financialData.value.value.as(SupplyFields.VALUE_FILED),
@@ -177,7 +179,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
 
     @Override
     public Boolean doesCostExistByCostId(long costId) {
-        return this.query().from(COST).where(COST.id.eq(costId)).select(COST).fetchCount() > 0;
+        return !this.query().from(COST).where(COST.id.eq(costId)).select(COST.id).fetch().isEmpty();
     }
 
     @Override
@@ -214,12 +216,13 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
 
     @Override
     public boolean doesSupplyForProjectExists(long projectId, long supplyId) {
-        return this.query()
+        return !this.query()
                 .from(SUPPLY)
                 .leftJoin(PROJECT_FINANCIAL_DATA)
                 .on(SUPPLY.projectFinancialDataId.eq(PROJECT_FINANCIAL_DATA.id))
                 .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId).and(SUPPLY.id.eq(supplyId)))
-                .fetchCount() > 0;
+                .select(SUPPLY.id)
+                .fetch().isEmpty();
     }
 
     @Override
@@ -249,11 +252,11 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
 
     @Override
     public boolean doesInstallmentExistsByInstallmentId(long installmentId) {
-        return this.query()
+        return !this.query()
                 .from(INSTALLMENT)
                 .where(INSTALLMENT.id.eq(installmentId))
                 .select(INSTALLMENT)
-                .fetchCount() > 0;
+                .fetch().isEmpty();
     }
 
     private List<FinancialDataDto> getFinancialDataForFinancialDataAwareObjects(JPAQuery<?> jpaQuery) {

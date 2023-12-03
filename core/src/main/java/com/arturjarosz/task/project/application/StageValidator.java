@@ -48,7 +48,7 @@ public class StageValidator {
      * Validates if Stage of given stageId exist.
      */
     public void validateExistenceOfStageInProject(Long projectId, Long stageId) {
-        Stage stage = this.projectRepository.getById(projectId)
+        Stage stage = this.projectRepository.getReferenceById(projectId)
                 .getStages()
                 .stream()
                 .filter(stageOnProject -> stageOnProject.getId().equals(stageId))

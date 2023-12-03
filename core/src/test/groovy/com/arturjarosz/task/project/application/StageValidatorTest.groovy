@@ -180,7 +180,7 @@ class StageValidatorTest extends Specification {
     }
 
     private void mockProjectRepositoryGetProject() {
-        this.projectRepository.getById(PROJECT_ID) >> this.prepareProjectWithStage()
+        this.projectRepository.getReferenceById(PROJECT_ID) >> this.prepareProjectWithStage()
     }
 
     private Project prepareProjectWithStage() {
