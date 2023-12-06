@@ -1,0 +1,63 @@
+name: Clean Maven Registry
+
+env:
+  JAVA_VERSION: 17
+  JAVA_DISTRIBUTION: 'zulu'
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run every day at midnight
+  push:
+    branches:
+      - 'TA-**'
+
+jobs:
+  clean-registry:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK - new
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ env.JAVA_VERSION}}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+      #      - name: checking where
+      #        run: |
+      #          pwd
+      #          ls -l
+      #
+      #      - name: Run script to remove packages
+      #        env:
+      #          GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      #        run: |
+      #          ./.github/workflows/scripts/remove-packages.sh
+
+      #      - name: Clean Maven Registry
+      #        run: |
+      #          mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.2:purge-local-repository \
+      #          -DreResolve=false \
+      #          -DactTransitively=false \
+      #          -DsnapshotsOnly=true \
+      #          -Dverbose=true \
+      #          -DreleasesOnly=false \
+      #          -DdaysElapsed=1
+      - name: Remove packages
+        uses: jackhowa/delete-github-package-versions@v0.4.9
+        with:
+          names: |
+            com.arturjarosz.task-database
+          version-pattern: "^\\d+\\.\\d+\\.\\d+-SNAPSHOT\\d+$"
+
+
+#      - name: Delete old snapshots
+#        uses: joshdk/github-packages-delete@v3.3.0
+#        with:
+#          token: ${{ secrets.ACCESS_TOKEN }}
+#          repository: ArturJarosz/Task
+#          keep: 2 # Change this number to the number of latest snapshots you want to keep
+#          package-type: maven
+#          package-name: task-database
+#          package-version: SNAPSHOT

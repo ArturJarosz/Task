@@ -10,12 +10,15 @@ on:
 
 env:
   JAVA_VERSION: 17
+  JAVA_DISTRIBUTION: 'zulu'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Printing git information
+        run: echo "git is - ${{toJson(github)}} "
+      - uses: actions/checkout@v4
       - name: Generate build number
         uses: einaregilsson/build-number@v3
         with:
@@ -23,9 +26,10 @@ jobs:
       - name: displaying build number
         run: echo "Build number $BUILD_NUMBER started."
       - name: Set up JDK version ${{env.JAVA_VERSION}}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{env.JAVA_VERSION}}
+          distribution: ${{env.JAVA_DISTRIBUTION}}
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
@@ -40,11 +44,12 @@ jobs:
       - build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up JDK version ${{env.JAVA_VERSION}}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{env.JAVA_VERSION}}
+          distribution: ${{env.JAVA_DISTRIBUTION}}
       - name: Cache local Maven repository
         uses: actions/cache@v3
         with:
@@ -61,11 +66,12 @@ jobs:
       - liquibase_test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up JDK version ${{env.JAVA_VERSION}}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: ${{env.JAVA_VERSION}}
+          distribution: ${{env.JAVA_DISTRIBUTION}}
       - name: Restoring cached dependencies
         uses: actions/cache@v3
         with:
