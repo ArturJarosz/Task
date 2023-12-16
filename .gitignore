@@ -26,3 +26,6 @@ hs_err_pid*
 # IDEA files
 .idea/
 **/*.iml
+
+# database files
+/docker/taskDb/
