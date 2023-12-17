@@ -1,0 +1,4 @@
+./target
+entrypoint.sh
+database-schema.Dockerfile
+build.sh
