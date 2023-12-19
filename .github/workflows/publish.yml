@@ -53,7 +53,7 @@ jobs:
       - name: Run liquibase changelog
         run: |
           cd database
-          mvn org.springframework.boot:spring-boot-maven-plugin:run -Dspring.profiles.active=test
+          mvn org.springframework.boot:spring-boot-maven-plugin:run
       - run: echo " This job's status is ${{ job.status }}."
 
   publish:
@@ -74,7 +74,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Build maven artifact
-        run: mvn package -P publish
+        run: mvn package -P publish,fatJar
       - name: Publish to GitHub Packages
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
