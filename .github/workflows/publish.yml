@@ -74,7 +74,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Build maven artifact
-        run: mvn package -P publish,fatJar
+        run: mvn package -P publish
       - name: Publish to GitHub Packages
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
