@@ -18,7 +18,7 @@
     </parent>
     <groupId>com.arturjarosz</groupId>
     <artifactId>task-parent</artifactId>
-    <version>0.6.1-SNAPSHOT</version>
+    <version>0.6.1</version>
     <name>task-parent</name>
 
     <properties>
