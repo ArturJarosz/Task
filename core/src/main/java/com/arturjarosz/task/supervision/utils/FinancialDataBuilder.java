@@ -2,8 +2,8 @@ package com.arturjarosz.task.supervision.utils;
 
 import com.arturjarosz.task.finance.model.FinancialData;
 import com.arturjarosz.task.sharedkernel.model.Money;
-import com.arturjarosz.task.sharedkernel.utils.AbstractBuilder;
-import com.arturjarosz.task.sharedkernel.utils.TestUtils;
+import com.arturjarosz.task.sharedkernel.testhelpers.AbstractBuilder;
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils;
 
 import java.time.LocalDate;
 

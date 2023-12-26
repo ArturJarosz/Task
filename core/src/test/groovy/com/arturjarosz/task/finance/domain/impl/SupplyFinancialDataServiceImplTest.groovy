@@ -1,7 +1,9 @@
 package com.arturjarosz.task.finance.domain.impl
 
 import com.arturjarosz.task.configuration.UserProperties
+import com.arturjarosz.task.finance.domain.SummationStrategy
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto
+import com.arturjarosz.task.finance.model.PartialFinancialDataType
 import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl
 import spock.lang.Specification
 
@@ -25,12 +27,28 @@ class SupplyFinancialDataServiceImplTest extends Specification {
             this.mockGetSuppliesFinancialData()
             this.mockUserService()
         when:
-            def partialFinancialData = this.suppliesFinancialDataService.providePartialFinancialData(PROJECT_ID)
+            def partialFinancialData = this.suppliesFinancialDataService.getPartialFinancialData(PROJECT_ID)
         then:
-            partialFinancialData.suppliesValue.grossValue == new BigDecimal("100")
-            partialFinancialData.suppliesValue.netValue == new BigDecimal("90").setScale(2, RoundingMode.HALF_UP)
-            partialFinancialData.suppliesValue.vatTax == new BigDecimal("10").setScale(2, RoundingMode.HALF_UP)
-            partialFinancialData.suppliesValue.incomeTax == new BigDecimal("5").setScale(2, RoundingMode.HALF_UP)
+            partialFinancialData.grossValue == new BigDecimal("100")
+            partialFinancialData.netValue == new BigDecimal("90").setScale(2, RoundingMode.HALF_UP)
+            partialFinancialData.vatTax == new BigDecimal("10").setScale(2, RoundingMode.HALF_UP)
+            partialFinancialData.incomeTax == new BigDecimal("5").setScale(2, RoundingMode.HALF_UP)
+    }
+
+    def "getSummationStrategy should return correct strategy"() {
+        given:
+        when:
+            def strategy = this.suppliesFinancialDataService.getSummationStrategy()
+        then:
+            strategy == SummationStrategy.ADD
+    }
+
+    def "getType should return correct type"() {
+        given:
+        when:
+            def type = this.suppliesFinancialDataService.getType()
+        then:
+            type == PartialFinancialDataType.SUPPLY
     }
 
     private void mockGetSuppliesFinancialData() {

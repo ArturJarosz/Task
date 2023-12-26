@@ -9,16 +9,19 @@ databaseChangeLog:
       file: "project/project-tables.yml"
       relativeToChangelogFile: true
   - include:
-      file: "cost/cost-tables.yml"
-      relativeToChangelogFile: true
-  - include:
       file: "installment/installment-tables.yml"
       relativeToChangelogFile: true
   - include:
       file: "financial-data/financial-data-tables.yml"
       relativeToChangelogFile: true
   - include:
+      file: "cost/cost-tables.yml"
+      relativeToChangelogFile: true
+  - include:
       file: "supervision/supervision-tables.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "cooperator-job/cooperator-job-tables.yml"
       relativeToChangelogFile: true
   - include:
       file: "system-parameter/system-parameter-tables.yml"

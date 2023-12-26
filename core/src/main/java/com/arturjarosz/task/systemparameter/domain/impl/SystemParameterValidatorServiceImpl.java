@@ -1,10 +1,10 @@
 package com.arturjarosz.task.systemparameter.domain.impl;
 
+import com.arturjarosz.task.dto.SystemParameterDto;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.systemparameter.domain.SystemParameterExceptionCodes;
 import com.arturjarosz.task.systemparameter.domain.SystemParameterValidatorService;
-import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto;
 import com.arturjarosz.task.systemparameter.domain.validator.SystemParameterValidator;
 import com.arturjarosz.task.systemparameter.query.SystemParameterQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +45,8 @@ public class SystemParameterValidatorServiceImpl implements SystemParameterValid
 
     @Override
     public void validateOnUpdate(SystemParameterDto systemParameterDto) {
-        String systemParameterName = systemParameterDto.getName();
-        SystemParameterValidator validator = this.systemNameToValidator.get(systemParameterName);
+        var systemParameterName = systemParameterDto.getName();
+        var validator = this.systemNameToValidator.get(systemParameterName);
         assertNotNull(validator,
                 createMessageCode(ExceptionCodes.NOT_EXIST, SystemParameterExceptionCodes.SYSTEM_PARAMETER,
                         SystemParameterExceptionCodes.VALIDATOR), systemParameterName);

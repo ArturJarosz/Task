@@ -1,34 +1,45 @@
 package com.arturjarosz.task.project.application
 
-import com.arturjarosz.task.project.application.dto.StageDto
-import com.arturjarosz.task.project.infrastructure.repositor.impl.ProjectRepositoryImpl
-import com.arturjarosz.task.project.model.Installment
+import com.arturjarosz.task.dto.StageDto
+import com.arturjarosz.task.dto.StageTypeDto
+import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
+import com.arturjarosz.task.finance.model.Installment
+import com.arturjarosz.task.finance.model.ProjectFinancialData
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
-import com.arturjarosz.task.project.model.StageType
-import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
-import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
+import com.arturjarosz.task.utils.ProjectBuilder
+import com.arturjarosz.task.utils.StageBuilder
 import spock.lang.Specification
 
 class StageValidatorTest extends Specification {
-    private static final Long PROJECT_ID = 2L
-    private static final Long EXISTING_STAGE_ID = 3L
-    private static final Long NOT_EXISTING_STAGE_ID = 4l
-    private static final Long STAGE_WITH_INSTALLMENT_ID = 5L
-    private static final Long STAGE_WITHOUT_INSTALLMENT_ID = 6L
+    private static final Long PROJECT_ID = 1L
+    private static final Long PROJECT_STAGE_WITHOUT_INSTALLMENT_ID = 2L
+    private static final Long PROJECT_STAGE_WITH_INSTALLMENT_ID = 3L
+    private static final Long EXISTING_STAGE_ID = 10L
+    private static final Long NOT_EXISTING_STAGE_ID = 11l
+    private static final Long STAGE_WITH_INSTALLMENT_ID = 20L
+    private static final Long STAGE_WITHOUT_INSTALLMENT_ID = 21L
 
     private static final String STAGE_NAME = "stageName"
 
-    def projectRepository = Mock(ProjectRepositoryImpl)
-    def projectQueryService = Mock(ProjectQueryServiceImpl)
+    def projectRepository = Mock(ProjectRepository)
+    def projectFinancialDataRepository = Mock(ProjectFinancialDataRepository)
 
-    def stageValidator = new StageValidator(projectRepository, projectQueryService)
+    def stageValidator = new StageValidator(projectRepository, projectFinancialDataRepository)
+
+    def setup() {
+        this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_STAGE_WITHOUT_INSTALLMENT_ID) >>
+                prepareProjectFinancialData(false)
+        this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_STAGE_WITH_INSTALLMENT_ID) >>
+                prepareProjectFinancialData(true)
+    }
 
     def "validateCreateStageDto should throw an exception, when passed stageDto is null"() {
         given:
-            StageDto stageDto = null
+            def stageDto = null
         when:
             this.stageValidator.validateCreateStageDto(stageDto)
         then:
@@ -38,7 +49,7 @@ class StageValidatorTest extends Specification {
 
     def "validateCreateStageDto should throw an exception, on null name in passed stageDto"() {
         given:
-            StageDto stageDto = new StageDto(stageType: StageType.VISUALISATIONS)
+            def stageDto = new StageDto(type: StageTypeDto.VISUALISATIONS)
         when:
             this.stageValidator.validateCreateStageDto(stageDto)
         then:
@@ -48,7 +59,7 @@ class StageValidatorTest extends Specification {
 
     def "validateCreateStageDto should throw an exception, on empty name in passed stageDto"() {
         given:
-            StageDto stageDto = new StageDto(name: "", stageType: StageType.VISUALISATIONS)
+            def stageDto = new StageDto(name: "", type: StageTypeDto.VISUALISATIONS)
         when:
             this.stageValidator.validateCreateStageDto(stageDto)
         then:
@@ -58,7 +69,7 @@ class StageValidatorTest extends Specification {
 
     def "validateCreateStageDto should throw an exception, on null stage type in passed stageDto"() {
         given:
-            StageDto stageDto = new StageDto(name: STAGE_NAME)
+            def stageDto = new StageDto(name: STAGE_NAME)
         when:
             this.stageValidator.validateCreateStageDto(stageDto)
         then:
@@ -68,7 +79,7 @@ class StageValidatorTest extends Specification {
 
     def "validateCreateStageDto should not throw any exception on proper stageDto"() {
         given:
-            StageDto stageDto = new StageDto(name: STAGE_NAME, stageType: StageType.VISUALISATIONS)
+            def stageDto = new StageDto(name: STAGE_NAME, type: StageTypeDto.VISUALISATIONS)
         when:
             this.stageValidator.validateCreateStageDto(stageDto)
         then:
@@ -77,7 +88,7 @@ class StageValidatorTest extends Specification {
 
     def "validateUpdateStageDto should throw an exception, when passed stageDto is null"() {
         given:
-            StageDto stageDto = null
+            def stageDto = null
         when:
             this.stageValidator.validateUpdateStageDto(stageDto)
         then:
@@ -87,7 +98,7 @@ class StageValidatorTest extends Specification {
 
     def "validateUpdateStageDto should throw an exception, on null name in passed stageDto"() {
         given:
-            StageDto stageDto = new StageDto(stageType: StageType.VISUALISATIONS)
+            def stageDto = new StageDto(type: StageTypeDto.VISUALISATIONS)
         when:
             this.stageValidator.validateUpdateStageDto(stageDto)
         then:
@@ -97,7 +108,7 @@ class StageValidatorTest extends Specification {
 
     def "validateUpdateStageDto should throw an exception, on empty name in passed stageDto"() {
         given:
-            StageDto stageDto = new StageDto(name: "", stageType: StageType.VISUALISATIONS)
+            def stageDto = new StageDto(name: "", type: StageTypeDto.VISUALISATIONS)
         when:
             this.stageValidator.validateUpdateStageDto(stageDto)
         then:
@@ -107,7 +118,7 @@ class StageValidatorTest extends Specification {
 
     def "validateUpdateStageDto should throw an exception, on null stage type in passed stageDto"() {
         given:
-            StageDto stageDto = new StageDto(name: STAGE_NAME)
+            def stageDto = new StageDto(name: STAGE_NAME)
         when:
             this.stageValidator.validateUpdateStageDto(stageDto)
         then:
@@ -117,7 +128,7 @@ class StageValidatorTest extends Specification {
 
     def "validateUpdateStageDto should not throw any exception on proper stageDto"() {
         given:
-            StageDto stageDto = new StageDto(name: STAGE_NAME, stageType: StageType.VISUALISATIONS)
+            def stageDto = new StageDto(name: STAGE_NAME, type: StageTypeDto.VISUALISATIONS)
         when:
             this.stageValidator.validateUpdateStageDto(stageDto)
         then:
@@ -127,6 +138,7 @@ class StageValidatorTest extends Specification {
     def "validateExistenceStageInProject should throw an exception when stage not present on project"() {
         given:
             this.mockProjectRepositoryLoadProject()
+            this.mockProjectRepositoryGetProject()
         when:
             this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, NOT_EXISTING_STAGE_ID)
         then:
@@ -137,6 +149,7 @@ class StageValidatorTest extends Specification {
     def "validateExistenceStageInProject should not throw any exception when stage present on project"() {
         given:
             this.mockProjectRepositoryLoadProject()
+            this.mockProjectRepositoryGetProject()
         when:
             this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, EXISTING_STAGE_ID)
         then:
@@ -145,9 +158,9 @@ class StageValidatorTest extends Specification {
 
     def "validateStageNotHavingInstallment should throw an exception, when stage has installment"() {
         given:
-            this.mockProjectQueryServiceStageWithInstallment()
         when:
-            this.stageValidator.validateStageNotHavingInstallment(STAGE_WITH_INSTALLMENT_ID)
+            this.stageValidator.validateStageNotHavingInstallment(PROJECT_STAGE_WITH_INSTALLMENT_ID,
+                    STAGE_WITH_INSTALLMENT_ID)
         then:
             IllegalArgumentException exception = thrown()
             exception.message == "alreadySet.stage.installment"
@@ -155,42 +168,19 @@ class StageValidatorTest extends Specification {
 
     def "validateStageNotHavingInstallment should not throw any exception, when stage has not installment"() {
         given:
-            this.mockProjectQueryServiceStageWithoutInstallment()
         when:
-            this.stageValidator.validateStageNotHavingInstallment(STAGE_WITHOUT_INSTALLMENT_ID)
-        then:
-            noExceptionThrown()
-    }
-
-    def "validateStageHavingInstallment should throw an exception, when stage has not installment"() {
-        given:
-            this.mockProjectQueryServiceStageWithoutInstallment()
-        when:
-            this.stageValidator.validateStageHavingInstallment(STAGE_WITHOUT_INSTALLMENT_ID)
-        then:
-            IllegalArgumentException exception = thrown()
-            exception.message == "notExist.stage.installment"
-    }
-
-    def "validateStageHavingInstallment should not throw any exception, when stage has installment"() {
-        given:
-            this.mockProjectQueryServiceStageWithInstallment()
-        when:
-            this.stageValidator.validateStageHavingInstallment(STAGE_WITH_INSTALLMENT_ID)
+            this.stageValidator.validateStageNotHavingInstallment(PROJECT_STAGE_WITHOUT_INSTALLMENT_ID,
+                    STAGE_WITHOUT_INSTALLMENT_ID)
         then:
             noExceptionThrown()
     }
 
     private void mockProjectRepositoryLoadProject() {
-        this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStage()
+        this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProjectWithStage())
     }
 
-    private void mockProjectQueryServiceStageWithInstallment() {
-        this.projectQueryService.getStageById(STAGE_WITH_INSTALLMENT_ID) >> this.prepareStageWithInstallment()
-    }
-
-    private void mockProjectQueryServiceStageWithoutInstallment() {
-        this.projectQueryService.getStageById(STAGE_WITHOUT_INSTALLMENT_ID) >> this.prepareStageWithoutInstallment()
+    private void mockProjectRepositoryGetProject() {
+        this.projectRepository.getReferenceById(PROJECT_ID) >> this.prepareProjectWithStage()
     }
 
     private Project prepareProjectWithStage() {
@@ -204,16 +194,16 @@ class StageValidatorTest extends Specification {
         return new StageBuilder().withId(id).build()
     }
 
-    private Stage prepareStageWithoutInstallment() {
-        return new StageBuilder()
-                .withId(STAGE_WITHOUT_INSTALLMENT_ID)
-                .build()
+    private ProjectFinancialData prepareProjectFinancialData(boolean stageHasInstallment) {
+        def financialData = new ProjectFinancialData()
+        if (stageHasInstallment) {
+            def installment = new Installment()
+            installment.setStageId(STAGE_WITH_INSTALLMENT_ID)
+            financialData.addInstallment(installment)
+        } else {
+            TestUtils.setFieldForObject(financialData, "installments", new HashSet<>())
+        }
+        return financialData
     }
 
-    private Stage prepareStageWithInstallment() {
-        return new StageBuilder()
-                .withId(STAGE_WITH_INSTALLMENT_ID)
-                .withInstallment(Mock(Installment))
-                .build()
-    }
 }

@@ -5,9 +5,8 @@ import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionServiceImpl
 import com.arturjarosz.task.project.status.stage.StageStatus
-import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
-import com.google.common.collect.Sets
+import com.arturjarosz.task.utils.ProjectBuilder
+import com.arturjarosz.task.utils.StageBuilder
 import spock.lang.Specification
 
 class StageRejectFromToDoListenerTest extends Specification {
@@ -18,7 +17,7 @@ class StageRejectFromToDoListenerTest extends Specification {
     def "Rejecting the only stage from status TO_DO on the project in TO_DO status should not change project status"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.TO_DO)
-            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.TO_DO, Sets.newHashSet(stage))
+            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.TO_DO, Set.of(stage))
         when:
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromToDoListener.onStageStatusChange(project)
@@ -32,7 +31,7 @@ class StageRejectFromToDoListenerTest extends Specification {
             def stage2 = this.createStageWithStatus(StageStatus.IN_PROGRESS)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,
-                            Sets.newHashSet(stage, stage2))
+                            Set.of(stage, stage2))
         when:
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromToDoListener.onStageStatusChange(project)
@@ -47,7 +46,7 @@ class StageRejectFromToDoListenerTest extends Specification {
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,
-                            Sets.newHashSet(stage, stage2, stage3))
+                            Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromToDoListener.onStageStatusChange(project)

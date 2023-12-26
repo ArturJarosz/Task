@@ -2,11 +2,12 @@ package com.arturjarosz.task.sharedkernel.model;
 
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import java.io.Serial;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 
@@ -16,6 +17,7 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertN
 
 @Embeddable
 public class Address extends AbstractValueObject<Address> implements ValueObject<Address> {
+    @Serial
     private static final long serialVersionUID = -4102560398759336232L;
 
     @Column(name = "POST_CODE")
@@ -34,7 +36,7 @@ public class Address extends AbstractValueObject<Address> implements ValueObject
     private String flatNumber;
 
     public Address() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Address(String postCode, String city, String street, String houseNumber, String flatNumber) {
@@ -47,10 +49,6 @@ public class Address extends AbstractValueObject<Address> implements ValueObject
 
     public String getPostCode() {
         return this.postCode;
-    }
-
-    public void setPostCode(String postCode) {
-        this.postCode = postCode;
     }
 
     public String getCity() {
@@ -113,5 +111,14 @@ public class Address extends AbstractValueObject<Address> implements ValueObject
     @Override
     public Address copy() {
         return new Address(this.postCode, this.city, this.street, this.houseNumber, this.flatNumber);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (!(o instanceof Address address)) return false;
+
+        return this.hasSameValueAs(address);
     }
 }

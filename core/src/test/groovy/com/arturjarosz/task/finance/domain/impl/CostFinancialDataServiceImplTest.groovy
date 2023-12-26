@@ -1,7 +1,9 @@
 package com.arturjarosz.task.finance.domain.impl
 
 import com.arturjarosz.task.configuration.UserProperties
+import com.arturjarosz.task.finance.domain.SummationStrategy
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto
+import com.arturjarosz.task.finance.model.PartialFinancialDataType
 import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl
 import spock.lang.Specification
 
@@ -22,12 +24,28 @@ class CostFinancialDataServiceImplTest extends Specification {
             this.mockGetCostsFinancialData()
             this.mockUserService()
         when:
-            def partialFinancialData = this.costFinancialDataService.providePartialFinancialData(PROJECT_ID)
+            def partialFinancialData = this.costFinancialDataService.getPartialFinancialData(PROJECT_ID)
         then:
-            partialFinancialData.costsValue.grossValue == new BigDecimal("66")
-            partialFinancialData.costsValue.netValue == new BigDecimal("60")
-            partialFinancialData.costsValue.vatTax == new BigDecimal("6")
-            partialFinancialData.costsValue.incomeTax == new BigDecimal("3")
+            partialFinancialData.grossValue == new BigDecimal("66")
+            partialFinancialData.netValue == new BigDecimal("60")
+            partialFinancialData.vatTax == new BigDecimal("6")
+            partialFinancialData.incomeTax == new BigDecimal("3")
+    }
+
+    def "getSummationStrategy should return correct strategy"() {
+        given:
+        when:
+            def strategy = this.costFinancialDataService.getSummationStrategy()
+        then:
+            strategy == SummationStrategy.SUBTRACT
+    }
+
+    def "getType should return correct type"() {
+        given:
+        when:
+            def type = this.costFinancialDataService.getType()
+        then:
+            type == PartialFinancialDataType.COST
     }
 
     private void mockGetCostsFinancialData() {

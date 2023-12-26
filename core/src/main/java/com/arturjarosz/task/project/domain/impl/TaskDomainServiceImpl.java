@@ -1,6 +1,6 @@
 package com.arturjarosz.task.project.domain.impl;
 
-import com.arturjarosz.task.project.application.dto.TaskDto;
+import com.arturjarosz.task.dto.TaskDto;
 import com.arturjarosz.task.project.application.mapper.TaskDtoMapper;
 import com.arturjarosz.task.project.domain.TaskDomainService;
 import com.arturjarosz.task.project.model.Project;
@@ -26,7 +26,7 @@ public class TaskDomainServiceImpl implements TaskDomainService {
 
     @Override
     public Task createTask(Project project, Long stageId, TaskDto taskDto) {
-        Task task = TaskDtoMapper.INSTANCE.createDtoToTask(taskDto, this.taskWorkflow);
+        var task = TaskDtoMapper.INSTANCE.createDtoToTask(taskDto, this.taskWorkflow);
         project.addTaskToStage(stageId, task);
         this.taskStatusTransitionService.createTask(project, stageId, task.getId());
         return task;

@@ -1,11 +1,10 @@
 package com.arturjarosz.task.contract.application;
 
-import com.arturjarosz.task.contract.application.dto.ContractDto;
-import com.arturjarosz.task.contract.model.Contract;
+import com.arturjarosz.task.dto.ContractDto;
 
 public interface ContractService {
 
-    Contract createContract(ContractDto contractDto);
+    ContractDto createContract(ContractDto contractDto);
 
     ContractDto reject(Long contractId);
 
@@ -21,4 +20,5 @@ public interface ContractService {
 
     ContractDto complete(Long contractId, ContractDto contractDto);
 
+    ContractDto getContractForProject(Long projectId);
 }

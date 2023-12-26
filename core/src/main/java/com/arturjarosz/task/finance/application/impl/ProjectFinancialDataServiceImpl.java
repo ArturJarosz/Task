@@ -1,103 +1,29 @@
 package com.arturjarosz.task.finance.application.impl;
 
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
-import com.arturjarosz.task.finance.application.dto.ProjectFinancialDataDto;
-import com.arturjarosz.task.finance.domain.PartialFinancialDataService;
-import com.arturjarosz.task.finance.infrastructure.FinancialDataRepository;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
-import com.arturjarosz.task.finance.model.FinancialData;
 import com.arturjarosz.task.finance.model.ProjectFinancialData;
-import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
-import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
-import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl;
-import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import com.arturjarosz.task.sharedkernel.model.Money;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-import java.math.BigDecimal;
-import java.util.List;
-
+@RequiredArgsConstructor
 @ApplicationService
 public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataService {
-
-    private final ProjectFinancialDataRepository projectFinancialDataRepository;
-    private final ProjectValidator projectValidator;
-    private final FinancialDataQueryServiceImpl financialDataQueryService;
-    private final FinancialDataRepository financialDataRepository;
-    private final List<PartialFinancialDataService> partialFinancialDataServices;
-
-    @Autowired
-    public ProjectFinancialDataServiceImpl(ProjectFinancialDataRepository projectFinancialDataRepository,
-            ProjectValidator projectValidator, FinancialDataQueryServiceImpl financialDataQueryService,
-            FinancialDataRepository financialDataRepository,
-            List<PartialFinancialDataService> partialFinancialDataServices) {
-        this.projectFinancialDataRepository = projectFinancialDataRepository;
-        this.projectValidator = projectValidator;
-        this.financialDataQueryService = financialDataQueryService;
-        this.financialDataRepository = financialDataRepository;
-        this.partialFinancialDataServices = partialFinancialDataServices;
-    }
+    @NonNull
+    private final ProjectFinancialDataRepository financialDataRepository;
 
     @Override
-    public ProjectFinancialData createProjectFinancialData(Long projectId) {
-        this.projectValidator.validateProjectExistence(projectId);
-        ProjectFinancialData projectFinancialData = new ProjectFinancialData(projectId);
-        projectFinancialData = this.projectFinancialDataRepository.save(projectFinancialData);
-        return projectFinancialData;
-    }
-
-    @Override
-    public void recalculateSupervision(Long supervisionId, Long supervisionFinancialDataId) {
-        SupervisionRatesDto supervisionRatesDto = this.financialDataQueryService.getSupervisionRatesDto(supervisionId);
-        List<SupervisionVisitFinancialDto> supervisionVisitFinancialDtos = this.financialDataQueryService.getVisitsFinancialDto(
-                supervisionId);
-        FinancialData financialData = this.financialDataRepository.load(supervisionFinancialDataId);
-
-        BigDecimal value = new BigDecimal("0");
-        value = value.add(BigDecimal.valueOf(supervisionRatesDto.getBaseNetRate().doubleValue()));
-
-        if (supervisionVisitFinancialDtos != null) {
-            // Adding hours value and rate per visit
-            for (SupervisionVisitFinancialDto supervisionVisit : supervisionVisitFinancialDtos) {
-                if (supervisionVisit.isPayable()) {
-                    BigDecimal hoursValue = BigDecimal.valueOf(
-                            supervisionVisit.getHoursCount() * supervisionRatesDto.getHourlyNetRate().doubleValue());
-                    value = value.add(hoursValue);
-                    value = value.add(supervisionRatesDto.getVisitNetRate());
-                }
-            }
-        }
-
-        financialData.setValue(new Money(value));
+    public ProjectFinancialData joinFinancialDataWithProject(Long projectId) {
+        ProjectFinancialData financialData = new ProjectFinancialData(projectId);
         this.financialDataRepository.save(financialData);
+        return financialData;
     }
 
     @Override
-    public void recalculateProjectFinancialData(long projectId) {
-        ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.loadProjectFinancialDataWithProjectId(
+    public void removeProjectFinancialData(Long projectId) {
+        ProjectFinancialData projectFinancialData = this.financialDataRepository.getProjectFinancialDataByProjectId(
                 projectId);
-        ProjectFinancialDataDto summedUpFinancialData = new ProjectFinancialDataDto();
-        for (PartialFinancialDataService partialFinancialDataService : this.partialFinancialDataServices) {
-            summedUpFinancialData.addFinancialValues(
-                    partialFinancialDataService.providePartialFinancialData(projectFinancialData.getId()));
-        }
-        this.recalculateTotalProjectValue(summedUpFinancialData);
-        projectFinancialData.updateWithPartialData(summedUpFinancialData);
-        this.projectFinancialDataRepository.save(projectFinancialData);
-    }
-
-    @Override
-    public void removeFinancialDataForProject(Long projectId) {
-        ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.loadProjectFinancialDataWithProjectId(
-                projectId);
-        this.projectFinancialDataRepository.remove(projectFinancialData.getId());
-    }
-
-    private void recalculateTotalProjectValue(ProjectFinancialDataDto projectFinancialDataDto) {
-        projectFinancialDataDto.getTotalProjectValue().addValues(projectFinancialDataDto.getSuppliesValue());
-        projectFinancialDataDto.getTotalProjectValue().addValues(projectFinancialDataDto.getSupervisionValue());
-        projectFinancialDataDto.getTotalProjectValue().addValues(projectFinancialDataDto.getContractorJobsValue());
-        projectFinancialDataDto.getTotalProjectValue().subtractValues(projectFinancialDataDto.getCostsValue());
+        this.financialDataRepository.delete(projectFinancialData);
     }
 }

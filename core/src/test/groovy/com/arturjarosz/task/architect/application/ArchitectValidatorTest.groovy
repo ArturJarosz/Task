@@ -1,30 +1,29 @@
 package com.arturjarosz.task.architect.application
 
-import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto
-import com.arturjarosz.task.architect.application.dto.ArchitectDto
-import com.arturjarosz.task.architect.infrastructure.repository.impl.ArchitectRepositoryImpl
+import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository
 import com.arturjarosz.task.architect.model.Architect
+import com.arturjarosz.task.dto.ArchitectDto
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
-import com.arturjarosz.task.project.utils.ProjectBuilder
+import com.arturjarosz.task.utils.ProjectBuilder
 import spock.lang.Specification
 
 class ArchitectValidatorTest extends Specification {
 
-    private static final String FIRST_NAME = "first"
-    private static final String LAST_NAME = "last"
-    private static final Long EXISTING_ID = 1L
-    private static final Long NON_EXISTING_ID = 999L
-    private static final Long ARCHITECT_WITH_PROJECTS = 10L
-    private static final Long ARCHITECT_WITHOUT_PROJECTS = 888L
+    static final String FIRST_NAME = "first"
+    static final String LAST_NAME = "last"
+    static final Long EXISTING_ID = 1L
+    static final Long NON_EXISTING_ID = 999L
+    static final Long ARCHITECT_WITH_PROJECTS = 10L
+    static final Long ARCHITECT_WITHOUT_PROJECTS = 888L
 
-    private static Architect architect = new Architect(FIRST_NAME, LAST_NAME)
+    static Architect architect = new Architect(FIRST_NAME, LAST_NAME)
 
-    private static Project project = new ProjectBuilder().build()
+    static Project project = new ProjectBuilder().build()
 
-    def architectRepository = Mock(ArchitectRepositoryImpl) {
-        load(NON_EXISTING_ID) >> { null }
-        load(EXISTING_ID) >> { architect }
+    def architectRepository = Mock(ArchitectRepository) {
+        findById(NON_EXISTING_ID) >> { Optional.ofNullable(null) }
+        findById(EXISTING_ID) >> { Optional.of(architect) }
     }
 
     def projectQueryService = Mock(ProjectQueryServiceImpl) {
@@ -33,65 +32,6 @@ class ArchitectValidatorTest extends Specification {
     }
 
     def architectValidator = new ArchitectValidator(architectRepository, projectQueryService)
-
-    def "when passing null architectBasicDtoValidator should throw an exception with specific error message"() {
-        given:
-            ArchitectBasicDto architectBasicDto = null
-        when:
-            ArchitectValidator.validateBasicArchitectDto(architectBasicDto)
-        then:
-            Exception exception = thrown()
-            exception.message == "isNull.architect"
-    }
-
-    def "when passing architect without firstName field architectBasicDtoValidator should throw an exception with specific error message"() {
-        given:
-            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(lastName: LAST_NAME)
-        when:
-            ArchitectValidator.validateBasicArchitectDto(architectBasicDto)
-        then:
-            Exception exception = thrown()
-            exception.message == "isNull.architect.firstName"
-    }
-
-    def "when passing architect without lastName field architectBasicDtoValidator should throw an exception with specific error message"() {
-        given:
-            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(firstName: FIRST_NAME)
-        when:
-            ArchitectValidator.validateBasicArchitectDto(architectBasicDto)
-        then:
-            Exception exception = thrown()
-            exception.message == "isNull.architect.lastName"
-    }
-
-    def "when passing architect with empty firstName field architectBasicDtoValidator should throw an exception with specific error message"() {
-        given:
-            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(firstName: "", lastName: LAST_NAME)
-        when:
-            ArchitectValidator.validateBasicArchitectDto(architectBasicDto)
-        then:
-            Exception exception = thrown()
-            exception.message == "isEmpty.architect.firstName"
-    }
-
-    def "when passing architect with empty lastName field architectBasicDtoValidator should throw an exception with specific error message"() {
-        given:
-            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(firstName: FIRST_NAME, lastName: "")
-        when:
-            ArchitectValidator.validateBasicArchitectDto(architectBasicDto)
-        then:
-            Exception exception = thrown()
-            exception.message == "isEmpty.architect.lastName"
-    }
-
-    def "when passing proper data architectBasicDtoValidator should not throw any exception"() {
-        given:
-            ArchitectBasicDto architectBasicDto = new ArchitectBasicDto(firstName: FIRST_NAME, lastName: LAST_NAME)
-        when:
-            ArchitectValidator.validateBasicArchitectDto(architectBasicDto)
-        then:
-            noExceptionThrown()
-    }
 
     def "when passing null architectDtoValidator should throw an exception with specific error message"() {
         given:
@@ -105,7 +45,7 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing architect without firstName field architectDtoValidator should throw an exception with specific error message"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto(lastName: LAST_NAME)
+            def architectDto = new ArchitectDto(lastName: LAST_NAME)
         when:
             ArchitectValidator.validateArchitectDto(architectDto)
         then:
@@ -115,7 +55,7 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing architect without lastName field architectDtoValidator should throw an exception with specific error message"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto(firstName: FIRST_NAME)
+            def architectDto = new ArchitectDto(firstName: FIRST_NAME)
         when:
             ArchitectValidator.validateArchitectDto(architectDto)
         then:
@@ -125,7 +65,7 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing architect with empty firstName field architectDtoValidator should throw an exception with specific error message"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto(firstName: "", lastName: LAST_NAME)
+            def architectDto = new ArchitectDto(firstName: "", lastName: LAST_NAME)
         when:
             ArchitectValidator.validateArchitectDto(architectDto)
         then:
@@ -135,7 +75,7 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing architect with empty lastName field architectDtoValidator should throw an exception with specific error message"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto(firstName: FIRST_NAME, lastName: "")
+            def architectDto = new ArchitectDto(firstName: FIRST_NAME, lastName: "")
         when:
             ArchitectValidator.validateArchitectDto(architectDto)
         then:
@@ -145,7 +85,7 @@ class ArchitectValidatorTest extends Specification {
 
     def "when passing proper data architectDtoValidator should not throw any exception"() {
         given:
-            ArchitectDto architectDto = new ArchitectDto(firstName: FIRST_NAME, lastName: LAST_NAME)
+            def architectDto = new ArchitectDto(firstName: FIRST_NAME, lastName: LAST_NAME)
         when:
             ArchitectValidator.validateArchitectDto(architectDto)
         then:

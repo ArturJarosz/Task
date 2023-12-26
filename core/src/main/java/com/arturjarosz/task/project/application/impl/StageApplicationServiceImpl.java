@@ -1,10 +1,10 @@
 package com.arturjarosz.task.project.application.impl;
 
 import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator;
+import com.arturjarosz.task.dto.StageDto;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.StageValidator;
-import com.arturjarosz.task.project.application.dto.StageDto;
 import com.arturjarosz.task.project.application.mapper.StageDtoMapper;
 import com.arturjarosz.task.project.domain.StageDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
@@ -12,6 +12,7 @@ import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +47,15 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     @Override
     public StageDto createStage(Long projectId, StageDto stageDto) {
         LOG.debug("Creating Stage for Project with id {}", projectId);
-        this.projectValidator.validateProjectExistence(projectId);
+
+        var maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateCreateStageDto(stageDto);
         this.contractWorkflowValidator.validateContractAllowsForWorkObjectsCreation(projectId);
-        Project project = this.projectRepository.load(projectId);
-        Stage stage = this.stageDomainService.createStage(project, stageDto);
+        var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
+        var stage = this.stageDomainService.createStage(project, stageDto);
         project = this.projectRepository.save(project);
+
         LOG.debug("Stage for Project with id {} created.", projectId);
         return StageDtoMapper.INSTANCE.stageDtoFromStage(this.getCreatedStageWithId(project, stage));
     }
@@ -60,9 +64,12 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     @Override
     public void removeStage(Long projectId, Long stageId) {
         LOG.debug("Removing Stage with id {} for Project with id {}.", stageId, projectId);
-        this.projectValidator.validateProjectExistence(projectId);
+
+        var maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        Project project = this.projectRepository.load(projectId);
+        var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
+
         project.removeStage(stageId);
         this.projectRepository.save(project);
         LOG.debug("Stage with id {} for Project with id {} removed.", stageId, projectId);
@@ -72,22 +79,28 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     @Override
     public StageDto updateStage(Long projectId, Long stageId, StageDto stageDto) {
         LOG.debug("Updating Stage with id {} for Project with id {}", stageId, projectId);
-        this.projectValidator.validateProjectExistence(projectId);
+
+        var maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        Project project = this.projectRepository.load(projectId);
+        var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.stageValidator.validateUpdateStageDto(stageDto);
-        Stage stage = this.stageDomainService.updateStage(project, stageId, stageDto);
+        var stage = this.stageDomainService.updateStage(project, stageId, stageDto);
         this.projectRepository.save(project);
+
         LOG.debug("Stage updated.");
         return StageDtoMapper.INSTANCE.stageDtoFromStage(stage);
     }
 
+    @Transactional
     @Override
     public StageDto getStage(Long projectId, Long stageId) {
         LOG.debug("Loading Stage with id {} for Project with id {}.", stageId, projectId);
+
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        Stage stage = this.projectQueryService.getStageById(stageId);
+        var stage = this.projectQueryService.getStageById(stageId);
+
         LOG.debug("Stage loaded.");
         return StageDtoMapper.INSTANCE.stageDtoFromStage(stage);
     }
@@ -103,11 +116,14 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     @Override
     public StageDto rejectStage(Long projectId, Long stageId) {
         LOG.debug("Rejecting Stage with id {}", stageId);
-        this.projectValidator.validateProjectExistence(projectId);
+
+        var maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        Project project = this.projectRepository.load(projectId);
+        var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.stageDomainService.rejectStage(project, stageId);
         this.projectRepository.save(project);
+
         return StageDtoMapper.INSTANCE.stageDtoFromStage(this.getStageById(project, stageId));
     }
 
@@ -115,9 +131,10 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     @Override
     public StageDto reopenStage(Long projectId, Long stageId) {
         LOG.debug("Reopening Stage with id {}", stageId);
-        this.projectValidator.validateProjectExistence(projectId);
+        var maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        Project project = this.projectRepository.load(projectId);
+        var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.stageDomainService.reopenStage(project, stageId);
         this.projectRepository.save(project);
         return StageDtoMapper.INSTANCE.stageDtoFromStage(this.getStageById(project, stageId));

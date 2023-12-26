@@ -14,14 +14,10 @@ import com.arturjarosz.task.project.status.task.validator.TaskStatusTransitionVa
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -41,11 +37,13 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
         this.projectWorkflowValidator = projectWorkflowValidator;
         this.stageWorkflowValidator = stageWorkflowValidator;
         this.mapNameToStatusTransitionValidators = new HashMap<>();
-        this.mapNameToStatusTransitionValidators = transitionValidatorList.stream().collect(Collectors.groupingBy(
-                taskStatusTransitionValidator -> taskStatusTransitionValidator.getStatusTransition().getName()));
+        this.mapNameToStatusTransitionValidators = transitionValidatorList.stream()
+                .collect(Collectors.groupingBy(
+                        taskStatusTransitionValidator -> taskStatusTransitionValidator.getStatusTransition()
+                                .getName()));
         this.mapNameToStatusTransitionListeners = new HashMap<>();
-        this.mapNameToStatusTransitionListeners = taskStatusTransitionListenerList.stream().collect(
-                Collectors.groupingBy(
+        this.mapNameToStatusTransitionListeners = taskStatusTransitionListenerList.stream()
+                .collect(Collectors.groupingBy(
                         taskStatusTransitionListener -> taskStatusTransitionListener.getStatusTransition().getName()));
     }
 
@@ -105,7 +103,8 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
     private TaskStatusTransition getTransitionForStatuses(TaskStatus oldStatus, TaskStatus newStatus) {
         return Arrays.stream(TaskStatusTransition.values())
                 .filter(transition -> transition.getCurrentStatus() == oldStatus && transition.getNextStatus() == newStatus)
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 
     private Task getTask(Project project, Long stageId, Long taskId) {
@@ -113,7 +112,12 @@ public class TaskWorkflowServiceImpl implements TaskWorkflowService {
         //Newly created Task do not have assigned id yet.
         Predicate<Task> taskPredicate = taskId != null ? task -> task.getId()
                 .equals(taskId) : task -> task.getId() == null;
-        return project.getStages().stream().filter(stagePredicate).flatMap(stage -> stage.getTasks().stream())
-                .filter(taskPredicate).findFirst().orElse(null);
+        return project.getStages()
+                .stream()
+                .filter(stagePredicate)
+                .flatMap(stage -> stage.getTasks().stream())
+                .filter(taskPredicate)
+                .findFirst()
+                .orElseThrow(ResourceNotFoundException::new);
     }
 }

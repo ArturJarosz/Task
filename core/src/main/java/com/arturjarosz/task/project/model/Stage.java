@@ -5,29 +5,22 @@ import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.project.status.stage.StageWorkflow;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
+import jakarta.persistence.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import java.io.Serial;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "stage_sequence", allocationSize = 1)
 @Table(name = "STAGE")
 public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> {
-
+    @Serial
     private static final long serialVersionUID = 3201266147496282083L;
+
     @Column(name = "NAME")
     private String name;
 
@@ -51,10 +44,6 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
     @Column(name = "STAGE_TYPE", nullable = false)
     private StageType stageType;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "INSTALLMENT_ID", referencedColumnName = "ID")
-    private Installment installment;
-
     @Column(name = "STATUS", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private StageStatus status;
@@ -63,7 +52,7 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
     private String workflowName;
 
     protected Stage() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Stage(String name, StageType stageType, StageWorkflow stageWorkflow) {
@@ -77,18 +66,6 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
         this.note = note;
         this.stageType = stageType;
         this.deadline = deadline;
-    }
-
-    public Installment getInstallment() {
-        return this.installment;
-    }
-
-    public void setInstallment(Installment installment) {
-        this.installment = installment;
-    }
-
-    public void removeInstallment() {
-        this.installment = null;
     }
 
     public void addTask(Task task) {
@@ -110,9 +87,8 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
     }
 
     public Task updateTask(Long taskId, TaskInnerDto taskInnerDto) {
-        Task taskToUpdate = Objects.requireNonNull(this.tasks.stream()
-                .filter(task -> task.getId().equals(taskId))
-                .findFirst().orElse(null));
+        Task taskToUpdate = Objects.requireNonNull(
+                this.tasks.stream().filter(task -> task.getId().equals(taskId)).findFirst().orElse(null));
         taskToUpdate.update(taskInnerDto);
         return taskToUpdate;
     }

@@ -2,44 +2,36 @@ package com.arturjarosz.task.architect.application.impl;
 
 import com.arturjarosz.task.architect.application.ArchitectApplicationService;
 import com.arturjarosz.task.architect.application.ArchitectValidator;
-import com.arturjarosz.task.architect.application.dto.ArchitectBasicDto;
-import com.arturjarosz.task.architect.application.dto.ArchitectDto;
 import com.arturjarosz.task.architect.application.mapper.ArchitectDtoMapper;
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository;
-import com.arturjarosz.task.architect.model.Architect;
+import com.arturjarosz.task.dto.ArchitectDto;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectDto;
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectExistence;
-import static com.arturjarosz.task.architect.application.ArchitectValidator.validateBasicArchitectDto;
 
+@Slf4j
+@RequiredArgsConstructor
 @ApplicationService
 public class ArchitectApplicationServiceImpl implements ArchitectApplicationService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ArchitectApplicationServiceImpl.class);
-
+    @NonNull
     private final ArchitectRepository architectRepository;
+    @NonNull
     private final ArchitectValidator architectValidator;
-
-    public ArchitectApplicationServiceImpl(ArchitectRepository architectRepository,
-                                           ArchitectValidator architectValidator) {
-        this.architectRepository = architectRepository;
-        this.architectValidator = architectValidator;
-    }
 
     @Transactional
     @Override
-    public ArchitectDto createArchitect(ArchitectBasicDto architectBasicDto) {
+    public ArchitectDto createArchitect(ArchitectDto architectDto) {
         LOG.debug("creating architect");
-
-        validateBasicArchitectDto(architectBasicDto);
-        Architect architect = ArchitectDtoMapper.INSTANCE.architectBasicDtoToArchitect(architectBasicDto);
+        validateArchitectDto(architectDto);
+        var architect = ArchitectDtoMapper.INSTANCE.architectDtoToArchitect(architectDto);
         architect = this.architectRepository.save(architect);
         LOG.debug("architect created");
         return ArchitectDtoMapper.INSTANCE.architectToArchitectDto(architect);
@@ -50,21 +42,21 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     public void removeArchitect(Long architectId) {
         LOG.debug("removing architect");
 
-        Architect architect = this.architectRepository.load(architectId);
-        validateArchitectExistence(architect, architectId);
+        this.architectValidator.validateArchitectExistence(architectId);
         this.architectValidator.validateArchitectHasNoProjects(architectId);
-        this.architectRepository.remove(architectId);
+        this.architectRepository.deleteById(architectId);
 
         LOG.debug("architect with id {} removed", architectId);
     }
 
     @Override
     public ArchitectDto getArchitect(Long architectId) {
-        Architect architect = this.architectRepository.load(architectId);
-        validateArchitectExistence(architect, architectId);
+        var maybeArchitect = this.architectRepository.findById(architectId);
+        validateArchitectExistence(maybeArchitect, architectId);
 
         LOG.debug("architect with id {} loaded", architectId);
-        return ArchitectDtoMapper.INSTANCE.architectToArchitectDto(architect);
+        return ArchitectDtoMapper.INSTANCE.architectToArchitectDto(maybeArchitect.orElseThrow(
+                ResourceNotFoundException::new));
     }
 
     @Transactional
@@ -72,19 +64,24 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     public ArchitectDto updateArchitect(Long architectId, ArchitectDto architectDto) {
         LOG.debug("updating architect with id {}", architectId);
 
-        Architect architect = this.architectRepository.load(architectId);
-        validateArchitectExistence(architect, architectId);
+        var maybeArchitect = this.architectRepository.findById(architectId);
+        validateArchitectExistence(maybeArchitect, architectId);
         validateArchitectDto(architectDto);
+        var architect = maybeArchitect.orElseThrow(
+                ResourceNotFoundException::new);
         architect.updateArchitectName(architectDto.getFirstName(), architectDto.getLastName());
-
         architect = this.architectRepository.save(architect);
+
         LOG.debug("architect with id {} updated", architectId);
+
         return ArchitectDtoMapper.INSTANCE.architectToArchitectDto(architect);
     }
 
     @Override
-    public List<ArchitectBasicDto> getBasicArchitects() {
-        return this.architectRepository.loadAll().stream()
-                .map(ArchitectDtoMapper.INSTANCE::architectToArchitectBasicDto).collect(Collectors.toList());
+    public List<ArchitectDto> getArchitects() {
+        return this.architectRepository.findAll()
+                .stream()
+                .map(ArchitectDtoMapper.INSTANCE::architectToArchitectDto)
+                .toList();
     }
 }

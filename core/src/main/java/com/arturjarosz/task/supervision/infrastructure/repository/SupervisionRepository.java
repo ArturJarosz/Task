@@ -1,7 +1,7 @@
 package com.arturjarosz.task.supervision.infrastructure.repository;
 
-import com.arturjarosz.task.sharedkernel.infrastructure.AbstractBaseRepository;
 import com.arturjarosz.task.supervision.model.Supervision;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SupervisionRepository extends AbstractBaseRepository<Supervision> {
+public interface SupervisionRepository extends JpaRepository<Supervision, Long> {
 }

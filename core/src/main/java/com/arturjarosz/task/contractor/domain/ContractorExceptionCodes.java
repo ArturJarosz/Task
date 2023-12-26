@@ -3,7 +3,7 @@ package com.arturjarosz.task.contractor.domain;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalStateException;
 
-public class ContractorExceptionCodes {
+public final class ContractorExceptionCodes {
     public static final String CONTRACTOR = "contractor";
 
     public static final String NAME = "name";

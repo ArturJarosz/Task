@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      author: "liquobase"
+      author: "liquibase"
       id: "create-project-financial-data-sequence"
       changes:
         - createSequence:

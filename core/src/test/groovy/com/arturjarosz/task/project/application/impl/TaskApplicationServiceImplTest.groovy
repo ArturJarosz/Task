@@ -1,62 +1,62 @@
 package com.arturjarosz.task.project.application.impl
 
 import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator
+import com.arturjarosz.task.dto.TaskDto
+import com.arturjarosz.task.dto.TaskStatusDto
+import com.arturjarosz.task.dto.TaskTypeDto
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.TaskValidator
-import com.arturjarosz.task.project.application.dto.TaskDto
 import com.arturjarosz.task.project.domain.TaskDomainService
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
-import com.arturjarosz.task.project.model.TaskType
 import com.arturjarosz.task.project.model.dto.TaskInnerDto
 import com.arturjarosz.task.project.query.ProjectQueryService
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.task.TaskStatus
-import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
-import com.arturjarosz.task.project.utils.TaskBuilder
+import com.arturjarosz.task.utils.ProjectBuilder
+import com.arturjarosz.task.utils.StageBuilder
+import com.arturjarosz.task.utils.TaskBuilder
 import spock.lang.Specification
 
 class TaskApplicationServiceImplTest extends Specification {
-    private static final Long PROJECT_ID = 1L
-    private static final Long STAGE_ID = 10L
-    private static final Long TASK_ID = 20L
-    private static final String PROJECT_NAME = "projectName"
-    private static final String STAGE_NAME = "stageName"
-    private static final String TASK_NAME = "taskName"
-    private static final String NEW_TASK_NAME = "newTaskName"
-    private static final String NOTE = "note"
-    private static final TaskStatus NEW_TASK_STATUS = TaskStatus.IN_PROGRESS
+    static final Long PROJECT_ID = 1L
+    static final Long STAGE_ID = 10L
+    static final Long TASK_ID = 20L
+    static final String PROJECT_NAME = "projectName"
+    static final String STAGE_NAME = "stageName"
+    static final String TASK_NAME = "taskName"
+    static final String NEW_TASK_NAME = "newTaskName"
+    static final TaskStatusDto NEW_TASK_STATUS = TaskStatusDto.IN_PROGRESS
 
-    private projectQueryService = Mock(ProjectQueryService)
-    private projectRepository = Mock(ProjectRepository)
-    private projectValidator = Mock(ProjectValidator)
-    private stageValidator = Mock(StageValidator)
-    private taskDomainService = Mock(TaskDomainService)
-    private taskValidator = Mock(TaskValidator)
-    private contractWorkflowValidator = Mock(ContractWorkflowValidator)
+    def projectQueryService = Mock(ProjectQueryService)
+    def projectRepository = Mock(ProjectRepository)
+    def projectValidator = Mock(ProjectValidator)
+    def stageValidator = Mock(StageValidator)
+    def taskDomainService = Mock(TaskDomainService)
+    def taskValidator = Mock(TaskValidator)
+    def contractWorkflowValidator = Mock(ContractWorkflowValidator)
 
     def taskApplicationService = new TaskApplicationServiceImpl(projectQueryService, projectRepository,
             projectValidator, stageValidator, taskDomainService, taskValidator, contractWorkflowValidator)
 
     def "createTask should call validateProjectExistence on ProjectValidator"() {
         given:
-            TaskDto taskDto = this.prepareNewTaskDto()
+            def taskDto = this.prepareNewTaskDto()
             this.mockProjectRepositoryLoad()
             this.mockTaskDomainServiceCreateTask()
             this.mockProjectRepositorySaveProjectWithStageAndTask()
         when:
             this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_ID)
     }
 
     def "createTask should call validateExistenceOfStageInProject on StageValidator"() {
         given:
-            TaskDto taskDto = this.prepareNewTaskDto()
+            def taskDto = this.prepareNewTaskDto()
             this.mockProjectRepositoryLoad()
             this.mockTaskDomainServiceCreateTask()
             this.mockProjectRepositorySaveProjectWithStageAndTask()
@@ -68,7 +68,7 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "createTask should call validateCreateTaskDto on TaskValidator"() {
         given:
-            TaskDto taskDto = this.prepareNewTaskDto()
+            def taskDto = this.prepareNewTaskDto()
             this.mockProjectRepositoryLoad()
             this.mockTaskDomainServiceCreateTask()
             this.mockProjectRepositorySaveProjectWithStageAndTask()
@@ -80,7 +80,7 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "createTask should call validateContractAllowsForWorkObjectsCreation on contractWorkflowValidator"() {
         given:
-            TaskDto taskDto = this.prepareNewTaskDto()
+            def taskDto = this.prepareNewTaskDto()
             this.mockProjectRepositoryLoad()
             this.mockTaskDomainServiceCreateTask()
             this.mockProjectRepositorySaveProjectWithStageAndTask()
@@ -92,19 +92,19 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "createTask should load project from ProjectRepository"() {
         given:
-            TaskDto taskDto = this.prepareNewTaskDto()
+            def taskDto = this.prepareNewTaskDto()
             this.mockProjectRepositoryLoad()
             this.mockTaskDomainServiceCreateTask()
             this.mockProjectRepositorySaveProjectWithStageAndTask()
         when:
             this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto)
         then:
-            1 * this.projectRepository.load(PROJECT_ID) >> Mock(Project)
+            1 * this.projectRepository.findById(PROJECT_ID) >> Optional.of(Mock(Project))
     }
 
     def "createTask should call createTask from TaskDomainRepository"() {
         given:
-            TaskDto taskDto = this.prepareNewTaskDto()
+            def taskDto = this.prepareNewTaskDto()
             this.mockProjectRepositoryLoad()
             this.mockTaskDomainServiceCreateTask()
             this.mockProjectRepositorySaveProjectWithStageAndTask()
@@ -116,7 +116,7 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "createTask should call createTask on taskDomainService"() {
         given:
-            TaskDto taskDto = this.prepareNewTaskDto()
+            def taskDto = this.prepareNewTaskDto()
             this.mockProjectRepositoryLoad()
             this.mockTaskDomainServiceCreateTask()
             this.mockProjectRepositorySaveProjectWithStageAndTask()
@@ -128,7 +128,7 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "createTask should save project with save on ProjectRepository"() {
         given:
-            TaskDto taskDto = this.prepareNewTaskDto()
+            def taskDto = this.prepareNewTaskDto()
             this.mockProjectRepositoryLoad()
             this.mockTaskDomainServiceCreateTask()
         when:
@@ -139,17 +139,17 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "updateTask should call validateProjectExistence on projectValidator"() {
         given:
-            TaskDto taskDto = this.prepareUpdateTaskDto()
+            def taskDto = this.prepareUpdateTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
             this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_ID)
     }
 
     def "updateTask should call validateExistenceOfStageInProject on stageValidator"() {
         given:
-            TaskDto taskDto = this.prepareUpdateTaskDto()
+            def taskDto = this.prepareUpdateTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
             this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
@@ -159,7 +159,7 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "updateTask should call validateExistenceOfTaskInStage on taskValidator"() {
         given:
-            TaskDto taskDto = this.prepareUpdateTaskDto()
+            def taskDto = this.prepareUpdateTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
             this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
@@ -169,7 +169,7 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "updateTask should call validateUpdateTaskDto on taskValidator"() {
         given:
-            TaskDto taskDto = this.prepareUpdateTaskDto()
+            def taskDto = this.prepareUpdateTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
             this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
@@ -179,17 +179,17 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "updateTask should load project from ProjectRepository"() {
         given:
-            TaskDto taskDto = this.prepareUpdateTaskDto()
+            def taskDto = this.prepareUpdateTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
             this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
         then:
-            1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask()
+            1 * this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProjectWithStageWithTask())
     }
 
     def "updateTask should call updateTask on taskDomainService"() {
         given:
-            TaskDto taskDto = this.prepareUpdateTaskDto()
+            def taskDto = this.prepareUpdateTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
             this.taskApplicationService.updateTask(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
@@ -209,17 +209,17 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "updateTaskStatus should call validateProjectExistence on projectValidator"() {
         given:
-            TaskDto taskDto = this.prepareUpdateStatusTaskDto()
+            def taskDto = this.prepareUpdateStatusTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
             this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_ID)
     }
 
     def "updateTaskStatus should call validateExistenceOfStageInProject on stageValidator"() {
         given:
-            TaskDto taskDto = this.prepareUpdateStatusTaskDto()
+            def taskDto = this.prepareUpdateStatusTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
             this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
@@ -229,7 +229,7 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "updateTaskStatus should call validateExistenceTaskInStatus on taskValidator"() {
         given:
-            TaskDto taskDto = this.prepareUpdateStatusTaskDto()
+            def taskDto = this.prepareUpdateStatusTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
             this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
@@ -239,17 +239,17 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "updateTaskStatus should load project from projectRepository"() {
         given:
-            TaskDto taskDto = this.prepareUpdateStatusTaskDto()
+            def taskDto = this.prepareUpdateStatusTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
             this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
         then:
-            1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask()
+            1 * this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProjectWithStageWithTask())
     }
 
     def "updateStatus should call updateTaskStatus on taskDomainService"() {
         given:
-            TaskDto taskDto = this.prepareUpdateStatusTaskDto()
+            def taskDto = this.prepareUpdateStatusTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
             this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
@@ -259,7 +259,7 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "updateStatus should save project on projectRepository"() {
         given:
-            TaskDto taskDto = this.prepareUpdateStatusTaskDto()
+            def taskDto = this.prepareUpdateStatusTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
             this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
@@ -309,7 +309,7 @@ class TaskApplicationServiceImplTest extends Specification {
         when:
             this.taskApplicationService.getTaskList(PROJECT_ID, STAGE_ID)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_ID)
     }
 
     def "getTaskList should call validateExistenceOfStageInProject on stageValidator"() {
@@ -328,7 +328,7 @@ class TaskApplicationServiceImplTest extends Specification {
         when:
             this.taskApplicationService.getTaskList(PROJECT_ID, STAGE_ID)
         then:
-            1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask()
+            1 * this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProjectWithStageWithTask())
     }
 
     def "getTaskList should return list of task from given stage"() {
@@ -346,7 +346,7 @@ class TaskApplicationServiceImplTest extends Specification {
         when:
             this.taskApplicationService.rejectTask(PROJECT_ID, STAGE_ID, TASK_ID)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_ID)
     }
 
     def "rejectTask should call validateExistenceOFStageInProject on stageValidator"() {
@@ -373,7 +373,7 @@ class TaskApplicationServiceImplTest extends Specification {
         when:
             this.taskApplicationService.rejectTask(PROJECT_ID, STAGE_ID, TASK_ID)
         then:
-            1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask()
+            1 * this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProjectWithStageWithTask())
     }
 
     def "rejectTask should call rejectTask on taskDomainService"() {
@@ -400,7 +400,7 @@ class TaskApplicationServiceImplTest extends Specification {
         when:
             this.taskApplicationService.reopenTask(PROJECT_ID, STAGE_ID, TASK_ID)
         then:
-            1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
+            1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_ID)
     }
 
     def "reopenTask should call validateExistenceOfStageInProject on stageValidator"() {
@@ -427,7 +427,7 @@ class TaskApplicationServiceImplTest extends Specification {
         when:
             this.taskApplicationService.reopenTask(PROJECT_ID, STAGE_ID, TASK_ID)
         then:
-            1 * this.projectRepository.load(PROJECT_ID) >> this.prepareProjectWithStageWithTask()
+            1 * this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProjectWithStageWithTask())
     }
 
     def "reopenTask should call reopenTask on taskDomainService"() {
@@ -449,13 +449,12 @@ class TaskApplicationServiceImplTest extends Specification {
     }
 
     private TaskDto prepareNewTaskDto() {
-        TaskDto taskDto = new TaskDto(name: TASK_NAME, id: TASK_ID, type: TaskType.CONCEPT)
-        taskDto
+        new TaskDto(name: TASK_NAME, id: TASK_ID, type: TaskTypeDto.CONCEPT)
     }
 
     private TaskDto prepareUpdateTaskDto() {
-        TaskDto taskDto = new TaskDto(name: NEW_TASK_NAME, id: TASK_ID, note: TaskType.CONCEPT)
-        taskDto
+        new TaskDto(name: NEW_TASK_NAME, id: TASK_ID, type: TaskTypeDto.CONCEPT)
+
     }
 
     private TaskDto prepareUpdateStatusTaskDto() {
@@ -497,22 +496,22 @@ class TaskApplicationServiceImplTest extends Specification {
     }
 
     private void mockProjectRepositoryLoad() {
-        Project project = this.prepareProjectWithStage()
-        this.projectRepository.load(PROJECT_ID) >> project
+        def project = this.prepareProjectWithStage()
+        this.projectRepository.findById(PROJECT_ID) >> Optional.of(project)
     }
 
     private void mockProjectRepositoryLoadProjectWithStageAndTask() {
-        Project project = this.prepareProjectWithStageWithTask()
-        this.projectRepository.load(PROJECT_ID) >> project
+        def project = this.prepareProjectWithStageWithTask()
+        this.projectRepository.findById(PROJECT_ID) >> Optional.of(project)
     }
 
     private void mockTaskDomainServiceCreateTask() {
-        Task task = this.prepareNewTask()
+        def task = this.prepareNewTask()
         this.taskDomainService.createTask(_ as Project, _ as Long, _ as TaskDto) >> task
     }
 
     private void mockProjectQueryServiceGetTask() {
-        TaskDto taskDto = this.prepareNewTaskDto()
+        def taskDto = this.prepareNewTaskDto()
         this.projectQueryService.getTaskByTaskId(TASK_ID) >> taskDto
     }
 
@@ -520,6 +519,7 @@ class TaskApplicationServiceImplTest extends Specification {
         return new TaskBuilder()
                 .withId(TASK_ID)
                 .withName(TASK_NAME)
+                .withStatus(TaskStatus.TO_DO)
                 .build()
     }
 

@@ -1,20 +1,16 @@
 package com.arturjarosz.task.sharedkernel.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import java.io.Serial;
 
 @Embeddable
 public class WorkTime extends AbstractValueObject<WorkTime> implements ValueObject<WorkTime> {
+    @Serial
     private static final long serialVersionUID = -9057875053913061735L;
-
-    /*
-    TODO: For now it does not validate adding time. The idea is to have something like parsing of entered text
-        1d 5h 10m and then translated to minutes and store as minutes amount. When no letter is provided,
-        then it should tread it as minutes. No any other letters are allowed.
-     */
 
     @Column(name = "WORK_TIME")
     private Long time;
@@ -44,5 +40,22 @@ public class WorkTime extends AbstractValueObject<WorkTime> implements ValueObje
     @Override
     public WorkTime copy() {
         return new WorkTime(this.time);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (object.getClass() != this.getClass()) {
+            return false;
+        }
+
+        WorkTime other = (WorkTime) object;
+
+        return this.hasSameValueAs(other);
     }
 }

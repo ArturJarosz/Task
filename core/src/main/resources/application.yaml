@@ -19,13 +19,15 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate.cache.use_query_cache: false
-      hibernate.generate_statistics: true
+      hibernate.generate_statistics: false
       hibernate.default_schema: task_schema
   main:
     log-startup-info: false
-    banner-mode: off
   jackson:
     default-property-inclusion: non_null
+  output:
+    ansi:
+      enabled: always
 server:
   port: 8100
 task:

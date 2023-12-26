@@ -1,7 +1,9 @@
 package com.arturjarosz.task.sharedkernel.exceptions;
 
-public class IllegalStateException extends BaseRuntimeException {
+import java.io.Serial;
 
+public class IllegalStateException extends BaseRuntimeException {
+    @Serial
     private static final long serialVersionUID = -6149413430368693629L;
 
     public IllegalStateException() {

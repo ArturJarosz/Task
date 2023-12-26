@@ -1,34 +1,35 @@
 package com.arturjarosz.task.client.application
 
-import com.arturjarosz.task.client.application.dto.ClientDto
-import com.arturjarosz.task.client.infrastructure.repository.impl.ClientRepositoryImpl
+import com.arturjarosz.task.client.infrastructure.repository.ClientRepository
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
+import com.arturjarosz.task.dto.ClientDto
+import com.arturjarosz.task.dto.ClientTypeDto
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
-import com.arturjarosz.task.project.utils.ProjectBuilder
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.PersonName
+import com.arturjarosz.task.utils.ProjectBuilder
 import spock.lang.Specification
 
 class ClientValidatorTest extends Specification {
 
-    private static final Long PRIVATE_CLIENT_ID = 1L
-    private static final Long CORPORATE_CLIENT_ID = 2L
-    private static final Long NON_EXISTING_ID = 999L
-    private static final Long CLIENT_ID_WITHOUT_PROJECTS = 899L
-    private static final Long CLIENT_ID_WITH_PROJECTS = 10L
-    private static final String FIRST_NAME = "first"
-    private static final String LAST_NAME = "last"
-    private static final String COMPANY_NAME = "company"
+    static final Long PRIVATE_CLIENT_ID = 1L
+    static final Long CORPORATE_CLIENT_ID = 2L
+    static final Long NON_EXISTING_ID = 999L
+    static final Long CLIENT_ID_WITHOUT_PROJECTS = 899L
+    static final Long CLIENT_ID_WITH_PROJECTS = 10L
+    static final String FIRST_NAME = "first"
+    static final String LAST_NAME = "last"
+    static final String COMPANY_NAME = "company"
 
-    private static Project emptyProject = new ProjectBuilder().build()
+    static Project emptyProject = new ProjectBuilder().build()
 
-    private static Client client = new Client(new PersonName(FIRST_NAME, LAST_NAME), null, ClientType.PRIVATE)
+    static Client client = new Client(new PersonName(FIRST_NAME, LAST_NAME), null, ClientType.PRIVATE)
 
-    def clientRepository = Mock(ClientRepositoryImpl) {
-        load(NON_EXISTING_ID) >> { null }
-        load(PRIVATE_CLIENT_ID) >> { client }
+    def clientRepository = Mock(ClientRepository) {
+        findById(NON_EXISTING_ID) >> { Optional.ofNullable(null) }
+        findById(PRIVATE_CLIENT_ID) >> { Optional.of(client) }
     }
 
     def projectQueryService = Mock(ProjectQueryServiceImpl) {
@@ -41,8 +42,8 @@ class ClientValidatorTest extends Specification {
 
     def "Should not throw any exception when private client data provided"() {
         given:
-            ClientDto clientDto = new ClientDto(firstName: FIRST_NAME, id: PRIVATE_CLIENT_ID, lastName: LAST_NAME,
-                    clientType: ClientType.PRIVATE)
+            def clientDto = new ClientDto(firstName: FIRST_NAME, id: PRIVATE_CLIENT_ID, lastName: LAST_NAME,
+                    clientType: ClientTypeDto.PRIVATE)
         when:
             this.clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -51,7 +52,7 @@ class ClientValidatorTest extends Specification {
 
     def "Should not throw any exception when corporate client data provided"() {
         given:
-            ClientDto clientDto = new ClientDto(clientType: ClientType.CORPORATE, companyName: COMPANY_NAME,
+            def clientDto = new ClientDto(clientType: ClientTypeDto.CORPORATE, companyName: COMPANY_NAME,
                     id: CORPORATE_CLIENT_ID)
         when:
             clientValidator.validateClientBasicDto(clientDto)
@@ -61,7 +62,7 @@ class ClientValidatorTest extends Specification {
 
     def "Not providing client dto should throw an error with specific message"() {
         given:
-            ClientDto clientDto = null
+            def clientDto = null
         when:
             clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -71,7 +72,7 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when client type not provided"() {
         given:
-            ClientDto clientDto = new ClientDto(id: CORPORATE_CLIENT_ID, companyName: COMPANY_NAME)
+            def clientDto = new ClientDto(id: CORPORATE_CLIENT_ID, companyName: COMPANY_NAME)
         when:
             clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -81,7 +82,7 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when first name is not provided for private client"() {
         given:
-            ClientDto clientDto = new ClientDto(clientType: ClientType.PRIVATE, id: PRIVATE_CLIENT_ID,
+            def clientDto = new ClientDto(clientType: ClientTypeDto.PRIVATE, id: PRIVATE_CLIENT_ID,
                     lastName: LAST_NAME)
         when:
             clientValidator.validateClientBasicDto(clientDto)
@@ -92,7 +93,7 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when last name is not provided for private client"() {
         given:
-            ClientDto clientDto = new ClientDto(clientType: ClientType.PRIVATE, firstName: FIRST_NAME,
+            def clientDto = new ClientDto(clientType: ClientTypeDto.PRIVATE, firstName: FIRST_NAME,
                     id: PRIVATE_CLIENT_ID)
         when:
             clientValidator.validateClientBasicDto(clientDto)
@@ -103,7 +104,7 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when company name is not provided for corporate client"() {
         given:
-            ClientDto clientDto = new ClientDto(clientType: ClientType.CORPORATE, id: CORPORATE_CLIENT_ID)
+            def clientDto = new ClientDto(clientType: ClientTypeDto.CORPORATE, id: CORPORATE_CLIENT_ID)
         when:
             clientValidator.validateClientBasicDto(clientDto)
         then:
@@ -113,7 +114,7 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when company name is empty for corporate client"() {
         given:
-            ClientDto clientDto = new ClientDto(clientType: ClientType.CORPORATE, companyName: "",
+            def clientDto = new ClientDto(clientType: ClientTypeDto.CORPORATE, companyName: "",
                     id: CORPORATE_CLIENT_ID)
         when:
             clientValidator.validateClientBasicDto(clientDto)
@@ -124,7 +125,7 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when first name is empty for private client"() {
         given:
-            ClientDto clientDto = new ClientDto(clientType: ClientType.PRIVATE, id: PRIVATE_CLIENT_ID, firstName: "",
+            def clientDto = new ClientDto(clientType: ClientTypeDto.PRIVATE, id: PRIVATE_CLIENT_ID, firstName: "",
                     lastName: LAST_NAME)
         when:
             clientValidator.validateClientBasicDto(clientDto)
@@ -135,7 +136,7 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an error with specific message when last name is empty for private client"() {
         given:
-            ClientDto clientDto = new ClientDto(clientType: ClientType.PRIVATE, id: PRIVATE_CLIENT_ID,
+            def clientDto = new ClientDto(clientType: ClientTypeDto.PRIVATE, id: PRIVATE_CLIENT_ID,
                     firstName: FIRST_NAME, lastName: "")
         when:
             clientValidator.validateClientBasicDto(clientDto)
@@ -146,18 +147,18 @@ class ClientValidatorTest extends Specification {
 
     def "Should throw an exception when client is null"() {
         given:
-            def client = null
+            Optional<Client> maybeClient = Optional.ofNullable(null)
         when:
-            clientValidator.validateClientExistence(client, PRIVATE_CLIENT_ID)
+            clientValidator.validateClientExistence(maybeClient, PRIVATE_CLIENT_ID)
         then:
             thrown(IllegalArgumentException)
     }
 
     def "Should not throw an exception when client in not null"() {
         given:
-            def client = new Client(new PersonName(FIRST_NAME, LAST_NAME), "", ClientType.PRIVATE)
+            def maybeClient = Optional.of(new Client(new PersonName(FIRST_NAME, LAST_NAME), "", ClientType.PRIVATE))
         when:
-            clientValidator.validateClientExistence(client, PRIVATE_CLIENT_ID)
+            clientValidator.validateClientExistence(maybeClient, PRIVATE_CLIENT_ID)
         then:
             noExceptionThrown()
     }

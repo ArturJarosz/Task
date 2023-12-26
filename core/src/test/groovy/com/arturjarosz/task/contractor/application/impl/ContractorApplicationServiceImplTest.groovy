@@ -1,37 +1,37 @@
 package com.arturjarosz.task.contractor.application.impl
 
+import com.arturjarosz.task.contract.intrastructure.ContractRepository
 import com.arturjarosz.task.contractor.application.ContractorValidator
-import com.arturjarosz.task.contractor.application.dto.ContractorDto
-import com.arturjarosz.task.contractor.infrastructure.impl.ContractorRepositoryImpl
+import com.arturjarosz.task.contractor.infrastructure.ContractorRepository
 import com.arturjarosz.task.contractor.model.Contractor
 import com.arturjarosz.task.contractor.model.ContractorCategory
+import com.arturjarosz.task.dto.ContractorCategoryDto
+import com.arturjarosz.task.dto.ContractorDto
 import spock.lang.Specification
 import spock.lang.Subject
 
 class ContractorApplicationServiceImplTest extends Specification {
     final static String NAME = "name"
     final static String UPDATED_NAME = "updated_name"
-    final static ContractorCategory CATEGORY = ContractorCategory.ARTIST
-    final static ContractorCategory UPDATED_CATEGORY = ContractorCategory.CARPENTER
+    final static ContractorCategoryDto CATEGORY = ContractorCategoryDto.ARTIST
+    final static ContractorCategoryDto UPDATED_CATEGORY = ContractorCategoryDto.CARPENTER
     final static String UPDATED_EMAIL = "email@email.com"
     final static String TELEPHONE = "123456789"
     final static String NOTE = "note"
     final static Long CONTRACTOR_ID = 1L
 
-    def contractorRepository = Mock(ContractorRepositoryImpl)
+    def contractorRepository = Mock(ContractRepository)
     def contractorValidator = Mock(ContractorValidator)
 
     @Subject
-    def contractorApplicationService = new ContractorApplicationServiceImpl(contractorRepository, contractorValidator)
+    def contractorApplicationService = new ContractorApplicationServiceImpl(contractorRepository as ContractorRepository, contractorValidator)
 
 
     def "createContractor should call validateCreateContractorDto from contractorValidator"() {
         given:
             def contractorDto = new ContractorDto(name: NAME, category: CATEGORY)
-
         when:
             this.contractorApplicationService.createContractor(contractorDto)
-
         then:
             1 * this.contractorValidator.validateCreateContractorDto(contractorDto)
     }
@@ -39,12 +39,21 @@ class ContractorApplicationServiceImplTest extends Specification {
     def "createContract should save created contractor"() {
         given:
             def contractorDto = new ContractorDto(name: NAME, category: CATEGORY)
-
         when:
             this.contractorApplicationService.createContractor(contractorDto)
-
         then:
             1 * this.contractorRepository.save(_ as Contractor)
+    }
+
+    def "createContractor should return created contractor"() {
+        given:
+            def contractorDto = new ContractorDto(name: NAME, category: CATEGORY)
+        when:
+            def createdContractor = this.contractorApplicationService.createContractor(contractorDto)
+        then:
+            createdContractor != null
+            createdContractor.name == NAME
+            createdContractor.category == CATEGORY
     }
 
     def "updateContractor should call validateContractorExistence on contractorValidator"() {
@@ -58,7 +67,7 @@ class ContractorApplicationServiceImplTest extends Specification {
             this.contractorApplicationService.updateContractor(CONTRACTOR_ID, updateContractorDto)
 
         then:
-            1 * this.contractorValidator.validateContractorExistence(CONTRACTOR_ID)
+            1 * this.contractorValidator.validateContractorExistence(_ as Optional<Contractor>, CONTRACTOR_ID)
     }
 
     def "updateContractor should call validateUpdateContractorDto on contractorValidator"() {
@@ -88,11 +97,30 @@ class ContractorApplicationServiceImplTest extends Specification {
         then:
             1 * this.contractorRepository.save({ Contractor contractor ->
                 contractor.name == UPDATED_NAME
-                contractor.category == UPDATED_CATEGORY
+                contractor.category == ContractorCategory.valueOf(UPDATED_CATEGORY.name())
                 contractor.email == UPDATED_EMAIL
                 contractor.telephone == TELEPHONE
                 contractor.note == NOTE
             })
+    }
+
+    def "updateContractor should return updated contractorDto"() {
+        given:
+            def updateContractorDto = new ContractorDto(name: UPDATED_NAME, category: UPDATED_CATEGORY,
+                    email: UPDATED_EMAIL,
+                    telephone: TELEPHONE, note: NOTE)
+            this.mockContractorRepositoryLoad(CONTRACTOR_ID)
+
+        when:
+            def updatedContractor = this.contractorApplicationService.updateContractor(CONTRACTOR_ID, updateContractorDto)
+        then:
+            with(updatedContractor) {
+                name == updateContractorDto.name
+                category == updateContractorDto.category
+                email == updateContractorDto.email
+                telephone == updateContractorDto.telephone
+                note == updateContractorDto.note
+            }
     }
 
     def "deleteContractor should call validateContractorExistence on contractorValidator"() {
@@ -125,7 +153,7 @@ class ContractorApplicationServiceImplTest extends Specification {
             this.contractorApplicationService.deleteContractor(CONTRACTOR_ID)
 
         then:
-            1 * this.contractorRepository.remove(CONTRACTOR_ID)
+            1 * this.contractorRepository.deleteById(CONTRACTOR_ID)
     }
 
     def "getContactor should call validateContractorExistence on contractorValidator"() {
@@ -136,7 +164,7 @@ class ContractorApplicationServiceImplTest extends Specification {
             this.contractorApplicationService.getContractor(CONTRACTOR_ID)
 
         then:
-            1 * this.contractorValidator.validateContractorExistence(CONTRACTOR_ID)
+            1 * this.contractorValidator.validateContractorExistence(_ as Optional<Contractor>, CONTRACTOR_ID)
     }
 
     def "getContractor should return contractorDto of given contractor"() {
@@ -152,6 +180,6 @@ class ContractorApplicationServiceImplTest extends Specification {
     }
 
     private void mockContractorRepositoryLoad(Long contractorId) {
-        this.contractorRepository.load(contractorId) >> new Contractor(NAME, CATEGORY)
+        this.contractorRepository.findById(contractorId) >> Optional.of(new Contractor(NAME, ContractorCategory.valueOf(CATEGORY.name())))
     }
 }

@@ -3,7 +3,7 @@ package com.arturjarosz.task.supervision.application;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalStateException;
 
-public class SupervisionExceptionCodes {
+public final class SupervisionExceptionCodes {
 
     // Entities
     public static final String SUPERVISION = "supervision";

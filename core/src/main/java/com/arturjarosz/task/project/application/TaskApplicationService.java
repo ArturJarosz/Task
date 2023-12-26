@@ -1,6 +1,6 @@
 package com.arturjarosz.task.project.application;
 
-import com.arturjarosz.task.project.application.dto.TaskDto;
+import com.arturjarosz.task.dto.TaskDto;
 
 import java.util.List;
 
@@ -46,7 +46,6 @@ public interface TaskApplicationService {
     /**
      * Set Task with taskId as rejected for Stage with stageId on Project with ProjectId. If Project, Stage or Task
      * does not exist, new exception will be thrown.
-
      */
     TaskDto rejectTask(Long projectId, Long stageId, Long taskId);
 

@@ -1,16 +1,18 @@
 package com.arturjarosz.task.client.application.mapper;
 
-import com.arturjarosz.task.client.application.dto.AddressDto;
-import com.arturjarosz.task.client.application.dto.ClientDto;
 import com.arturjarosz.task.client.model.Client;
-import com.arturjarosz.task.client.model.ClientType;
+import com.arturjarosz.task.dto.AddressDto;
+import com.arturjarosz.task.dto.ClientDto;
+import com.arturjarosz.task.dto.ClientTypeDto;
 import com.arturjarosz.task.sharedkernel.model.Address;
+import com.arturjarosz.task.sharedkernel.model.Email;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ClientDtoMapper {
 
     ClientDtoMapper INSTANCE = Mappers.getMapper(ClientDtoMapper.class);
@@ -23,21 +25,21 @@ public interface ClientDtoMapper {
     @Mapping(source = "address", target = "contact.address")
     @Mapping(source = "note", target = "note")
     @Mapping(source = "telephone", target = "contact.telephone")
-    @Mapping(target = "projectValue", source = ".", qualifiedByName = "getProjectsValue")
     ClientDto clientToClientDto(Client client);
 
-    @Mapping(target = "clientType", source = ".", qualifiedByName = "deductClientType")
-    @Mapping(source = "personName.firstName", target = "firstName")
-    @Mapping(source = "personName.lastName", target = "lastName")
-    @Mapping(source = "id", target = "id")
-    ClientDto clientToClientBasicDto(Client client);
+    default Client clientDtoToClient(ClientDto clientDto) {
+        if (clientDto.getClientType() == ClientTypeDto.CORPORATE) {
+            return this.clientDtoToCorporateClient(clientDto);
+        }
+        return this.clientDtoToPrivateClient(clientDto);
+    }
 
     @Named("deductClientType")
-    default ClientType deductClientType(Client client) {
+    default ClientTypeDto deductClientType(Client client) {
         if (client.isPrivate()) {
-            return ClientType.PRIVATE;
+            return ClientTypeDto.PRIVATE;
         }
-        return ClientType.CORPORATE;
+        return ClientTypeDto.CORPORATE;
     }
 
     @Named("getEmailValue")
@@ -48,14 +50,33 @@ public interface ClientDtoMapper {
         return client.getEmail().getValue();
     }
 
-    @Named("getProjectsValue")
-    default Double getProjectsValue(Client client) {
-        return client.getProjectsValue().getValue().doubleValue();
-    }
-
     @Named("addressDtoToAddress")
     default Address addressDtoToAddress(AddressDto addressDto) {
+        if (addressDto == null) {
+            return null;
+        }
         return new Address(addressDto.getPostCode(), addressDto.getCity(), addressDto.getStreet(),
                 addressDto.getHouseNumber(), addressDto.getFlatNumber());
     }
+
+    @Named("textToEmail")
+    default Email textToEmail(String text) {
+        return new Email(text);
+    }
+
+    @Mapping(target = "companyName", ignore = true)
+    @Mapping(target = "clientType", constant = "PRIVATE")
+    @Mapping(target = "personName.firstName", source = "firstName")
+    @Mapping(target = "personName.lastName", source = "lastName")
+    @Mapping(target = "telephone", source = "contact.telephone")
+    @Mapping(target = "address", source = "contact.address", qualifiedByName = "addressDtoToAddress")
+    @Mapping(target = "email", source = "contact.email", qualifiedByName = "textToEmail")
+    Client clientDtoToPrivateClient(ClientDto clientDto);
+
+    @Mapping(target = "personName", ignore = true)
+    @Mapping(target = "clientType", constant = "CORPORATE")
+    @Mapping(target = "telephone", source = "contact.telephone")
+    @Mapping(target = "address", source = "contact.address", qualifiedByName = "addressDtoToAddress")
+    @Mapping(target = "email", source = "contact.email", qualifiedByName = "textToEmail")
+    Client clientDtoToCorporateClient(ClientDto clientDto);
 }

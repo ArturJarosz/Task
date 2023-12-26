@@ -1,12 +1,12 @@
 package com.arturjarosz.task.data;
 
 import com.arturjarosz.task.client.application.ClientApplicationService;
-import com.arturjarosz.task.client.application.dto.ClientDto;
+import com.arturjarosz.task.dto.ClientDto;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @Component
 public class ClientInitializer implements DataInitializer {
 
-    private static final Logger LOG = LogManager.getLogger(ClientInitializer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ClientInitializer.class);
 
     private final ClientApplicationService clientApplicationService;
 

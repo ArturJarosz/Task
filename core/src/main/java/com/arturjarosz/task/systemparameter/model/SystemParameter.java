@@ -1,19 +1,22 @@
 package com.arturjarosz.task.systemparameter.model;
 
+import com.arturjarosz.task.dto.SystemParameterDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
-import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import java.io.Serial;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "system_parameter_sequence", allocationSize = 1)
 @Table(name = "SYSTEM_PARAMETER")
 public class SystemParameter extends AbstractAggregateRoot {
+    @Serial
     private static final long serialVersionUID = 9194763340793223514L;
 
     @Column(name = "NAME")
@@ -33,7 +36,7 @@ public class SystemParameter extends AbstractAggregateRoot {
     private boolean singleValue;
 
     protected SystemParameter() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public SystemParameter(String name, String value, String defaultValue, SystemParameterType type,

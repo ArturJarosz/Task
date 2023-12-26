@@ -1,12 +1,13 @@
 package com.arturjarosz.task.contract.application;
 
-import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.contract.domain.ContractExceptionCodes;
 import com.arturjarosz.task.contract.model.Contract;
+import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
@@ -31,9 +32,9 @@ public class ContractValidator {
         }
     }
 
-    public void validateContractExistence(Contract contract, Long contractId) {
-        assertNotNull(contract, createMessageCode(ExceptionCodes.NOT_EXIST, ContractExceptionCodes.CONTRACT),
-                contractId);
+    public void validateContractExistence(Optional<Contract> maybeContract, Long contractId) {
+        assertIsTrue(maybeContract.isPresent(),
+                createMessageCode(ExceptionCodes.NOT_EXIST, ContractExceptionCodes.CONTRACT), contractId);
     }
 
     public void validateSignContractDto(ContractDto contractDto) {
@@ -65,10 +66,7 @@ public class ContractValidator {
     }
 
     public void validateTerminateContractDto(ContractDto contractDto) {
-        assertNotNull(contractDto, createMessageCode(ExceptionCodes.NULL, ContractExceptionCodes.PROJECT,
-                ContractExceptionCodes.CONTRACT));
-        assertNotNull(contractDto.getEndDate(), createMessageCode(ExceptionCodes.NULL, ContractExceptionCodes.CONTRACT,
-                ContractExceptionCodes.END_DATE));
+        this.validateCompleteContractDto(contractDto);
     }
 
     public void validateCompleteContractDto(ContractDto contractDto) {

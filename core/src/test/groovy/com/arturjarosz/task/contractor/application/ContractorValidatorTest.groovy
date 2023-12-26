@@ -1,9 +1,10 @@
 package com.arturjarosz.task.contractor.application
 
-import com.arturjarosz.task.contractor.application.dto.ContractorDto
-import com.arturjarosz.task.contractor.infrastructure.impl.ContractorRepositoryImpl
+import com.arturjarosz.task.contractor.infrastructure.ContractorRepository
 import com.arturjarosz.task.contractor.model.Contractor
 import com.arturjarosz.task.contractor.model.ContractorCategory
+import com.arturjarosz.task.dto.ContractorCategoryDto
+import com.arturjarosz.task.dto.ContractorDto
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
@@ -12,9 +13,9 @@ class ContractorValidatorTest extends Specification {
     private final static Long EXISTING_CONTRACTOR_ID = 1L
     private final static Long NOT_EXISTING_CONTRACTOR_ID = 10L
     private final static String NAME = "name"
-    private final static ContractorCategory CONTRACTOR_CATEGORY = ContractorCategory.ARTIST
+    private final static ContractorCategoryDto CONTRACTOR_CATEGORY = ContractorCategoryDto.ARTIST
 
-    def contractorRepository = Mock(ContractorRepositoryImpl)
+    def contractorRepository = Mock(ContractorRepository)
 
     @Subject
     def contractorValidator = new ContractorValidator(contractorRepository)
@@ -119,11 +120,11 @@ class ContractorValidatorTest extends Specification {
     }
 
     private void mockContractorRepositoryLoadOfExistingContractor() {
-        1 * this.contractorRepository.load(EXISTING_CONTRACTOR_ID) >>
-                new Contractor(NAME, CONTRACTOR_CATEGORY)
+        1 * this.contractorRepository.findById(EXISTING_CONTRACTOR_ID) >>
+                Optional.of(new Contractor(NAME, ContractorCategory.valueOf(CONTRACTOR_CATEGORY.name())))
     }
 
     private void mockContractorRepositoryLoadOfNotExistingContractor() {
-        1 * this.contractorRepository.load(NOT_EXISTING_CONTRACTOR_ID) >> null
+        1 * this.contractorRepository.findById(NOT_EXISTING_CONTRACTOR_ID) >> Optional.ofNullable(null)
     }
 }

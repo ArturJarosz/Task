@@ -1,8 +1,8 @@
 package com.arturjarosz.task.supplier.application
 
-import com.arturjarosz.task.supplier.application.SupplierValidator
-import com.arturjarosz.task.supplier.application.dto.SupplierDto
-import com.arturjarosz.task.supplier.infrastructure.impl.SupplierRepositoryImpl
+import com.arturjarosz.task.dto.SupplierCategoryDto
+import com.arturjarosz.task.dto.SupplierDto
+import com.arturjarosz.task.supplier.infrastructure.SupplierRepository
 import com.arturjarosz.task.supplier.model.Supplier
 import com.arturjarosz.task.supplier.model.SupplierCategory
 import spock.lang.Specification
@@ -12,16 +12,16 @@ class SupplierValidatorTest extends Specification {
     private final static Long EXISTING_SUPPLIER_ID = 1L
     private final static Long NOT_EXISTING_SUPPLIER_ID = 10L
     private final static String NAME = "name"
-    private final static SupplierCategory SUPPLIER_CATEGORY = SupplierCategory.PAINT_SHOP
+    private final static SupplierCategoryDto SUPPLIER_CATEGORY = SupplierCategoryDto.PAINT_SHOP
 
-    def supplierRepository = Mock(SupplierRepositoryImpl)
+    def supplierRepository = Mock(SupplierRepository)
 
     @Subject
     def supplierValidator = new SupplierValidator(supplierRepository)
 
     def "validateCreateSupplierDto throws exception with proper error message"() {
         given: "SupplierDto"
-            SupplierDto supplierDto = givenSupplierDto
+            def supplierDto = givenSupplierDto
             if (supplierDto != null) {
                 supplierDto.with { testedSupplierDto ->
                     testedSupplierDto.name = name
@@ -37,11 +37,11 @@ class SupplierValidatorTest extends Specification {
             exception.message == exceptionMessage
 
         where:
-            givenSupplierDto  | name | category || exceptionMessage
-            null              | null | null     || "isNull.supplier"
+            givenSupplierDto  | name | category          || exceptionMessage
+            null              | null | null              || "isNull.supplier"
             new SupplierDto() | null | SUPPLIER_CATEGORY || "isNull.supplier.name"
             new SupplierDto() | ""   | SUPPLIER_CATEGORY || "isEmpty.supplier.name"
-            new SupplierDto() | NAME | null     || "isNull.supplier.category"
+            new SupplierDto() | NAME | null              || "isNull.supplier.category"
 
     }
 
@@ -58,7 +58,7 @@ class SupplierValidatorTest extends Specification {
 
     def "validateUpdateSupplierDto throws exception with proper error message"() {
         given: "SupplierDto"
-            SupplierDto supplierDto = givenSupplierDto
+            def supplierDto = givenSupplierDto
             if (supplierDto != null) {
                 supplierDto.with { testedSupplierDto ->
                     testedSupplierDto.name = name
@@ -74,17 +74,17 @@ class SupplierValidatorTest extends Specification {
             exception.message == exceptionMessage
 
         where:
-            givenSupplierDto  | name | category || exceptionMessage
-            null              | null | null     || "isNull.supplier"
+            givenSupplierDto  | name | category          || exceptionMessage
+            null              | null | null              || "isNull.supplier"
             new SupplierDto() | null | SUPPLIER_CATEGORY || "isNull.supplier.name"
             new SupplierDto() | ""   | SUPPLIER_CATEGORY || "isEmpty.supplier.name"
-            new SupplierDto() | NAME | null     || "isNull.supplier.category"
+            new SupplierDto() | NAME | null              || "isNull.supplier.category"
 
     }
 
     def "validateUpdateSupplierDto does not throw any exception when passed proper supplierDto"() {
         given: "Proper SupplierDto"
-            SupplierDto supplierDto = new SupplierDto(name: NAME, category: SUPPLIER_CATEGORY)
+            def supplierDto = new SupplierDto(name: NAME, category: SUPPLIER_CATEGORY)
 
         when: "Calling validateCreateSupplierDto"
             this.supplierValidator.validateUpdateSupplierDto(supplierDto)
@@ -117,11 +117,11 @@ class SupplierValidatorTest extends Specification {
     }
 
     private void mockSupplierRepositoryLoadOfExistingSupplier() {
-        1 * this.supplierRepository.load(EXISTING_SUPPLIER_ID) >> new Supplier(NAME, SUPPLIER_CATEGORY)
+        1 * this.supplierRepository.findById(EXISTING_SUPPLIER_ID) >> Optional.of(new Supplier(NAME, SupplierCategory.valueOf(SUPPLIER_CATEGORY.name())))
     }
 
     private void mockSupplierRepositoryLoadOfNotExistingSupplier() {
-        1 * this.supplierRepository.load(NOT_EXISTING_SUPPLIER_ID) >> null
+        1 * this.supplierRepository.findById(NOT_EXISTING_SUPPLIER_ID) >> Optional.ofNullable(null)
     }
 
 }

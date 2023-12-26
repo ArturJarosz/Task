@@ -33,7 +33,7 @@ databaseChangeLog:
                   name: "NOTE"
                   type: "VARCHAR2(1000 ${char.unit})"
               - column:
-                  name: "PROJECT_ID"
+                  name: "PROJECT_FINANCIAL_DATA_ID"
                   type: "${long.type}"
                   constraints:
                     nullable: false
@@ -48,7 +48,7 @@ databaseChangeLog:
             constraintName: "PK_COST"
         - addForeignKeyConstraint:
             baseTableName: "COST"
-            baseColumnNames: "PROJECT_ID"
-            referencedTableName: "PROJECT"
+            baseColumnNames: "PROJECT_FINANCIAL_DATA_ID"
+            referencedTableName: "PROJECT_FINANCIAL_DATA"
             referencedColumnNames: "ID"
-            constraintName: "FK_COST_PROJECT"
+            constraintName: "FK_COST_PROJECT_FINANCIAL_DATA"

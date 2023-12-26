@@ -1,15 +1,14 @@
 package com.arturjarosz.task.data;
 
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
-import com.arturjarosz.task.systemparameter.application.SystemParameterService;
 import com.arturjarosz.task.systemparameter.infrastructure.repository.SystemParameterRepository;
 import com.arturjarosz.task.systemparameter.model.SystemParameter;
 import com.arturjarosz.task.systemparameter.model.SystemParameterType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,16 +20,13 @@ import java.util.List;
 
 @Component
 public class SystemParametersInitializer implements DataInitializer {
-    private static final Logger LOGGER = LogManager.getLogger(SystemParametersInitializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SystemParametersInitializer.class);
     private static final String SYSTEM_PARAMETERS_PATH = "initialSystemParameters.json";
 
-    private final SystemParameterService systemParameterService;
     private final SystemParameterRepository systemParameterRepository;
 
     @Autowired
-    public SystemParametersInitializer(SystemParameterService systemParameterService,
-                                       SystemParameterRepository systemParameterRepository) {
-        this.systemParameterService = systemParameterService;
+    public SystemParametersInitializer(SystemParameterRepository systemParameterRepository) {
         this.systemParameterRepository = systemParameterRepository;
     }
 
@@ -43,11 +39,11 @@ public class SystemParametersInitializer implements DataInitializer {
 
     private void importSystemParametersFromFile() {
         List<SystemParameter> systemParameters = this.prepareSystemParameters(SYSTEM_PARAMETERS_PATH);
-        systemParameters.forEach(this.systemParameterRepository::save);
+        this.systemParameterRepository.saveAll(systemParameters);
     }
 
     private List<SystemParameter> prepareSystemParameters(String filename) {
-        ObjectMapper mapper = new ObjectMapper();
+        var mapper = new ObjectMapper();
         BaseValidator.assertNotEmpty(filename, "File name cannot be empty.");
         try (InputStream inputStream = SystemParametersInitializer.class.getClassLoader()
                 .getResourceAsStream(filename)) {

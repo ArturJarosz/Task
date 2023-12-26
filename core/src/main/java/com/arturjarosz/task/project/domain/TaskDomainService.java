@@ -1,6 +1,6 @@
 package com.arturjarosz.task.project.domain;
 
-import com.arturjarosz.task.project.application.dto.TaskDto;
+import com.arturjarosz.task.dto.TaskDto;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Task;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;

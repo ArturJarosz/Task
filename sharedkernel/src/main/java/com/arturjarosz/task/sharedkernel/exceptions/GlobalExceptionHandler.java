@@ -20,7 +20,6 @@ public class GlobalExceptionHandler {
 
     public static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    private static final String UNEXPECTED_ERROR = "Exception.unexpected";
     private final MessageSource messageSource;
 
     @Autowired
@@ -32,10 +31,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorMessage> handleException(IllegalArgumentException exception) {
         LOG.error(exception.getMessage(), exception);
         String errorMessage = exception.getMessage();
-        String message = this.messageSource
-                .getMessage(errorMessage, exception.getMessageParameters(), errorMessage,
-                        Locale.getDefault());
-        return new ResponseEntity<>(new ErrorMessage(message),
-                HttpStatus.BAD_REQUEST);
+        String message = this.messageSource.getMessage(errorMessage, exception.getMessageParameters(), errorMessage,
+                Locale.getDefault());
+        return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.BAD_REQUEST);
     }
 }

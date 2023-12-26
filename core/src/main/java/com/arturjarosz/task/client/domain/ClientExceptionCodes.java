@@ -5,7 +5,7 @@ import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 /**
  * Stores exception codes related to Client context.
  */
-public class ClientExceptionCodes {
+public final class ClientExceptionCodes {
 
     public static final String CLIENT = "client";
 
@@ -15,7 +15,7 @@ public class ClientExceptionCodes {
     public static final String CLIENT_TYPE = "clientType";
     public static final String PROJECTS = "projects";
 
-    protected ClientExceptionCodes() {
+    private ClientExceptionCodes() {
         throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
     }
 }

@@ -1,0 +1,3394 @@
+openapi: 3.0.3
+
+info:
+  title: Task by Artur Jarosz
+  description: "TASK app openAPI specification"
+  version: 0.6.0-SNAPSHOT
+
+tags:
+  - name: architect
+    description: Architect API and models
+  - name: client
+    description: Client API and models
+  - name: configuration
+    description: Configuration of the application
+  - name: contract
+    description: Contract API and models
+  - name: contractor
+    description: Contractor API and models
+  - name: contractorJob
+    description: ContractorJob API and models
+  - name: cost
+    description: Cost API and models
+  - name: installment
+    description: Installment API and models
+  - name: financialData
+    description: Financial data API and models
+  - name: project
+    description: Project data API and models
+  - name: stage
+    description: Stage data API and models
+  - name: supervision
+    description: Supervision data API and models
+  - name: supplier
+    description: Supplier data API and models
+  - name: systemParameter
+    description: SystemParameter data API and models
+
+paths:
+  /architects:
+    post:
+      tags:
+        - architect
+      summary: Create a new architect
+      operationId: createArchitect
+      requestBody:
+        description: New architect data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Architect"
+      responses:
+        201:
+          description: Architect successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Architect"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - architect
+      summary: Get list of architects
+      operationId: getArchitects
+      responses:
+        201:
+          description: Architect successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Architects"
+
+  /architects/{architectId}:
+    delete:
+      tags:
+        - architect
+      summary: Delete an architect with given architectId
+      operationId: deleteArchitect
+      parameters:
+        - name: architectId
+          in: path
+          description: "A unique identifier of the architect"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - architect
+      summary: Get an architect with given architectId
+      operationId: getArchitect
+      parameters:
+        - name: architectId
+          in: path
+          description: "A unique identifier of the architect"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Architect"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - architect
+      summary: Update an architect with given architectId
+      operationId: updateArchitect
+      parameters:
+        - name: architectId
+          in: path
+          description: "A unique identifier of the architect"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated data of the architect
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Architect"
+      responses:
+        200:
+          description: Architect successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Architect"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /clients:
+    post:
+      tags:
+        - client
+      summary: Create a new client
+      operationId: createClient
+      requestBody:
+        description: New client data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Client"
+      responses:
+        201:
+          description: Client successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - client
+      summary: Get list of clients
+      operationId: getClients
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Clients"
+
+  /clients/{clientId}:
+    delete:
+      tags:
+        - client
+      summary: Delete a client with given clientId
+      operationId: deleteClient
+      parameters:
+        - name: clientId
+          in: path
+          description: "A unique identifier of the client"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - client
+      summary: Get a client with given clientId
+      operationId: getClient
+      parameters:
+        - name: clientId
+          in: path
+          description: "A unique identifier of the client"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - client
+      summary: Update a client with given clientId
+      operationId: updateClient
+      parameters:
+        - name: clientId
+          in: path
+          description: "A unique identifier of the client"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated data of the client
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Client"
+      responses:
+        200:
+          description: Client successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /configuration:
+    get:
+      tags:
+        - configuration
+      summary: Gets application configuration
+      operationId: getConfiguration
+      responses:
+        200:
+          description: Application configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationConfiguration"
+
+
+  /contracts/{contractId}/reject:
+    post:
+      tags:
+        - contract
+      summary: Reject contract offer
+      operationId: rejectOffer
+      parameters:
+        - name: contractId
+          in: path
+          description: "A unique identifier of the contract"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Contract rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /contracts/{contractId}/new-offer:
+    post:
+      tags:
+        - contract
+      summary: Make a new offer
+      operationId: makeNewOffer
+      parameters:
+        - name: contractId
+          in: path
+          description: "A unique identifier of the contract"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: New offer for contract made
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Contract"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /contracts/{contractId}/accept-offer:
+    post:
+      tags:
+        - contract
+      summary: Accepts contract offer
+      operationId: acceptOffer
+      parameters:
+        - name: contractId
+          in: path
+          description: "A unique identifier of the contract"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Offer for the contract accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /contracts/{contractId}/sign:
+    post:
+      tags:
+        - contract
+      summary: Sign the contract
+      operationId: sign
+      parameters:
+        - name: contractId
+          in: path
+          description: "A unique identifier of the contract"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of contract to sign
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Contract"
+      responses:
+        200:
+          description: Contract signed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /contracts/{contractId}/terminate:
+    post:
+      tags:
+        - contract
+      summary: Terminate the contract
+      operationId: terminate
+      parameters:
+        - name: contractId
+          in: path
+          description: "A unique identifier of the contract"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of contract to terminate
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Contract"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /contracts/{contractId}/resume:
+    post:
+      tags:
+        - contract
+      summary: Resume the contract
+      operationId: resume
+      parameters:
+        - name: contractId
+          in: path
+          description: "A unique identifier of the contract"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /contracts/{contractId}/complete:
+    post:
+      tags:
+        - contract
+      summary: Complete the contract
+      operationId: complete
+      parameters:
+        - name: contractId
+          in: path
+          description: "A unique identifier of the contract"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of contract to complete
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Contract"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /contractors:
+    post:
+      tags:
+        - contractor
+      summary: Create a new contractor
+      operationId: createContractor
+      requestBody:
+        description: New contractor data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Contractor"
+      responses:
+        201:
+          description: Contractor successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contractor"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - contractor
+      summary: Get list of contractors
+      operationId: getContractors
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contractors"
+
+  /contractors/{contractorId}:
+    delete:
+      tags:
+        - contractor
+      summary: Delete a contractor with given contractorId
+      operationId: deleteContractor
+      parameters:
+        - name: contractorId
+          in: path
+          description: "A unique identifier of the contractor"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - contractor
+      summary: Get a contractor with given contractorId
+      operationId: getContractor
+      parameters:
+        - name: contractorId
+          in: path
+          description: "A unique identifier of the contractor"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contractor"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - contractor
+      summary: Update a contractor with given contractorId
+      operationId: updateContractor
+      parameters:
+        - name: contractorId
+          in: path
+          description: "A unique identifier of the contractor"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of updated contractor
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Contractor"
+      responses:
+        200:
+          description: Contractor successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contractor"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/contractor-jobs:
+    post:
+      tags:
+        - contractorJob
+      summary: Create a new contractor job
+      operationId: createContractorJob
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: New contractor job data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContractorJob"
+      responses:
+        201:
+          description: Contractor job successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractorJob"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/contractor-jobs/{contractorJobId}:
+    delete:
+      tags:
+        - contractorJob
+      summary: Delete a contractor job with given contractorJobId
+      operationId: deleteContractorJob
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: contractorJobId
+          in: path
+          description: "A unique identifier of the contractor job"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Contractor job successfully deleted
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - contractorJob
+      summary: Update a contractor job
+      operationId: updateContractorJob
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: contractorJobId
+          in: path
+          description: "A unique identifier of the contractor job"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated contractor job data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContractorJob"
+      responses:
+        200:
+          description: Contractor job successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractorJob"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - contractorJob
+      summary: Get a contractor job
+      operationId: getContractorJob
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: contractorJobId
+          in: path
+          description: "A unique identifier of the contractor job"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractorJob"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/costs:
+    post:
+      tags:
+        - cost
+      summary: Create a new cost
+      operationId: createCost
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: New cost data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cost"
+      responses:
+        201:
+          description: Cost successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cost"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - cost
+      summary: Get costs for project with given projectId
+      operationId: getCostsForProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Costs"
+
+  /projects/{projectId}/costs/{costId}:
+    delete:
+      tags:
+        - cost
+      summary: Delete a cost with given costId
+      operationId: deleteCost
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: costId
+          in: path
+          description: "A unique identifier of the cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Cost successfully deleted
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - cost
+      summary: Update a cost
+      operationId: updateCost
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: costId
+          in: path
+          description: "A unique identifier of the cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated cost data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cost"
+      responses:
+        200:
+          description: Cost successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cost"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/costs/{costId}:
+    get:
+      tags:
+        - cost
+      summary: Get a cost
+      operationId: getCost
+      parameters:
+        - name: costId
+          in: path
+          description: "A unique identifier of the cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cost"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/stages/{stageId}/installments:
+    post:
+      tags:
+        - installment
+      summary: Create a new installment
+      operationId: createInstallment
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: New installment data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Installment"
+      responses:
+        201:
+          description: Installment successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Installment"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/installments/{installmentId}:
+    get:
+      tags:
+        - installment
+      summary: Get an installment
+      operationId: getInstallment
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: installmentId
+          in: path
+          description: "A unique identifier of the installment"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Installment"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - installment
+      summary: Update an installment
+      operationId: updateInstallment
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: installmentId
+          in: path
+          description: "A unique identifier of the installment"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated cost data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Installment"
+      responses:
+        200:
+          description: Installment successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Installment"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - installment
+      summary: Delete an installment with given installmentId
+      operationId: deleteInstallment
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: installmentId
+          in: path
+          description: "A unique identifier of the installment"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Cost successfully deleted
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/installments/{installmentId}/pay:
+    post:
+      tags:
+        - installment
+      summary: Pay for an installment
+      operationId: payInstallment
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: installmentId
+          in: path
+          description: "A unique identifier of the installment"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Installement payment data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Installment"
+      responses:
+        200:
+          description: Installment successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Installment"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/installments:
+    get:
+      tags:
+        - installment
+      summary: Get installments for project with given projectId
+      operationId: getInstallmentsForProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Installments"
+
+  /projects/{projectId}/supplies:
+    post:
+      tags:
+        - supply
+      summary: Create a new supply
+      operationId: createSupply
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: New supply data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Supply"
+      responses:
+        201:
+          description: Supply successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supply"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - supply
+      summary: Get supplies for project with given projectId
+      operationId: getSuppliesForProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplies"
+
+  /projects/{projectId}/supplies/{supplyId}:
+    delete:
+      tags:
+        - supply
+      summary: Delete a supply with given supplyId
+      operationId: deleteSupply
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: supplyId
+          in: path
+          description: "A unique identifier of the contractor job"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Supply successfully deleted
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - supply
+      summary: Update a supply
+      operationId: updateSupply
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: supplyId
+          in: path
+          description: "A unique identifier of the supply"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated supply data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Supply"
+      responses:
+        200:
+          description: Supply successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supply"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - supply
+      summary: Get a supply
+      operationId: getSupply
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: supplyId
+          in: path
+          description: "A unique identifier of the supply"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supply"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /project/{projectId}/total-financial-summary:
+    get:
+      tags:
+        - financialData
+      summary: Get summary of project financial data
+      operationId: getTotalProjectFinancialSummary
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TotalProjectFinancialSummary"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects:
+    post:
+      tags:
+        - project
+      summary: Create new project
+      operationId: createProject
+      requestBody:
+        description: New project data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectCreate"
+      responses:
+        201:
+          description: Project successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - project
+      summary: Get projects
+      operationId: getProjects
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Projects"
+
+  /projects/{projectId}:
+    get:
+      tags:
+        - project
+      summary: Get project
+      operationId: getProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - project
+      summary: Update project with new data
+      operationId: updateProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated project data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Project"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - project
+      summary: Delete project
+      operationId: deleteProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Project successfully deleted
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/finish:
+    post:
+      tags:
+        - project
+      summary: Finish work on the project
+      operationId: finishProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated project data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Project"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/reject:
+    post:
+      tags:
+        - project
+      summary: Reject project
+      operationId: rejectProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/reopen:
+    post:
+      tags:
+        - project
+      summary: Reopen closed or rejected project
+      operationId: reopenProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/stages:
+    post:
+      tags:
+        - stage
+      summary: Create new stage
+      operationId: createStage
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: New stage data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Stage"
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stage"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - stage
+      summary: Get stages for project with projectId
+      operationId: getStagesForProject
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stages"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/stages/{stageId}:
+    delete:
+      tags:
+        - stage
+      summary: Delete stage
+      operationId: deleteStage
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Stage successfully deleted
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - stage
+      summary: Update stage with new data
+      operationId: updateStage
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated stage data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Stage"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stage"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - stage
+      summary: Get stage with stageId
+      operationId: getStage
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stage"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/stages/{stageId}/reopen:
+    post:
+      tags:
+        - stage
+      summary: Reopen stage with given stageId
+      operationId: reopenStage
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stage"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/stages/{stageId}/reject:
+    post:
+      tags:
+        - stage
+      summary: Reject stage with given stageId
+      operationId: rejectStage
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stage"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/stages/{stageId}/tasks:
+    post:
+      tags:
+        - task
+      summary: Create new task
+      operationId: createTask
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: New task data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Task"
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - task
+      summary: Get tasks for stage
+      operationId: Get tasks for stage
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tasks"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/stages/{stageId}/tasks/{taskId}:
+    delete:
+      tags:
+        - task
+      summary: Delete task
+      operationId: deleteTask
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: taskId
+          in: path
+          description: "A unique identifier of the task"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Task successfully deleted
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - task
+      summary: Update task with new data
+      operationId: updateTask
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: taskId
+          in: path
+          description: "A unique identifier of the task"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated task data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Task"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - task
+      summary: Get task
+      operationId: getTask
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: taskId
+          in: path
+          description: "A unique identifier of the task"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/stages/{stageId}/tasks/{taskId}/status:
+    post:
+      tags:
+        - task
+      summary: Update task status
+      operationId: updateStatus
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: taskId
+          in: path
+          description: "A unique identifier of the task"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Task data with new status
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Task"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/stages/{stageId}/tasks/{taskId}/reject:
+    post:
+      tags:
+        - task
+      summary: Reject task
+      operationId: rejectTask
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: taskId
+          in: path
+          description: "A unique identifier of the task"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/stages/{stageId}/tasks/{taskId}/reopen:
+    post:
+      tags:
+        - task
+      summary: Reopen task
+      operationId: reopenTask
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: path
+          description: "A unique identifier of the stage"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: taskId
+          in: path
+          description: "A unique identifier of the task"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /supervisions:
+    post:
+      tags:
+        - supervision
+      summary: Create supervision
+      operationId: createSupervision
+      requestBody:
+        description: New supervision data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Supervision"
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supervision"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /supervisions/{supervisionId}:
+    put:
+      tags:
+        - supervision
+      summary: Update supervision
+      operationId: updateSupervision
+      parameters:
+        - name: supervisionId
+          in: path
+          description: "A unique identifier of the supervision"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated supervision data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Supervision"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supervision"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - supervision
+      summary: Delete supervision
+      operationId: deleteSupervision
+      parameters:
+        - name: supervisionId
+          in: path
+          description: "A unique identifier of the supervision"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Supervision successfully deleted
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - supervision
+      summary: Get supervision
+      operationId: getSupervision
+      parameters:
+        - name: supervisionId
+          in: path
+          description: "A unique identifier of the supervision"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supervision"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /supervisions/{supervisionId}/supervision-visits:
+    post:
+      tags:
+        - supervision
+      summary: Create supervision visit
+      operationId: createSupervisionVisit
+      parameters:
+        - name: supervisionId
+          in: path
+          description: "A unique identifier of the supervision"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: New supervision visit data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SupervisionVisit"
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupervisionVisit"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /supervisions/{supervisionId}/supervision-visits/{supervisionVisitId}:
+    put:
+      tags:
+        - supervision
+      summary: Update supervision visit
+      operationId: updateSupervisionVisit
+      parameters:
+        - name: supervisionId
+          in: path
+          description: "A unique identifier of the supervision"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: supervisionVisitId
+          in: path
+          description: "A unique identifier of the supervision visit"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Updated supervision visit data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SupervisionVisit"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupervisionVisit"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - supervision
+      summary: Get supervision visit
+      operationId: getSupervisionVisit
+      parameters:
+        - name: supervisionId
+          in: path
+          description: "A unique identifier of the supervision"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: supervisionVisitId
+          in: path
+          description: "A unique identifier of the supervision visit"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupervisionVisit"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - supervision
+      summary: Delete supervision visit
+      operationId: deleteSupervisionVisit
+      parameters:
+        - name: supervisionId
+          in: path
+          description: "A unique identifier of the supervision"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: supervisionVisitId
+          in: path
+          description: "A unique identifier of the supervision visit"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /suppliers:
+    post:
+      tags:
+        - supplier
+      summary: Create a new supplier
+      operationId: createSupplier
+      requestBody:
+        description: New supplier data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Supplier"
+      responses:
+        201:
+          description: Supplier successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - supplier
+      summary: Get list of suppliers
+      operationId: getSuppliers
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Suppliers"
+
+  /suppliers/{supplierId}:
+    delete:
+      tags:
+        - supplier
+      summary: Delete a supplier with given supplierId
+      operationId: deleteSupplier
+      parameters:
+        - name: supplierId
+          in: path
+          description: "A unique identifier of the supplier"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - supplier
+      summary: Get a supplier with given supplierId
+      operationId: getSupplier
+      parameters:
+        - name: supplierId
+          in: path
+          description: "A unique identifier of the supplier"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - supplier
+      summary: Update a supplier with given supplierId
+      operationId: updateSupplier
+      parameters:
+        - name: supplierId
+          in: path
+          description: "A unique identifier of the supplier"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of updated supplier
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Supplier"
+      responses:
+        200:
+          description: Supplier successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /system-parameters:
+    get:
+      tags:
+        - systemParameter
+      summary: Get system parameters
+      operationId: getSystemParameters
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemParameters"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /system-parameters/{systemParameterId}:
+    put:
+      tags:
+        - systemParameter
+      summary: Update a system parameter with given supplierId
+      operationId: updateSystemParameter
+      parameters:
+        - name: systemParameterId
+          in: path
+          description: "A unique identifier of the system parameter"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of updated system parameter
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SystemParameter"
+      responses:
+        200:
+          description: System parameter successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemParameter"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - systemParameter
+      summary: Get a system parameter
+      operationId: getSystemParameter
+      parameters:
+        - name: systemParameterId
+          in: path
+          description: "A unique identifier of the system parameter"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemParameter"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+components:
+  schemas:
+
+    Architect:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+
+    Architects:
+      type: array
+      items:
+        $ref: "#/components/schemas/Architect"
+
+    Address:
+      type: object
+      properties:
+        city:
+          type: string
+        postCode:
+          type: string
+        street:
+          type: string
+        houseNumber:
+          type: string
+        flatNumber:
+          type: string
+
+    Contact:
+      type: object
+      properties:
+        address:
+          $ref: "#/components/schemas/Address"
+        email:
+          type: string
+        telephone:
+          type: string
+
+    Client:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        companyName:
+          type: string
+        contact:
+          $ref: "#/components/schemas/Contact"
+        note:
+          type: string
+        clientType:
+          $ref: "#/components/schemas/ClientType"
+
+    Clients:
+      type: array
+      items:
+        $ref: "#/components/schemas/Client"
+
+    ClientType:
+      type: string
+      enum:
+        - CORPORATE
+        - PRIVATE
+
+    Contract:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        offerValue:
+          type: number
+          format: double
+        signingDate:
+          type: string
+          format: date
+        deadline:
+          type: string
+          format: date
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        status:
+          $ref: "#/components/schemas/ContractStatus"
+        nextStatuses:
+          items:
+            $ref: "#/components/schemas/ContractStatus"
+
+    ContractStatus:
+      type: string
+      enum:
+        - OFFER
+        - REJECTED
+        - ACCEPTED
+        - SIGNED
+        - TERMINATED
+        - COMPLETED
+
+    Contractor:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        note:
+          type: string
+        email:
+          type: string
+        telephone:
+          type: string
+        category:
+          $ref: "#/components/schemas/ContractorCategory"
+
+    Contractors:
+      type: array
+      items:
+        $ref: "#/components/schemas/Contractor"
+
+    ContractorCategory:
+      type: string
+      enum:
+        - GENERAL
+        - PLUMBER
+        - ELECTRICIAN
+        - TILER
+        - CARPENTER
+        - ARTIST
+
+    ContractorJob:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        value:
+          type: number
+        contractorId:
+          type: integer
+          format: int64
+        note:
+          type: string
+        hasInvoice:
+          type: boolean
+        payable:
+          type: boolean
+        paid:
+          type: boolean
+
+    Cost:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        date:
+          type: string
+          format: date
+        category:
+          $ref: "#/components/schemas/CostCategory"
+        value:
+          type: number
+        note:
+          type: string
+        hasInvoice:
+          type: boolean
+        payable:
+          type: boolean
+        paid:
+          type: boolean
+
+    Costs:
+      type: array
+      items:
+        $ref: "#/components/schemas/Cost"
+
+    CostCategory:
+      type: string
+      enum:
+        - FUEL
+        - MISTAKE
+
+    Installment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        value:
+          type: number
+        paymentDate:
+          type: string
+          format: date
+        stageId:
+          type: integer
+          format: int64
+        hasInvoice:
+          type: boolean
+        paid:
+          type: boolean
+        note:
+          type: string
+
+    Installments:
+      type: array
+      items:
+        $ref: "#/components/schemas/Installment"
+
+    Supply:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        value:
+          type: number
+        supplierId:
+          type: integer
+          format: int64
+        note:
+          type: string
+        hasInvoice:
+          type: boolean
+        payable:
+          type: boolean
+        paid:
+          type: boolean
+        projectId:
+          type: integer
+          format: int64
+
+    Supplies:
+      type: array
+      items:
+        $ref: "#/components/schemas/Supply"
+
+    TotalProjectFinancialSummary:
+      type: object
+      properties:
+        netValue:
+          type: number
+          format: double
+        grossValue:
+          type: number
+          format: double
+        vatTax:
+          type: number
+          format: double
+        incomeTax:
+          type: number
+          format: double
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        client:
+          $ref: "#/components/schemas/Client"
+        architect:
+          $ref: "#/components/schemas/Architect"
+        name:
+          type: string
+        type:
+          $ref: "#/components/schemas/ProjectType"
+        signingDate:
+          type: string
+          format: date
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        deadLine:
+          type: string
+          format: date
+        note:
+          type: string
+        status:
+          $ref: "#/components/schemas/ProjectStatus"
+        contract:
+          $ref: "#/components/schemas/Contract"
+        nextStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectStatus"
+
+    Projects:
+      type: array
+      items:
+        $ref: "#/components/schemas/Project"
+
+    ProjectType:
+      type: string
+      enum:
+        - ARCHITECTURE_HOUSE
+        - CONCEPT
+        - INTERIOR_APARTMENT
+        - INTERIOR_HOUSE
+        - INTERIOR_OFFICE
+
+    ProjectStatus:
+      type: string
+      enum:
+        - TO_DO
+        - IN_PROGRESS
+        - REJECTED
+        - DONE
+        - COMPLETED
+
+    ProjectCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        architectId:
+          type: integer
+          format: int64
+        clientId:
+          type: integer
+          format: int64
+        type:
+          $ref: "#/components/schemas/ProjectType"
+        offerValue:
+          type: number
+          format: double
+        deadline:
+          type: string
+          format: date
+
+    Stage:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        deadline:
+          type: string
+          format: date
+        type:
+          $ref: "#/components/schemas/StageType"
+        note:
+          type: string
+        installment:
+          $ref: "#/components/schemas/Installment"
+        tasksNumber:
+          type: integer
+        status:
+          $ref: "#/components/schemas/StageStatus"
+        nextStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/StageStatus"
+
+    Stages:
+      type: array
+      items:
+        $ref: "#/components/schemas/Stage"
+
+    StageType:
+      type: string
+      enum:
+        - AUTHORS_SUPERVISION
+        - EXECUTIVE_PROJECT
+        - FUNCTIONAL_LAYOUT
+        - VISUALISATIONS
+
+    StageStatus:
+      type: string
+      enum:
+        - TO_DO
+        - IN_PROGRESS
+        - DONE
+        - REJECTED
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          $ref: "#/components/schemas/TaskType"
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        note:
+          type: string
+        status:
+          $ref: "#/components/schemas/TaskStatus"
+        nextStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/TaskStatus"
+
+    Tasks:
+      type: array
+      items:
+        $ref: "#/components/schemas/Task"
+
+    TaskType:
+      type: string
+      enum:
+        - RENDER
+        - CONCEPT
+        - SHOPPING
+
+    TaskStatus:
+      type: string
+      enum:
+        - TO_DO
+        - IN_PROGRESS
+        - DONE
+        - REJECTED
+
+    Supervision:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        projectId:
+          type: integer
+          format: int64
+        hasInvoice:
+          type: boolean
+        baseNetRate:
+          type: number
+        hourlyNetRate:
+          type: number
+        visitNetRate:
+          type: number
+        hoursCount:
+          type: integer
+        value:
+          type: number
+        note:
+          type: string
+
+    SupervisionVisit:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        supervisionId:
+          type: integer
+          format: int64
+        dateOfVisit:
+          type: string
+          format: date
+        payable:
+          type: boolean
+        hoursCount:
+          type: integer
+
+    Supplier:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        note:
+          type: string
+        email:
+          type: string
+        telephone:
+          type: string
+        category:
+          $ref: "#/components/schemas/SupplierCategory"
+
+    Suppliers:
+      type: array
+      items:
+        $ref: "#/components/schemas/Supplier"
+
+    SupplierCategory:
+      type: string
+      enum:
+        - SHOP_WITH_BATHROOM_FITTINGS
+        - SHOP_WITH_TILES
+        - BATHROOM_CERAMICS_SHOP
+        - PAINT_SHOP
+        - FLOORING_SHOP
+        - LIGHTING_SHOP
+
+    SystemParameter:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          type: string
+        value:
+          type: string
+        defaultValue:
+          type: string
+        singleValue:
+          type: boolean
+
+    SystemParameters:
+      type: array
+      items:
+        $ref: "#/components/schemas/SystemParameter"
+
+    ValidatorError:
+      type: object
+      properties:
+        message:
+          type: string
+
+    ConfigurationEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+
+    ApplicationConfiguration:
+      type: object
+      properties:
+        supplierTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        contractorTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        contractStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        projectTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        projectStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        stageTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        stageStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        taskTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        taskStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
+        clientTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"

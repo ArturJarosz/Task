@@ -1,10 +1,10 @@
 package com.arturjarosz.task.sharedkernel.status;
 
-public interface StatusTransition<TStatus extends Status> {
+public interface StatusTransition<T extends Status> {
 
-    TStatus getCurrentStatus();
+    T getCurrentStatus();
 
-    TStatus getNextStatus();
+    T getNextStatus();
 
     String getName();
 }

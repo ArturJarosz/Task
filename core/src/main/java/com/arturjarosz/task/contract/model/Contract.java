@@ -1,39 +1,48 @@
 package com.arturjarosz.task.contract.model;
 
-import com.arturjarosz.task.contract.application.dto.ContractDto;
 import com.arturjarosz.task.contract.status.ContractStatus;
-import com.arturjarosz.task.contract.status.StatusWorkflow;
+import com.arturjarosz.task.contract.status.ContractStatusWorkflow;
+import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.Getter;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import java.io.Serial;
 import java.time.LocalDate;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @DiscriminatorValue(value = "CONTRACT")
 public class Contract extends AbstractAggregateRoot implements WorkflowAware<ContractStatus> {
+    @Serial
     private static final long serialVersionUID = -6156547903688654882L;
 
+    @Getter
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "VALUE"))
     private Money offerValue;
 
+    @Getter
     @Column(name = "SIGNING_DATE")
     private LocalDate signingDate;
 
+    @Getter
     @Column(name = "DEADLINE")
     private LocalDate deadline;
 
+    @Getter
     @Column(name = "START_DATE")
     private LocalDate startDate;
 
+    @Getter
     @Column(name = "END_DATE")
     private LocalDate endDate;
 
@@ -45,21 +54,13 @@ public class Contract extends AbstractAggregateRoot implements WorkflowAware<Con
     private String workflowName;
 
     protected Contract() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
-    public Contract(double offerValue, LocalDate deadline, StatusWorkflow contractWorkflow) {
+    public Contract(double offerValue, LocalDate deadline, ContractStatusWorkflow contractWorkflow) {
         this.offerValue = new Money(offerValue);
         this.workflowName = contractWorkflow.getName();
         this.deadline = deadline;
-    }
-
-    public LocalDate getSigningDate() {
-        return this.signingDate;
-    }
-
-    public LocalDate getDeadline() {
-        return this.deadline;
     }
 
     @Override
@@ -82,10 +83,6 @@ public class Contract extends AbstractAggregateRoot implements WorkflowAware<Con
         this.deadline = deadline;
     }
 
-    public Money getOfferValue() {
-        return this.offerValue;
-    }
-
     public void sign(ContractDto contractDto) {
         this.offerValue = new Money(contractDto.getOfferValue());
         this.deadline = contractDto.getDeadline();
@@ -99,5 +96,13 @@ public class Contract extends AbstractAggregateRoot implements WorkflowAware<Con
 
     public void resume() {
         this.endDate = null;
+    }
+
+    public void terminate(ContractDto contractDto) {
+        this.updateEnd(contractDto);
+    }
+
+    public void complete(ContractDto contractDto) {
+        this.updateEnd(contractDto);
     }
 }

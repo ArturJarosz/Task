@@ -1,6 +1,6 @@
 package com.arturjarosz.task.supervision.application
 
-import com.arturjarosz.task.supervision.application.dto.SupervisionVisitDto
+import com.arturjarosz.task.dto.SupervisionVisitDto
 import com.arturjarosz.task.supervision.query.impl.SupervisionQueryServiceImpl
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -8,10 +8,10 @@ import spock.lang.Unroll
 import java.time.LocalDate
 
 class SupervisionVisitValidatorTest extends Specification {
-    private static final Long SUPERVISION_ID = 1L
-    private static final LocalDate DATE_OF_VISIT = new LocalDate(2021, 10, 10)
-    private static final int HOURS_COUNT = 10
-    private static final int NEGATIVE_HOURS_COUNT = -10
+    static final Long SUPERVISION_ID = 1L
+    static final LocalDate DATE_OF_VISIT = LocalDate.of(2021, 10, 10)
+    static final int HOURS_COUNT = 10
+    static final int NEGATIVE_HOURS_COUNT = -10
 
     def supervisionQueryService = Mock(SupervisionQueryServiceImpl)
 
@@ -19,7 +19,7 @@ class SupervisionVisitValidatorTest extends Specification {
 
     def "validateCreateSupervisionVisit throws an exception when supervisionVisitDto is null"() {
         given:
-            SupervisionVisitDto supervisionVisitDto = null
+            def supervisionVisitDto = null
         when:
             this.supervisionValidatorVisit.validateCreateSupervisionVisit(supervisionVisitDto)
         then:
@@ -30,7 +30,7 @@ class SupervisionVisitValidatorTest extends Specification {
     @Unroll
     def "validateCreateSupervisionVisit throws an exception with proper exception code"() {
         given:
-            SupervisionVisitDto supervisionVisitDto = new SupervisionVisitDto()
+            def supervisionVisitDto = new SupervisionVisitDto()
             supervisionVisitDto.supervisionId = supervisionId
             supervisionVisitDto.dateOfVisit = dateOfVisit
             supervisionVisitDto.payable = isPayable

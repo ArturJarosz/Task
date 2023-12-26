@@ -5,9 +5,8 @@ import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionServiceImpl
 import com.arturjarosz.task.project.status.stage.StageStatus
-import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
-import com.google.common.collect.Sets
+import com.arturjarosz.task.utils.ProjectBuilder
+import com.arturjarosz.task.utils.StageBuilder
 import spock.lang.Specification
 
 class StageCompleteWorkListenerTest extends Specification {
@@ -18,7 +17,7 @@ class StageCompleteWorkListenerTest extends Specification {
     def "Complete work on only stage in the project, should complete work on the project as well"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.IN_PROGRESS)
-            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Sets.newHashSet(stage))
+            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Set.of(stage))
         when:
             stage.changeStatus(StageStatus.DONE)
             this.stageCompleteWorkListener.onStageStatusChange(project)
@@ -31,7 +30,7 @@ class StageCompleteWorkListenerTest extends Specification {
             def stage = this.createStageWithStatus(StageStatus.IN_PROGRESS)
             def stage2 = this.createStageWithStatus(StageStatus.DONE)
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
-            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Sets.newHashSet(stage, stage2, stage3))
+            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.DONE)
             this.stageCompleteWorkListener.onStageStatusChange(project)
@@ -44,7 +43,7 @@ class StageCompleteWorkListenerTest extends Specification {
             def stage = this.createStageWithStatus(StageStatus.IN_PROGRESS)
             def stage2 = this.createStageWithStatus(StageStatus.DONE)
             def stage3 = this.createStageWithStatus(StageStatus.IN_PROGRESS)
-            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Sets.newHashSet(stage, stage2, stage3))
+            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.DONE)
             this.stageCompleteWorkListener.onStageStatusChange(project)

@@ -1,6 +1,8 @@
 package com.arturjarosz.task.sharedkernel.model;
 
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.MappedSuperclass;
+
+import java.io.Serial;
 
 /**
  * Base class for all aggregate roots.
@@ -8,6 +10,7 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public abstract class AbstractAggregateRoot extends AbstractEntity {
+    @Serial
     private static final long serialVersionUID = -1097600977230597412L;
 
 }

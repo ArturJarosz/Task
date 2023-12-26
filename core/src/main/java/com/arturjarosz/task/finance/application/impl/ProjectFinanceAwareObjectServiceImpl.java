@@ -1,35 +1,33 @@
 package com.arturjarosz.task.finance.application.impl;
 
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
-import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
+import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @ApplicationService
 public class ProjectFinanceAwareObjectServiceImpl implements ProjectFinanceAwareObjectService {
-    private final ProjectFinancialDataService projectFinancialDataService;
-
-    @Autowired
-    public ProjectFinanceAwareObjectServiceImpl(ProjectFinancialDataService projectFinancialDataService) {
-        this.projectFinancialDataService = projectFinancialDataService;
-    }
+    @NonNull
+    private final ProjectFinancialSummaryService projectFinancialSummaryService;
 
     @Override
     public void onCreate(long projectId) {
-        this.triggerProjectFinancialDataRecalculation(projectId);
+        this.triggerProjectFinancialSummaryRecalculation(projectId);
     }
 
     @Override
     public void onUpdate(long projectId) {
-        this.triggerProjectFinancialDataRecalculation(projectId);
+        this.triggerProjectFinancialSummaryRecalculation(projectId);
     }
 
     @Override
     public void onRemove(long projectId) {
-        this.triggerProjectFinancialDataRecalculation(projectId);
+        this.triggerProjectFinancialSummaryRecalculation(projectId);
     }
 
-    private void triggerProjectFinancialDataRecalculation(long projectId){
-        this.projectFinancialDataService.recalculateProjectFinancialData(projectId);
+    private void triggerProjectFinancialSummaryRecalculation(long projectId){
+        this.projectFinancialSummaryService.recalculateProjectFinancialSummary(projectId);
     }
 }

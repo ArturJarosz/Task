@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.domain.impl;
 
-import com.arturjarosz.task.project.application.dto.ProjectCreateDto;
-import com.arturjarosz.task.project.application.dto.ProjectDto;
+import com.arturjarosz.task.dto.ProjectCreateDto;
+import com.arturjarosz.task.dto.ProjectDto;
 import com.arturjarosz.task.project.application.mapper.ProjectDtoMapper;
 import com.arturjarosz.task.project.domain.ProjectDataValidator;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
@@ -22,8 +22,8 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
 
     @Autowired
     public ProjectDomainServiceImpl(ProjectDataValidator projectDataValidator,
-                                    ProjectWorkflow projectWorkflow,
-                                    ProjectStatusTransitionService projectStatusTransitionService) {
+            ProjectWorkflow projectWorkflow,
+            ProjectStatusTransitionService projectStatusTransitionService) {
         this.projectDataValidator = projectDataValidator;
         this.projectWorkflow = projectWorkflow;
         this.projectStatusTransitionService = projectStatusTransitionService;
@@ -31,7 +31,8 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
 
     @Override
     public Project createProject(ProjectCreateDto projectCreateDto, Long contractId) {
-        Project project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto, contractId, this.projectWorkflow);
+        var project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto, contractId,
+                this.projectWorkflow);
         this.projectStatusTransitionService.create(project);
         return project;
     }

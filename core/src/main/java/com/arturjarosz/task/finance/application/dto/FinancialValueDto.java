@@ -1,7 +1,10 @@
 package com.arturjarosz.task.finance.application.dto;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 
+@Data
 public class FinancialValueDto {
     private BigDecimal netValue;
     private BigDecimal grossValue;
@@ -17,39 +20,6 @@ public class FinancialValueDto {
         this.grossValue = new BigDecimal("0.0");
         this.vatTax = new BigDecimal("0.0");
         this.incomeTax = new BigDecimal("0.0");
-
-    }
-
-    public BigDecimal getNetValue() {
-        return this.netValue;
-    }
-
-    public void setNetValue(BigDecimal netValue) {
-        this.netValue = netValue;
-    }
-
-    public BigDecimal getGrossValue() {
-        return this.grossValue;
-    }
-
-    public void setGrossValue(BigDecimal grossValue) {
-        this.grossValue = grossValue;
-    }
-
-    public BigDecimal getVatTax() {
-        return this.vatTax;
-    }
-
-    public void setVatTax(BigDecimal vatTax) {
-        this.vatTax = vatTax;
-    }
-
-    public BigDecimal getIncomeTax() {
-        return this.incomeTax;
-    }
-
-    public void setIncomeTax(BigDecimal incomeTax) {
-        this.incomeTax = incomeTax;
     }
 
     public void copyValues(FinancialValueDto financialValueDto) {
@@ -59,7 +29,7 @@ public class FinancialValueDto {
         this.vatTax = financialValueDto.getVatTax();
     }
 
-    public void addValues(FinancialValueDto financialValueDto){
+    public void addValues(FinancialValueDto financialValueDto) {
         this.netValue = this.netValue.add(financialValueDto.getNetValue());
         this.grossValue = this.grossValue.add(financialValueDto.getGrossValue());
         this.incomeTax = this.incomeTax.add(financialValueDto.getIncomeTax());
@@ -87,5 +57,10 @@ public class FinancialValueDto {
 
     public void addIncomeTax(BigDecimal value) {
         this.incomeTax = this.incomeTax.add(value);
+    }
+
+    @Override
+    public String toString() {
+        return "FinancialValueDto{" + "netValue=" + this.netValue + ", grossValue=" + this.grossValue + ", vatTax=" + this.vatTax + ", incomeTax=" + this.incomeTax + '}';
     }
 }

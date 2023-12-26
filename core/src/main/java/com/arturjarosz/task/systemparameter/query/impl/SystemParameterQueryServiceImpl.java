@@ -1,8 +1,8 @@
 package com.arturjarosz.task.systemparameter.query.impl;
 
+import com.arturjarosz.task.dto.SystemParameterDto;
 import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
-import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto;
 import com.arturjarosz.task.systemparameter.model.QSystemParameter;
 import com.arturjarosz.task.systemparameter.query.SystemParameterQueryService;
 import com.querydsl.core.types.Projections;
@@ -12,7 +12,7 @@ import java.util.List;
 @Finder
 public class SystemParameterQueryServiceImpl extends AbstractQueryService<QSystemParameter> implements SystemParameterQueryService {
 
-    private final static QSystemParameter SYSTEM_PARAMETER = QSystemParameter.systemParameter;
+    private static final QSystemParameter SYSTEM_PARAMETER = QSystemParameter.systemParameter;
 
     public SystemParameterQueryServiceImpl() {
         super(SYSTEM_PARAMETER);

@@ -1,6 +1,6 @@
 package com.arturjarosz.task.systemparameter.domain.validator;
 
-import com.arturjarosz.task.systemparameter.domain.dto.SystemParameterDto;
+import com.arturjarosz.task.dto.SystemParameterDto;
 
 public interface SystemParameterValidator {
 

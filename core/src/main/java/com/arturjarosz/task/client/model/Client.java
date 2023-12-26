@@ -5,42 +5,58 @@ import com.arturjarosz.task.sharedkernel.model.Address;
 import com.arturjarosz.task.sharedkernel.model.Email;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.sharedkernel.model.PersonName;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import java.io.Serial;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "client_sequence", allocationSize = 1)
 @Table(name = "CLIENT")
 public class Client extends AbstractAggregateRoot {
 
+    @Serial
     private static final long serialVersionUID = 5821492165714199395L;
 
+    @Getter
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "PROJECTS_VALUE"))
     private Money projectsValue;
 
+    @Getter
     @Embedded
     private PersonName personName;
 
+    @Getter
     @Column(name = "COMPANY_NAME")
     private String companyName;
 
+    @Getter
+    @Setter
     @Embedded
     private Address address;
 
+    @Getter
+    @Setter
     @Embedded
     private Email email;
 
+    @Getter
+    @Setter
     @Column(name = "NOTE")
     private String note;
 
+    @Getter
+    @Setter
     @Column(name = "TELEPHONE")
     private String telephone;
 
@@ -49,7 +65,7 @@ public class Client extends AbstractAggregateRoot {
     private ClientType clientType;
 
     protected Client() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Client(PersonName personName, String companyName, ClientType clientType) {
@@ -57,30 +73,7 @@ public class Client extends AbstractAggregateRoot {
         this.companyName = companyName;
         this.clientType = clientType;
         this.projectsValue = new Money(0);
-    }
 
-    public static Client createPrivateClient(String firstName, String lastName) {
-        return new Client(new PersonName(firstName, lastName), null, ClientType.PRIVATE);
-    }
-
-    public static Client createCorporateClient(String companyName) {
-        return new Client(null, companyName, ClientType.CORPORATE);
-    }
-
-    public Email getEmail() {
-        return this.email;
-    }
-
-    public void setEmail(Email email) {
-        this.email = email;
-    }
-
-    public PersonName getPersonName() {
-        return this.personName;
-    }
-
-    public String getCompanyName() {
-        return this.companyName;
     }
 
     public boolean isPrivate() {
@@ -91,46 +84,19 @@ public class Client extends AbstractAggregateRoot {
         return this.clientType.equals(ClientType.CORPORATE);
     }
 
-    public Address getAddress() {
-        return this.address;
-    }
-
-    public Money getProjectsValue() {
-        return this.projectsValue;
-    }
-
-    public String getNote() {
-        return this.note;
-    }
-
-    public String getTelephone() {
-        return this.telephone;
-    }
-
-    public void updateProjectsValue(Money newValue) {
+    public void setProjectsValue(Money newValue) {
         this.projectsValue = newValue.copy();
     }
 
-    public void updatePersonName(String firstName, String lastName) {
+    public void setPersonName(String firstName, String lastName) {
         this.personName.setFirstName(firstName);
         this.personName.setLastName(lastName);
     }
 
-    public void updateCompanyName(String companyName) {
+    public void setCompanyName(String companyName) {
         this.companyName = companyName;
     }
 
-    public void updateNote(String note) {
-        this.note = note;
-    }
-
-    public void updateTelephone(String telephone) {
-        this.telephone = telephone;
-    }
-
-    public void updateAddress(Address address) {
-        this.address = address.copy();
-    }
 
     public void updateEmail(String email) {
         this.email = new Email(email);

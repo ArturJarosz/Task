@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Properties>
+        <Property name="log-path">archive</Property>
+        <Property name="logging-pattern-colored">%date{DEFAULT} %highlight{%5p} [%15t]%x - %style{%c{1.}.(%M):%L}{White, Dim} - %m%n</Property>
+        <!--due to problems with extra character related to colors, when saving logs to files, patterns for files should not contain styles-->
+        <Property name="logging-pattern">%date{DEFAULT} %5p [%15t]%x - %c{1.}.(%M):%L - %m%n</Property>
+        <Property name="additive-logging">false</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${logging-pattern-colored}"/>
+        </Console>
+        <File name="FileAppender" fileName="${log-path}/logs.log">
+            <PatternLayout pattern="${logging-pattern}" charset="UTF-8"/>
+        </File>
+        <File name="LiquibaseFileAppender" fileName="${log-path}/liquibase.log">
+            <PatternLayout pattern="${logging-pattern}" charset="UTF-8"/>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="liquibase" level="debug" additivity="${additive-logging}">
+            <AppenderRef ref="LiquibaseFileAppender"/>
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+        <Logger name="com.arturjarosz.task" level="info" additivity="${additive-logging}">
+            <AppenderRef ref="FileAppender"/>
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

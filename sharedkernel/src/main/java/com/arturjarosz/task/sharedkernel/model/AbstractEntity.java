@@ -1,10 +1,12 @@
 package com.arturjarosz.task.sharedkernel.model;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -14,16 +16,15 @@ import java.util.UUID;
 
 @MappedSuperclass
 public abstract class AbstractEntity implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1221112071690776121L;
 
     private static final String SEQUENCE_NAME = "sequence_generator";
-
+    @Column(name = "UUID", nullable = false)
+    protected final UUID uuid = UUID.randomUUID();
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQUENCE_NAME)
     private Long id;
-
-    @Column(name = "UUID", nullable = false)
-    protected UUID uuid = UUID.randomUUID();
 
     public Long getId() {
         return this.id;

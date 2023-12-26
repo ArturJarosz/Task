@@ -3,18 +3,21 @@ package com.arturjarosz.task.architect.model;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import com.arturjarosz.task.sharedkernel.model.PersonName;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import java.io.Serial;
 
+@SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "architect_sequence", allocationSize = 1)
 @Table(name = "ARCHITECT")
 public class Architect extends AbstractAggregateRoot {
+    @Serial
     private static final long serialVersionUID = -194851694606886763L;
 
     @Embedded
@@ -25,7 +28,7 @@ public class Architect extends AbstractAggregateRoot {
     private Money projectsValue;
 
     protected Architect() {
-        //needed by Hibernate
+        // needed by JPA
     }
 
     public Architect(String firstName, String lastName) {

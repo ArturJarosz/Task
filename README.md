@@ -1,9 +1,17 @@
-# Task
+# Task application
 
-Task project
+## 0. Last action statuses
 
-### Workflow status
+### 0.1. Building and running tests on last PR or commit
 
-[![Java build and test](https://github.com/ArturJarosz/Task/actions/workflows/maven.yml/badge.svg?event=push)](https://github.com/ArturJarosz/Task/actions/workflows/maven.yml)
+[![Workflow without publishing](https://github.com/ArturJarosz/Task/actions/workflows/build%20and%20test.yml/badge.svg)](https://github.com/ArturJarosz/Task/actions/workflows/build%20and%20test.yml)
 
-[![Database check](https://github.com/ArturJarosz/Task/actions/workflows/db_test.yml/badge.svg)](https://github.com/ArturJarosz/Task/actions/workflows/db_test.yml)
+### 0.2. Building, running tests, building maven artifacts and publishing to artifactory
+
+[![Publish artifact](https://github.com/ArturJarosz/Task/actions/workflows/publish.yml/badge.svg)](https://github.com/ArturJarosz/Task/actions/workflows/publish.yml)
+
+## 1. Running application
+
+### 1.1. Docker workflow
+
+### 1.2. Local environment without docker

@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 /**
  * Defines workflow of statuses for Object.
  */
-public class Workflow<TStatus extends Status> {
+public class Workflow<T extends Status> {
     private final String name;
-    private final Map<String, TStatus> nameToStatus;
-    private final TStatus initialStatus;
+    private final Map<String, T> nameToStatus;
+    private final T initialStatus;
 
-    public Workflow(String name, TStatus initialStatus, List<TStatus> statusList) {
+    public Workflow(String name, T initialStatus, List<T> statusList) {
         this.name = name;
         this.initialStatus = initialStatus;
         this.nameToStatus = statusList.stream()
@@ -24,15 +24,15 @@ public class Workflow<TStatus extends Status> {
         return this.name;
     }
 
-    public Map<String, TStatus> getNameToStatus() {
+    public Map<String, T> getNameToStatus() {
         return this.nameToStatus;
     }
 
-    public TStatus getInitialStatus() {
+    public T getInitialStatus() {
         return this.initialStatus;
     }
 
-    public boolean containsStatus(TStatus status) {
+    public boolean containsStatus(T status) {
         return this.nameToStatus.containsValue(status);
     }
 }

@@ -1,0 +1,85 @@
+name: Publish artifact
+
+# Workflow should run on pushes/merged to develop and release branches.
+# These two cases should allow to build release and SNAPSHOT artifacts
+on:
+  push:
+    branches:
+      - develop
+      - 'release/**'
+
+env:
+  JAVA_VERSION: 17
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Generate build number
+        uses: einaregilsson/build-number@v3
+        with:
+          token: ${{secrets.ACCESS_TOKEN}}
+      - name: displaying build number
+        run: echo "Build number $BUILD_NUMBER started."
+      - name: Set up JDK version ${{env.JAVA_VERSION}}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JAVA_VERSION}}
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+      - name: Run maven verify
+        run: mvn verify
+      - run: echo " This job's status is ${{ job.status }}."
+
+  liquibase_test:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK version ${{env.JAVA_VERSION}}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JAVA_VERSION}}
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+      - name: Run liquibase changelog
+        run: |
+          cd database
+          mvn org.springframework.boot:spring-boot-maven-plugin:run
+      - run: echo " This job's status is ${{ job.status }}."
+
+  publish:
+    needs:
+      - liquibase_test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK version ${{env.JAVA_VERSION}}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JAVA_VERSION}}
+      - name: Restoring cached dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Build maven artifact
+        run: mvn package -P publish
+      - name: Publish to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run:
+          mvn deploy
+      - name: Showing job status
+        run: echo " This job's status is ${{ job.status }}."
+

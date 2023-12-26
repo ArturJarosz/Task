@@ -2,7 +2,7 @@ package com.arturjarosz.task.sharedkernel.model;
 
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 
-public class ModelExceptionCodes {
+public final class ModelExceptionCodes {
 
     //Classes
     public static final String ADDRESS = "address";

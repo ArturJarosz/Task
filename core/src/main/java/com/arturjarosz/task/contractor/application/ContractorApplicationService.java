@@ -1,7 +1,6 @@
 package com.arturjarosz.task.contractor.application;
 
-import com.arturjarosz.task.contractor.application.dto.ContractorDto;
-import com.arturjarosz.task.sharedkernel.model.CreatedEntityDto;
+import com.arturjarosz.task.dto.ContractorDto;
 
 import java.util.List;
 
@@ -10,13 +9,13 @@ public interface ContractorApplicationService {
      * Create new Contractor based on data form contractorDto. If data provided in contractorDto are not correct
      * an exception will be thrown.
      */
-    CreatedEntityDto createContractor(ContractorDto contractorDto);
+    ContractorDto createContractor(ContractorDto contractorDto);
 
     /**
-     * Update Contractor of given contractorId with data from contractorDto. If contractor does not exists or
+     * Update Contractor of given contractorId with data from contractorDto. If contractor does not exist or
      * data provided in dto are not correct an exception will be thrown.
      */
-    void updateContractor(Long contractorId, ContractorDto contractorDto);
+    ContractorDto updateContractor(Long contractorId, ContractorDto contractorDto);
 
     /**
      * Remove Contractor with given contractorId. If Contractor does not exist, or has ContractorJobs, new exception

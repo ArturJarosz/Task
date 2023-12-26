@@ -5,9 +5,8 @@ import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionServiceImpl
 import com.arturjarosz.task.project.status.stage.StageStatus
-import com.arturjarosz.task.project.utils.ProjectBuilder
-import com.arturjarosz.task.project.utils.StageBuilder
-import com.google.common.collect.Sets
+import com.arturjarosz.task.utils.ProjectBuilder
+import com.arturjarosz.task.utils.StageBuilder
 import spock.lang.Specification
 
 class StageRejectFromProgressListenerTest extends Specification {
@@ -18,7 +17,7 @@ class StageRejectFromProgressListenerTest extends Specification {
     def "Rejecting the only stage from IN_PROGRESS on the project should return project to TO_DO"() {
         given:
             def stage = this.createStageWithStatus(StageStatus.IN_PROGRESS)
-            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Sets.newHashSet(stage))
+            def project = this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS, Set.of(stage))
         when:
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromProgressListener.onStageStatusChange(project)
@@ -33,7 +32,7 @@ class StageRejectFromProgressListenerTest extends Specification {
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,
-                            Sets.newHashSet(stage, stage2, stage3))
+                            Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromProgressListener.onStageStatusChange(project)
@@ -48,7 +47,7 @@ class StageRejectFromProgressListenerTest extends Specification {
             def stage3 = this.createStageWithStatus(StageStatus.TO_DO)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,
-                            Sets.newHashSet(stage, stage2, stage3))
+                            Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromProgressListener.onStageStatusChange(project)
@@ -63,7 +62,7 @@ class StageRejectFromProgressListenerTest extends Specification {
             def stage3 = this.createStageWithStatus(StageStatus.IN_PROGRESS)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,
-                            Sets.newHashSet(stage, stage2, stage3))
+                            Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromProgressListener.onStageStatusChange(project)
@@ -78,7 +77,7 @@ class StageRejectFromProgressListenerTest extends Specification {
             def stage3 = this.createStageWithStatus(StageStatus.DONE)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,
-                            Sets.newHashSet(stage, stage2, stage3))
+                            Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromProgressListener.onStageStatusChange(project)
@@ -93,7 +92,7 @@ class StageRejectFromProgressListenerTest extends Specification {
             def stage3 = this.createStageWithStatus(StageStatus.REJECTED)
             def project =
                     this.createProjectWithGivenStatusAndStages(ProjectStatus.IN_PROGRESS,
-                            Sets.newHashSet(stage, stage2, stage3))
+                            Set.of(stage, stage2, stage3))
         when:
             stage.changeStatus(StageStatus.REJECTED)
             this.stageRejectFromProgressListener.onStageStatusChange(project)
