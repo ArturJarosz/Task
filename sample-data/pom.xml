@@ -61,6 +61,10 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <classifier>fat</classifier>
+                            <finalName>${project.artifactId}</finalName>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
