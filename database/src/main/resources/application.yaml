@@ -1,11 +1,4 @@
 spring:
-  profiles:
-    active: test
-  #  datasource:
-  #    url: jdbc:postgresql://localhost:5432/taskdb
-  #    username: postgres
-  #    password: postgres123
-  #    driver-class-name: org.postgresql.Driver
   liquibase:
     change-log: classpath:/database/changelogs/changelog-master.yml
     default-schema: task_schema

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+    <localRepository>.m2/maven-repo</localRepository>
+    <interactiveMode>true</interactiveMode>
+    <offline>false</offline>
+
+    <pluginGroups>
+    </pluginGroups>
+    <proxies>
+    </proxies>
+
+    <servers>
+        <server>
+            <id>github</id>
+            <username>ArturJarosz</username>
+            <password>${env.GITHUB_TOKEN}</password>
+        </server>
+
+    </servers>
+    <mirrors>
+        <mirror>
+            <id>maven-default-http-blocker</id>
+            <mirrorOf>external:http:*</mirrorOf>
+            <name>Pseudo repository to mirror external repositories initially using HTTP.</name>
+            <url>http://0.0.0.0/</url>
+            <blocked>true</blocked>
+        </mirror>
+    </mirrors>
+
+    <profiles>
+
+        <profile>
+            <id>mavenCentral</id>
+        </profile>
+        <profile>
+            <id>github</id>
+            <repositories>
+                <repository>
+                    <id>github</id>
+                    <name>GitHub Artur Jarosz Apache Maven Packages</name>
+                    <url>https://maven.pkg.github.com/ArturJarosz/Task</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>mavenCentral</activeProfile>
+        <activeProfile>github</activeProfile>
+    </activeProfiles>
+
+</settings>

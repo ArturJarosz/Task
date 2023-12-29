@@ -1,17 +1,63 @@
 # Task application
 
-## 0. Last action statuses
+## 1. Last action statuses
 
-### 0.1. Building and running tests on last PR or commit
+Building and running tests on last PR or commit
 
 [![Workflow without publishing](https://github.com/ArturJarosz/Task/actions/workflows/build%20and%20test.yml/badge.svg)](https://github.com/ArturJarosz/Task/actions/workflows/build%20and%20test.yml)
 
-### 0.2. Building, running tests, building maven artifacts and publishing to artifactory
+Building, running tests, building maven artifacts and publishing to artifactory
 
 [![Publish artifact](https://github.com/ArturJarosz/Task/actions/workflows/publish.yml/badge.svg)](https://github.com/ArturJarosz/Task/actions/workflows/publish.yml)
 
-## 1. Running application
+## 2. Running application for development
 
-### 1.1. Docker workflow
+### 2.1. Docker workflow
 
-### 1.2. Local environment without docker
+To make full environment running, go to the `docker` directory:
+
+```bash
+cd docker
+```
+
+and then lunch docker compose script:
+
+```bash
+./docker-compose-up.sh
+```
+
+Keep in mind, that it requires fill some of the envs in the `local.env` file, listed in the `example.env`.
+Then, change line in the `docker-compose-up.sh`:
+
+``` bash
+#from
+export $(xargs < ./env/environment.env)
+#to
+export $(xargs < ./env/local.env)
+```
+
+### 2.2. Local environment without docker (with IntelliJ)
+
+#### Prerequisites
+
+Project requires JDK in version 17, Maven, and instance of Postgresql database.
+
+Clone current repository locally:
+
+```bash 
+git clone git@github.com:ArturJarosz/Task.git
+```
+
+Import whole project to your IDE. With the project there should be 4 templates to run SpringBoot application imported.
+Edit them to fill needed information like password, user and database and run them in order:
+
+1. `Drop and Init DB`
+2. `Load sample data` (optional if you need some data to test application).
+3. `Run Task BE`
+
+If you have running version of the database with older version of application, you may want to run `Update DB`.
+
+### 2.3. Running frontend part
+
+To run FE part of the application please follow instruction in corresponding
+repository: `https://github.com/ArturJarosz/Task-FE`.

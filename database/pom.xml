@@ -87,6 +87,32 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <classifier>fat</classifier>
+                            <finalName>${project.artifactId}</finalName>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy-file</goal>
+                                </goals>
+                                <configuration>
+                                    <packaging>jar</packaging>
+                                    <generatePom>true</generatePom>
+                                    <url>https://maven.pkg.github.com/ArturJarosz/Task</url>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <groupId>${project.groupId}</groupId>
+                                    <version>${project.version}</version>
+                                    <file>${project.build.directory}/${project.artifactId}-${project.version}-fat.jar
+                                    </file>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
