@@ -53,7 +53,7 @@ jobs:
       - name: Run liquibase changelog
         run: |
           cd database
-          mvn org.springframework.boot:spring-boot-maven-plugin:run
+          mvn spring-boot:run -Dspring-boot.run.profiles=test
       - run: echo " This job's status is ${{ job.status }}."
 
   publish:

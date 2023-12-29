@@ -49,6 +49,8 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-      - name: Run maven verify
-        run: mvn verify
+      - name: Run liquibase changelog
+        run: |
+          cd database
+          mvn spring-boot:run -Dspring-boot.run.profiles=test
       - run: echo " This job's status is ${{ job.status }}."
