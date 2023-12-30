@@ -33,13 +33,25 @@ services:
       dockerfile: database-schema.Dockerfile
     env_file:
       - env/local.env
-    ports:
-      - 8050:8050
     networks:
       task-network:
     depends_on:
       task-database:
         condition: service_healthy
+
+  sample-data:
+    image: task-sample-data:${APP_VERSION}
+    container_name: task-sample-data
+    build:
+      context: ../sample-data
+      dockerfile: sample-data.Dockerfile
+    env_file:
+      - env/local.env
+    networks:
+      task-network:
+    depends_on:
+      task-schema:
+        condition: service_completed_successfully
 
 networks:
   task-network:

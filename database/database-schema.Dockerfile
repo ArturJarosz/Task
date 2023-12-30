@@ -22,9 +22,6 @@ RUN chmod uo+x task-database-fat.jar
 
 USER task
 
-RUN ls -l
-RUN java --version
-
 ENTRYPOINT ["java", \
             "-jar", \
             "task-database-fat.jar", \
