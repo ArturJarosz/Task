@@ -6,7 +6,7 @@ COPY ./docker/settings.xml /root/.m2/settings.xml
 
 WORKDIR /task-sample-data-build
 
-RUN mvn clean package -DskipTests -P fatJar -X
+RUN mvn clean package -Dmaven.test.skip=true -P fatJar
 
 FROM eclipse-temurin:17-jre as sample-data-base
 
