@@ -2,14 +2,8 @@ services:
   task-database:
     image: postgres:16.1
     container_name: task-database
-    environment:
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_DB=${DB_DATABASE}
-    env_file:
-      - env/environment.env
     ports:
-      - 5432:5432
+      - 5432:${DB_PORT}
     volumes:
       - ./taskDb:/var/lib/postgresql/data
     networks:
@@ -31,8 +25,10 @@ services:
     build:
       context: ../database
       dockerfile: database-schema.Dockerfile
+      args:
+        - GITHUB_MAVEN_TOKEN=${GITHUB_TOKEN}
     env_file:
-      - env/environment.env
+      - ${ENV_FILE}
     networks:
       task-network:
     depends_on:
@@ -45,8 +41,10 @@ services:
     build:
       context: ../sample-data
       dockerfile: sample-data.Dockerfile
+      args:
+        - GITHUB_MAVEN_TOKEN=${GITHUB_TOKEN}
     env_file:
-      - env/environment.env
+      - ${ENV_FILE}
     networks:
       task-network:
     depends_on:
@@ -59,15 +57,17 @@ services:
     build:
       context: ../core
       dockerfile: core.Dockerfile
+      args:
+        - GITHUB_MAVEN_TOKEN=${GITHUB_TOKEN}
     env_file:
-      - env/environment.env
+      - ${ENV_FILE}
     networks:
       task-network:
     ports:
-      - 8100:8100
+      - 8100:${BACKEND_PORT}
     depends_on:
-      task-database:
-        condition: service_healthy
+      task-sample-data:
+        condition: service_completed_successfully
 
 networks:
   task-network:

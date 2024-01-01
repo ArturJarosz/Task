@@ -20,14 +20,17 @@ To make full environment running, go to the `docker` directory:
 cd docker
 ```
 
-and then lunch docker compose script:
+and then lunch docker compose script with needed flags, like this:
 
 ```bash
-./docker-compose-up.sh
+./app-up.sh -e local -v 0.6.2-SNAPSHOT -b full
 ```
 
-Keep in mind, that it requires fill some of the envs in the `local.env` file, listed in the `example.env`.
-Then, change line in the `docker-compose-up.sh`:
+For more help with script run with `-h` (help) flag:
+
+```bash 
+./app-up.sh -h
+```
 
 ``` bash
 #from

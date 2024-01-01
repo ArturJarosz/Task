@@ -16,7 +16,7 @@
         <server>
             <id>github</id>
             <username>ArturJarosz</username>
-            <password>${env.GITHUB_TOKEN}</password>
+            <password>${GITHUB_MAVEN_TOKEN}</password>
         </server>
 
     </servers>
