@@ -1,0 +1,41 @@
+  services:--no-cache --progress plain
+  task-database:
+    image: postgres:16.1
+    container_name: task-database
+    ports:
+      - 5432:${DB_PORT}
+    volumes:
+      - ./taskDb:/var/lib/postgresql/data
+    networks:
+      task-network:
+    healthcheck:
+      test: pg_isready -q -U ${DB_USER} -d ${DB_DATABASE}
+      interval: 15s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+  task-backend:
+    image: task-backend:${APP_VERSION}
+    container_name: task-backend
+    build:
+      context: ../core
+      dockerfile: core.Dockerfile
+      args:
+        - GITHUB_MAVEN_TOKEN=${GITHUB_TOKEN}
+    networks:
+      task-network:
+    ports:
+      - 8100:${BACKEND_PORT}
+    depends_on:
+      task-database:
+        condition: service_healthy
+
+  networks:
+    task-network:
+
+

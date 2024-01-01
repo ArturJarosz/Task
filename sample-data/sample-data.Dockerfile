@@ -1,5 +1,7 @@
 FROM maven:3.9.2-eclipse-temurin-17 as build
 
+ARG GITHUB_MAVEN_TOKEN
+
 RUN mkdir /task-sample-data-build
 COPY . /task-sample-data-build
 COPY ./docker/settings.xml /root/.m2/settings.xml
