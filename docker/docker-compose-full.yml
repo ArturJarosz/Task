@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   task-database:
     image: postgres:16.1
@@ -20,7 +22,7 @@ services:
           memory: 2G
 
   task-schema:
-    image: task-liquibase:${APP_VERSION}
+    image: azjarosz/task-schema:${APP_VERSION}
     container_name: task-schema
     build:
       context: ../database
@@ -36,7 +38,7 @@ services:
         condition: service_healthy
 
   task-sample-data:
-    image: task-sample-data:${APP_VERSION}
+    image: azjarosz/task-sample-data:${APP_VERSION}
     container_name: task-sample-data
     build:
       context: ../sample-data
@@ -52,7 +54,7 @@ services:
         condition: service_completed_successfully
 
   task-backend:
-    image: task-backend:${APP_VERSION}
+    image: azjarosz/task-backend:${APP_VERSION}
     container_name: task-backend
     build:
       context: ../core

@@ -4,10 +4,10 @@ VERSION_PATTERN="^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)(
 BUILD_TYPES=("full" "only-update" "only-run")
 MORE_INFORMATION="For more information about script parameters call: $0 -h"
 
-
-displayHelp() {
+displayHelpForCompose() {
     echo "Script to run environment."
-    echo "Usage: $0 -e [environment] -v [version] -b [build type] -h [help]"
+    echo "Usage: $0 -e [environment] -v [version] -b [build type]"
+    echo "Usage: $0 -h"
     echo "  -e      environment:"
     echo "          - local - running local environment and loading local.env file"
     echo "  -v      version:"
@@ -16,10 +16,28 @@ displayHelp() {
     echo "          - full - full redeploy of the application, with dropping tables and applying schema and then running application"
     echo "          - only-update - applying updating database schema without running the application"
     echo "          - run - starting database and application"
-    echo "  Example: $0 local 0.6.2-SNAPSHOT full"
+    echo "  -h      display this help"
+    echo "Example: $0 local 0.6.2-SNAPSHOT full"
 }
 
-checkMandatoryArgument() {
+displayHelpForBuild() {
+    echo "Script to build docker images."
+    echo "Usage: $0 -e [environment] -l [true/false] -c [chosen module] -p [true/false]"
+    echo "Usage: $0 -l"
+    echo "Usage: $0 -h"
+    echo "Usage: $0 -a"
+    echo "  -a      lists all available images that can be built using this script"
+    echo "  -e      environment:"
+    echo "          - local - building images in the local environment "
+    echo "          - github - building images in GitHub actions"
+    echo "  -l      whether image should be tagged as latest"
+    echo "  -c      chosen module to build image from, use -a to display all available options"
+    echo "  -p      whether image should be published or not"
+    echo "  -h      display this help."
+    echo "Example: $0 -e local -l true -c task-schema -p true"
+}
+
+verifyMandatoryArgument() {
     if [[ -z "$1" ]]; then
         if [[ $HELP_DISPLAYED = false ]]; then
             echo "Use -h option to display help."
@@ -28,7 +46,7 @@ checkMandatoryArgument() {
     fi
 }
 
-checkVersion() {
+verifyVersion() {
     if ! [[ $1 =~ $VERSION_PATTERN ]]; then
         echo "Error: $1 is not valid version format."
         echo "Version number has to be in format: [NUMBER].[NUMBER].[NUMBER]-[QUALIFIER], where QUALIFIER is optional."
@@ -44,37 +62,44 @@ checkVersion() {
     fi
 }
 
-checkEnvironment() {
+verifyEnvironment() {
     envExtension=".env"
-    foundEnv=false
+    foundEnv="false"
     currentEnvFile="$1$envExtension"
     files=( $(ls env) )
-    for fileName in ${files[@]}; do
+    for fileName in "${files[@]}"; do
         if [[ "$fileName" = "$currentEnvFile" ]]; then
-            foundEnv=true
+            foundEnv="true"
         fi
     done
-    if [[ "$foundEnv" = false ]]; then
-        echo "Wrong environment set. Could not find matching environment file: $currentEnvFile ."
+    if [[ "$foundEnv" = "false" ]]; then
+        echo "$1 is not correct environment name. Could not find matching environment file: $currentEnvFile."
+        echo "Available ones are: ${files[*]}"
+        echo "$MORE_INFORMATION"
         exit 1
     fi
 }
 
-checkBuildType() {
-    foundType=false
-    for type in ${BUILD_TYPES[@]}; do
+verifyBuildType() {
+    foundType="false"
+    for type in "${BUILD_TYPES[@]}"; do
         if [[ "$1" = "$type" ]]; then
-            foundType=true
+            foundType="true"
         fi
     done
-    if [[ "$foundType" = false ]]; then
+    if [[ "$foundType" = "false" ]]; then
         echo "$1 is not correct build type. It should be one of: ${BUILD_TYPES[*]}"
+        echo "$MORE_INFORMATION"
         exit 1
     fi
 }
 
-moreInformation () {
-    echo
+verifyBoolean() {
+    if ! [[ "$1" = "true" || "$1" = "false" ]]; then
+        echo "Incorrect values. It has to be either 'true' or 'false'"
+        echo "$MORE_INFORMATION"
+        exit 1
+    fi
 }
 
 notImplemented() {
@@ -82,3 +107,26 @@ notImplemented() {
     echo "$MORE_INFORMATION"
     exit 1
 }
+
+listServices() {
+    echo "Services available for building:"
+    docker compose --env-file "$ENV_FILE" -f docker-compose-full.yml config --services
+}
+
+verifyChosenModule() {
+    availableServices=( $(docker compose --env-file "$ENV_FILE" -f docker-compose-full.yml config --services) )
+    foundModule="false"
+    for module in "${availableServices[@]}"; do
+        if [[ "$1" = "${module}" ]]; then
+            foundModule="true"
+        fi
+    done
+    if [[ "${foundModule}" = "false" ]]; then
+        echo "$1 is not correct module name."
+        echo "Available ones are: ${availableServices[*]}"
+        echo "$MORE_INFORMATION"
+        exit 1
+    fi
+    echo "services: ${availableServices[*]}"
+}
+

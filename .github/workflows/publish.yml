@@ -1,4 +1,4 @@
-name: Publish artifact
+name: Publish artifacts
 
 # Workflow should run on pushes/merged to develop and release branches.
 # These two cases should allow to build release and SNAPSHOT artifacts
@@ -15,7 +15,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Generate build number
         uses: einaregilsson/build-number@v3
         with:
@@ -40,7 +40,7 @@ jobs:
       - build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up JDK version ${{env.JAVA_VERSION}}
         uses: actions/setup-java@v1
         with:
@@ -56,12 +56,12 @@ jobs:
           mvn spring-boot:run -Dspring-boot.run.profiles=test
       - run: echo " This job's status is ${{ job.status }}."
 
-  publish:
+  build-and-publish-maven:
     needs:
       - liquibase_test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up JDK version ${{env.JAVA_VERSION}}
         uses: actions/setup-java@v1
         with:
@@ -83,3 +83,29 @@ jobs:
       - name: Showing job status
         run: echo " This job's status is ${{ job.status }}."
 
+  build-and-publish-docker-task-schema:
+    secrets: inherit
+    needs:
+      - liquibase_test
+    uses: arturjarosz/Task/.github/workflows/build-and-publish-docker.yaml@TA-405
+    with:
+      latest: true
+      chosen-module: "task-schema"
+
+  build-and-publish-docker-task-sample-data:
+    secrets: inherit
+    needs:
+      - liquibase_test
+    uses: arturjarosz/Task/.github/workflows/build-and-publish-docker.yaml@TA-405
+    with:
+      latest: true
+      chosen-module: "task-sample-data"
+
+  build-and-publish-docker-task-task-backend:
+    secrets: inherit
+    needs:
+      - liquibase_test
+    uses: arturjarosz/Task/.github/workflows/build-and-publish-docker.yaml@TA-405
+    with:
+      latest: true
+      chosen-module: "task-backend"

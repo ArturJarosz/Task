@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /bin/bash
 
 set -e
 
@@ -8,30 +8,32 @@ ENVIRONMENT=""
 VERSION=""
 BUILD_TYPE=""
 HELP_DISPLAYED=false
+COMPOSE_FILE=""
 
 # reading script flags
-while getopts "e:v:b:h" flag
-do
+while getopts "e:v:b:h" flag; do
     case "${flag}" in
-        e) ENVIRONMENT=${OPTARG}
-            checkEnvironment "$ENVIRONMENT"
+        e)  ENVIRONMENT=${OPTARG}
+            verifyEnvironment "$ENVIRONMENT"
             ;;
-        v) VERSION=${OPTARG}
-            checkVersion "$VERSION"
+        v)  VERSION=${OPTARG}
+            verifyVersion "$VERSION"
             ;;
-        b) BUILD_TYPE=${OPTARG}
-            checkBuildType "$BUILD_TYPE"
+        b)  BUILD_TYPE=${OPTARG}
+            verifyBuildType "$BUILD_TYPE"
             ;;
-        h) HELP_DISPLAYED=true
-            displayHelp
+        h)  HELP_DISPLAYED=true
+            displayHelpForCompose
+            ;;
+        *)  displayHelpForCompose
             ;;
     esac
 done
 
 # checking correctness of inputs
-checkMandatoryArgument "$ENVIRONMENT" "Environment"
-checkMandatoryArgument "$VERSION" "Version"
-checkMandatoryArgument "$BUILD_TYPE" "Build type"
+verifyMandatoryArgument "$ENVIRONMENT" "Environment"
+verifyMandatoryArgument "$VERSION" "Version"
+verifyMandatoryArgument "$BUILD_TYPE" "Build type"
 
 # exporting environment variables
 export ENV="$ENVIRONMENT"
@@ -42,7 +44,7 @@ export BUILD_TYPE="$BUILD_TYPE"
 # triggering composing
 case "$BUILD_TYPE" in
     "full") echo "full deployment..."
-        docker compose --env-file "$ENV_FILE" -f docker-compose-full.yml up -d
+        COMPOSE_FILE="docker-compose-full.yml"
         ;;
     "only-update") echo "only update deployment"
         # TODO: TA-407 create configuration for only updating schema
@@ -50,12 +52,12 @@ case "$BUILD_TYPE" in
         exit 1
         ;;
     "only-run") echo "only run deployment"
-    docker compose --env-file "$ENV_FILE" up -d task-database task-backend
+        COMPOSE_FILE="docker-compose-run.yml"
         ;;
 esac
-#
-#echo "Env file is : ${ENV_FILE}"
-#export $(xargs < "$ENV_FILE")
 
-#docker compose --env-file "$ENV_FILE" build --no-cache --progress plain
-#docker compose --env-file "$ENV_FILE" build
+docker compose --env-file "$ENV_FILE" --remove-orphans -f "${COMPOSE_FILE}" down
+if [[ "local" != "${ENV}" ]]; then
+    docker compose --env-file "$ENV_FILE" --remove-orphans -f "${COMPOSE_FILE}" pull
+fi
+docker compose --env-file "$ENV_FILE" -f "${COMPOSE_FILE}" -d

@@ -1,0 +1,54 @@
+name: Build and publish docker
+
+on:
+  workflow_call:
+    inputs:
+      latest:
+        type: boolean
+        required: true
+        default: true
+      chosen-module:
+        type: string
+        required: true
+  workflow_dispatch:
+    inputs:
+      latest:
+        description: "Whether image should be tagged as latest."
+        type: boolean
+        default: true
+      chosen-module:
+        description: "Chosen module to build docker image from. [task-schema, task-sample-data, task-backend]"
+        type: string
+        required: true
+
+env:
+  JAVA_VERSION: 17
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK version ${{env.JAVA_VERSION}}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JAVA_VERSION}}
+      - name: docker login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          # login to docker hub
+          docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+      - name: building docker image of ${{inputs.chosen-module}}:${{inputs.latest}}
+        shell: bash
+        env:
+          DATABASE_SCHEMA: ${{ secrets.DATABASE_SCHEMA }}
+          BACKEND_PORT: ${{ secrets.BACKEND_PORT }}
+          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+          MAVEN_ACCESS_TOKEN: ${{secrets.MAVEN_ACCESS_TOKEN }}
+        run: |
+          cd docker
+          # adding permissions to execute script
+          chmod +x build-and-publish.sh
+          ./build-and-publish.sh -e github -l "${{inputs.latest}}" -c "${{inputs.chosen-module}}" -p true
