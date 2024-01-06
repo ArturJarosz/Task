@@ -1,4 +1,6 @@
-  services:--no-cache --progress plain
+version: "3.8"
+
+services:
   task-database:
     image: postgres:16.1
     container_name: task-database
@@ -20,7 +22,7 @@
           memory: 2G
 
   task-backend:
-    image: task-backend:${APP_VERSION}
+    image: azjarosz/task-backend:${APP_VERSION}
     container_name: task-backend
     build:
       context: ../core
@@ -35,7 +37,7 @@
       task-database:
         condition: service_healthy
 
-  networks:
-    task-network:
+networks:
+  task-network:
 
 
