@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /bin/bash
 
 VERSION_PATTERN="^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)(-(SNAPSHOT|((rc|beta|alpha)(\.[0-9]+){0,1}))){0,1}$"
 BUILD_TYPES=("full" "only-update" "only-run")
@@ -22,11 +22,12 @@ displayHelpForCompose() {
 
 displayHelpForBuild() {
     echo "Script to build docker images."
-    echo "Usage: $0 -e [environment] -l [true/false] -c [chosen module] -p [true/false]"
-    echo "Usage: $0 -l"
+    echo "Usage: $0 -e [environment] -l [true/false] -c [chosen module] -p [true/false] -l [true/false]"
+    echo "Usage: $0 -C"
     echo "Usage: $0 -h"
     echo "Usage: $0 -a"
     echo "  -a      lists all available images that can be built using this script"
+    echo "  -C      display current version of application"
     echo "  -e      environment:"
     echo "          - local - building images in the local environment "
     echo "          - github - building images in GitHub actions"
@@ -128,5 +129,10 @@ verifyChosenModule() {
         exit 1
     fi
     echo "services: ${availableServices[*]}"
+}
+
+displayCurrentVersion() {
+    currentVersion=$(mvn -f ../pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)
+    echo "Current version is: ${currentVersion}"
 }
 
