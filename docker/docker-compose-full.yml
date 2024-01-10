@@ -5,7 +5,7 @@ services:
     image: postgres:16.1
     container_name: task-database
     ports:
-      - 5432:${DB_PORT}
+      - "${DB_PORT}:5432"
     volumes:
       - ./taskDb:/var/lib/postgresql/data
     networks:
@@ -33,6 +33,10 @@ services:
       - ${ENV_FILE}
     networks:
       task-network:
+    deploy:
+      resources:
+        limits:
+          memory: 1G
     depends_on:
       task-database:
         condition: service_healthy
@@ -49,6 +53,10 @@ services:
       - ${ENV_FILE}
     networks:
       task-network:
+    deploy:
+      resources:
+        limits:
+          memory: 1G
     depends_on:
       task-schema:
         condition: service_completed_successfully
@@ -66,10 +74,29 @@ services:
     networks:
       task-network:
     ports:
-      - 8100:${BACKEND_PORT}
+      - "${BACKEND_PORT}:8100"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
     depends_on:
       task-sample-data:
         condition: service_completed_successfully
+
+  task-fe:
+    image: azjarosz/task-fe:${APP_VERSION}
+    container_name: task-fe
+    networks:
+      task-network:
+    ports:
+      - "${FE_PORT}:80"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    depends_on:
+      task-backend:
+        condition: service_started
 
 networks:
   task-network:
