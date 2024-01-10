@@ -17,10 +17,12 @@ export APP_VERSION=""
 export BUILD_TYPE="full"
 
 # reading script flags
-while getopts "e:l:c:p:h" flag; do
+while getopts "aCe:l:c:p:h" flag; do
     case "${flag}" in
         a)  docker compose --env-file "$ENV_FILE" -f docker-compose-full.yml config --services
             CONTINUE="false"
+            ;;
+        C)  displayCurrentVersion
             ;;
         h)  displayHelpForBuild
             CONTINUE="false"
