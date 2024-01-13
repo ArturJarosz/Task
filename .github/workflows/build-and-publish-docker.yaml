@@ -17,9 +17,13 @@ on:
         type: boolean
         default: true
       chosen-module:
-        description: "Chosen module to build docker image from. [task-schema, task-sample-data, task-backend]"
-        type: string
+        description: "Chosen module to build docker image from."
+        type: choice
         required: true
+        options:
+          - task-schema
+          - task-sample-data
+          - task-backend
 
 env:
   JAVA_VERSION: 17
