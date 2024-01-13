@@ -32,12 +32,8 @@ For more help with script run with `-h` (help) flag:
 ./app-up.sh -h
 ```
 
-``` bash
-#from
-export $(xargs < ./env/environment.env)
-#to
-export $(xargs < ./env/local.env)
-```
+That script uses matching `.env` with passed environment (for `local` it will be `local.env`) located in /docker/env.
+To make it work provide all needed environment variables there. You can uses `example.env` for full list of them.
 
 ### 2.2. Local environment without docker (with IntelliJ)
 
