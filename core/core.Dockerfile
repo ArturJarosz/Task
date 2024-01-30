@@ -22,12 +22,9 @@ WORKDIR /core-app
 
 RUN chmod uo+x task-core-fat.jar
 
+COPY --chown=task:task entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
 USER task
 
-ENTRYPOINT ["java", \
-            "-jar", \
-            "task-core-fat.jar", \
-            "--spring.datasource.username=${DB_USER}", \
-            "--spring.datasource.url=jdbc:postgresql://task-database:5432/${DB_DATABASE}", \
-            "--spring.datasource.password=${DB_PASSWORD}", \
-            "--spring.datasource.driver-class-name=org.postgresql.Driver"]
+CMD "./entrypoint.sh"

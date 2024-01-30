@@ -57,7 +57,7 @@ case "$BUILD_TYPE" in
 esac
 
 docker compose --env-file "$ENV_FILE" -f "docker-compose-full.yml" down --remove-orphans
-if [[ "local" != "${ENV}" ]]; then
-    docker compose --env-file "$ENV_FILE" -f "${COMPOSE_FILE}" pull
-fi
+#if [[ "local" != "${ENV}" ]]; then
+#    docker compose --env-file "$ENV_FILE" -f "${COMPOSE_FILE}" pull
+#fi
 docker compose --env-file "$ENV_FILE" -f "${COMPOSE_FILE}" up -d

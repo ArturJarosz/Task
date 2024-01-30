@@ -8,6 +8,10 @@ spring:
   output:
     ansi:
       enabled: always
+  datasource:
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 task:
   language: en
   encoding: UTF-8

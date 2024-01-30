@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Task BE" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="ACTIVE_PROFILES" value="local" />
+    <option name="envFilePaths">
+      <option value="$PROJECT_DIR$/docker/env/local.env" />
+    </option>
+    <module name="task-core" />
+    <selectedOptions>
+      <option name="environmentVariables" />
+    </selectedOptions>
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.arturjarosz.task.Main" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.arturjarosz.task.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
