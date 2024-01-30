@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:${DB_PORT}/${DB_DATABASE}
+server:
+  port: 8100

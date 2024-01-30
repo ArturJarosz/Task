@@ -1,12 +1,4 @@
 spring:
-  profiles:
-    active: postgres
-  # should be provided by properties of run template
-  #  datasource:
-  #    url: jdbc:postgresql://localhost:5432/taskdb
-  #    username: postgres
-  #    password: postgres123
-  #    driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     database: postgresql
@@ -28,8 +20,10 @@ spring:
   output:
     ansi:
       enabled: always
-server:
-  port: 8100
+  datasource:
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 task:
   language: en
   encoding: UTF-8
