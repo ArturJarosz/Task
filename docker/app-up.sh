@@ -41,6 +41,10 @@ export ENV_FILE="./env/$ENVIRONMENT.env"
 export APP_VERSION="$VERSION"
 export BUILD_TYPE="$BUILD_TYPE"
 
+echo "========================================================="
+echo "Running ${BUILD_TYPE} type of environment ${ENVIRONMENT} in version ${APP_VERSION}."
+echo "========================================================="
+
 # triggering composing
 case "$BUILD_TYPE" in
     "full") echo "full deployment..."
@@ -57,7 +61,8 @@ case "$BUILD_TYPE" in
 esac
 
 docker compose --env-file "$ENV_FILE" -f "docker-compose-full.yml" down --remove-orphans
-#if [[ "local" != "${ENV}" ]]; then
-#    docker compose --env-file "$ENV_FILE" -f "${COMPOSE_FILE}" pull
-#fi
+if [[ "local" != "${ENV}" ]]; then
+    echo "Pulling latest images."
+    docker compose --env-file "$ENV_FILE" -f "${COMPOSE_FILE}" pull
+fi
 docker compose --env-file "$ENV_FILE" -f "${COMPOSE_FILE}" up -d

@@ -53,6 +53,7 @@ verifyMandatoryArgument "$ENVIRONMENT" "Environment"
 verifyMandatoryArgument "$CHOSEN_MODULE" "Module"
 verifyMandatoryArgument "$LATEST" "Latest"
 
+echo "========================================================="
 echo "Environment set to $ENVIRONMENT"
 export ENV_FILE="./env/$ENVIRONMENT.env"
 
@@ -65,6 +66,7 @@ source "${ENV_FILE}"
 
 # build image
 echo "Building ${CHOSEN_MODULE}:${APP_VERSION} image."
+echo "========================================================="
 docker compose --env-file "$ENV_FILE" -f docker-compose-full.yml build --no-cache --progress plain "${CHOSEN_MODULE}"
 # checking build result
 buildResult=$?
