@@ -112,7 +112,7 @@ jobs:
 
   redeploy_environment:
     needs:
-      - liquibase_test
+      - build-and-publish-docker-task-task-backend
     uses: arturjarosz/Task/.github/workflows/redeploy-environment.yml@develop
     with:
       drop_db: true
