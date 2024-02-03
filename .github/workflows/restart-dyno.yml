@@ -1,0 +1,66 @@
+name: Restart Heroku dyno
+
+on:
+  workflow_call:
+    inputs:
+      chosen_environment:
+        type: string
+        required: true
+      dyno:
+        type: string
+        required: true
+    secrets:
+      HEROKU_API_KEY:
+        required: true
+      HEROKU_MAIL:
+        required: true
+  workflow_dispatch:
+    inputs:
+      chosen_environment:
+        type: choice
+        required: true
+        description: "Choose environment to build."
+        options:
+          - task-test-be
+      dyno:
+        type: choice
+        required: true
+        description: "Choose dyno to restart."
+        options:
+          - backend
+
+env:
+  JAVA_VERSION: 17
+
+jobs:
+  restart_dyno:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK version ${{env.JAVA_VERSION}}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JAVA_VERSION}}
+      - name: Add Heroku login credentials
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_MAIL: ${{ secrets.HEROKU_MAIL }}
+        shell: bash
+        run: |
+          cat >~/.netrc <<EOF
+          machine api.heroku.com
+            login $HEROKU_MAIL
+            password $HEROKU_API_KEY
+          machine git.heroku.com
+            login $HEROKU_MAIL
+            password $HEROKU_API_KEY
+          machine registry.heroku.com
+            login $HEROKU_MAIL
+            password $HEROKU_API_KEY
+          EOF
+      - name: Restart dyno
+        shell: bash
+        run: |
+          chosen_env="${{ inputs.chosen_environment }}"
+          dyno="${{ inputs.dyno }}"
+          heroku restart $dyno -a $chosen_env

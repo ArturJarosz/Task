@@ -1,0 +1,98 @@
+name: Rebuild selected environment
+
+on:
+  workflow_call:
+    inputs:
+      drop_db:
+        type: boolean
+        required: true
+        default: true
+      load_sample_data:
+        type: boolean
+        required: true
+        default: true
+      chosen_environment:
+        type: string
+        required: true
+      version:
+        type: string
+        required: false
+    secrets:
+      MAVEN_ACCESS_TOKEN:
+        required: true
+      DATABASE_LOCATION:
+        required: true
+      DATABASE_SCHEMA:
+        required: true
+      DATABASE_PASSWORD:
+        required: true
+      DATABASE_PORT:
+        required: true
+      BACKEND_PORT:
+        required: true
+      FE_PORT:
+        required: true
+      DOCKER_USER:
+        required: true
+      DOCKER_PASSWORD:
+        required: true
+      HEROKU_API_KEY:
+        required: true
+      HEROKU_MAIL:
+        required: true
+  workflow_dispatch:
+    inputs:
+      drop_db:
+        type: boolean
+        required: true
+        default: true
+        description: "Drop and rebuild database."
+      load_sample_data:
+        type: boolean
+        required: true
+        default: true
+        description: "Load test sample data."
+      chosen_environment:
+        type: choice
+        required: true
+        description: "Choose environment to build."
+        options:
+          - test
+      version:
+        type: string
+        required: false
+        description: "Version of the application to be deployed to chosen environment. If empty, latest version from develop branch will be chosen."
+
+env:
+  JAVA_VERSION: 17
+
+jobs:
+  redeploy_schema:
+    if: ${{ inputs.drop_db }} == "true"
+    uses: arturjarosz/Task/.github/workflows/deploy-to-dyno.yml@develop
+    with:
+      module_name: task-schema
+      version: ${{ inputs.version }}
+    secrets: inherit
+  redeply_sample_data:
+    if: ${{ inputs.load_sample_data }} == "true"
+    needs: redeploy_schema
+    uses: arturjarosz/Task/.github/workflows/deploy-to-dyno.yml@develop
+    with:
+      module_name: task-sample-data
+      version: ${{ inputs.version }}
+    secrets: inherit
+  redeploy_backend:
+    needs: redeply_sample_data
+    uses: arturjarosz/Task/.github/workflows/deploy-to-dyno.yml@develop
+    with:
+      module_name: task-backend
+      version: ${{ inputs.version }}
+    secrets: inherit
+  restart_environment:
+    needs: redeploy_backend
+    uses: arturjarosz/Task/.github/workflows/restart-dyno.yml@develop
+    with:
+      chosen_environment: task-test-be
+      dyno: web
+    secrets: inherit

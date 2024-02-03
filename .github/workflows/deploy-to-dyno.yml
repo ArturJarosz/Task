@@ -1,0 +1,163 @@
+name: Prepare and push to Heroku dyno
+
+on:
+  workflow_call:
+    inputs:
+      module_name:
+        type: string
+        required: true
+      version:
+        type: string
+        required: false
+    secrets:
+      MAVEN_ACCESS_TOKEN:
+        required: true
+      DATABASE_LOCATION:
+        required: true
+      DATABASE_SCHEMA:
+        required: true
+      DATABASE_PASSWORD:
+        required: true
+      DATABASE_PORT:
+        required: true
+      BACKEND_PORT:
+        required: true
+      FE_PORT:
+        required: true
+      DOCKER_USER:
+        required: true
+      DOCKER_PASSWORD:
+        required: true
+      HEROKU_API_KEY:
+        required: true
+      HEROKU_MAIL:
+        required: true
+  workflow_dispatch:
+    inputs:
+      module_name:
+        type: choice
+        required: true
+        description: "Choose module to redeploy."
+        options:
+          - task-schema
+          - task-sample-data
+          - task-backend
+      version:
+        type: string
+        required: false
+        description: "Version of the application to be deployed to chosen environment. If empty, latest version from develop branch will be chosen."
+
+env:
+  JAVA_VERSION: 17
+  VERSION: ""
+  CHOSEN_MODULE: ""
+  APP_NAME: ""
+  APP_TYPE: ""
+  IS_ONE_OFF_DYNO: ""
+
+jobs:
+  prepare_and_push_to_dyno:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK version ${{env.JAVA_VERSION}}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JAVA_VERSION}}
+      - name: Calculate metadata
+        shell: bash
+        run: |
+          cd docker
+          echo "Calculating metadata for deployment"
+          
+          # importing environment related look up tables
+          . ./heroku/test.sh
+
+          # setting up chosen module name
+          chosen_module="${{ inputs.module_name }}"
+          echo "CHOSEN_MODULE=$chosen_module" >> "$GITHUB_ENV"
+          
+          # setting up application version to deploy
+          version="${{ inputs.version }}"
+          if [[ -z "$version" ]]; then
+            echo "Version was not setup. Taking version from the branch."
+            version=$(mvn -f ../pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)
+            version=$(echo "$version" | sed -r 's/\x1b\[[0-9;]*m?//g')
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          
+          # setting up application name
+          echo "APP_NAME=${moduleToApp[$chosen_module]}" >> $GITHUB_ENV
+          
+          # setting up application type
+          echo "APP_TYPE=${moduleToType[$chosen_module]}" >> $GITHUB_ENV
+          
+          # checking whether application is one off dyno
+          echo "IS_ONE_OFF_DYNO=${isOneOffDyno[$chosen_module]}" >> $GITHUB_ENV
+          
+          echo "========================================================="
+          echo "Deployment metadata:"
+          echo "Version was set to $version."
+          echo "Chosen module: $chosen_module."
+          echo "Application name: ${moduleToApp[$chosen_module]}."
+          echo "Application type: ${moduleToType[$chosen_module]}."
+          echo "Is one off dyno: ${isOneOffDyno[$chosen_module]}."
+          echo "========================================================="
+      - name: Login to docker with Heroku credentials
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          # login to docker hub
+          docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+      - name: Add Heroku login credentials
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_MAIL: ${{ secrets.HEROKU_MAIL }}
+        shell: bash
+        run: |
+          cat >~/.netrc <<EOF
+          machine api.heroku.com
+            login $HEROKU_MAIL
+            password $HEROKU_API_KEY
+          machine git.heroku.com
+            login $HEROKU_MAIL
+            password $HEROKU_API_KEY
+          machine registry.heroku.com
+            login $HEROKU_MAIL
+            password $HEROKU_API_KEY
+          EOF
+      - name: Prepare image and redeploy
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          MAVEN_ACCESS_TOKEN: ${{ secrets.MAVEN_ACCESS_TOKEN }}
+          DATABASE_LOCATION: ${{ secrets.DATABASE_LOCATION}}
+          DATABASE_SCHEMA: ${{ secrets.DATABASE_SCHEMA }}
+          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          BACKEND_PORT: ${{ secrets.BACKEND_PORT }}
+          FE_PORT: ${{ secrets.FE_PORT }}
+        shell: bash
+        run: |
+          cd docker
+          echo "Preparing $chosen_module to redeploy."
+          
+          echo "Pulling image"
+          ./pull-image.sh -e github -v "$version" -c "$CHOSEN_MODULE"
+          
+          echo "Tagging image azjarosz/"$CHOSEN_MODULE":$VERSION with Heroku tag: registry.heroku.com/$APP_NAME/$APP_TYPE."
+          docker tag azjarosz/"$CHOSEN_MODULE":$VERSION registry.heroku.com/"$APP_NAME"/"$APP_TYPE"
+          
+          echo "Pushing image to heroku registry."
+          docker push registry.heroku.com/"$APP_NAME"/"$APP_TYPE"
+          
+          echo "Releasing $APP_TYPE to app $APP_NAME to Heroku."
+          heroku container:release "$APP_TYPE" -a "$APP_NAME"
+          
+          echo "Module $chosen_module redeployed."
+      - name: Spin off one off dyno
+        shell: bash
+        run: |
+          if [[ "$IS_ONE_OFF_DYNO" = "true" ]]; then
+            echo "Running one off dyno."
+            heroku run "$APP_TYPE" --type="$APP_TYPE" -a "$APP_NAME"
+          fi

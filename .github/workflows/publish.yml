@@ -87,7 +87,7 @@ jobs:
     secrets: inherit
     needs:
       - build-and-publish-maven
-    uses: arturjarosz/Task/.github/workflows/build-and-publish-docker.yaml@TA-405
+    uses: arturjarosz/Task/.github/workflows/build-and-publish-docker.yaml@develop
     with:
       latest: true
       chosen-module: "task-schema"
@@ -96,7 +96,7 @@ jobs:
     secrets: inherit
     needs:
       - build-and-publish-maven
-    uses: arturjarosz/Task/.github/workflows/build-and-publish-docker.yaml@TA-405
+    uses: arturjarosz/Task/.github/workflows/build-and-publish-docker.yaml@develop
     with:
       latest: true
       chosen-module: "task-sample-data"
@@ -105,7 +105,17 @@ jobs:
     secrets: inherit
     needs:
       - build-and-publish-maven
-    uses: arturjarosz/Task/.github/workflows/build-and-publish-docker.yaml@TA-405
+    uses: arturjarosz/Task/.github/workflows/build-and-publish-docker.yaml@develop
     with:
       latest: true
       chosen-module: "task-backend"
+
+  redeploy_environment:
+    needs:
+      - liquibase_test
+    uses: arturjarosz/Task/.github/workflows/redeploy-environment.yml@develop
+    with:
+      drop_db: true
+      load_sample_data: true
+      chosen_environment: test
+    secrets: inherit

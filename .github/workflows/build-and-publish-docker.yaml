@@ -13,11 +13,11 @@ on:
   workflow_dispatch:
     inputs:
       latest:
-        description: "Whether image should be tagged as latest."
+        description: "Tag image as 'latest'."
         type: boolean
         default: true
       chosen-module:
-        description: "Chosen module to build docker image from."
+        description: "Choose module to build docker image from."
         type: choice
         required: true
         options:
