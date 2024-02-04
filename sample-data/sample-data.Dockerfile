@@ -1,4 +1,4 @@
-FROM maven:3.9.2-eclipse-temurin-17 as build
+FROM maven:3.8.7-eclipse-temurin-17-alpine as build
 
 ARG GITHUB_MAVEN_TOKEN
 
@@ -10,10 +10,10 @@ WORKDIR /task-sample-data-build
 
 RUN mvn clean package -Dmaven.test.skip=true -P fatJar
 
-FROM eclipse-temurin:17-jre as sample-data-base
+FROM eclipse-temurin:17-jre-alpine as sample-data-base
 
 RUN mkdir /task-sample-data-app
-RUN groupadd -r task && useradd --no-log-init -r -g task task
+RUN addgroup task && adduser --disabled-password task --ingroup task
 
 COPY --from=build /task-sample-data-build/target/task-sample-data-fat.jar /task-sample-data-app/task-sample-data-fat.jar
 

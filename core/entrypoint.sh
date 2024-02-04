@@ -1,1 +1,1 @@
-java -jar task-core-fat.jar --spring.profiles.active=${ACTIVE_PROFILE} --server.port=${PORT} ${JVM_PROPERTIES}
+java -jar task-core-fat.jar --spring.profiles.active=${ACTIVE_PROFILE} --server.port=${PORT} -Xmx256m -Xss448k -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution -XX:+UseConcMarkSweepGC
