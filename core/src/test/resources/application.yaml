@@ -16,3 +16,6 @@ server:
 task:
   language: en
   encoding: UTF-8
+  security:
+    allowed-origins:
+      - "localhost"
