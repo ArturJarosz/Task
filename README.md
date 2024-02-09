@@ -56,6 +56,9 @@ Edit them to fill needed information like password, user and database and run th
 
 If you have running version of the database with older version of application, you may want to run `Update DB`.
 
+Please be aware that these run configurations use `local.env` file as well. So it might be a need that that file on your
+system has to be prepared from scratch. You can use `/docker/env/example.env` as a template.
+
 ### 2.3. Running frontend part
 
 To run FE part of the application please follow instruction in corresponding
