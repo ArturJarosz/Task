@@ -74,7 +74,7 @@ services:
     networks:
       task-network:
     ports:
-      - "${BACKEND_PORT}:8100"
+      - ${BACKEND_PORT}:${PORT}
     deploy:
       resources:
         limits:
@@ -90,6 +90,8 @@ services:
       task-network:
     ports:
       - "${FE_PORT}:80"
+    env_file:
+      - ${ENV_FILE}
     deploy:
       resources:
         limits:
