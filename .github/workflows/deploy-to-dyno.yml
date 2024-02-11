@@ -10,6 +10,8 @@ on:
         type: string
         required: false
     secrets:
+      BASE_URL:
+        required: true
       MAVEN_ACCESS_TOKEN:
         required: true
       DATABASE_LOCATION:
@@ -32,6 +34,8 @@ on:
         required: true
       HEROKU_MAIL:
         required: true
+      PORT:
+        required: true
   workflow_dispatch:
     inputs:
       module_name:
@@ -42,6 +46,7 @@ on:
           - task-schema
           - task-sample-data
           - task-backend
+          - task-fe
       version:
         type: string
         required: false
@@ -57,7 +62,7 @@ env:
 
 jobs:
   prepare_and_push_to_dyno:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK version ${{env.JAVA_VERSION}}

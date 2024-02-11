@@ -1,4 +1,4 @@
-name: Publish artifacts
+name: Build test publish redeploy environment
 
 # Workflow should run on pushes/merged to develop and release branches.
 # These two cases should allow to build release and SNAPSHOT artifacts
@@ -13,7 +13,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Generate build number
@@ -38,7 +38,7 @@ jobs:
   liquibase_test:
     needs:
       - build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK version ${{env.JAVA_VERSION}}
@@ -59,7 +59,7 @@ jobs:
   build-and-publish-maven:
     needs:
       - liquibase_test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK version ${{env.JAVA_VERSION}}

@@ -6,9 +6,13 @@ Building and running tests on last PR or commit
 
 [![Workflow without publishing](https://github.com/ArturJarosz/Task/actions/workflows/build%20and%20test.yml/badge.svg)](https://github.com/ArturJarosz/Task/actions/workflows/build%20and%20test.yml)
 
-Building, running tests, building maven artifacts and publishing to artifactory
+Building, running tests, building maven artifacts, docker images and publishing to artifactory
 
 [![Publish artifact](https://github.com/ArturJarosz/Task/actions/workflows/publish.yml/badge.svg)](https://github.com/ArturJarosz/Task/actions/workflows/publish.yml)
+
+Building and publishing FE docker image (https://github.com/ArturJarosz/Task-FE)
+
+[![Test and publish docker image](https://github.com/ArturJarosz/Task-FE/actions/workflows/test-and-publish.yml/badge.svg)](https://github.com/ArturJarosz/Task-FE/actions/workflows/test-and-publish.yml)
 
 ## 2. Running application for development
 

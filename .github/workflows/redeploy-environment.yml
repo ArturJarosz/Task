@@ -89,6 +89,13 @@ jobs:
       module_name: task-backend
       version: ${{ inputs.version }}
     secrets: inherit
+  redeploy_fe:
+    needs: redeply_sample_data
+    uses: arturjarosz/Task/.github/workflows/deploy-to-dyno.yml@develop
+    with:
+      module_name: task-fe
+      version: ${{ inputs.version }}
+    secrets: inherit
   restart_environment:
     needs: redeploy_backend
     uses: arturjarosz/Task/.github/workflows/restart-dyno.yml@develop
