@@ -1,5 +1,6 @@
 package com.arturjarosz.task.data;
 
+import com.arturjarosz.task.exception.SampleDataInitializingException;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.systemparameter.infrastructure.repository.SystemParameterRepository;
 import com.arturjarosz.task.systemparameter.model.SystemParameter;
@@ -7,20 +8,17 @@ import com.arturjarosz.task.systemparameter.model.SystemParameterType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Component
 public class SystemParametersInitializer implements DataInitializer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SystemParametersInitializer.class);
     private static final String SYSTEM_PARAMETERS_PATH = "initialSystemParameters.json";
 
     private final SystemParameterRepository systemParameterRepository;
@@ -32,21 +30,21 @@ public class SystemParametersInitializer implements DataInitializer {
 
     @Override
     public void initializeData() {
-        LOGGER.info("Start importing system parameters.");
+        LOG.info("Start importing system parameters.");
         this.importSystemParametersFromFile();
-        LOGGER.info("System parameters added to the database.");
+        LOG.info("System parameters added to the database.");
     }
 
     private void importSystemParametersFromFile() {
-        List<SystemParameter> systemParameters = this.prepareSystemParameters(SYSTEM_PARAMETERS_PATH);
+        List<SystemParameter> systemParameters = this.prepareSystemParameters();
         this.systemParameterRepository.saveAll(systemParameters);
     }
 
-    private List<SystemParameter> prepareSystemParameters(String filename) {
+    private List<SystemParameter> prepareSystemParameters() {
         var mapper = new ObjectMapper();
-        BaseValidator.assertNotEmpty(filename, "File name cannot be empty.");
+        BaseValidator.assertNotEmpty(SystemParametersInitializer.SYSTEM_PARAMETERS_PATH, "File name cannot be empty.");
         try (InputStream inputStream = SystemParametersInitializer.class.getClassLoader()
-                .getResourceAsStream(filename)) {
+                .getResourceAsStream(SystemParametersInitializer.SYSTEM_PARAMETERS_PATH)) {
             JsonNode jsonNode = mapper.readTree(inputStream);
             ArrayNode systemParametersNodes = (ArrayNode) jsonNode;
             List<SystemParameter> systemParameters = new ArrayList<>();
@@ -58,9 +56,10 @@ public class SystemParametersInitializer implements DataInitializer {
                 systemParameters.add(systemParameter);
             });
             return systemParameters;
-        } catch (IOException e) {
-            throw new UncheckedIOException(
-                    String.format("There was a problem with adding system parameter from %1$s file", filename), e);
+        } catch (Exception e) {
+            throw new SampleDataInitializingException(
+                    String.format("There was a problem with adding system parameter from %1$s file",
+                            SystemParametersInitializer.SYSTEM_PARAMETERS_PATH), e);
         }
     }
 }
