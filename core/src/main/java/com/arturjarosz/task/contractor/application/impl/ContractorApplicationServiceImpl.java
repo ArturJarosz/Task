@@ -48,7 +48,8 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
         this.contractorValidator.validateContractorExistence(maybeContractor, contractorId);
         this.contractorValidator.validateUpdateContractorDto(contractorDto);
         var contractor = maybeContractor.orElseThrow(ResourceNotFoundException::new);
-        contractor.update(contractorDto.getName(), ContractorCategory.valueOf(contractorDto.getCategory().name()), contractorDto.getEmail(),
+        contractor.update(contractorDto.getName(), ContractorCategory.valueOf(contractorDto.getCategory().name()),
+                contractorDto.getEmail(),
                 contractorDto.getTelephone(), contractorDto.getNote());
         this.contractorRepository.save(contractor);
 
@@ -85,6 +86,6 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     public List<ContractorDto> getBasicContractors() {
         LOG.debug("Loading Contractors list");
         return this.contractorRepository.findAll().stream()
-                .map(ContractorDtoMapper.INSTANCE::contractorToBasicContractor).toList();
+                .map(ContractorDtoMapper.INSTANCE::contractorToContractorDto).toList();
     }
 }

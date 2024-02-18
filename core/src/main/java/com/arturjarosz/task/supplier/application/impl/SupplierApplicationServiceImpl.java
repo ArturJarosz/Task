@@ -84,7 +84,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
         LOG.debug("Loading Suppliers list");
         return this.supplierRepository.findAll()
                 .stream()
-                .map(SupplierDtoMapper.INSTANCE::supplierToBasicSupplier)
+                .map(SupplierDtoMapper.INSTANCE::supplierToSupplierDto)
                 .toList();
     }
 }

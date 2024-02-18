@@ -182,7 +182,7 @@ class SupplierApplicationServiceImplTest extends Specification {
     }
 
     private void mockSupplierRepositoryLoad(Long supplierId) {
-        this.supplierRepository.findById(supplierId) >> Optional.of(new Supplier(NAME, SupplierCategory.valueOf(CATEGORY.name())))
+        this.supplierRepository.findById(supplierId) >> Optional.of(new Supplier(NAME, SupplierCategory.valueOf(CATEGORY.name()), UPDATED_EMAIL, TELEPHONE, NOTE))
     }
 
 }

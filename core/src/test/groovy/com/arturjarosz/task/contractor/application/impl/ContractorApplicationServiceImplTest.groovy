@@ -47,13 +47,16 @@ class ContractorApplicationServiceImplTest extends Specification {
 
     def "createContractor should return created contractor"() {
         given:
-            def contractorDto = new ContractorDto(name: NAME, category: CATEGORY)
+            def contractorDto = new ContractorDto(name: NAME, category: CATEGORY, note: NOTE, email: UPDATED_EMAIL, telephone: TELEPHONE)
         when:
             def createdContractor = this.contractorApplicationService.createContractor(contractorDto)
         then:
             createdContractor != null
             createdContractor.name == NAME
             createdContractor.category == CATEGORY
+            createdContractor.email == UPDATED_EMAIL
+            createdContractor.telephone == TELEPHONE
+            createdContractor.note == NOTE
     }
 
     def "updateContractor should call validateContractorExistence on contractorValidator"() {
@@ -180,6 +183,6 @@ class ContractorApplicationServiceImplTest extends Specification {
     }
 
     private void mockContractorRepositoryLoad(Long contractorId) {
-        this.contractorRepository.findById(contractorId) >> Optional.of(new Contractor(NAME, ContractorCategory.valueOf(CATEGORY.name())))
+        this.contractorRepository.findById(contractorId) >> Optional.of(new Contractor(NAME, ContractorCategory.valueOf(CATEGORY.name()), UPDATED_EMAIL, TELEPHONE, NOTE))
     }
 }

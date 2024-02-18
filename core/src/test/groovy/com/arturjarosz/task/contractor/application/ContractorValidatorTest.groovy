@@ -10,10 +10,14 @@ import spock.lang.Subject
 import spock.lang.Unroll
 
 class ContractorValidatorTest extends Specification {
-    private final static Long EXISTING_CONTRACTOR_ID = 1L
-    private final static Long NOT_EXISTING_CONTRACTOR_ID = 10L
-    private final static String NAME = "name"
-    private final static ContractorCategoryDto CONTRACTOR_CATEGORY = ContractorCategoryDto.ARTIST
+    final static Long EXISTING_CONTRACTOR_ID = 1L
+    final static Long NOT_EXISTING_CONTRACTOR_ID = 10L
+    final static String NAME = "name"
+    final static ContractorCategoryDto CONTRACTOR_CATEGORY = ContractorCategoryDto.ARTIST
+    final static String NOTE = "some note"
+    final static String TELEPHONE = "123-456-789"
+    final static String EMAIL = "test@email.com"
+
 
     def contractorRepository = Mock(ContractorRepository)
 
@@ -121,7 +125,7 @@ class ContractorValidatorTest extends Specification {
 
     private void mockContractorRepositoryLoadOfExistingContractor() {
         1 * this.contractorRepository.findById(EXISTING_CONTRACTOR_ID) >>
-                Optional.of(new Contractor(NAME, ContractorCategory.valueOf(CONTRACTOR_CATEGORY.name())))
+                Optional.of(new Contractor(NAME, ContractorCategory.valueOf(CONTRACTOR_CATEGORY.name()), EMAIL, TELEPHONE, NOTE))
     }
 
     private void mockContractorRepositoryLoadOfNotExistingContractor() {

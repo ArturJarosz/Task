@@ -12,6 +12,11 @@ public interface ContractorDtoMapper {
 
     ContractorDtoMapper INSTANCE = Mappers.getMapper(ContractorDtoMapper.class);
 
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "note", target = "note")
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "telephone", target = "telephone")
+    @Mapping(source = "category", target = "category")
     Contractor createContractorDtoToContractor(ContractorDto contractorDto);
 
     @Mapping(source = "name", target = "name")
@@ -21,7 +26,4 @@ public interface ContractorDtoMapper {
     @Mapping(source = "category", target = "category")
     ContractorDto contractorToContractorDto(Contractor contractor);
 
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "category", target = "category")
-    ContractorDto contractorToBasicContractor(Contractor contractor);
 }

@@ -40,9 +40,12 @@ public class Supplier extends AbstractAggregateRoot {
         // needed by JPA
     }
 
-    public Supplier(String name, SupplierCategory category) {
+    public Supplier(String name, SupplierCategory category, String email, String telephone, String note) {
         this.name = name;
         this.category = category;
+        this.email = new Email(email);
+        this.telephone = telephone;
+        this.note = note;
     }
 
     public void update(String name, SupplierCategory category, String email, String telephone, String note) {

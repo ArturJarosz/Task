@@ -12,6 +12,11 @@ public interface SupplierDtoMapper {
 
     SupplierDtoMapper INSTANCE = Mappers.getMapper(SupplierDtoMapper.class);
 
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "note", target = "note")
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "telephone", target = "telephone")
+    @Mapping(source = "category", target = "category")
     Supplier supplierDtoToSupplier(SupplierDto supplierDto);
 
     @Mapping(source = "name", target = "name")
@@ -20,8 +25,4 @@ public interface SupplierDtoMapper {
     @Mapping(source = "telephone", target = "telephone")
     @Mapping(source = "category", target = "category")
     SupplierDto supplierToSupplierDto(Supplier supplier);
-
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "category", target = "category")
-    SupplierDto supplierToBasicSupplier(Supplier supplier);
 }
