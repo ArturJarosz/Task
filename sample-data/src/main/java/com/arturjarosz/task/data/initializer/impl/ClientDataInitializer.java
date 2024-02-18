@@ -1,6 +1,7 @@
-package com.arturjarosz.task.data;
+package com.arturjarosz.task.data.initializer.impl;
 
 import com.arturjarosz.task.client.application.ClientApplicationService;
+import com.arturjarosz.task.data.initializer.DataInitializer;
 import com.arturjarosz.task.dto.ClientDto;
 import com.arturjarosz.task.exception.SampleDataInitializingException;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
@@ -16,12 +17,12 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class ClientInitializer implements DataInitializer {
-    private static final String FILE_NAME = "clientsSample.json";
+public class ClientDataInitializer implements DataInitializer {
+    private static final String FILE_NAME = "sampleData/clientsSample.json";
     private final ClientApplicationService clientApplicationService;
 
     @Autowired
-    public ClientInitializer(ClientApplicationService clientApplicationService) {
+    public ClientDataInitializer(ClientApplicationService clientApplicationService) {
         this.clientApplicationService = clientApplicationService;
     }
 
@@ -39,8 +40,8 @@ public class ClientInitializer implements DataInitializer {
 
     private List<ClientDto> prepareClients() {
         ObjectMapper mapper = new ObjectMapper();
-        BaseValidator.assertNotEmpty(ClientInitializer.FILE_NAME, "File name cannot be empty.");
-        try (InputStream inputStream = ClientInitializer.class.getClassLoader().getResourceAsStream(
+        BaseValidator.assertNotEmpty(ClientDataInitializer.FILE_NAME, "File name cannot be empty.");
+        try (InputStream inputStream = ClientDataInitializer.class.getClassLoader().getResourceAsStream(
                 FILE_NAME)) {
             return mapper.readValue(inputStream, new TypeReference<>() {
             });

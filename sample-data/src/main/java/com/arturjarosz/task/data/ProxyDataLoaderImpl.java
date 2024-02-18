@@ -1,5 +1,6 @@
 package com.arturjarosz.task.data;
 
+import com.arturjarosz.task.data.initializer.DataInitializer;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,11 @@ import java.util.List;
 
 @Slf4j
 @ApplicationService
-public class DataLoaderImpl implements DataLoader {
+public class ProxyDataLoaderImpl implements ProxyDataLoader {
     private final List<DataInitializer> dataInitializers;
 
     @Autowired
-    public DataLoaderImpl(List<DataInitializer> dataInitializers) {
+    public ProxyDataLoaderImpl(List<DataInitializer> dataInitializers) {
         this.dataInitializers = dataInitializers;
     }
 

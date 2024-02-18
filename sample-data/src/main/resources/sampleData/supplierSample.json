@@ -1,0 +1,26 @@
+[
+    {
+        "id": "100",
+        "name": "WOKA",
+        "note": "",
+        "telephone": "668 300 150",
+        "email": "sale@woka.pl",
+        "category": "GENERAL_SHOP"
+    },
+    {
+        "id": "101",
+        "name": "ARGO",
+        "note": "",
+        "telephone": "785 393 668",
+        "email": "salon.lublin@argoag.pl",
+        "category": "BATHROOM_CERAMICS_SHOP"
+    },
+    {
+        "id": "102",
+        "name": "PUFFO",
+        "note": "",
+        "telephone": "570 957 729",
+        "email": "zamowienia@puffo.pl",
+        "category": "FURNITURE_SHOP"
+    }
+]

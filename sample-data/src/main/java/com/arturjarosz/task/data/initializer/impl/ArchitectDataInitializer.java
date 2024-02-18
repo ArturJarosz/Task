@@ -1,6 +1,7 @@
-package com.arturjarosz.task.data;
+package com.arturjarosz.task.data.initializer.impl;
 
 import com.arturjarosz.task.architect.application.ArchitectApplicationService;
+import com.arturjarosz.task.data.initializer.DataInitializer;
 import com.arturjarosz.task.dto.ArchitectDto;
 import com.arturjarosz.task.exception.SampleDataInitializingException;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
@@ -16,12 +17,12 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class ArchitectsInitializer implements DataInitializer {
-    private final static String FILE_NAME = "architectsSample.json";
+public class ArchitectDataInitializer implements DataInitializer {
+    private final static String FILE_NAME = "sampleData/architectsSample.json";
     private final ArchitectApplicationService architectApplicationService;
 
     @Autowired
-    public ArchitectsInitializer(ArchitectApplicationService architectApplicationService) {
+    public ArchitectDataInitializer(ArchitectApplicationService architectApplicationService) {
         this.architectApplicationService = architectApplicationService;
     }
 
@@ -40,7 +41,7 @@ public class ArchitectsInitializer implements DataInitializer {
     private List<ArchitectDto> prepareArchitects() {
         var mapper = new ObjectMapper();
         BaseValidator.assertNotEmpty(FILE_NAME, "File name cannot be empty.");
-        try (InputStream inputStream = ArchitectsInitializer.class.getClassLoader().getResourceAsStream(
+        try (InputStream inputStream = ArchitectDataInitializer.class.getClassLoader().getResourceAsStream(
                 FILE_NAME)) {
             return mapper.readValue(inputStream, new TypeReference<>() {
             });

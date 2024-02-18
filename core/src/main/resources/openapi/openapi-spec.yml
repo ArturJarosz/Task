@@ -3312,6 +3312,8 @@ components:
         - PAINT_SHOP
         - FLOORING_SHOP
         - LIGHTING_SHOP
+        - GENERAL_SHOP
+        - FURNITURE_SHOP
 
     SystemParameter:
       type: object

@@ -1,0 +1,163 @@
+[
+    {
+        "id": "100",
+        "clientType": "PRIVATE",
+        "firstName": "Teodor",
+        "lastName": "Czerwiński",
+        "note": "Ciężki klient, nie za bardzo da się z nim gadać o odstępstwach.",
+        "contact": {
+            "telephone": "661 112 754",
+            "email": "czerwinski@gmail.com",
+            "address": {
+                "city": "Zielona Góra",
+                "postCode": "16-461",
+                "street": "Gajdy",
+                "houseNumber": "1",
+                "flatNumber": ""
+            }
+        }
+    },
+    {
+        "id": "101",
+        "clientType": "CORPORATE",
+        "companyName": "Ciuba & Partnerzy",
+        "note": "Kontakt przez panią Katarzynę, numer 570 14 71 03.",
+        "contact": {
+            "telephone": "570 123 456",
+            "email": "ciuba@mail.com",
+            "address": {
+                "city": "Lublin",
+                "postCode": "20-701",
+                "street": "Nałęczowska",
+                "houseNumber": "18A",
+                "flatNumber": "U18"
+            }
+        }
+    },
+    {
+        "id": "102",
+        "clientType": "PRIVATE",
+        "firstName": "Marcin",
+        "lastName": "Dobrzański",
+        "note": "",
+        "contact": {
+            "telephone": "503 988 153",
+            "email": "mdobrzanski@wp.pl",
+            "address": {
+                "city": "Bytom",
+                "postCode": "64-103",
+                "street": "Sosnowa",
+                "houseNumber": "71",
+                "flatNumber": "2"
+            }
+        }
+    },
+    {
+        "id": "103",
+        "clientType": "PRIVATE",
+        "firstName": "Alfred",
+        "lastName": "Milewski",
+        "note": "Kontakt po 17, wcześniej nie odbiera.",
+        "contact": {
+            "telephone": "557 682 375",
+            "email": "amilewski@gmail.com",
+            "address": {
+                "city": "Olsztyn",
+                "postCode": "12-915",
+                "street": "Kołłątaja",
+                "houseNumber": "1",
+                "flatNumber": "13"
+            }
+        }
+    },
+    {
+        "id": "104",
+        "clientType": "PRIVATE",
+        "firstName": "Bogusława",
+        "lastName": "Kołodziejczyk",
+        "note": "Pamiętać o rabacie 10% do całości za czas",
+        "contact": {
+            "telephone": "808 899 899",
+            "email": "b.kolodziejczyk@gmail.com",
+            "address": {
+                "city": "Kraków",
+                "postCode": "08-774",
+                "street": "Rolna",
+                "houseNumber": "2",
+                "flatNumber": "15"
+            }
+        }
+    },
+    {
+        "id": "105",
+        "clientType": "PRIVATE",
+        "firstName": "Mieczysława",
+        "lastName": "Krajewska",
+        "note": "",
+        "contact": {
+            "telephone": "403 190 690",
+            "email": "m.krajewska@onet.pl",
+            "address": {
+                "city": "Mysłowice",
+                "postCode": "48-062",
+                "street": "Sikorskiego",
+                "houseNumber": "17a",
+                "flatNumber": ""
+            }
+        }
+    },
+    {
+        "id": "106",
+        "clientType": "PRIVATE",
+        "firstName": "Wojciech",
+        "lastName": "Leśniak",
+        "note": "Klient w szpitalu, nie kontaktować się bezpośrednio. Kontakt przez żonę. 512 883 127",
+        "contact": {
+            "telephone": "889 687 771",
+            "email": "w.lesniak@gmail.com",
+            "address": {
+                "city": "Warszawa",
+                "postCode": "95-790",
+                "street": "Jarzębinowa",
+                "houseNumber": "112",
+                "flatNumber": "67"
+            }
+        }
+    },
+    {
+        "id": "107",
+        "clientType": "PRIVATE",
+        "firstName": "Jagoda",
+        "lastName": "Stasiak",
+        "note": "",
+        "contact": {
+            "telephone": "938 931 092",
+            "email": "jagoda.stasiak@gmail.com",
+            "address": {
+                "city": "Lublin",
+                "postCode": "08-478",
+                "street": "Słowiańska",
+                "houseNumber": "53c",
+                "flatNumber": "7"
+            }
+        }
+    },
+    {
+        "id": "108",
+        "clientType": "PRIVATE",
+        "firstName": "Teresa",
+        "lastName": "Bednarczyk",
+        "note": "",
+        "contact": {
+            "telephone": "632 378 611",
+            "email": "t.bednarczyk@wp.pl",
+            "address": {
+                "city": "Lublin",
+                "postCode": "00-629",
+                "street": "Widok",
+                "houseNumber": "39",
+                "flatNumber": "9"
+            }
+        }
+    }
+]

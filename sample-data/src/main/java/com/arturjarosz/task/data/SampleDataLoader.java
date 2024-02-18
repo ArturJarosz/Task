@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
 @ApplicationService
-public class SampleDataInitializer extends AbstractDataInitializer {
-    private final DataLoader dataLoader;
+public class SampleDataLoader extends AbstractDataLoader {
+    private final ProxyDataLoader dataLoader;
 
     @Autowired
-    public SampleDataInitializer(DataLoader dataLoader) {
+    public SampleDataLoader(ProxyDataLoader dataLoader) {
         this.dataLoader = dataLoader;
     }
 

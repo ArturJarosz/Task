@@ -6,7 +6,7 @@ import org.springframework.boot.ApplicationRunner;
 /**
  * Class that should be extended by every class that is responsible for loading sample data.
  */
-public abstract class AbstractDataInitializer implements ApplicationRunner {
+public abstract class AbstractDataLoader implements ApplicationRunner {
 
     protected abstract void loadData();
 
