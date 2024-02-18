@@ -13,6 +13,9 @@ class SupplierValidatorTest extends Specification {
     private final static Long NOT_EXISTING_SUPPLIER_ID = 10L
     private final static String NAME = "name"
     private final static SupplierCategoryDto SUPPLIER_CATEGORY = SupplierCategoryDto.PAINT_SHOP
+    final static String NOTE = "some note"
+    final static String TELEPHONE = "123-456-789"
+    final static String EMAIL = "test@email.com"
 
     def supplierRepository = Mock(SupplierRepository)
 
@@ -117,7 +120,7 @@ class SupplierValidatorTest extends Specification {
     }
 
     private void mockSupplierRepositoryLoadOfExistingSupplier() {
-        1 * this.supplierRepository.findById(EXISTING_SUPPLIER_ID) >> Optional.of(new Supplier(NAME, SupplierCategory.valueOf(SUPPLIER_CATEGORY.name())))
+        1 * this.supplierRepository.findById(EXISTING_SUPPLIER_ID) >> Optional.of(new Supplier(NAME, SupplierCategory.valueOf(SUPPLIER_CATEGORY.name()), EMAIL, TELEPHONE, NOTE))
     }
 
     private void mockSupplierRepositoryLoadOfNotExistingSupplier() {

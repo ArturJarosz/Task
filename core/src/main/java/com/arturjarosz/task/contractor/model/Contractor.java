@@ -41,9 +41,12 @@ public class Contractor extends AbstractAggregateRoot {
         // needed by JPA
     }
 
-    public Contractor(String name, ContractorCategory category) {
+    public Contractor(String name, ContractorCategory category, String email, String telephone, String note) {
         this.name = name;
         this.category = category;
+        this.email = new Email(email);
+        this.telephone = telephone;
+        this.note = note;
     }
 
     public void update(String name, ContractorCategory category, String email, String telephone, String note) {
