@@ -1,5 +1,6 @@
-package com.arturjarosz.task.data;
+package com.arturjarosz.task.data.initializer.impl;
 
+import com.arturjarosz.task.data.initializer.DataInitializer;
 import com.arturjarosz.task.exception.SampleDataInitializingException;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.systemparameter.infrastructure.repository.SystemParameterRepository;
@@ -18,13 +19,13 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class SystemParametersInitializer implements DataInitializer {
+public class SystemParametersDataInitializer implements DataInitializer {
     private static final String SYSTEM_PARAMETERS_PATH = "initialSystemParameters.json";
 
     private final SystemParameterRepository systemParameterRepository;
 
     @Autowired
-    public SystemParametersInitializer(SystemParameterRepository systemParameterRepository) {
+    public SystemParametersDataInitializer(SystemParameterRepository systemParameterRepository) {
         this.systemParameterRepository = systemParameterRepository;
     }
 
@@ -42,9 +43,10 @@ public class SystemParametersInitializer implements DataInitializer {
 
     private List<SystemParameter> prepareSystemParameters() {
         var mapper = new ObjectMapper();
-        BaseValidator.assertNotEmpty(SystemParametersInitializer.SYSTEM_PARAMETERS_PATH, "File name cannot be empty.");
-        try (InputStream inputStream = SystemParametersInitializer.class.getClassLoader()
-                .getResourceAsStream(SystemParametersInitializer.SYSTEM_PARAMETERS_PATH)) {
+        BaseValidator.assertNotEmpty(SystemParametersDataInitializer.SYSTEM_PARAMETERS_PATH,
+                "File name cannot be empty.");
+        try (InputStream inputStream = SystemParametersDataInitializer.class.getClassLoader()
+                .getResourceAsStream(SystemParametersDataInitializer.SYSTEM_PARAMETERS_PATH)) {
             JsonNode jsonNode = mapper.readTree(inputStream);
             ArrayNode systemParametersNodes = (ArrayNode) jsonNode;
             List<SystemParameter> systemParameters = new ArrayList<>();
@@ -59,7 +61,7 @@ public class SystemParametersInitializer implements DataInitializer {
         } catch (Exception e) {
             throw new SampleDataInitializingException(
                     String.format("There was a problem with adding system parameter from %1$s file",
-                            SystemParametersInitializer.SYSTEM_PARAMETERS_PATH), e);
+                            SystemParametersDataInitializer.SYSTEM_PARAMETERS_PATH), e);
         }
     }
 }

@@ -1,5 +1,5 @@
 package com.arturjarosz.task.data;
 
-public interface DataLoader {
+public interface ProxyDataLoader {
     void loadData();
 }

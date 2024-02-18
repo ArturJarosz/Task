@@ -1,4 +1,4 @@
-package com.arturjarosz.task.data;
+package com.arturjarosz.task.data.initializer;
 
 /**
  * Base interface for initialization data in the database.

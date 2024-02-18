@@ -6,7 +6,9 @@ public enum SupplierCategory {
     BATHROOM_CERAMICS_SHOP("bathroomCeramicsShop"),
     PAINT_SHOP("painShop"),
     FLOORING_SHOP("flooringShop"),
-    LIGHTING_SHOP("lightingShop");
+    GENERAL_SHOP("generalShop"),
+    LIGHTING_SHOP("lightingShop"),
+    FURNITURE_SHOP("furnitureShop");
 
     private final String name;
 
