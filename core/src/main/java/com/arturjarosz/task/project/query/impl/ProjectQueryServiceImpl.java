@@ -4,7 +4,7 @@ import com.arturjarosz.task.contract.model.QContract;
 import com.arturjarosz.task.contract.status.ContractStatus;
 import com.arturjarosz.task.dto.StageDto;
 import com.arturjarosz.task.dto.TaskDto;
-import com.arturjarosz.task.project.application.mapper.StageFields;
+import com.arturjarosz.task.project.application.mapper.StageDtoMapper;
 import com.arturjarosz.task.project.application.mapper.TaskDtoMapper;
 import com.arturjarosz.task.project.domain.dto.ProjectStatusData;
 import com.arturjarosz.task.project.domain.dto.StageStatusData;
@@ -20,6 +20,7 @@ import com.querydsl.core.types.Projections;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
+import java.util.Objects;
 
 @Finder
 public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> implements ProjectQueryService {
@@ -29,6 +30,7 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     private static final QStage STAGE = QStage.stage;
     private static final QTask TASK = QTask.task;
     private static final TaskDtoMapper TASK_DTO_MAPPER = Mappers.getMapper(TaskDtoMapper.class);
+    private static final StageDtoMapper STAGE_DTO_MAPPER = Mappers.getMapper(StageDtoMapper.class);
 
     public ProjectQueryServiceImpl() {
         super(PROJECT);
@@ -51,25 +53,19 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
 
     @Override
     public TaskDto getTaskByTaskId(Long taskId) {
-        var task = this.query()
-                .from(TASK)
-                .where(TASK.id.eq(taskId))
-                .select(TASK)
-                .fetchOne();
+        var task = this.query().from(TASK).where(TASK.id.eq(taskId)).select(TASK).fetchOne();
         return TASK_DTO_MAPPER.taskToTaskDto(task);
     }
 
     @Override
     public List<StageDto> getStagesForProjectById(Long projectId) {
-        return this.query()
+        List<Stage> stages = this.query()
                 .from(PROJECT)
                 .leftJoin(PROJECT.stages, STAGE)
                 .where(PROJECT.id.eq(projectId))
-                .select(Projections.bean(StageDto.class, STAGE.id.as(StageFields.ID_FIELD),
-                        STAGE.name.as(StageFields.NAME_FIELD),
-                        STAGE.deadline.as(StageFields.DEADLINE_FIELD), STAGE.stageType.as(StageFields.STAGE_TYPE_FIELD),
-                        STAGE.status.as(StageFields.STATUS_FIELD)))
+                .select(STAGE)
                 .fetch();
+        return stages.stream().filter(Objects::nonNull).map(STAGE_DTO_MAPPER::stageDtoFromStage).toList();
     }
 
     @Override
