@@ -11,6 +11,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
@@ -28,6 +29,7 @@ public class InstallmentValidator {
         assertNotNull(installmentDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.INSTALLMENT));
         assertNotNull(installmentDto.getValue(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.INSTALLMENT, ProjectExceptionCodes.VALUE));
+        this.validateValueNotNegative(installmentDto.getValue());
     }
 
     public void validatePayDateNotFuture(LocalDate date) {
@@ -43,6 +45,7 @@ public class InstallmentValidator {
         if (paid) {
             this.validatePayDateNotFuture(installmentDto.getPaymentDate());
         }
+        this.validateValueNotNegative(installmentDto.getValue());
     }
 
     public void validateInstallmentExistence(Long installmentId) {
@@ -66,5 +69,11 @@ public class InstallmentValidator {
         }
         assertNotNull(installmentDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.INSTALLMENT));
         this.validatePayDateNotFuture(installmentDto.getPaymentDate());
+    }
+
+    private void validateValueNotNegative(BigDecimal value) {
+        assertIsTrue(value.doubleValue() >= 0.0D,
+                createMessageCode(ExceptionCodes.NEGATIVE, ProjectExceptionCodes.INSTALLMENT,
+                        ProjectExceptionCodes.VALUE));
     }
 }
