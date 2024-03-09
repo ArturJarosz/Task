@@ -59,6 +59,30 @@ class InstallmentValidatorTest extends Specification {
             noExceptionThrown()
     }
 
+    def "validateCreateInstallmentDto should throw an exception if value of installment is negative"() {
+        given:
+            def installmentDto = new InstallmentDto(value: -1.0, paymentDate: PAY_DATE)
+        when:
+            installmentValidator.validateCreateInstallmentDto(installmentDto)
+        then:
+            Exception exception = thrown()
+            exception.localizedMessage == "negative.installment.value"
+    }
+
+    def "validateCreateInstallmentDto should not throw any exception if value of installment is not negative"() {
+        given:
+            def installmentDto = new InstallmentDto(value: givenValue, paymentDate: PAY_DATE)
+        when:
+            installmentValidator.validateCreateInstallmentDto(installmentDto)
+        then:
+            noExceptionThrown()
+        where:
+            givenValue || outcome
+            0.0        || 1 == 1
+            10.0       || 1 == 1
+    }
+
+
     def "when payDate is future, validatePayDateNotFuture should throw an exception with specific message"() {
         given:
             def futureDate = LocalDate.now().plusDays(2)
@@ -108,6 +132,29 @@ class InstallmentValidatorTest extends Specification {
             installmentValidator.validateUpdateInstallmentDto(installmentDto, false)
         then:
             noExceptionThrown()
+    }
+
+    def "validateUpdateInstallmentDto should throw an exception if value of installment is negative"() {
+        given:
+            def installmentDto = new InstallmentDto(value: -1.0, paymentDate: PAY_DATE)
+        when:
+            installmentValidator.validateUpdateInstallmentDto(installmentDto, false)
+        then:
+            Exception exception = thrown()
+            exception.localizedMessage == "negative.installment.value"
+    }
+
+    def "validateUpdateInstallmentDto should not throw any exception if value of installment is not negative"() {
+        given:
+            def installmentDto = new InstallmentDto(value: givenValue, paymentDate: PAY_DATE)
+        when:
+            installmentValidator.validateUpdateInstallmentDto(installmentDto, false)
+        then:
+            noExceptionThrown()
+        where:
+            givenValue || outcome
+            0.0        || 1 == 1
+            10.0       || 1 == 1
     }
 
     def "validateInstallmentExistence should throw exception with specific message if installment with given id does not exist"() {
