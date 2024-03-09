@@ -46,6 +46,7 @@ public final class ProjectExceptionCodes {
     public static final String OFFER = "value";
     public static final String COMPLETED = "completed";
     public static final String WORK = "work";
+    public static final String ALREADY_PAID = "alreadyPaid";
 
     private ProjectExceptionCodes() {
         throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
