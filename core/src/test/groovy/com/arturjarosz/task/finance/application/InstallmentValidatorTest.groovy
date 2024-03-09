@@ -2,6 +2,7 @@ package com.arturjarosz.task.finance.application
 
 import com.arturjarosz.task.dto.InstallmentDto
 import com.arturjarosz.task.finance.application.validator.InstallmentValidator
+import com.arturjarosz.task.finance.model.Installment
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import spock.lang.Specification
@@ -17,6 +18,8 @@ class InstallmentValidatorTest extends Specification {
     static final LocalDate PAST_PAY_DATE = LocalDate.now().minusDays(100)
     static final Long INSTALLMENT_ID = 1L
     static final Long NOT_EXISTING_INSTALLMENT_ID = 2L
+    static final Long PROJECT_ID = 10L
+    static final Long STAGE_ID = 100L
 
     def financialDataQueryService = Mock(FinancialDataQueryService)
 
@@ -124,6 +127,25 @@ class InstallmentValidatorTest extends Specification {
             noExceptionThrown()
     }
 
+    def "validateInstallmentExistence should throw exception if installment is null"() {
+        given:
+            def installment = null
+        when:
+            installmentValidator.validateInstallmentExistence(installment, INSTALLMENT_ID, PROJECT_ID)
+        then:
+            def exception = thrown(IllegalArgumentException)
+            exception.localizedMessage == "notExist.installment.project"
+    }
+
+    def "validateInstallmentExistence should not throw any exception if installment is not null"() {
+        given:
+            def installment = new Installment(InstallmentDto.builder().hasInvoice(false).build(), STAGE_ID)
+        when:
+            installmentValidator.validateInstallmentExistence(installment, INSTALLMENT_ID, PROJECT_ID)
+        then:
+            noExceptionThrown()
+    }
+
     def "validatePayInstallmentDto should throw exception with specific message if input not correct"() {
         given:
         when:
@@ -146,4 +168,5 @@ class InstallmentValidatorTest extends Specification {
         then:
             noExceptionThrown()
     }
+
 }

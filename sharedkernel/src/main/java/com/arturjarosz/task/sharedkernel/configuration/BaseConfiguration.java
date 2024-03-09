@@ -20,6 +20,7 @@ public class BaseConfiguration {
             "classpath:/i18n/client/client",
             "classpath:/i18n/contract/contract",
             "classpath:/i18n/contractor/contractor",
+            "classpath:/i18n/finance/finance",
             "classpath:/i18n/project/contractorJob",
             "classpath:/i18n/project/project",
             "classpath:/i18n/project/status",
@@ -28,7 +29,7 @@ public class BaseConfiguration {
     };
 
     public BaseConfiguration(@Value("${task.language}") String defaultLanguageCode,
-                             @Value("${task.encoding}") String defaultEncoding) {
+            @Value("${task.encoding}") String defaultEncoding) {
         this.defaultEncoding = defaultEncoding;
         this.defaultLanguageCode = defaultLanguageCode;
     }
