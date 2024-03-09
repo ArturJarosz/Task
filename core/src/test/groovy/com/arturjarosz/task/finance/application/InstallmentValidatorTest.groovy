@@ -216,4 +216,24 @@ class InstallmentValidatorTest extends Specification {
             noExceptionThrown()
     }
 
+    def "validateInstallmentNotPaid should throw an exception if installment is paid"() {
+        given:
+            def installment = new Installment(new InstallmentDto().hasInvoice(true), STAGE_ID)
+            installment.payInstallment(PAST_PAY_DATE)
+        when:
+            installmentValidator.validateInstallmentNotPaid(installment)
+        then:
+            Exception exception = thrown()
+            exception.localizedMessage == "alreadyPaid.installment"
+    }
+
+    def "validateInstallmentNotPaid should not throw any exception if installment is not paid"() {
+        given:
+            def installment = new Installment(new InstallmentDto().hasInvoice(true), STAGE_ID)
+        when:
+            installmentValidator.validateInstallmentNotPaid(installment)
+        then:
+            noExceptionThrown()
+    }
+
 }

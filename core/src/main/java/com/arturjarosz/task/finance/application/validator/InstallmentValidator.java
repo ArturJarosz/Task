@@ -76,4 +76,10 @@ public class InstallmentValidator {
                 createMessageCode(ExceptionCodes.NEGATIVE, ProjectExceptionCodes.INSTALLMENT,
                         ProjectExceptionCodes.VALUE));
     }
+
+    public void validateInstallmentNotPaid(Installment installment) {
+        assertIsTrue(!installment.isPaid(),
+                createMessageCode(ProjectExceptionCodes.ALREADY_PAID, ProjectExceptionCodes.INSTALLMENT),
+                installment.getId());
+    }
 }
