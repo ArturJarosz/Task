@@ -1,6 +1,7 @@
 package com.arturjarosz.task.finance.application.validator;
 
 import com.arturjarosz.task.dto.InstallmentDto;
+import com.arturjarosz.task.finance.model.Installment;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
@@ -48,6 +49,12 @@ public class InstallmentValidator {
         assertIsTrue(this.financialDataQueryService.doesInstallmentExistsByInstallmentId(installmentId),
                 BaseValidator.createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.INSTALLMENT),
                 installmentId);
+    }
+
+    public void validateInstallmentExistence(Installment installment, long installmentId, long projectId) {
+        assertNotNull(installment,
+                BaseValidator.createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.INSTALLMENT,
+                        ProjectExceptionCodes.PROJECT), installmentId, projectId);
     }
 
 

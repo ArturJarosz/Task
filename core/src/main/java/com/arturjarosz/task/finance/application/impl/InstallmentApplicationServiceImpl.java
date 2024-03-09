@@ -70,6 +70,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
 
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
         var installment = projectFinancialData.getInstallment(installmentId);
+        this.installmentValidator.validateInstallmentExistence(installment, installmentId, projectId);
         this.installmentValidator.validateUpdateInstallmentDto(installmentDto, installment.isPaid());
         installment = projectFinancialData.updateInstallment(installmentId, installmentDto);
         this.projectFinancialDataRepository.save(projectFinancialData);
@@ -102,7 +103,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
         var installment = projectFinancialData.getInstallment(installmentId);
         this.installmentValidator.validatePayInstallmentDto(installmentDto, installment.isPaid());
-        projectFinancialData.payInstallment(installmentId, installmentDto.getPaymentDate());
+        installment = projectFinancialData.payInstallment(installmentId, installmentDto.getPaymentDate());
         this.projectFinancialDataRepository.save(projectFinancialData);
 
         LOG.debug("Payment for Installment with id {} made", installmentId);

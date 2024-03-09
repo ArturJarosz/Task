@@ -106,7 +106,7 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
         return this.installments.stream()
                 .filter(installment -> installment.getId().equals(installmentId))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElse(null);
     }
 
     public void removeInstallment(Long installmentId) {
