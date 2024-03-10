@@ -2,6 +2,7 @@ package com.arturjarosz.task.project.application.impl;
 
 import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator;
 import com.arturjarosz.task.dto.StageDto;
+import com.arturjarosz.task.finance.application.InstallmentApplicationService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.StageValidator;
@@ -13,16 +14,16 @@ import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
+@RequiredArgsConstructor
 @ApplicationService
 public class StageApplicationServiceImpl implements StageApplicationService {
-    public static final Logger LOG = LoggerFactory.getLogger(StageApplicationServiceImpl.class);
 
     private final ProjectQueryService projectQueryService;
     private final ProjectValidator projectValidator;
@@ -30,18 +31,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     private final StageDomainService stageDomainService;
     private final StageValidator stageValidator;
     private final ContractWorkflowValidator contractWorkflowValidator;
-
-    @Autowired
-    public StageApplicationServiceImpl(ProjectQueryService projectQueryService, ProjectValidator projectValidator,
-            ProjectRepository projectRepository, StageDomainService stageDomainService, StageValidator stageValidator,
-            ContractWorkflowValidator contractWorkflowValidator) {
-        this.projectQueryService = projectQueryService;
-        this.projectValidator = projectValidator;
-        this.projectRepository = projectRepository;
-        this.stageDomainService = stageDomainService;
-        this.stageValidator = stageValidator;
-        this.contractWorkflowValidator = contractWorkflowValidator;
-    }
+    private final InstallmentApplicationService installmentApplicationService;
 
     @Transactional
     @Override
@@ -71,6 +61,12 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
 
         project.removeStage(stageId);
+
+        var installmentId = this.projectQueryService.getInstallmentIdForStage(stageId);
+        if (installmentId != null) {
+            this.installmentApplicationService.removeInstallment(projectId, installmentId);
+        }
+
         this.projectRepository.save(project);
         LOG.debug("Stage with id {} for Project with id {} removed.", stageId, projectId);
     }

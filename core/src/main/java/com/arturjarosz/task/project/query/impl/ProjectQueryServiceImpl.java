@@ -4,6 +4,7 @@ import com.arturjarosz.task.contract.model.QContract;
 import com.arturjarosz.task.contract.status.ContractStatus;
 import com.arturjarosz.task.dto.StageDto;
 import com.arturjarosz.task.dto.TaskDto;
+import com.arturjarosz.task.finance.model.QInstallment;
 import com.arturjarosz.task.project.application.mapper.StageDtoMapper;
 import com.arturjarosz.task.project.application.mapper.TaskDtoMapper;
 import com.arturjarosz.task.project.domain.dto.ProjectStatusData;
@@ -29,6 +30,7 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     private static final QContract CONTRACT = QContract.contract;
     private static final QStage STAGE = QStage.stage;
     private static final QTask TASK = QTask.task;
+    private static final QInstallment INSTALLMENT = QInstallment.installment;
     private static final TaskDtoMapper TASK_DTO_MAPPER = Mappers.getMapper(TaskDtoMapper.class);
     private static final StageDtoMapper STAGE_DTO_MAPPER = Mappers.getMapper(StageDtoMapper.class);
 
@@ -100,8 +102,16 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     }
 
     @Override
-    public Boolean doesProjectExistByProjectId(Long projectId) {
+    public Boolean doesProjectExistByProjectId(long projectId) {
         return this.queryFromAggregate().where(PROJECT.id.eq(projectId)).fetchCount() > 0;
     }
 
+    @Override
+    public Long getInstallmentIdForStage(long stageId) {
+        return this.query()
+                .from(INSTALLMENT)
+                .where(INSTALLMENT.stageId.eq(stageId))
+                .select(INSTALLMENT.id)
+                .fetchOne();
+    }
 }

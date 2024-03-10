@@ -46,5 +46,7 @@ public interface ProjectQueryService {
 
     StageStatusData getStageStatusData(long stageId);
 
-    Boolean doesProjectExistByProjectId(Long projectId);
+    Boolean doesProjectExistByProjectId(long projectId);
+
+    Long getInstallmentIdForStage(long stageId);
 }

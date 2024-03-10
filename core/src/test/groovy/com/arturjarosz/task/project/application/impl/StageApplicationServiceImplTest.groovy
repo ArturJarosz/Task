@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.application.impl
 import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator
 import com.arturjarosz.task.dto.StageDto
 import com.arturjarosz.task.dto.StageTypeDto
+import com.arturjarosz.task.finance.application.InstallmentApplicationService
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.domain.StageDomainService
@@ -26,6 +27,7 @@ class StageApplicationServiceImplTest extends Specification {
     static final Long STAGE_ID = 5L
     static final Long STAGE_WITH_TASKS_IN_TODO_ID = 10L
     static final Long STAGE_WITH_TASKS_IN_DIFFERENT_STATUSES = 20L
+    static final Long INSTALLMENT_ID = 100L
     static final String NEW_STAGE_NAME = "newStageName"
     static final String NEW_STAGE_NOTE = "newStageNote"
     static final StageTypeDto NEW_STAGE_TYPE = StageTypeDto.FUNCTIONAL_LAYOUT
@@ -37,9 +39,10 @@ class StageApplicationServiceImplTest extends Specification {
     def stageValidator = Mock(StageValidator)
     def stageDomainService = Mock(StageDomainService)
     def contractWorkflowValidator = Mock(ContractWorkflowValidator)
+    def installmentApplicationService = Mock(InstallmentApplicationService)
 
     def stageApplicationService = new StageApplicationServiceImpl(projectQueryService, projectValidator,
-            projectRepository, stageDomainService, stageValidator, contractWorkflowValidator)
+            projectRepository, stageDomainService, stageValidator, contractWorkflowValidator, installmentApplicationService)
 
     def "createStage should call validateProjectExistence on projectValidator"() {
         given:
@@ -149,6 +152,16 @@ class StageApplicationServiceImplTest extends Specification {
         then:
             1 * this.projectRepository.save({ Project project -> project.stages.size() == 0
             })
+    }
+
+    def "removeStage should also remove related installment"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStage()
+            this.mockLoadRelatedInstallmentId()
+        when:
+            this.stageApplicationService.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+        then:
+            1 * this.installmentApplicationService.removeInstallment(PROJECT_WITH_STAGE_ID, INSTALLMENT_ID)
     }
 
     def "updateStage should call validateProjectExistence on projectValidator"() {
@@ -359,6 +372,10 @@ class StageApplicationServiceImplTest extends Specification {
 
     private void mockProjectRepositoryLoadProjectWithStage() {
         this.projectRepository.findById(PROJECT_WITH_STAGE_ID) >> Optional.of(this.prepareProjectWithStage())
+    }
+
+    private void mockLoadRelatedInstallmentId() {
+        this.projectQueryService.getInstallmentIdForStage(_ as Long) >> INSTALLMENT_ID
     }
 
     private void mockProjectQueryServiceGetStageById() {
