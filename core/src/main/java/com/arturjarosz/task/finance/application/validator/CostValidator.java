@@ -10,6 +10,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
@@ -29,9 +31,7 @@ public class CostValidator {
                         ProjectExceptionCodes.CATEGORY));
         assertNotNull(costDto.getDate(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.COST_DATE));
-        assertIsTrue(costDto.getValue().doubleValue() >= 0,
-                createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.COST,
-                        ProjectExceptionCodes.NEGATIVE));
+        this.validateCostValue(costDto.getValue());
         this.validateCostName(costDto.getName());
     }
 
@@ -48,11 +48,16 @@ public class CostValidator {
     }
 
     public void validateUpdateCostDto(CostDto costDto) {
-        //TODO: what data should be updatable on Cost?
+        this.validateCostDto(costDto);
     }
 
     public void validateCostExistence(Long costId) {
         assertIsTrue(this.financialDataQueryService.doesCostExistByCostId(costId),
                 BaseValidator.createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.COST), costId);
+    }
+
+    private void validateCostValue(BigDecimal value) {
+        assertIsTrue(value.doubleValue() >= 0, createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.COST,
+                ProjectExceptionCodes.NEGATIVE));
     }
 }
