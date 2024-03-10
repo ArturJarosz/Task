@@ -100,6 +100,76 @@ class CostValidatorTest extends Specification {
             ex.message == "notValid.cost.negative"
     }
 
+    def "when costDto is null, validateUpdateCostDto should thrown an exception with specific error message"() {
+        given:
+            def costDto = null
+        when:
+            this.costValidator.validateUpdateCostDto(costDto)
+        then:
+            Exception ex = thrown()
+            ex.message == "isNull.cost"
+    }
+
+    def "when costDto category is null, validateUpdateCostDto should thrown an exception with specific error message"() {
+        given:
+            def costDto = new CostDto(name: NAME, value: VALUE, date: DATE, note: NOTE)
+        when:
+            this.costValidator.validateUpdateCostDto(costDto)
+        then:
+            Exception ex = thrown()
+            ex.message == "isNull.cost.category"
+    }
+
+    def "when costDto date is null, validateUpdateCostDto should thrown an exception with specific error message"() {
+        given:
+            def costDto = new CostDto(name: NAME, category: CATEGORY, value: VALUE, note: NOTE)
+        when:
+            this.costValidator.validateUpdateCostDto(costDto)
+        then:
+            Exception ex = thrown()
+            ex.message == "isNull.cost.costDate"
+    }
+
+    def "when costDto name is null, validateUpdateCostDto should thrown an exception with specific error message"() {
+        given:
+            def costDto = new CostDto(category: CATEGORY, date: DATE, value: VALUE, note: NOTE)
+        when:
+            this.costValidator.validateUpdateCostDto(costDto)
+        then:
+            Exception ex = thrown()
+            ex.message == "isNull.cost.name"
+    }
+
+    def "when costDto name is empty, validateUpdateCostDto should thrown an exception with specific error message"() {
+        given:
+            def costDto = new CostDto(name: "", category: CATEGORY, date: DATE, value: VALUE, note: NOTE)
+        when:
+            this.costValidator.validateUpdateCostDto(costDto)
+        then:
+            Exception ex = thrown()
+            ex.message == "isEmpty.cost.name"
+    }
+
+    def "when costData is provided, validateUpdateCostDto should not thrown any exception"() {
+        given:
+            def costDto = new CostDto(name: NAME, category: CATEGORY, date: DATE, value: VALUE, note: NOTE)
+        when:
+            this.costValidator.validateUpdateCostDto(costDto)
+        then:
+            noExceptionThrown()
+    }
+
+    def "when cost has negative value, validateUpdateCostDto should throw an exception"() {
+        given:
+            def costDto = new CostDto(name: NAME, category: CATEGORY, date: DATE, value: NEGATIVE_VALUE,
+                    note: NOTE)
+        when:
+            this.costValidator.validateUpdateCostDto(costDto)
+        then:
+            Exception ex = thrown()
+            ex.message == "notValid.cost.negative"
+    }
+
     def "when cost is null, validateCostExistence should throw an exception with specific error message"() {
         given:
             Cost cost = null
