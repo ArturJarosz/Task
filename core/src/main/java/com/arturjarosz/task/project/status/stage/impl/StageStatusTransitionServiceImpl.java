@@ -21,7 +21,7 @@ public class StageStatusTransitionServiceImpl implements StageStatusTransitionSe
 
     @Autowired
     public StageStatusTransitionServiceImpl(ProjectQueryService projectQueryService,
-                                            StageWorkflowService stageWorkflowService) {
+            StageWorkflowService stageWorkflowService) {
         this.projectQueryService = projectQueryService;
         this.stageWorkflowService = stageWorkflowService;
     }
@@ -33,7 +33,7 @@ public class StageStatusTransitionServiceImpl implements StageStatusTransitionSe
 
     @Override
     public void startProgress(Project project, Long stageId) {
-
+        this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.IN_PROGRESS);
     }
 
     @Override
@@ -43,17 +43,17 @@ public class StageStatusTransitionServiceImpl implements StageStatusTransitionSe
 
     @Override
     public void completeWork(Project project, Long stageId) {
-
+        this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.DONE);
     }
 
     @Override
     public void rejectFromInProgress(Project project, Long stageId) {
-
+        this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.TO_DO);
     }
 
     @Override
     public void backToToDo(Project project, Long stageId) {
-
+        this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.TO_DO);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class StageStatusTransitionServiceImpl implements StageStatusTransitionSe
 
     @Override
     public void backToInProgress(Project project, Long stageId) {
-
+        this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.IN_PROGRESS);
     }
 
     @Override

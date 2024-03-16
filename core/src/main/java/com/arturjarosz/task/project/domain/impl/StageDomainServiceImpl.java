@@ -34,8 +34,7 @@ public class StageDomainServiceImpl implements StageDomainService {
     @Override
     public Stage updateStage(Project project, Long stageId, StageDto stageDto) {
         return project.updateStage(stageId, stageDto.getName(), stageDto.getNote(),
-                StageType.valueOf(stageDto.getType().name()),
-                stageDto.getDeadline());
+                StageType.valueOf(stageDto.getType().name()), stageDto.getDeadline());
     }
 
     @Override

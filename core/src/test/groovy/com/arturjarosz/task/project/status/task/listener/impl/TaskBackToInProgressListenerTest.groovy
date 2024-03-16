@@ -4,7 +4,7 @@ import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.status.stage.StageStatus
-import com.arturjarosz.task.project.status.stage.impl.StageWorkflowServiceImpl
+import com.arturjarosz.task.project.status.stage.StageStatusTransitionService
 import com.arturjarosz.task.project.status.task.TaskStatus
 import com.arturjarosz.task.utils.ProjectBuilder
 import com.arturjarosz.task.utils.StageBuilder
@@ -12,10 +12,10 @@ import com.arturjarosz.task.utils.TaskBuilder
 import spock.lang.Specification
 
 class TaskBackToInProgressListenerTest extends Specification {
-    private static final long STAGE_ID = 100L
+    static final long STAGE_ID = 100L
 
-    def stageWorkflowService = Mock(StageWorkflowServiceImpl)
-    def taskBackToInProgressListener = new TaskBackToInProgressListener(stageWorkflowService)
+    def stageStatusTransitionService = Mock(StageStatusTransitionService)
+    def taskBackToInProgressListener = new TaskBackToInProgressListener(stageStatusTransitionService)
 
     def "Changing task status from DONE to IN_PROGRESS in stage in IN_PROGRESS status should not change that stage status"() {
         given:
@@ -30,7 +30,7 @@ class TaskBackToInProgressListenerTest extends Specification {
             task.changeStatus(TaskStatus.IN_PROGRESS)
             this.taskBackToInProgressListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
+            0 * this.stageStatusTransitionService.backToInProgress(project, STAGE_ID)
     }
 
     def "Changing task status from DONE to IN_PROGRESS in stage in DONE status should change that stage status to IN_PROGRESS"() {
@@ -46,7 +46,7 @@ class TaskBackToInProgressListenerTest extends Specification {
             task.changeStatus(TaskStatus.IN_PROGRESS)
             this.taskBackToInProgressListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.IN_PROGRESS)
+            1 * this.stageStatusTransitionService.backToInProgress(project, STAGE_ID)
     }
 
     private Project createProjectWithGivenStage(Stage stage) {

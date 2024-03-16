@@ -4,7 +4,7 @@ import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.status.stage.StageStatus
-import com.arturjarosz.task.project.status.stage.impl.StageWorkflowServiceImpl
+import com.arturjarosz.task.project.status.stage.StageStatusTransitionService
 import com.arturjarosz.task.project.status.task.TaskStatus
 import com.arturjarosz.task.utils.ProjectBuilder
 import com.arturjarosz.task.utils.StageBuilder
@@ -14,8 +14,8 @@ import spock.lang.Specification
 class TaskBackToToDoListenerTest extends Specification {
     private static final long STAGE_ID = 100L
 
-    def stageWorkflowService = Mock(StageWorkflowServiceImpl)
-    def taskBackToToDoListener = new TaskBackToToDoListener(stageWorkflowService)
+    def stageStatusTransitionService = Mock(StageStatusTransitionService)
+    def taskBackToToDoListener = new TaskBackToToDoListener(stageStatusTransitionService)
 
     def "Changing status of the only task from IN_PROGRESS to TO_DO on the stage in IN_PROGRESS status should change that stage status to TO_DO"() {
         given:
@@ -27,7 +27,7 @@ class TaskBackToToDoListenerTest extends Specification {
             task.changeStatus(TaskStatus.TO_DO)
             this.taskBackToToDoListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.TO_DO)
+            1 * this.stageStatusTransitionService.backToToDo(project, STAGE_ID)
     }
 
     def "Changing status of task from IN_PROGRESS to TO_DO on stage, where rest of tasks are in REJECTED, should change stage status to TO_DO"() {
@@ -43,7 +43,7 @@ class TaskBackToToDoListenerTest extends Specification {
             task.changeStatus(TaskStatus.TO_DO)
             this.taskBackToToDoListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.TO_DO)
+            1 * this.stageStatusTransitionService.backToToDo(project, STAGE_ID)
     }
 
     def "Changing status of task from IN_PROGRESS to TO_DO on stage, where rest of tasks are in TO_DO and REJECTED, should change stage status to TO_DO"() {
@@ -59,7 +59,7 @@ class TaskBackToToDoListenerTest extends Specification {
             task.changeStatus(TaskStatus.TO_DO)
             this.taskBackToToDoListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.TO_DO)
+            1 * this.stageStatusTransitionService.backToToDo(project, STAGE_ID)
     }
 
     def "Changing status of task from IN_PROGRESS to TO_DO on stage, where rest of tasks are in TO_DO, should change stage status to TO_DO"() {
@@ -75,10 +75,10 @@ class TaskBackToToDoListenerTest extends Specification {
             task.changeStatus(TaskStatus.TO_DO)
             this.taskBackToToDoListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.TO_DO)
+            1 * this.stageStatusTransitionService.backToToDo(project, STAGE_ID)
     }
 
-    def "Changing status of task from IN_PROGRESS to TO_DO on stage, where at least on the tasks is in DONE, should not change stage status"(){
+    def "Changing status of task from IN_PROGRESS to TO_DO on stage, where at least on the tasks is in DONE, should not change stage status"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.DONE)
@@ -91,9 +91,10 @@ class TaskBackToToDoListenerTest extends Specification {
             task.changeStatus(TaskStatus.TO_DO)
             this.taskBackToToDoListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
+            0 * this.stageStatusTransitionService.backToToDo(project, STAGE_ID)
     }
-    def "Changing status of task from IN_PROGRESS to TO_DO on stage, where at least on the tasks is in IN_PROGRESS, should not change stage status"(){
+
+    def "Changing status of task from IN_PROGRESS to TO_DO on stage, where at least on the tasks is in IN_PROGRESS, should not change stage status"() {
         given:
             def task = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.IN_PROGRESS)
@@ -106,7 +107,7 @@ class TaskBackToToDoListenerTest extends Specification {
             task.changeStatus(TaskStatus.TO_DO)
             this.taskBackToToDoListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
+            0 * this.stageStatusTransitionService.backToToDo(project, STAGE_ID)
     }
 
     private Project createProjectWithGivenStage(Stage stage) {

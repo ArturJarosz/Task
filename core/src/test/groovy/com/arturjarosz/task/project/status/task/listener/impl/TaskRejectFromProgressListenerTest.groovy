@@ -4,7 +4,7 @@ import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.status.stage.StageStatus
-import com.arturjarosz.task.project.status.stage.impl.StageWorkflowServiceImpl
+import com.arturjarosz.task.project.status.stage.StageStatusTransitionService
 import com.arturjarosz.task.project.status.task.TaskStatus
 import com.arturjarosz.task.utils.ProjectBuilder
 import com.arturjarosz.task.utils.StageBuilder
@@ -14,8 +14,8 @@ import spock.lang.Specification
 class TaskRejectFromProgressListenerTest extends Specification {
     private static final long STAGE_ID = 100L
 
-    def stageWorkflowService = Mock(StageWorkflowServiceImpl)
-    def taskRejectFromProgressListener = new TaskRejectFromProgressListener(stageWorkflowService)
+    def stageStatusTransitionService = Mock(StageStatusTransitionService)
+    def taskRejectFromProgressListener = new TaskRejectFromProgressListener(stageStatusTransitionService)
 
     def "Rejecting the only task from stage in IN_PROGRESS status should change stage status to TO_DO"() {
         given:
@@ -27,7 +27,7 @@ class TaskRejectFromProgressListenerTest extends Specification {
             task.changeStatus(TaskStatus.REJECTED)
             this.taskRejectFromProgressListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.TO_DO)
+            1 * this.stageStatusTransitionService.rejectFromInProgress(project, STAGE_ID)
     }
 
     def "Rejecting task from stage in IN_PROGRESS status, while other tasks are in TO_DO, should change status of stage to TO_DO"() {
@@ -43,7 +43,7 @@ class TaskRejectFromProgressListenerTest extends Specification {
             task.changeStatus(TaskStatus.REJECTED)
             this.taskRejectFromProgressListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.TO_DO)
+            1 * this.stageStatusTransitionService.rejectFromInProgress(project, STAGE_ID)
     }
 
     def "Rejecting task from stage in IN_PROGRESS status, while other tasks are in DONE, should change status of stage to DONE"() {
@@ -59,7 +59,7 @@ class TaskRejectFromProgressListenerTest extends Specification {
             task.changeStatus(TaskStatus.REJECTED)
             this.taskRejectFromProgressListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.DONE)
+            1 * this.stageStatusTransitionService.completeWork(project, STAGE_ID)
     }
 
     def "Rejecting task from stage in IN_PROGRESS status, while there is at least on task in IN_PROGRESS status, should not change status of stage"() {
@@ -75,7 +75,7 @@ class TaskRejectFromProgressListenerTest extends Specification {
             task.changeStatus(TaskStatus.REJECTED)
             this.taskRejectFromProgressListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
+            0 * this.stageStatusTransitionService._(project, STAGE_ID)
     }
 
     def "Rejecting task from stage in IN_PROGRESS status, while there are at least one of task in TO_DO and DONE statuses, should not change status of stage"() {
@@ -91,7 +91,7 @@ class TaskRejectFromProgressListenerTest extends Specification {
             task.changeStatus(TaskStatus.REJECTED)
             this.taskRejectFromProgressListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
+            0 * this.stageStatusTransitionService._(project, STAGE_ID, _ as StageStatus)
     }
 
     private Project createProjectWithGivenStage(Stage stage) {

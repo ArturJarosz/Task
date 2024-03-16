@@ -3,31 +3,28 @@ package com.arturjarosz.task.project.status.task.listener.impl;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.status.stage.StageStatus;
-import com.arturjarosz.task.project.status.stage.StageWorkflowService;
+import com.arturjarosz.task.project.status.stage.StageStatusTransitionService;
 import com.arturjarosz.task.project.status.task.TaskStatusTransition;
 import com.arturjarosz.task.project.status.task.listener.TaskStatusTransitionListener;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class TaskStartProgressListener implements TaskStatusTransitionListener {
     private final TaskStatusTransition transition = TaskStatusTransition.START_PROGRESS;
-    private final StageWorkflowService stageWorkflowService;
-
-    @Autowired
-    public TaskStartProgressListener(StageWorkflowService stageWorkflowService) {
-        this.stageWorkflowService = stageWorkflowService;
-    }
+    private final StageStatusTransitionService stageStatusTransitionService;
 
     @Override
     public void onTaskStatusChange(Project project, Long stageId) {
-        Stage stage = project.getStages().stream()
+        Stage stage = project.getStages()
+                .stream()
                 .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
         assert stage != null;
         if (stage.getStatus() == StageStatus.TO_DO) {
-            this.stageWorkflowService
-                    .changeStageStatusOnProject(project, stageId, StageStatus.IN_PROGRESS);
+            this.stageStatusTransitionService.startProgress(project, stageId);
         }
     }
 
