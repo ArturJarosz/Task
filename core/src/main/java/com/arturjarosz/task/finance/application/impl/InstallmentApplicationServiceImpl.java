@@ -105,6 +105,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
 
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
         var installment = projectFinancialData.getInstallment(installmentId);
+        this.installmentValidator.validateInstallmentExistence(installment, installmentId, projectId);
         this.installmentValidator.validatePayInstallmentDto(installmentDto, installment.isPaid());
         installment = projectFinancialData.payInstallment(installmentId, installmentDto.getPaymentDate());
         this.projectFinancialDataRepository.save(projectFinancialData);
