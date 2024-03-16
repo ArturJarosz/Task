@@ -3,42 +3,38 @@ package com.arturjarosz.task.project.status.task.listener.impl;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
-import com.arturjarosz.task.project.status.stage.StageStatus;
-import com.arturjarosz.task.project.status.stage.StageWorkflowService;
+import com.arturjarosz.task.project.status.stage.StageStatusTransitionService;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.project.status.task.TaskStatusTransition;
 import com.arturjarosz.task.project.status.task.listener.TaskStatusTransitionListener;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Component
 public class TaskRejectFromProgressListener implements TaskStatusTransitionListener {
     private final TaskStatusTransition transition = TaskStatusTransition.REJECT_FROM_IN_PROGRESS;
-    private final StageWorkflowService stageWorkflowService;
-
-    @Autowired
-    public TaskRejectFromProgressListener(StageWorkflowService stageWorkflowService) {
-        this.stageWorkflowService = stageWorkflowService;
-    }
+    private final StageStatusTransitionService stageStatusTransitionService;
 
     @Override
     public void onTaskStatusChange(Project project, Long stageId) {
-        Stage stage = project.getStages().stream().filter(stageOnProject -> stageOnProject.getId().equals(stageId))
-                .findFirst().orElse(null);
+        Stage stage = project.getStages()
+                .stream()
+                .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
+                .findFirst()
+                .orElse(null);
         assert stage != null;
         /*
         First we are checking for REJECTED and TO_DO, as Stage with only Tasks in only REJECTED statuses should
         go back to TO_DO.
          */
-        if (this.hasStatusesOnlyInRejected(stage)) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.TO_DO);
-        } else if (this.hasStatusesOnlyInRejectedAndToDo(stage)) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.TO_DO);
+        if (this.hasStatusesOnlyInRejected(stage) || this.hasStatusesOnlyInRejectedAndToDo(stage)) {
+            this.stageStatusTransitionService.rejectFromInProgress(project, stageId);
         } else if (this.hasStatusesOnlyInRejectedAndDone(stage)) {
-            this.stageWorkflowService.changeStageStatusOnProject(project, stageId, StageStatus.DONE);
+            this.stageStatusTransitionService.completeWork(project, stageId);
         }
     }
 

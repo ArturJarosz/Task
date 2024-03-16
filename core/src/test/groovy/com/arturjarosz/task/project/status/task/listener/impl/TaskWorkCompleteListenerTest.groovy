@@ -4,7 +4,7 @@ import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.status.stage.StageStatus
-import com.arturjarosz.task.project.status.stage.impl.StageWorkflowServiceImpl
+import com.arturjarosz.task.project.status.stage.StageStatusTransitionService
 import com.arturjarosz.task.project.status.task.TaskStatus
 import com.arturjarosz.task.utils.ProjectBuilder
 import com.arturjarosz.task.utils.StageBuilder
@@ -14,8 +14,8 @@ import spock.lang.Specification
 class TaskWorkCompleteListenerTest extends Specification {
     private static final long STAGE_ID = 100L
 
-    def stageWorkflowService = Mock(StageWorkflowServiceImpl)
-    def taskWorkCompleteListener = new TaskWorkCompleteListener(stageWorkflowService)
+    def stageStatusTransitionService = Mock(StageStatusTransitionService)
+    def taskWorkCompleteListener = new TaskWorkCompleteListener(stageStatusTransitionService)
 
     def "When finishing work on the only task on stage in IN_PROGRESS status should change status of that stage to DONE"() {
         given:
@@ -27,7 +27,7 @@ class TaskWorkCompleteListenerTest extends Specification {
             task.changeStatus(TaskStatus.DONE)
             this.taskWorkCompleteListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.DONE)
+            1 * this.stageStatusTransitionService.completeWork(project, STAGE_ID)
     }
 
     def "When finishing work on the task on stage in IN_PROGRESS, and rest tasks are REJECTED, status should change status of that stage to DONE"() {
@@ -42,7 +42,7 @@ class TaskWorkCompleteListenerTest extends Specification {
             task.changeStatus(TaskStatus.DONE)
             this.taskWorkCompleteListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.DONE)
+            1 * this.stageStatusTransitionService.completeWork(project, STAGE_ID)
     }
 
     def "When finishing work on the task on stage in IN_PROGRESS, and rest tasks are REJECTED or DONE, status should change status of that stage to DONE"() {
@@ -57,7 +57,7 @@ class TaskWorkCompleteListenerTest extends Specification {
             task.changeStatus(TaskStatus.DONE)
             this.taskWorkCompleteListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            1 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.DONE)
+            1 * this.stageStatusTransitionService.completeWork(project, STAGE_ID)
     }
 
     def "When finishing work on the task on stage in IN_PROGRESS, and there is at least on task in TO_DO, status of stage should not change"() {
@@ -72,7 +72,7 @@ class TaskWorkCompleteListenerTest extends Specification {
             task.changeStatus(TaskStatus.DONE)
             this.taskWorkCompleteListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
+            0 * this.stageStatusTransitionService.completeWork(project, STAGE_ID)
     }
 
     def "When finishing work on the task on stage in IN_PROGRESS, and there is at least on task in IN_PROGRESS, status of stage should not change"() {
@@ -87,7 +87,7 @@ class TaskWorkCompleteListenerTest extends Specification {
             task.changeStatus(TaskStatus.DONE)
             this.taskWorkCompleteListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
+            0 * this.stageStatusTransitionService.completeWork(project, STAGE_ID)
     }
 
     private Project createProjectWithGivenStage(Stage stage) {

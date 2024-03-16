@@ -4,7 +4,7 @@ import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.status.stage.StageStatus
-import com.arturjarosz.task.project.status.stage.impl.StageWorkflowServiceImpl
+import com.arturjarosz.task.project.status.stage.StageStatusTransitionService
 import com.arturjarosz.task.project.status.task.TaskStatus
 import com.arturjarosz.task.utils.ProjectBuilder
 import com.arturjarosz.task.utils.StageBuilder
@@ -15,10 +15,10 @@ class TaskCreateTaskListenerTest extends Specification {
 
     private static final long STAGE_ID = 100L
 
-    def stageWorkflowService = Mock(StageWorkflowServiceImpl)
-    def taskCreateTaskListener = new TaskCreateTaskListener(stageWorkflowService)
+    def stageStatusTransitionService = Mock(StageStatusTransitionService)
+    def taskCreateTaskListener = new TaskCreateTaskListener(stageStatusTransitionService)
 
-    def "Creating first task on stage should not change stage status"(){
+    def "Creating first task on stage should not change stage status"() {
         given:
             def task = this.createTaskOfGivenStatus(null)
             def stage =
@@ -28,10 +28,10 @@ class TaskCreateTaskListenerTest extends Specification {
             task.changeStatus(TaskStatus.TO_DO)
             this.taskCreateTaskListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
+            0 * this.stageStatusTransitionService.backToInProgress(project, STAGE_ID)
     }
 
-    def "Creating new task on stage in TO_DO status, should not change stage status"(){
+    def "Creating new task on stage in TO_DO status, should not change stage status"() {
         given:
             def task = this.createTaskOfGivenStatus(null)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.TO_DO)
@@ -43,10 +43,10 @@ class TaskCreateTaskListenerTest extends Specification {
             task.changeStatus(TaskStatus.TO_DO)
             this.taskCreateTaskListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
+            0 * this.stageStatusTransitionService.backToInProgress(project, STAGE_ID)
     }
 
-    def "Creating new task on stage in IN_PROGRESS status, should not change stage status"(){
+    def "Creating new task on stage in IN_PROGRESS status, should not change stage status"() {
         given:
             def task = this.createTaskOfGivenStatus(null)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.DONE)
@@ -58,10 +58,10 @@ class TaskCreateTaskListenerTest extends Specification {
             task.changeStatus(TaskStatus.TO_DO)
             this.taskCreateTaskListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, _ as StageStatus)
+            0 * this.stageStatusTransitionService.backToInProgress(project, STAGE_ID)
     }
 
-    def "Creating new task on stage in DONE status, should change stage status to IN_PROGRESS"(){
+    def "Creating new task on stage in DONE status, should change stage status to IN_PROGRESS"() {
         given:
             def task = this.createTaskOfGivenStatus(null)
             def task2 = this.createTaskOfGivenStatus(TaskStatus.DONE)
@@ -73,7 +73,7 @@ class TaskCreateTaskListenerTest extends Specification {
             task.changeStatus(TaskStatus.TO_DO)
             this.taskCreateTaskListener.onTaskStatusChange(project, STAGE_ID)
         then:
-            0 * this.stageWorkflowService.changeStageStatusOnProject(project, STAGE_ID, StageStatus.IN_PROGRESS)
+            0 * this.stageStatusTransitionService.backToInProgress(project, STAGE_ID)
     }
 
     private Project createProjectWithGivenStage(Stage stage) {
