@@ -41,20 +41,15 @@ class InstallmentApplicationServiceImplTest extends Specification {
             installmentValidator, projectFinanceAwareObjectService)
 
     def setup() {
-        this.projectValidator.validateProjectExistence(
-                NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }
+        this.projectValidator.validateProjectExistence(NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }
         this.stageValidator.validateExistenceOfStageInProject(_ as Long,
                 NOT_EXISTING_STAGE_ID) >> { throw new IllegalArgumentException() }
         this.stageValidator.validateStageNotHavingInstallment(_ as Long,
                 STAGE_WITH_INSTALLMENT_ID) >> { throw new IllegalArgumentException() }
-        this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_ID) >> new ProjectFinancialData(
-                PROJECT_ID)
-        this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITH_INSTALLMENT_ID) >>
-                prepareProjectFinancialDataWithInstallment(PROJECT_WITH_INSTALLMENT_ID, INSTALLMENT_ID)
-        this.installmentValidator.validateInstallmentExistence(NOT_EXISTING_INSTALLMENT_ID) >>
-                { throw new IllegalArgumentException() }
-        this.financialDataQueryService.getInstallmentsByProjectId(
-                PROJECT_WITH_INSTALLMENT_ID) >> ([new InstallmentDto()] as List)
+        this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_ID) >> new ProjectFinancialData(PROJECT_ID)
+        this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITH_INSTALLMENT_ID) >> prepareProjectFinancialDataWithInstallment(PROJECT_WITH_INSTALLMENT_ID, INSTALLMENT_ID)
+        this.installmentValidator.validateInstallmentExistence(NOT_EXISTING_INSTALLMENT_ID) >> { throw new IllegalArgumentException() }
+        this.financialDataQueryService.getInstallmentsByProjectId(PROJECT_WITH_INSTALLMENT_ID) >> ([new InstallmentDto()] as List)
     }
 
     def "createInstallment should not create installment if project existence validation fails"() {
@@ -108,8 +103,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
                     this.installmentApplicationService.createInstallment(PROJECT_ID, STAGE_WITHOUT_INSTALLMENT_ID,
                             installmentDto)
         then:
-            1 * this.projectFinancialDataRepository.save({
-                ProjectFinancialData projectFinancialData -> projectFinancialData.installments.size() == 1
+            1 * this.projectFinancialDataRepository.save({ ProjectFinancialData projectFinancialData -> projectFinancialData.installments.size() == 1
             }) >> prepareProjectFinancialDataWithInstallment(PROJECT_ID, INSTALLMENT_ID)
         and:
             createdInstallment != null
@@ -145,10 +139,9 @@ class InstallmentApplicationServiceImplTest extends Specification {
             this.installmentApplicationService.
                     updateInstallment(PROJECT_WITH_INSTALLMENT_ID, INSTALLMENT_ID, installmentDto)
         then:
-            1 * this.projectFinancialDataRepository.save({
-                ProjectFinancialData projectFinancialData ->
-                    def updatedInstallment = projectFinancialData.installments.iterator().next()
-                    updatedInstallment.amount.value == NEW_VALUE
+            1 * this.projectFinancialDataRepository.save({ ProjectFinancialData projectFinancialData ->
+                def updatedInstallment = projectFinancialData.installments.iterator().next()
+                updatedInstallment.amount.value == NEW_VALUE
             }) >> prepareProjectFinancialDataWithInstallment(PROJECT_WITH_INSTALLMENT_ID, INSTALLMENT_ID)
     }
 
@@ -168,9 +161,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
             this.installmentApplicationService.removeInstallment(PROJECT_WITH_INSTALLMENT_ID,
                     INSTALLMENT_ID)
         then:
-            1 * this.projectFinancialDataRepository.save({
-                ProjectFinancialData projectFinancialData ->
-                    projectFinancialData.installments.size() == 0
+            1 * this.projectFinancialDataRepository.save({ ProjectFinancialData projectFinancialData -> projectFinancialData.installments.size() == 0
             })
     }
 
@@ -204,10 +195,19 @@ class InstallmentApplicationServiceImplTest extends Specification {
                     INSTALLMENT_ID, installmentDto)
         then:
             noExceptionThrown()
-            1 * this.projectFinancialDataRepository.save({
-                ProjectFinancialData projectFinancialData ->
-                    projectFinancialData.installments.iterator().next().isPaid()
+            1 * this.projectFinancialDataRepository.save({ ProjectFinancialData projectFinancialData -> projectFinancialData.installments.iterator().next().isPaid()
             })
+    }
+
+    def "payInstallment for not existing Installment should throw an exception"() {
+        given:
+            mockValidateInstallmentDtoThrowsException()
+            def installmentDto = new InstallmentDto(paymentDate: LocalDate.now().minusDays(2))
+        when:
+            this.installmentApplicationService.payInstallment(PROJECT_WITH_INSTALLMENT_ID, NOT_EXISTING_INSTALLMENT_ID, installmentDto)
+        then:
+            thrown(IllegalArgumentException)
+            0 * this.projectFinancialDataRepository.save(_ as ProjectFinancialData)
     }
 
     def "getProjectInstallments throw an exception and not return installments if project existence validation fails"() {
@@ -249,8 +249,8 @@ class InstallmentApplicationServiceImplTest extends Specification {
     }
 
     private void mockValidateInstallmentDtoThrowsException() {
-        this.installmentValidator.validateCreateInstallmentDto(_ as InstallmentDto)
-                >> { throw new IllegalArgumentException() }
+        this.installmentValidator.validateCreateInstallmentDto(_ as InstallmentDto) >> { throw new IllegalArgumentException() }
+        this.installmentValidator.validateInstallmentExistence(null, _ as Long, _ as Long) >> { throw new IllegalArgumentException() }
     }
 
     private ProjectFinancialData prepareProjectFinancialDataWithInstallment(long projectId, long installmentId) {
