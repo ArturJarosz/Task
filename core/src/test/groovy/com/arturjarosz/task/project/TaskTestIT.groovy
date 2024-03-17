@@ -48,7 +48,7 @@ class TaskTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Creating task for not existing project should return code 400 and error message"() {
+    def "Creating task for not existing project should return code 404 and error message"() {
         given:
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
         when:
@@ -59,14 +59,14 @@ class TaskTestIT extends BaseTestIT {
                             .content(taskRequestBody)
             ).andReturn().response
         then: "Returns code 400"
-            taskResponse.status == HttpStatus.BAD_REQUEST.value()
+            taskResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(taskResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Project with id 10,000 does not exist."
     }
 
     @Transactional
-    def "Creating task for not existing stage should return code 400 and error message"() {
+    def "Creating task for not existing stage should return code 404 and error message"() {
         given:
             def projectDto = this.createProject()
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
@@ -77,7 +77,7 @@ class TaskTestIT extends BaseTestIT {
                             .content(taskRequestBody)
             ).andReturn().response
         then: "Returns code 400"
-            taskResponse.status == HttpStatus.BAD_REQUEST.value()
+            taskResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(taskResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Stage with id 10,000 does not exist."
@@ -124,7 +124,7 @@ class TaskTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Deleting not existing task should return code 400 and error message"() {
+    def "Deleting not existing task should return code 404 and error message"() {
         given:
             def projectDto = this.createProject()
             def stageDto = this.createStage(projectDto.id)
@@ -134,7 +134,7 @@ class TaskTestIT extends BaseTestIT {
                             NOT_EXISTING_TASK_ID))
             ).andReturn().response
         then:
-            taskResponse.status == HttpStatus.BAD_REQUEST.value()
+            taskResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(taskResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Task with id 10,000 does not exist on stage with id " + stageDto.id + "."
@@ -158,18 +158,18 @@ class TaskTestIT extends BaseTestIT {
             ).andReturn().response
         then:
             removeTaskResponse.status == HttpStatus.OK.value()
-        and:
+        and: "try to remove the same task again"
             def getTaskResponse = this.mockMvc.perform(MockMvcRequestBuilders.get(URI
                     .create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + createdTaskDto.id))
             ).andReturn().response
-            getTaskResponse.status == HttpStatus.BAD_REQUEST.value()
+            getTaskResponse.status == HttpStatus.NOT_FOUND.value()
             def message = MAPPER.readValue(getTaskResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Task with id " +
                     createdTaskDto.id + " does not exist on stage with id " + stageDto.id + "."
     }
 
     @Transactional
-    def "Updating not existing task should return code 400 and error message"() {
+    def "Updating not existing task should return code 404 and error message"() {
         given:
             def projectDto = this.createProject()
             def stageDto = this.createStage(projectDto.id)
@@ -182,7 +182,7 @@ class TaskTestIT extends BaseTestIT {
                             .content(taskRequestBody)
             ).andReturn().response
         then:
-            taskResponse.status == HttpStatus.BAD_REQUEST.value()
+            taskResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(taskResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Task with id 10,000 does not exist on stage with id " + stageDto.id + "."
@@ -248,7 +248,7 @@ class TaskTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Getting not existing task should return code 400 and error message"() {
+    def "Getting not existing task should return code 404 and error message"() {
         given:
             def projectDto = this.createProject()
             def stageDto = this.createStage(projectDto.id)
@@ -258,7 +258,7 @@ class TaskTestIT extends BaseTestIT {
                             NOT_EXISTING_TASK_ID))
             ).andReturn().response
         then:
-            taskResponse.status == HttpStatus.BAD_REQUEST.value()
+            taskResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(taskResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Task with id 10,000 does not exist on stage with id " + stageDto.id + "."

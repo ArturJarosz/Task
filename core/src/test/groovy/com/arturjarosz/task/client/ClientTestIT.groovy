@@ -109,13 +109,13 @@ class ClientTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Removing not existing client should give code 400 and error message"() {
+    def "Removing not existing client should give code 404 and error message"() {
         given:
         when:
             def removedClientResponse = this.mockMvc.perform(MockMvcRequestBuilders
                     .delete(URI.create(HOST + ":" + port + CLIENTS_URI + "/" + NOT_EXISTING_CLIENT_ID))).andReturn().response
         then:
-            removedClientResponse.status == HttpStatus.BAD_REQUEST.value()
+            removedClientResponse.status == HttpStatus.NOT_FOUND.value()
             def errorMessage = MAPPER.readValue(removedClientResponse.contentAsString, ErrorMessage)
             errorMessage.message == "Client with id 2,000 does not exist."
     }
@@ -155,7 +155,7 @@ class ClientTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Updating not existing client should give code 400"() {
+    def "Updating not existing client should give code 404 and error message"() {
         given:
             def updateRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateClient)
         when:
@@ -164,7 +164,7 @@ class ClientTestIT extends BaseTestIT {
                     .content(updateRequestBody)
                     .header("Content-Type", "application/json")).andReturn().response
         then:
-            updatedClientResponse.status == HttpStatus.BAD_REQUEST.value()
+            updatedClientResponse.status == HttpStatus.NOT_FOUND.value()
             def errorMessage = MAPPER.readValue(updatedClientResponse.contentAsString, ErrorMessage)
             errorMessage.message == "Client with id 2,000 does not exist."
     }
@@ -210,13 +210,13 @@ class ClientTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Getting not existing client should return code 400 and error message"() {
+    def "Getting not existing client should return code 404 and error message"() {
         given:
         when:
             def clientResponse = this.mockMvc.perform(MockMvcRequestBuilders
                     .get(URI.create(HOST + ":" + port + CLIENTS_URI + "/" + NOT_EXISTING_CLIENT_ID))).andReturn().response
         then:
-            clientResponse.status == HttpStatus.BAD_REQUEST.value()
+            clientResponse.status == HttpStatus.NOT_FOUND.value()
             def errorMessage = MAPPER.readValue(clientResponse.contentAsString, ErrorMessage)
             errorMessage.message == "Client with id 2,000 does not exist."
     }

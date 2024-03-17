@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityPresent;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsFalse;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
@@ -66,12 +67,12 @@ public class SupervisionValidator {
     }
 
     public void validateSupervisionExistence(Long supervisionId) {
-        assertIsTrue(this.supervisionQueryService.supervisionExists(supervisionId),
+        assertEntityPresent(this.supervisionQueryService.supervisionExists(supervisionId),
                 createMessageCode(ExceptionCodes.NOT_EXIST, SupervisionExceptionCodes.SUPERVISION), supervisionId);
     }
 
     public void validateSupervisionExistence(Optional<Supervision> maybeSupervision, Long supervisionId) {
-        assertIsTrue(maybeSupervision.isPresent(),
+        assertEntityPresent(maybeSupervision.isPresent(),
                 createMessageCode(ExceptionCodes.NOT_EXIST, SupervisionExceptionCodes.SUPERVISION), supervisionId);
     }
 

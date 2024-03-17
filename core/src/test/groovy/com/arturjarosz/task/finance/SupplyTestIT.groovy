@@ -38,7 +38,7 @@ class SupplyTestIT extends BaseTestIT {
     private MockMvc mockMvc
 
     @Transactional
-    def "creating supply with wrong input data should return code 400 and error message"() {
+    def "creating supply with wrong input data should return code 404 and error message"() {
         given:
             def project = createProject()
             createSupplyDto.supplierId = NOT_EXISTING_SUPPLIER_ID
@@ -48,7 +48,7 @@ class SupplyTestIT extends BaseTestIT {
                     .header(CONTENT_TYPE, APPLICATION_JSON)
                     .content(requestBody)).andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Supplier with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist."
@@ -74,7 +74,7 @@ class SupplyTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "updating not existing supply should return code 400 and error message"() {
+    def "updating not existing supply should return code 404 and error message"() {
         given:
             def project = createProject()
             def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateSupplyDto)
@@ -83,7 +83,7 @@ class SupplyTestIT extends BaseTestIT {
                     .header(CONTENT_TYPE, APPLICATION_JSON)
                     .content(requestBody)).andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Supply with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist in Project with id ${project.id}."
@@ -129,14 +129,14 @@ class SupplyTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "fetching not existing supply should return code 400 and error message"() {
+    def "fetching not existing supply should return code 404 and error message"() {
         given:
             def project = createProject()
         when:
             def response = this.mockMvc.perform(MockMvcRequestBuilders.get("$PROJECTS_URI/${project.id}$SUPPLIES_URI/${NOT_EXISTING_SUPPLY_ID}"))
                     .andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Supply with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist in Project with id ${project.id}."
@@ -159,14 +159,14 @@ class SupplyTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "deleting not existing supply should return code 400 and error message"() {
+    def "deleting not existing supply should return code 404 and error message"() {
         given:
             def project = createProject()
         when:
             def response = this.mockMvc.perform(MockMvcRequestBuilders.delete("$PROJECTS_URI/${project.id}$SUPPLIES_URI/${NOT_EXISTING_SUPPLY_ID}"))
                     .andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Supply with id ${String.format("%,d", NOT_EXISTING_SUPPLIER_ID)} does not exist in Project with id ${project.id}."
@@ -186,7 +186,7 @@ class SupplyTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "fetching supplies for not existing project should return code 400 and error message"() {
+    def "fetching supplies for not existing project should return code 404 and error message"() {
         given:
             def project = createProject()
             def supplier = createSupplier()
@@ -197,7 +197,7 @@ class SupplyTestIT extends BaseTestIT {
             def response = this.mockMvc.perform(MockMvcRequestBuilders.get("$PROJECTS_URI/${NOT_EXISTING_PROJECT_ID}$SUPPLIES_URI"))
                     .andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Project with id ${String.format("%,d", NOT_EXISTING_PROJECT_ID)} does not exist."

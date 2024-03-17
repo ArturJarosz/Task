@@ -5,6 +5,7 @@ import com.arturjarosz.task.finance.application.validator.InstallmentValidator
 import com.arturjarosz.task.finance.model.Installment
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -180,7 +181,7 @@ class InstallmentValidatorTest extends Specification {
         when:
             installmentValidator.validateInstallmentExistence(installment, INSTALLMENT_ID, PROJECT_ID)
         then:
-            def exception = thrown(IllegalArgumentException)
+            def exception = thrown(ResourceNotFoundException)
             exception.localizedMessage == "notExist.installment.project"
     }
 

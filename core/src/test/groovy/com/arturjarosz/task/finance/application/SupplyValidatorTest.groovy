@@ -3,7 +3,7 @@ package com.arturjarosz.task.finance.application
 import com.arturjarosz.task.dto.SupplyDto
 import com.arturjarosz.task.finance.application.validator.SupplyValidator
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
-import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import com.arturjarosz.task.supplier.query.impl.SupplierQueryServiceImpl
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -95,7 +95,7 @@ class SupplyValidatorTest extends Specification {
         when:
             this.supplyValidator.validateSupplyOnProjectExistence(PROJECT_ID, NOT_EXISTING_SUPPLY_ID)
         then:
-            thrown(IllegalArgumentException)
+            thrown(ResourceNotFoundException)
     }
 
     def "validateSupplyOnProjectExistence should not throw any exception if supply exists on project"() {

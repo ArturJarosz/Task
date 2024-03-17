@@ -86,7 +86,7 @@ class ArchitectTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Removing not existing Architect will give code 400 and error message about not existing Architect"() {
+    def "Removing not existing Architect will give code 404 and error message about not existing Architect"() {
         given:
         when:
             def response = this.mockMvc.perform(
@@ -95,7 +95,7 @@ class ArchitectTestIT extends BaseTestIT {
                             .header("Content-Type", "application/json")
             ).andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Architect with id 2,000 does not exist."
@@ -136,7 +136,7 @@ class ArchitectTestIT extends BaseTestIT {
                             .header("Content-Type", "application/json")
             ).andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Architect with id 2,000 does not exist."
@@ -215,7 +215,7 @@ class ArchitectTestIT extends BaseTestIT {
                             .content(requestBodyUpdate)
             ).andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Architect with id 2,000 does not exist."

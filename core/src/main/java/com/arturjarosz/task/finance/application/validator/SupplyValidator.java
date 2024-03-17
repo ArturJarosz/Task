@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityPresent;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -26,7 +27,7 @@ public class SupplyValidator {
     private final FinancialDataQueryService financialDataQueryService;
 
     public void validateSupplierExistence(Long supplierId) {
-        assertIsTrue(this.supplierQueryService.supplierWithIdExists(supplierId),
+        assertEntityPresent(this.supplierQueryService.supplierWithIdExists(supplierId),
                 createMessageCode(ExceptionCodes.NOT_EXIST, SupplyExceptionCodes.SUPPLIER), supplierId);
     }
 
@@ -53,7 +54,7 @@ public class SupplyValidator {
     }
 
     public void validateSupplyOnProjectExistence(Long projectId, Long supplyId) {
-        assertIsTrue(this.financialDataQueryService.doesSupplyForProjectExists(projectId, supplyId),
+        assertEntityPresent(this.financialDataQueryService.doesSupplyForProjectExists(projectId, supplyId),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
                         SupplyExceptionCodes.SUPPLY), supplyId, projectId);
     }

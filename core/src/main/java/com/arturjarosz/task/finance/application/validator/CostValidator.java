@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityNotNull;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityPresent;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
@@ -36,7 +38,7 @@ public class CostValidator {
     }
 
     public void validateCostExistence(Cost cost, Long costId) {
-        assertNotNull(cost, BaseValidator.createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.COST),
+        assertEntityNotNull(cost, BaseValidator.createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.COST),
                 costId);
     }
 
@@ -52,7 +54,7 @@ public class CostValidator {
     }
 
     public void validateCostExistence(Long costId) {
-        assertIsTrue(this.financialDataQueryService.doesCostExistByCostId(costId),
+        assertEntityPresent(this.financialDataQueryService.doesCostExistByCostId(costId),
                 BaseValidator.createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.COST), costId);
     }
 

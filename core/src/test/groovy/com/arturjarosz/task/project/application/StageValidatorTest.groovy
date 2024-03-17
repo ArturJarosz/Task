@@ -9,6 +9,7 @@ import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import com.arturjarosz.task.utils.ProjectBuilder
 import com.arturjarosz.task.utils.StageBuilder
@@ -142,7 +143,7 @@ class StageValidatorTest extends Specification {
         when:
             this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, NOT_EXISTING_STAGE_ID)
         then:
-            IllegalArgumentException exception = thrown()
+            ResourceNotFoundException exception = thrown()
             exception.message == "notExist.project.stage"
     }
 

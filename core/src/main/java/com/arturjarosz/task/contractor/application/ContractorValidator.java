@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityPresent;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -52,7 +52,7 @@ public class ContractorValidator {
     }
 
     public void validateContractorExistence(Optional<Contractor> maybeContractor, Long contractorId) {
-        assertIsTrue(maybeContractor.isPresent(),
+        assertEntityPresent(maybeContractor.isPresent(),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ContractorExceptionCodes.CONTRACTOR), contractorId);
     }
 }

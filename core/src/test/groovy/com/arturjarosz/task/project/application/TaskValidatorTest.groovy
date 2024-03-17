@@ -5,7 +5,7 @@ import com.arturjarosz.task.dto.TaskTypeDto
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
-import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import com.arturjarosz.task.utils.StageBuilder
 import com.arturjarosz.task.utils.TaskBuilder
 import spock.lang.Specification
@@ -67,7 +67,7 @@ class TaskValidatorTest extends Specification {
         when:
             this.taskValidator.validateExistenceOfTaskInStage(STAGE_ID, TASK_ID)
         then:
-            IllegalArgumentException ex = thrown()
+            ResourceNotFoundException ex = thrown()
             ex.message == "notExist.stage.task"
     }
 

@@ -6,6 +6,7 @@ import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -32,12 +33,15 @@ public class TaskValidator {
 
     public void validateExistenceOfTaskInStage(Long stageId, Long taskId) {
         var stage = this.projectQueryService.getStageById(stageId);
-        assertNotNull(stage.getTasks(),
+        assertEntityNotNull(stage.getTasks(),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TASK),
                 stageId, taskId);
-        var task = stage.getTasks().stream().filter(taskOnStage -> taskOnStage.getId().equals(taskId)).findFirst()
+        var task = stage.getTasks()
+                .stream()
+                .filter(taskOnStage -> taskOnStage.getId().equals(taskId))
+                .findFirst()
                 .orElse(null);
-        assertNotNull(task,
+        assertEntityNotNull(task,
                 createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TASK),
                 stageId, taskId);
     }

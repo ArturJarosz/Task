@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityNotNull;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityPresent;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -49,13 +51,13 @@ public class InstallmentValidator {
     }
 
     public void validateInstallmentExistence(Long installmentId) {
-        assertIsTrue(this.financialDataQueryService.doesInstallmentExistsByInstallmentId(installmentId),
+        assertEntityPresent(this.financialDataQueryService.doesInstallmentExistsByInstallmentId(installmentId),
                 BaseValidator.createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.INSTALLMENT),
                 installmentId);
     }
 
     public void validateInstallmentExistence(Installment installment, long installmentId, long projectId) {
-        assertNotNull(installment,
+        assertEntityNotNull(installment,
                 BaseValidator.createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.INSTALLMENT,
                         ProjectExceptionCodes.PROJECT), installmentId, projectId);
     }

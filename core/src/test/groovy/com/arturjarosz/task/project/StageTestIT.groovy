@@ -45,7 +45,7 @@ class StageTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Creating stage for not existing project should return code 400 and error message about not existing project"() {
+    def "Creating stage for not existing project should return code 404 and error message about not existing project"() {
         given:
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
         when:
@@ -55,7 +55,7 @@ class StageTestIT extends BaseTestIT {
                             .content(stageRequestBody)
             ).andReturn().response
         then: "Returns code 400"
-            stageResponse.status == HttpStatus.BAD_REQUEST.value()
+            stageResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Project with id 10,000 does not exist."
@@ -102,7 +102,7 @@ class StageTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Removing not existing stage should return code 400 and error message"() {
+    def "Removing not existing stage should return code 404 and error message"() {
         given:
             def createdProject = this.createProject()
         when:
@@ -112,11 +112,12 @@ class StageTestIT extends BaseTestIT {
                                     NOT_EXISTING_STAGE_ID))
             ).andReturn().response
         then: "Returns code 400"
-            stageResponse.status == HttpStatus.BAD_REQUEST.value()
+            stageResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Stage with id 10,000 does not exist."
     }
+
 
     @Transactional
     def "Removing existing stage should return code 200 and remove stage"() {
@@ -136,20 +137,20 @@ class StageTestIT extends BaseTestIT {
             ).andReturn().response
         then: "Returns code 200"
             stageResponse.status == HttpStatus.OK.value()
-        and: "Getting stage with removed stage id returns code 400 and error message."
+        and: "Getting stage with removed stage id returns code 404 and error message."
             def removedStageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
                             .get(URI.create(this.stageUrlBuilder(createdProject.id) + "/" + stageDto.id))
                             .header("Content-Type", "application/json")
                             .content(stageRequestBody)
             ).andReturn().response
-            removedStageResponse.status == HttpStatus.BAD_REQUEST.value()
+            removedStageResponse.status == HttpStatus.NOT_FOUND.value()
             def message = MAPPER.readValue(removedStageResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Stage with id " + stageDto.id + " does not exist."
     }
 
     @Transactional
-    def "Updating not existing stage should return code 400 and error message"() {
+    def "Updating not existing stage should return code 404 and error message"() {
         given:
             def createdProject = this.createProject()
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageUpdateDto)
@@ -162,7 +163,7 @@ class StageTestIT extends BaseTestIT {
                             .content(stageRequestBody)
             ).andReturn().response
         then: "Returns code 400"
-            stageResponse.status == HttpStatus.BAD_REQUEST.value()
+            stageResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Stage with id 10,000 does not exist."
@@ -228,7 +229,7 @@ class StageTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Getting not existing stage should code 400 and error message"() {
+    def "Getting not existing stage should code 404 and error message"() {
         given:
             def createdProject = this.createProject()
         when:
@@ -238,7 +239,7 @@ class StageTestIT extends BaseTestIT {
                                     NOT_EXISTING_STAGE_ID))
             ).andReturn().response
         then: "Returns code 400"
-            stageResponse.status == HttpStatus.BAD_REQUEST.value()
+            stageResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Stage with id 10,000 does not exist."

@@ -1,12 +1,12 @@
 package com.arturjarosz.task.architect.application
 
-
 import com.arturjarosz.task.architect.application.impl.ArchitectApplicationServiceImpl
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository
 import com.arturjarosz.task.architect.model.Architect
 import com.arturjarosz.task.dto.ArchitectDto
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import spock.lang.Specification
 
 import java.lang.reflect.Field
@@ -84,7 +84,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         when:
             architectApplicationService.removeArchitect(NOT_EXISTING_ID)
         then:
-            thrown(IllegalArgumentException)
+            thrown(ResourceNotFoundException)
     }
 
     def "when passing existing architect id removeArchitect no should throw an exception and architect should be removed"() {
@@ -110,7 +110,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         when:
             def architectDto = architectApplicationService.getArchitect(NOT_EXISTING_ID)
         then:
-            thrown(IllegalArgumentException)
+            thrown(ResourceNotFoundException)
             architectDto == null
     }
 
@@ -128,7 +128,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
         when:
             architectApplicationService.updateArchitect(NOT_EXISTING_ID, architectDto)
         then:
-            thrown(IllegalArgumentException)
+            thrown(ResourceNotFoundException)
     }
 
     def "when updating architect with dto with missing data architect should not be updated"() {

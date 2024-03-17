@@ -7,7 +7,7 @@ import com.arturjarosz.task.dto.ClientDto
 import com.arturjarosz.task.dto.ClientTypeDto
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
-import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import com.arturjarosz.task.sharedkernel.model.PersonName
 import com.arturjarosz.task.utils.ProjectBuilder
 import spock.lang.Specification
@@ -151,7 +151,7 @@ class ClientValidatorTest extends Specification {
         when:
             clientValidator.validateClientExistence(maybeClient, PRIVATE_CLIENT_ID)
         then:
-            thrown(IllegalArgumentException)
+            thrown(ResourceNotFoundException)
     }
 
     def "Should not throw an exception when client in not null"() {

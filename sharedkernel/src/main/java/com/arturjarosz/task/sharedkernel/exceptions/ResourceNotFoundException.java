@@ -12,4 +12,8 @@ public class ResourceNotFoundException extends BaseRuntimeException {
     public ResourceNotFoundException(String message) {
         super(message);
     }
+
+    public ResourceNotFoundException(String messageCode, Object[] parameters) {
+        super(messageCode, parameters);
+    }
 }

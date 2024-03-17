@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
@@ -54,7 +55,7 @@ public class StageValidator {
                 .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .findFirst()
                 .orElse(null);
-        assertNotNull(stage,
+        assertEntityNotNull(stage,
                 createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.STAGE),
                 stageId);
     }

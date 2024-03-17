@@ -10,6 +10,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityNotNull;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityPresent;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
@@ -33,7 +35,7 @@ public class ContractorJobValidator {
     }
 
     public void validateContractorExistence(Long contractorId) {
-        assertIsTrue(this.contractorQueryService.contractorWithIdExists(contractorId),
+        assertEntityPresent(this.contractorQueryService.contractorWithIdExists(contractorId),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ContractorExceptionCodes.CONTRACTOR), contractorId);
     }
 
@@ -69,7 +71,7 @@ public class ContractorJobValidator {
 
     public void validateContractorJobExistence(ContractorJobDto contractorJobDto, Long projectId,
             Long contractorJobId) {
-        assertNotNull(contractorJobDto, createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
+        assertEntityNotNull(contractorJobDto, createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
                 ProjectExceptionCodes.CONTRACTOR_JOB), projectId, contractorJobId);
     }
 }

@@ -5,6 +5,7 @@ import com.arturjarosz.task.dto.ContractorJobDto
 import com.arturjarosz.task.finance.application.validator.ContractorJobValidator
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -121,7 +122,7 @@ class ContractorJobValidatorTest extends Specification {
         when:
             this.contractorValidator.validateContractorJobExistence(contractorJobDto, PROJECT_ID, NOT_EXISTING_CONTRACTOR_JOB_ID)
         then:
-            thrown(IllegalArgumentException)
+            thrown(ResourceNotFoundException)
     }
 
     def "validateContractorJobExistence does not throw any exception when null passed as contractorJobDto"() {
