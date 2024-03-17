@@ -19,7 +19,6 @@ import java.util.Locale;
 public class GlobalExceptionHandler {
 
     public static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
     private final MessageSource messageSource;
 
     @Autowired
@@ -34,5 +33,14 @@ public class GlobalExceptionHandler {
         String message = this.messageSource.getMessage(errorMessage, exception.getMessageParameters(), errorMessage,
                 Locale.getDefault());
         return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {ResourceNotFoundException.class})
+    public ResponseEntity<ErrorMessage> handleException(ResourceNotFoundException exception) {
+        LOG.error(exception.getMessage(), exception);
+        String errorMessage = exception.getMessage();
+        String message = this.messageSource.getMessage(errorMessage, exception.getMessageParameters(), errorMessage,
+                Locale.getDefault());
+        return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
     }
 }

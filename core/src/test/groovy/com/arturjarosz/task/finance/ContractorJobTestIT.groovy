@@ -155,23 +155,23 @@ class ContractorJobTestIT extends BaseTestIT {
                     .andReturn().response
         then:
             response.status == HttpStatus.OK.value()
-        and:
+        and: "try to remove same contractorJob again"
             def fetchContractorJobResponse = this.mockMvc.perform(MockMvcRequestBuilders.get("$PROJECTS_URI/${project.id}$CONTRACTOR_JOBS_URI/${contractorJob.id}"))
                     .andReturn().response
-            fetchContractorJobResponse.status == HttpStatus.BAD_REQUEST.value()
+            fetchContractorJobResponse.status == HttpStatus.NOT_FOUND.value()
             def errorMessage = MAPPER.readValue(fetchContractorJobResponse.contentAsString, ErrorMessage)
             errorMessage.message == "Project with id ${project.id} does not have a contractorJob with id ${String.format("%,d", contractorJob.id)}."
     }
 
     @Transactional
-    def "fetching not existing contractorJob should return code 400 and error message"() {
+    def "fetching not existing contractorJob should return code 404 and error message"() {
         given:
             def project = createProject()
         when:
             def response = this.mockMvc.perform(MockMvcRequestBuilders.get("$PROJECTS_URI/${project.id}$CONTRACTOR_JOBS_URI/$NOT_EXISTING_CONTRACTOR_JOB_ID"))
                     .andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Project with id ${project.id} does not have a contractorJob with id ${String.format("%,d", NOT_EXISTING_CONTRACTOR_JOB_ID)}."

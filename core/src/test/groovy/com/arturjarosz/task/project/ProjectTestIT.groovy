@@ -87,7 +87,7 @@ class ProjectTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Creating project with not existing client should give code 400 and error message"() {
+    def "Creating project with not existing client should give code 404 and error message"() {
         given: "Existing architect"
             def architectDto = TestsHelper.createArchitect(architect, this.createArchitectUri(), this.mockMvc)
             properProjectDto.architectId = architectDto.id
@@ -99,14 +99,14 @@ class ProjectTestIT extends BaseTestIT {
                     .header("Content-Type", "application/json")
                     .content(projectRequestBody)).andReturn().response
         then: "Returns code 400"
-            projectResponse.status == HttpStatus.BAD_REQUEST.value()
+            projectResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(projectResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Client with id 10,000 does not exist."
     }
 
     @Transactional
-    def "Creating project with not existing architect should give code 400 and error message"() {
+    def "Creating project with not existing architect should give code 404 and error message"() {
         given: "Not existing architect"
             properProjectDto.architectId = NOT_EXISTING_ARCHITECT_ID
         and: "Existing client"
@@ -118,20 +118,20 @@ class ProjectTestIT extends BaseTestIT {
                     .header("Content-Type", "application/json")
                     .content(projectRequestBody)).andReturn().response
         then: "Returns code 400"
-            projectResponse.status == HttpStatus.BAD_REQUEST.value()
+            projectResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(projectResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Architect with id 10,000 does not exist."
     }
 
     @Transactional
-    def "Getting not existing project should give code 400 and error message"() {
+    def "Getting not existing project should give code 404 and error message"() {
         given:
         when:
             def projectResponse = this.mockMvc.perform(MockMvcRequestBuilders
                     .get(URI.create(HOST + ":" + port + PROJECTS_URI + "/" + NOT_EXISTING_PROJECT_ID))).andReturn().response
         then: "Returns code 400"
-            projectResponse.status == HttpStatus.BAD_REQUEST.value()
+            projectResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(projectResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Project with id 10,000 does not exist."
@@ -170,7 +170,7 @@ class ProjectTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Updating not existing project should give code 400 and error message"() {
+    def "Updating not existing project should give code 404 and error message"() {
         given:
         when:
             def projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
@@ -179,7 +179,7 @@ class ProjectTestIT extends BaseTestIT {
                     .header("Content-Type", "application/json")
                     .content(projectRequestBody)).andReturn().response
         then: "Returns code 400"
-            projectResponse.status == HttpStatus.BAD_REQUEST.value()
+            projectResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(projectResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Project with id 10,000 does not exist."
@@ -219,14 +219,14 @@ class ProjectTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Removing not existing project should give code 400 and error message"() {
+    def "Removing not existing project should give code 404 and error message"() {
         given:
         when:
             MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
             def projectResponse = this.mockMvc.perform(MockMvcRequestBuilders
                     .delete(URI.create(HOST + ":" + port + PROJECTS_URI + "/" + NOT_EXISTING_PROJECT_ID))).andReturn().response
         then: "Returns code 400"
-            projectResponse.status == HttpStatus.BAD_REQUEST.value()
+            projectResponse.status == HttpStatus.NOT_FOUND.value()
         and:
             def message = MAPPER.readValue(projectResponse.contentAsString, ErrorMessage)
             message.getMessage() == "Project with id 10,000 does not exist."

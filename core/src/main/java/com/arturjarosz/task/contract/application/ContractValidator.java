@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityPresent;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -33,7 +34,7 @@ public class ContractValidator {
     }
 
     public void validateContractExistence(Optional<Contract> maybeContract, Long contractId) {
-        assertIsTrue(maybeContract.isPresent(),
+        assertEntityPresent(maybeContract.isPresent(),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ContractExceptionCodes.CONTRACT), contractId);
     }
 

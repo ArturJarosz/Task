@@ -70,6 +70,18 @@ public abstract class BaseValidator<T> {
         }
     }
 
+    public static void assertEntityNotNull(Object entity, String messageCode, Object... parameters) {
+        if (entity == null) {
+            throw new ResourceNotFoundException(messageCode, parameters);
+        }
+    }
+
+    public static void assertEntityPresent(boolean value, String messageCode, Object... parameters) {
+        if (!value) {
+            throw new ResourceNotFoundException(messageCode, parameters);
+        }
+    }
+
     public static void assertIsEmpty(String value, String messageCode, Object... parameters) {
         if (StringUtils.isNotBlank(value)) {
             throw new IllegalArgumentException(messageCode, parameters);
@@ -83,14 +95,14 @@ public abstract class BaseValidator<T> {
     }
 
     public static <T> void assertContains(Collection<T> collection, T element, String messageCode,
-                                          Object... parameters) {
+            Object... parameters) {
         if (!collection.contains(element)) {
             throw new IllegalStateException(messageCode, parameters);
         }
     }
 
     public static <T> void assertNotContains(Collection<T> collection, T element, String messageCode,
-                                             Object... parameters) {
+            Object... parameters) {
         if (collection.contains(element)) {
             throw new IllegalStateException(messageCode, parameters);
         }

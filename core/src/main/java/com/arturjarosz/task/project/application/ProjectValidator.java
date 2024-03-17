@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityPresent;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -52,13 +52,13 @@ public class ProjectValidator {
     }
 
     public void validateProjectExistence(Optional<Project> maybeProject, Long projectId) {
-        assertIsTrue(maybeProject.isPresent(),
+        assertEntityPresent(maybeProject.isPresent(),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT), projectId);
     }
 
     public void validateProjectExistence(Long projectId) {
-        Boolean projectExists = this.projectQueryService.doesProjectExistByProjectId(projectId);
-        assertIsTrue(projectExists, createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT),
+        var projectExists = this.projectQueryService.doesProjectExistByProjectId(projectId);
+        assertEntityPresent(projectExists, createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT),
                 projectId);
     }
 

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityPresent;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -56,7 +57,7 @@ public class ClientValidator {
     }
 
     public void validateClientExistence(Optional<Client> maybeClient, Long clientId) {
-        assertIsTrue(maybeClient.isPresent(),
+        assertEntityPresent(maybeClient.isPresent(),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ClientExceptionCodes.CLIENT), clientId);
     }
 

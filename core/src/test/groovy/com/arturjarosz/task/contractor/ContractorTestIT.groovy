@@ -80,7 +80,7 @@ class ContractorTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Updating not existing Contractor should return code 400 and error message"() {
+    def "Updating not existing Contractor should return code 404 and error message"() {
         given:
             createContractor()
             def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateContractorDto)
@@ -89,7 +89,7 @@ class ContractorTestIT extends BaseTestIT {
                     .header(CONTENT_TYPE, APPLICATION_JSON)
                     .content(requestBody)).andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Contractor with id ${String.format("%,d", NOT_EXISTING_CONTRACTOR_ID)} does not exist."
@@ -113,13 +113,13 @@ class ContractorTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "Removing not existing Contractor should return code 400 and error message"() {
+    def "Removing not existing Contractor should return code 404 and error message"() {
         given:
         when:
             def response = this.mockMvc.perform(MockMvcRequestBuilders.delete("$CONTRACTORS_URI/$NOT_EXISTING_CONTRACTOR_ID"))
                     .andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Contractor with id ${String.format("%,d", NOT_EXISTING_CONTRACTOR_ID)} does not exist."
@@ -134,22 +134,22 @@ class ContractorTestIT extends BaseTestIT {
                     .andReturn().response
         then:
             response.status == HttpStatus.OK.value()
-        and:
+        and: "try to remove same Contractor again"
             def fetchContractorResponse = this.mockMvc.perform(MockMvcRequestBuilders.get("$CONTRACTORS_URI/${createdContractor.id}"))
                     .andReturn().response
-            fetchContractorResponse.status == HttpStatus.BAD_REQUEST.value()
+            fetchContractorResponse.status == HttpStatus.NOT_FOUND.value()
             ErrorMessage errorMessage = MAPPER.readValue(fetchContractorResponse.contentAsString, ErrorMessage)
             errorMessage.message == "Contractor with id ${String.format("%,d", createdContractor.id)} does not exist."
     }
 
     @Transactional
-    def "Fetching not existing Contractor should return code 400 and error message"() {
+    def "Fetching not existing Contractor should return code 404 and error message"() {
         given:
         when:
             def response = this.mockMvc.perform(MockMvcRequestBuilders.get("$CONTRACTORS_URI/$NOT_EXISTING_CONTRACTOR_ID"))
                     .andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             ErrorMessage errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Contractor with id ${String.format("%,d", NOT_EXISTING_CONTRACTOR_ID)} does not exist."

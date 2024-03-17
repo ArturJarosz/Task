@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityPresent;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -44,7 +45,7 @@ public class ArchitectValidator {
     }
 
     public static void validateArchitectExistence(Optional<Architect> maybeArchitect, Long architectId) {
-        assertIsTrue(maybeArchitect.isPresent(),
+        assertEntityPresent(maybeArchitect.isPresent(),
                 BaseValidator.createMessageCode(ExceptionCodes.NOT_EXIST, ArchitectExceptionCodes.ARCHITECT),
                 architectId);
     }
