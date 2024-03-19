@@ -112,6 +112,7 @@ class SupplierApplicationServiceImplTest extends Specification {
                     email: UPDATED_EMAIL,
                     telephone: TELEPHONE, note: NOTE)
             this.mockSupplierRepositoryLoad(SUPPLIER_ID)
+            this.mockSupplierRepositorySave()
 
         when:
             def updatedSupplier = this.supplierApplicationService.updateSupplier(SUPPLIER_ID, updateSupplierDto)
@@ -183,6 +184,14 @@ class SupplierApplicationServiceImplTest extends Specification {
 
     private void mockSupplierRepositoryLoad(Long supplierId) {
         this.supplierRepository.findById(supplierId) >> Optional.of(new Supplier(NAME, SupplierCategory.valueOf(CATEGORY.name()), UPDATED_EMAIL, TELEPHONE, NOTE))
+    }
+
+    private void mockSupplierRepositorySave() {
+        this.supplierRepository.save(_ as Supplier) >> { arguments ->
+            {
+                return arguments[0]
+            }
+        }
     }
 
 }

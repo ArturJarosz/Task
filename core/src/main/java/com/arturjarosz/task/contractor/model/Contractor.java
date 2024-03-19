@@ -21,7 +21,7 @@ public class Contractor extends AbstractAggregateRoot {
 
     @Serial
     private static final long serialVersionUID = -8552309774453189195L;
-    @Column(name = "NAME", updatable = false)
+    @Column(name = "NAME", nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)

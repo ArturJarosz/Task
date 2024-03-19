@@ -49,7 +49,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
         supplier.update(supplierDto.getName(), SupplierCategory.valueOf(supplierDto.getCategory().name()),
                 supplierDto.getEmail(),
                 supplierDto.getTelephone(), supplierDto.getNote());
-        this.supplierRepository.save(supplier);
+        supplier = this.supplierRepository.save(supplier);
 
         LOG.debug("Supplier with id {} updated.", supplierId);
         return SupplierDtoMapper.INSTANCE.supplierToSupplierDto(supplier);
