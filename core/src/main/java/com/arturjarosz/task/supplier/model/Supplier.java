@@ -20,7 +20,8 @@ public class Supplier extends AbstractAggregateRoot {
 
     @Serial
     private static final long serialVersionUID = 6745432422347427647L;
-    @Column(name = "NAME", updatable = false)
+
+    @Column(name = "NAME", nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
