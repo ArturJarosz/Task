@@ -4,6 +4,7 @@ import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator
 import com.arturjarosz.task.dto.TaskDto
 import com.arturjarosz.task.dto.TaskStatusDto
 import com.arturjarosz.task.dto.TaskTypeDto
+import com.arturjarosz.task.dto.UpdateStatusRequestDto
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.TaskValidator
@@ -209,60 +210,60 @@ class TaskApplicationServiceImplTest extends Specification {
 
     def "updateTaskStatus should call validateProjectExistence on projectValidator"() {
         given:
-            def taskDto = this.prepareUpdateStatusTaskDto()
+            def statusRequestDto = this.prepareUpdateStatusTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
-            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, statusRequestDto)
         then:
             1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_ID)
     }
 
     def "updateTaskStatus should call validateExistenceOfStageInProject on stageValidator"() {
         given:
-            def taskDto = this.prepareUpdateStatusTaskDto()
+            def statusRequestDto = this.prepareUpdateStatusTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
-            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, statusRequestDto)
         then:
             1 * this.stageValidator.validateExistenceOfStageInProject(PROJECT_ID, STAGE_ID)
     }
 
     def "updateTaskStatus should call validateExistenceTaskInStatus on taskValidator"() {
         given:
-            def taskDto = this.prepareUpdateStatusTaskDto()
+            def statusRequestDto = this.prepareUpdateStatusTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
-            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, statusRequestDto)
         then:
             1 * this.taskValidator.validateExistenceOfTaskInStage(STAGE_ID, TASK_ID)
     }
 
     def "updateTaskStatus should load project from projectRepository"() {
         given:
-            def taskDto = this.prepareUpdateStatusTaskDto()
+            def statusRequestDto = this.prepareUpdateStatusTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
-            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, statusRequestDto)
         then:
             1 * this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProjectWithStageWithTask())
     }
 
     def "updateStatus should call updateTaskStatus on taskDomainService"() {
         given:
-            def taskDto = this.prepareUpdateStatusTaskDto()
+            def statusRequestDto = this.prepareUpdateStatusTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
-            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, statusRequestDto)
         then:
             1 * this.taskDomainService.updateTaskStatus(_ as Project, STAGE_ID, TASK_ID, _ as TaskStatus)
     }
 
     def "updateStatus should save project on projectRepository"() {
         given:
-            def taskDto = this.prepareUpdateStatusTaskDto()
+            def statusRequestDto = this.prepareUpdateStatusTaskDto()
             this.mockProjectRepositoryLoadProjectWithStageAndTask()
         when:
-            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, taskDto)
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, statusRequestDto)
         then:
             1 * this.projectRepository.save(_)
     }
@@ -457,9 +458,9 @@ class TaskApplicationServiceImplTest extends Specification {
 
     }
 
-    private TaskDto prepareUpdateStatusTaskDto() {
-        TaskDto taskDto = new TaskDto(id: TASK_ID, status: NEW_TASK_STATUS)
-        taskDto
+    private UpdateStatusRequestDto prepareUpdateStatusTaskDto() {
+        var updateTasksStatusDto = new UpdateStatusRequestDto(status: NEW_TASK_STATUS)
+        updateTasksStatusDto
     }
 
     private Project prepareProjectWithStage() {

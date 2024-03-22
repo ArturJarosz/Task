@@ -2,6 +2,7 @@ package com.arturjarosz.task.project.application.impl;
 
 import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator;
 import com.arturjarosz.task.dto.TaskDto;
+import com.arturjarosz.task.dto.UpdateStatusRequestDto;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageValidator;
 import com.arturjarosz.task.project.application.TaskApplicationService;
@@ -102,7 +103,8 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
 
     @Transactional
     @Override
-    public TaskDto updateTaskStatus(Long projectId, Long stageId, Long taskId, TaskDto taskDto) {
+    public TaskDto updateTaskStatus(Long projectId, Long stageId, Long taskId,
+            UpdateStatusRequestDto statusRequestDto) {
         LOG.debug("Updating status on Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId,
                 projectId);
         var maybeProject = this.projectRepository.findById(projectId);
@@ -112,7 +114,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.taskDomainService.updateTaskStatus(project, stageId, taskId,
-                TaskStatus.valueOf(taskDto.getStatus().name()));
+                TaskStatus.valueOf(statusRequestDto.getStatus().name()));
         this.projectRepository.save(project);
 
         LOG.debug("Task status updated.");
@@ -138,9 +140,12 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
 
-        return project.getStages().stream().filter(stageOnProject -> stageOnProject.getId().equals(stageId))
+        return project.getStages()
+                .stream()
+                .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .flatMap(stageOnProject -> stageOnProject.getTasks().stream())
-                .map(TaskDtoMapper.INSTANCE::taskToTaskBasicDto).toList();
+                .map(TaskDtoMapper.INSTANCE::taskToTaskBasicDto)
+                .toList();
 
     }
 
@@ -179,14 +184,24 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     private Task getNewTaskWithId(Project project, Long stageId, Task task) {
         Predicate<Stage> stagePredicate = stage -> stage.getId().equals(stageId);
         Predicate<Task> taskPredicate = taskOnStage -> taskOnStage.equals(task);
-        return project.getStages().stream().filter(stagePredicate).flatMap(stage -> stage.getTasks().stream())
-                .filter(taskPredicate).findFirst().orElse(null);
+        return project.getStages()
+                .stream()
+                .filter(stagePredicate)
+                .flatMap(stage -> stage.getTasks().stream())
+                .filter(taskPredicate)
+                .findFirst()
+                .orElse(null);
     }
 
     private Task getTaskById(Project project, Long stageId, Long taskId) {
         Predicate<Stage> stagePredicate = stage -> stage.getId().equals(stageId);
         Predicate<Task> taskPredicate = taskOnStage -> taskOnStage.getId().equals(taskId);
-        return project.getStages().stream().filter(stagePredicate).flatMap(stage -> stage.getTasks().stream())
-                .filter(taskPredicate).findFirst().orElse(null);
+        return project.getStages()
+                .stream()
+                .filter(stagePredicate)
+                .flatMap(stage -> stage.getTasks().stream())
+                .filter(taskPredicate)
+                .findFirst()
+                .orElse(null);
     }
 }

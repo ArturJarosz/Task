@@ -2191,7 +2191,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Task"
+              type: object
+              properties:
+                status:
+                  $ref: "#/components/schemas/TaskStatus"
       responses:
         200:
           description: Successful operation

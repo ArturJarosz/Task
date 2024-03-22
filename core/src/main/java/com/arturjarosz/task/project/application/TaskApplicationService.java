@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.dto.TaskDto;
+import com.arturjarosz.task.dto.UpdateStatusRequestDto;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public interface TaskApplicationService {
      * Update Status of Task with given taskId, on Stage with stageId on Project with projectId. If Project, Stage or
      * Status does not exist or Stage is not valid Status on used Workflow an exception will be thrown.
      */
-    TaskDto updateTaskStatus(Long projectId, Long stageId, Long taskId, TaskDto taskDto);
+    TaskDto updateTaskStatus(Long projectId, Long stageId, Long taskId, UpdateStatusRequestDto taskDto);
 
     /**
      * Return Task as TaskDto for Task on Stage on Project with given taskId, stageId and projectId. If Project,
