@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.dto.TaskDto;
+import com.arturjarosz.task.dto.UpdateStatusRequestDto;
 import com.arturjarosz.task.project.application.TaskApplicationService;
 import com.arturjarosz.task.rest.TaskApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
@@ -22,9 +23,8 @@ public class TaskRestController implements TaskApi {
     @Override
     public ResponseEntity<TaskDto> createTask(TaskDto taskDto, Long projectId, Long stageId) {
         var createdTaskDto = this.taskApplicationService.createTask(projectId, stageId, taskDto);
-        var headers = new HttpHeadersBuilder()
-                .withLocation("/stage/{stageId}/tasks/{tasksId}", stageId, createdTaskDto.getId())
-                .build();
+        var headers = new HttpHeadersBuilder().withLocation("/stage/{stageId}/tasks/{tasksId}", stageId,
+                createdTaskDto.getId()).build();
         return new ResponseEntity<>(createdTaskDto, headers, HttpStatus.CREATED);
     }
 
@@ -41,9 +41,10 @@ public class TaskRestController implements TaskApi {
     }
 
     @Override
-    public ResponseEntity<TaskDto> updateStatus(TaskDto taskDto, Long projectId, Long stageId, Long taskId) {
-        return new ResponseEntity<>(this.taskApplicationService.updateTaskStatus(projectId, stageId, taskId, taskDto),
-                HttpStatus.OK);
+    public ResponseEntity<TaskDto> updateStatus(UpdateStatusRequestDto requestDto, Long projectId, Long stageId,
+            Long taskId) {
+        return new ResponseEntity<>(
+                this.taskApplicationService.updateTaskStatus(projectId, stageId, taskId, requestDto), HttpStatus.OK);
     }
 
     @Override
