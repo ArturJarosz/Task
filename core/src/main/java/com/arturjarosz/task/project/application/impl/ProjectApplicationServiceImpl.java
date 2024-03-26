@@ -5,30 +5,29 @@ import com.arturjarosz.task.architect.application.ArchitectValidator;
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.ClientValidator;
 import com.arturjarosz.task.contract.application.ContractService;
-import com.arturjarosz.task.contract.application.mapper.ContractDtoMapper;
+import com.arturjarosz.task.contract.application.mapper.ContractMapper;
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.ProjectValidator;
-import com.arturjarosz.task.project.application.mapper.ProjectDtoMapper;
+import com.arturjarosz.task.project.application.mapper.ProjectMapper;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @ApplicationService
 public class ProjectApplicationServiceImpl implements ProjectApplicationService {
-    public static final Logger LOG = LoggerFactory.getLogger(ProjectApplicationServiceImpl.class);
 
     @NonNull
     private final ClientApplicationService clientApplicationService;
@@ -50,6 +49,10 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final ProjectFinancialDataService projectFinancialDataService;
     @NonNull
     private final ContractService contractService;
+    @NonNull
+    private final ContractMapper contractMapper;
+    @NonNull
+    private final ProjectMapper projectMapper;
 
     @Transactional
     @Override
@@ -60,7 +63,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.architectValidator.validateArchitectExistence(projectCreateDto.getArchitectId());
         this.clientValidator.validateClientExistence(projectCreateDto.getClientId());
 
-        var contractDto = ContractDtoMapper.INSTANCE.projectDtoToContractDto(projectCreateDto);
+        var contractDto = this.contractMapper.projectDtoToContractDto(projectCreateDto);
         var contract = this.contractService.createContract(contractDto);
         var project = this.projectDomainService.createProject(projectCreateDto, contract.getId());
         project = this.projectRepository.save(project);
@@ -69,7 +72,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectFinancialDataService.joinFinancialDataWithProject(project.getId());
 
         LOG.debug("Project created.");
-        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project, contract);
+        return this.projectMapper.mapToDto(project, contract);
     }
 
     @Override
@@ -84,7 +87,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         var contractDto = this.contractService.getContractForProject(project.getContractId());
 
         LOG.debug("Project with id {} loaded.", projectId);
-        return ProjectDtoMapper.INSTANCE.projectToProjectDto(clientDto, architectDto, project, contractDto);
+        return this.projectMapper.mapToDto(clientDto, architectDto, project, contractDto);
     }
 
     @Transactional
@@ -100,7 +103,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectRepository.save(project);
 
         LOG.debug("Project with id {} updated", projectId);
-        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
+        return this.projectMapper.mapToDto(project);
     }
 
     @Transactional
@@ -128,7 +131,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectRepository.save(project);
 
         LOG.debug("Project with id {} is finished.", projectId);
-        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
+        return this.projectMapper.mapToDto(project);
     }
 
     @Override
@@ -138,7 +141,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         return this.projectRepository.findAll().stream().map(project -> {
             var clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
             var architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
-            return ProjectDtoMapper.INSTANCE.projectToBasicProjectDto(clientDto, architectDto, project);
+            return this.projectMapper.mapToDto(clientDto, architectDto, project);
         }).toList();
     }
 
@@ -153,7 +156,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectDomainService.rejectProject(project);
         this.projectRepository.save(project);
 
-        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
+        return this.projectMapper.mapToDto(project);
     }
 
     @Transactional
@@ -167,6 +170,6 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectDomainService.reopenProject(project);
         this.projectRepository.save(project);
 
-        return ProjectDtoMapper.INSTANCE.projectToProjectDto(project);
+        return this.projectMapper.mapToDto(project);
     }
 }

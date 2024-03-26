@@ -1,7 +1,7 @@
 package com.arturjarosz.task.project.domain.impl;
 
 import com.arturjarosz.task.dto.TaskDto;
-import com.arturjarosz.task.project.application.mapper.TaskDtoMapper;
+import com.arturjarosz.task.project.application.mapper.TaskMapper;
 import com.arturjarosz.task.project.domain.TaskDomainService;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Task;
@@ -10,23 +10,19 @@ import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.project.status.task.TaskStatusTransitionService;
 import com.arturjarosz.task.project.status.task.TaskWorkflow;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @DomainService
 public class TaskDomainServiceImpl implements TaskDomainService {
 
     private final TaskWorkflow taskWorkflow;
     private final TaskStatusTransitionService taskStatusTransitionService;
-
-    @Autowired
-    public TaskDomainServiceImpl(TaskWorkflow taskWorkflow, TaskStatusTransitionService taskStatusTransitionService) {
-        this.taskWorkflow = taskWorkflow;
-        this.taskStatusTransitionService = taskStatusTransitionService;
-    }
+    private final TaskMapper taskMapper;
 
     @Override
     public Task createTask(Project project, Long stageId, TaskDto taskDto) {
-        var task = TaskDtoMapper.INSTANCE.createDtoToTask(taskDto, this.taskWorkflow);
+        var task = this.taskMapper.createDtoToTask(taskDto, this.taskWorkflow);
         project.addTaskToStage(stageId, task);
         this.taskStatusTransitionService.createTask(project, stageId, task.getId());
         return task;

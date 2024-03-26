@@ -1,6 +1,7 @@
 package com.arturjarosz.task.architect.application
 
 import com.arturjarosz.task.architect.application.impl.ArchitectApplicationServiceImpl
+import com.arturjarosz.task.architect.application.mapper.ArchitectMapperImpl
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository
 import com.arturjarosz.task.architect.model.Architect
 import com.arturjarosz.task.dto.ArchitectDto
@@ -45,8 +46,9 @@ class ArchitectApplicationServiceImplTest extends Specification {
     }
 
     def architectValidator = new ArchitectValidator(architectRepository, projectQueryService)
+    def architectMapper = new ArchitectMapperImpl()
 
-    def architectApplicationService = new ArchitectApplicationServiceImpl(architectRepository, architectValidator)
+    def architectApplicationService = new ArchitectApplicationServiceImpl(architectRepository, architectValidator, architectMapper)
 
     def "when passing null an exception should be thrown and architect should not be saved"() {
         given:
@@ -147,10 +149,9 @@ class ArchitectApplicationServiceImplTest extends Specification {
             architectApplicationService.updateArchitect(EXISTING_ID, architectDto)
         then:
             noExceptionThrown()
-            1 * architectRepository.save({
-                Architect architect ->
-                    architect.personName.firstName == NEW_FIRST_NAME
-                    architect.personName.lastName == NEW_LAST_NAME
+            1 * architectRepository.save({ Architect architect ->
+                architect.personName.firstName == NEW_FIRST_NAME
+                architect.personName.lastName == NEW_LAST_NAME
             })
     }
 }

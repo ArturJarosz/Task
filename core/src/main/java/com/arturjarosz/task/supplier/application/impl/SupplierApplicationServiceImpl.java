@@ -5,25 +5,23 @@ import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.supplier.application.SupplierApplicationService;
 import com.arturjarosz.task.supplier.application.SupplierValidator;
-import com.arturjarosz.task.supplier.application.mapper.SupplierDtoMapper;
+import com.arturjarosz.task.supplier.application.mapper.SupplierMapper;
 import com.arturjarosz.task.supplier.infrastructure.SupplierRepository;
 import com.arturjarosz.task.supplier.model.SupplierCategory;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @ApplicationService
 public class SupplierApplicationServiceImpl implements SupplierApplicationService {
 
     private final SupplierRepository supplierRepository;
     private final SupplierValidator supplierValidator;
-
-    public SupplierApplicationServiceImpl(SupplierRepository supplierRepository, SupplierValidator supplierValidator) {
-        this.supplierRepository = supplierRepository;
-        this.supplierValidator = supplierValidator;
-    }
+    private final SupplierMapper supplierMapper;
 
     @Transactional
     @Override
@@ -31,10 +29,10 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
         LOG.debug("Creating Supplier.");
 
         this.supplierValidator.validateCreateSupplierDto(supplierDto);
-        var supplier = SupplierDtoMapper.INSTANCE.supplierDtoToSupplier(supplierDto);
+        var supplier = this.supplierMapper.mapFromDto(supplierDto);
         this.supplierRepository.save(supplier);
         LOG.debug("Supplier created.");
-        return SupplierDtoMapper.INSTANCE.supplierToSupplierDto(supplier);
+        return this.supplierMapper.mapToDto(supplier);
     }
 
     @Transactional
@@ -47,18 +45,17 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
         this.supplierValidator.validateUpdateSupplierDto(supplierDto);
         var supplier = maybeSupplier.orElseThrow(ResourceNotFoundException::new);
         supplier.update(supplierDto.getName(), SupplierCategory.valueOf(supplierDto.getCategory().name()),
-                supplierDto.getEmail(),
-                supplierDto.getTelephone(), supplierDto.getNote());
+                supplierDto.getEmail(), supplierDto.getTelephone(), supplierDto.getNote());
         supplier = this.supplierRepository.save(supplier);
 
         LOG.debug("Supplier with id {} updated.", supplierId);
-        return SupplierDtoMapper.INSTANCE.supplierToSupplierDto(supplier);
+        return this.supplierMapper.mapToDto(supplier);
     }
 
     @Transactional
     @Override
     public void deleteSupplier(Long supplierId) {
-        LOG.debug("Loading Supplier with id {}", supplierId);
+        LOG.debug("Deleting Supplier with id {}", supplierId);
 
         this.supplierValidator.validateSupplierExistence(supplierId);
         this.supplierValidator.validateSupplierHasNoSupply(supplierId);
@@ -74,7 +71,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
         var maybeSupplier = this.supplierRepository.findById(supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
         var supplier = maybeSupplier.orElseThrow(ResourceNotFoundException::new);
-        var supplierDto = SupplierDtoMapper.INSTANCE.supplierToSupplierDto(supplier);
+        var supplierDto = this.supplierMapper.mapToDto(supplier);
         LOG.debug("Supplier with id {} loaded.", supplierId);
         return supplierDto;
     }
@@ -82,9 +79,6 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     @Override
     public List<SupplierDto> getBasicSuppliers() {
         LOG.debug("Loading Suppliers list");
-        return this.supplierRepository.findAll()
-                .stream()
-                .map(SupplierDtoMapper.INSTANCE::supplierToSupplierDto)
-                .toList();
+        return this.supplierRepository.findAll().stream().map(this.supplierMapper::mapToDto).toList();
     }
 }

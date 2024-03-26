@@ -2,6 +2,7 @@ package com.arturjarosz.task.finance.application.impl
 
 import com.arturjarosz.task.dto.InstallmentDto
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService
+import com.arturjarosz.task.finance.application.mapper.InstallmentMapperImpl
 import com.arturjarosz.task.finance.application.validator.InstallmentValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.Installment
@@ -35,10 +36,11 @@ class InstallmentApplicationServiceImplTest extends Specification {
     def projectValidator = Mock(ProjectValidator)
     def stageValidator = Mock(StageValidator)
     def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectService)
+    def installmentMapper = new InstallmentMapperImpl()
 
     def installmentApplicationService = new InstallmentApplicationServiceImpl(projectValidator, stageValidator,
             projectFinancialDataRepository, financialDataQueryService,
-            installmentValidator, projectFinanceAwareObjectService)
+            installmentValidator, projectFinanceAwareObjectService, installmentMapper)
 
     def setup() {
         this.projectValidator.validateProjectExistence(NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }

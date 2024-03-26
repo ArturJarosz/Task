@@ -6,13 +6,11 @@ import com.arturjarosz.task.sharedkernel.model.Money;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface InstallmentDtoMapper {
-    InstallmentDtoMapper INSTANCE = Mappers.getMapper(InstallmentDtoMapper.class);
+public interface InstallmentMapper {
 
-    default Installment installmentDtoToInstallment(InstallmentDto installmentDto, Long stageId) {
+    default Installment mapFromDto(InstallmentDto installmentDto, Long stageId) {
         return new Installment(installmentDto, stageId);
     }
 
@@ -23,7 +21,7 @@ public interface InstallmentDtoMapper {
     @Mapping(source = "hasInvoice", target = "hasInvoice")
     @Mapping(source = "paymentDate", target = "paymentDate")
     @Mapping(source = "stageId", target = "stageId")
-    InstallmentDto installmentToInstallmentDto(Installment installment);
+    InstallmentDto mapToDto(Installment installment);
 
     @Named("moneyToDouble")
     default Double moneyToDouble(Money money) {

@@ -1,6 +1,7 @@
 package com.arturjarosz.task.client.application
 
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
+import com.arturjarosz.task.client.application.mapper.ClientMapperImpl
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
@@ -37,11 +38,13 @@ class ClientApplicationServiceImplTest extends Specification {
 
     }
 
-    ClientValidator clientValidator = Mock(ClientValidator) {
+    def clientValidator = Mock(ClientValidator) {
         validateClientBasicDto(null) >> { throw new IllegalArgumentException() }
     }
-    def clientApplicationServiceImpl = new ClientApplicationServiceImpl(clientRepository, clientValidator
-    )
+
+    def clientMapper = new ClientMapperImpl()
+
+    def clientApplicationServiceImpl = new ClientApplicationServiceImpl(clientRepository, clientValidator, clientMapper)
 
     def "createClient should validate clientBasicDto"() {
         given:

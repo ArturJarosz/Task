@@ -2,36 +2,29 @@ package com.arturjarosz.task.project.domain.impl;
 
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
-import com.arturjarosz.task.project.application.mapper.ProjectDtoMapper;
+import com.arturjarosz.task.project.application.mapper.ProjectMapper;
 import com.arturjarosz.task.project.domain.ProjectDataValidator;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.status.project.ProjectStatusTransitionService;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
+@RequiredArgsConstructor
 @DomainService
 public class ProjectDomainServiceImpl implements ProjectDomainService {
 
     private final ProjectDataValidator projectDataValidator;
     private final ProjectWorkflow projectWorkflow;
     private final ProjectStatusTransitionService projectStatusTransitionService;
-
-    @Autowired
-    public ProjectDomainServiceImpl(ProjectDataValidator projectDataValidator,
-            ProjectWorkflow projectWorkflow,
-            ProjectStatusTransitionService projectStatusTransitionService) {
-        this.projectDataValidator = projectDataValidator;
-        this.projectWorkflow = projectWorkflow;
-        this.projectStatusTransitionService = projectStatusTransitionService;
-    }
+    private final ProjectMapper projectMapper;
 
     @Override
     public Project createProject(ProjectCreateDto projectCreateDto, Long contractId) {
-        var project = ProjectDtoMapper.INSTANCE.projectCreateDtoToProject(projectCreateDto, contractId,
+        var project = this.projectMapper.mapFromCreateDto(projectCreateDto, contractId,
                 this.projectWorkflow);
         this.projectStatusTransitionService.create(project);
         return project;

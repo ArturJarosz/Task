@@ -3,7 +3,7 @@ package com.arturjarosz.task.finance.application.impl;
 import com.arturjarosz.task.dto.SupplyDto;
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
 import com.arturjarosz.task.finance.application.SupplyApplicationService;
-import com.arturjarosz.task.finance.application.mapper.SupplyDtoMapper;
+import com.arturjarosz.task.finance.application.mapper.SupplyMapper;
 import com.arturjarosz.task.finance.application.validator.SupplyValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
@@ -31,6 +31,8 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
     @NonNull
     private final FinancialDataQueryService financialDataQueryService;
+    @NonNull
+    private final SupplyMapper supplyMapper;
 
     @Transactional
     @Override
@@ -41,16 +43,15 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         this.supplyValidator.validateCreateSupplyDto(supplyDto);
         this.supplyValidator.validateSupplierExistence(supplyDto.getSupplierId());
 
-        var financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(
-                projectId);
+        var financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
 
-        var supply = SupplyDtoMapper.INSTANCE.supplyDtoToSupply(supplyDto);
+        var supply = this.supplyMapper.mapFromDto(supplyDto);
         financialData.addSupply(supply);
 
         this.projectFinanceAwareObjectService.onCreate(projectId);
         this.projectFinancialDataRepository.save(financialData);
         LOG.debug("Supply for Project with id {} created", projectId);
-        return SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply, projectId);
+        return this.supplyMapper.mapToDto(supply, projectId);
     }
 
     @Transactional
@@ -62,15 +63,14 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
         this.supplyValidator.validateUpdateSupplyDto(supplyDto);
 
-        var financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(
-                projectId);
+        var financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
         var supply = financialData.updateSupply(supplyId, supplyDto);
 
         this.projectFinanceAwareObjectService.onUpdate(projectId);
         this.projectFinancialDataRepository.save(financialData);
 
         LOG.debug("Supply with id {} updated", supplyId);
-        return SupplyDtoMapper.INSTANCE.supplyToSupplyDto(supply, projectId);
+        return this.supplyMapper.mapToDto(supply, projectId);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         LOG.debug("Loading Supply with id {} for Project with id {}.", supplyId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
-        return this.financialDataQueryService.getSupplyById(supplyId);
+        return this.financialDataQueryService.getSupplyById(supplyId, projectId);
     }
 
     @Transactional
@@ -89,8 +89,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
 
-        var financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(
-                projectId);
+        var financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
         financialData.removeSupply(supplyId);
         this.projectFinancialDataRepository.save(financialData);
         this.projectFinanceAwareObjectService.onRemove(projectId);

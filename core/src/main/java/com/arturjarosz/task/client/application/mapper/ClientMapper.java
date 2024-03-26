@@ -10,12 +10,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface ClientDtoMapper {
-
-    ClientDtoMapper INSTANCE = Mappers.getMapper(ClientDtoMapper.class);
+public interface ClientMapper {
 
     @Mapping(source = "personName.firstName", target = "firstName")
     @Mapping(source = "personName.lastName", target = "lastName")
@@ -25,13 +22,13 @@ public interface ClientDtoMapper {
     @Mapping(source = "address", target = "contact.address")
     @Mapping(source = "note", target = "note")
     @Mapping(source = "telephone", target = "contact.telephone")
-    ClientDto clientToClientDto(Client client);
+    ClientDto mapToDto(Client client);
 
     default Client clientDtoToClient(ClientDto clientDto) {
         if (clientDto.getClientType() == ClientTypeDto.CORPORATE) {
-            return this.clientDtoToCorporateClient(clientDto);
+            return this.mapFromDtoToCorporateClient(clientDto);
         }
-        return this.clientDtoToPrivateClient(clientDto);
+        return this.mapFromDtoToPrivateClient(clientDto);
     }
 
     @Named("deductClientType")
@@ -71,12 +68,12 @@ public interface ClientDtoMapper {
     @Mapping(target = "telephone", source = "contact.telephone")
     @Mapping(target = "address", source = "contact.address", qualifiedByName = "addressDtoToAddress")
     @Mapping(target = "email", source = "contact.email", qualifiedByName = "textToEmail")
-    Client clientDtoToPrivateClient(ClientDto clientDto);
+    Client mapFromDtoToPrivateClient(ClientDto clientDto);
 
     @Mapping(target = "personName", ignore = true)
     @Mapping(target = "clientType", constant = "CORPORATE")
     @Mapping(target = "telephone", source = "contact.telephone")
     @Mapping(target = "address", source = "contact.address", qualifiedByName = "addressDtoToAddress")
     @Mapping(target = "email", source = "contact.email", qualifiedByName = "textToEmail")
-    Client clientDtoToCorporateClient(ClientDto clientDto);
+    Client mapFromDtoToCorporateClient(ClientDto clientDto);
 }

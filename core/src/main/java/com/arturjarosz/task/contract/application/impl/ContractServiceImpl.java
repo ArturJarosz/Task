@@ -2,7 +2,7 @@ package com.arturjarosz.task.contract.application.impl;
 
 import com.arturjarosz.task.contract.application.ContractService;
 import com.arturjarosz.task.contract.application.ContractValidator;
-import com.arturjarosz.task.contract.application.mapper.ContractDtoMapper;
+import com.arturjarosz.task.contract.application.mapper.ContractMapper;
 import com.arturjarosz.task.contract.intrastructure.ContractRepository;
 import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.contract.status.ContractStatusTransitionService;
@@ -28,6 +28,8 @@ public class ContractServiceImpl implements ContractService {
     private final ContractValidator contractValidator;
     @NonNull
     private final ContractRepository contractRepository;
+    @NonNull
+    private final ContractMapper contractMapper;
 
     @Transactional
     @Override
@@ -40,7 +42,7 @@ public class ContractServiceImpl implements ContractService {
         contract = this.contractRepository.save(contract);
 
         LOG.debug("Contract with id {} created", contract.getId());
-        return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
+        return this.contractMapper.mapToDto(contract);
     }
 
     @Transactional
@@ -54,7 +56,7 @@ public class ContractServiceImpl implements ContractService {
         this.contractStatusTransitionService.rejectOffer(contract);
 
         LOG.debug("Contract with id {} rejected.", contractId);
-        return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
+        return this.contractMapper.mapToDto(contract);
     }
 
     @Transactional
@@ -70,7 +72,7 @@ public class ContractServiceImpl implements ContractService {
         this.contractStatusTransitionService.makeNewOffer(contract);
 
         LOG.debug("New offer for contract with id {} made.", contractId);
-        return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
+        return this.contractMapper.mapToDto(contract);
     }
 
     @Transactional
@@ -84,7 +86,7 @@ public class ContractServiceImpl implements ContractService {
         this.contractStatusTransitionService.acceptOffer(contract);
 
         LOG.debug("Offer for contract with id {} accepted.", contractId);
-        return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
+        return this.contractMapper.mapToDto(contract);
     }
 
     @Transactional
@@ -100,7 +102,7 @@ public class ContractServiceImpl implements ContractService {
         this.contractStatusTransitionService.signContract(contract);
 
         LOG.debug("Contract with id {} signed.", contractId);
-        return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
+        return this.contractMapper.mapToDto(contract);
     }
 
     @Transactional
@@ -116,7 +118,7 @@ public class ContractServiceImpl implements ContractService {
         this.contractStatusTransitionService.terminateContract(contract);
 
         LOG.debug("Contract with id {} terminated.", contractId);
-        return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
+        return this.contractMapper.mapToDto(contract);
     }
 
     @Transactional
@@ -131,7 +133,7 @@ public class ContractServiceImpl implements ContractService {
         contract.resume();
 
         LOG.debug("Contract with id {} was resumed.", contractId);
-        return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
+        return this.contractMapper.mapToDto(contract);
     }
 
     @Transactional
@@ -147,7 +149,7 @@ public class ContractServiceImpl implements ContractService {
         this.contractStatusTransitionService.completeContract(contract);
 
         LOG.debug("Contract with id {} has been completed.", contractId);
-        return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
+        return this.contractMapper.mapToDto(contract);
     }
 
     @Override
@@ -158,7 +160,7 @@ public class ContractServiceImpl implements ContractService {
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
 
-        return ContractDtoMapper.INSTANCE.contractToContractDto(contract);
+        return this.contractMapper.mapToDto(contract);
     }
 
 }

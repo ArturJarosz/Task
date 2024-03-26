@@ -12,18 +12,18 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 
 class ContractorJobTestIT extends BaseTestIT {
-    static final String ARCHITECTS_URI = "/architects"
-    static final String CLIENTS_URI = "/clients"
-    static final String PROJECTS_URI = "/projects"
-    static final String CONTRACTORS_URI = "/contractors"
-    static final String CONTRACTOR_JOBS_URI = "/contractor-jobs"
+    static final ARCHITECTS_URI = "/architects"
+    static final CLIENTS_URI = "/clients"
+    static final PROJECTS_URI = "/projects"
+    static final CONTRACTORS_URI = "/contractors"
+    static final CONTRACTOR_JOBS_URI = "/contractor-jobs"
 
     static final NOT_EXISTING_CONTRACTOR_JOB_ID = Integer.MAX_VALUE
 
-    static final ObjectMapper MAPPER = new ObjectMapper()
+    static final MAPPER = new ObjectMapper()
     static final CONTENT_TYPE = "Content-Type"
     static final APPLICATION_JSON = "application/json"
-    static final String LOCATION = "Location"
+    static final LOCATION = "Location"
 
     def architectDto = createObjectFromJson('json/architect/architect.json', ArchitectDto)
     def privateClientDto = createObjectFromJson('json/client/privateClient.json', ClientDto)
@@ -76,7 +76,7 @@ class ContractorJobTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "updating not existing contractorJob should return code 400 and error message"() {
+    def "updating not existing contractorJob should return code 404 and error message"() {
         given:
             def project = createProject()
             def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateContractorJobDto)
@@ -85,7 +85,7 @@ class ContractorJobTestIT extends BaseTestIT {
                     .header(CONTENT_TYPE, APPLICATION_JSON)
                     .content(requestBody)).andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Project with id ${project.id} does not have a contractorJob with id ${String.format("%,d", NOT_EXISTING_CONTRACTOR_JOB_ID)}."
@@ -131,14 +131,14 @@ class ContractorJobTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "removing not existing contractorJob should return code 400 and error message"() {
+    def "removing not existing contractorJob should return code 404 and error message"() {
         given:
             def project = createProject()
         when:
             def response = this.mockMvc.perform(MockMvcRequestBuilders.delete("$PROJECTS_URI/${project.id}$CONTRACTOR_JOBS_URI/$NOT_EXISTING_CONTRACTOR_JOB_ID"))
                     .andReturn().response
         then:
-            response.status == HttpStatus.BAD_REQUEST.value()
+            response.status == HttpStatus.NOT_FOUND.value()
         and:
             def errorMessage = MAPPER.readValue(response.contentAsString, ErrorMessage)
             errorMessage.message == "Project with id ${project.id} does not have a contractorJob with id ${String.format("%,d", NOT_EXISTING_CONTRACTOR_JOB_ID)}."

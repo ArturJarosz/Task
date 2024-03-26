@@ -1,7 +1,6 @@
 package com.arturjarosz.task.sharedkernel.exceptions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -15,10 +14,10 @@ import java.util.Locale;
  * Class responsible for handling all error messages in API.
  * Message codes should be intercepted and proper error message for given language should be returned.
  */
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    public static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     private final MessageSource messageSource;
 
     @Autowired

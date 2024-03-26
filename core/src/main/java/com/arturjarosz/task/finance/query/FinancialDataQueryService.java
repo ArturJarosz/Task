@@ -15,7 +15,7 @@ public interface FinancialDataQueryService {
 
     SupervisionRatesDto getSupervisionRatesDto(long supervisionId);
 
-    List<SupervisionVisitFinancialDto> getVisitsFinancialDto(Long supervisionId);
+    List<SupervisionVisitFinancialDto> getVisitsFinancialDto(long supervisionId);
 
     List<FinancialDataDto> getCostsFinancialData(long projectId);
 
@@ -37,13 +37,13 @@ public interface FinancialDataQueryService {
 
     List<InstallmentDto> getInstallmentsByProjectId(long projectId);
 
-    ContractorJobDto getContractorJobById(long contractorJobId);
+    ContractorJobDto getContractorJobById(long contractorJobId, long projectId);
 
     boolean doesInstallmentExistsByInstallmentId(long installmentId);
 
     boolean doesSupplyForProjectExists(long projectId, long supplyId);
 
-    SupplyDto getSupplyById(Long supplyId);
+    SupplyDto getSupplyById(long supplyId, long projectId);
 
-    List<SupplyDto> getSuppliesForProject(Long projectId);
+    List<SupplyDto> getSuppliesForProject(long projectId);
 }

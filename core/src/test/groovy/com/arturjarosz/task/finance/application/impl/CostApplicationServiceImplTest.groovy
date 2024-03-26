@@ -2,6 +2,7 @@ package com.arturjarosz.task.finance.application.impl
 
 import com.arturjarosz.task.dto.CostCategoryDto
 import com.arturjarosz.task.dto.CostDto
+import com.arturjarosz.task.finance.application.mapper.CostMapperImpl
 import com.arturjarosz.task.finance.application.validator.CostValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.Cost
@@ -37,10 +38,11 @@ class CostApplicationServiceImplTest extends Specification {
     def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectServiceImpl)
     def projectFinancialDataRepository = Mock(ProjectFinancialDataRepository)
     def financialDataQueryService = Mock(FinancialDataQueryService)
+    def costMapper = new CostMapperImpl()
 
     def projectCostApplicationService = new CostApplicationServiceImpl(costValidator, projectValidator,
             projectFinanceAwareObjectService, projectFinancialDataRepository,
-            financialDataQueryService)
+            financialDataQueryService, costMapper)
 
     def setup() {
         projectValidator.validateProjectExistence(NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }

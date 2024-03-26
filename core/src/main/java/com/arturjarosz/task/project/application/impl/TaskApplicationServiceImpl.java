@@ -7,7 +7,7 @@ import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageValidator;
 import com.arturjarosz.task.project.application.TaskApplicationService;
 import com.arturjarosz.task.project.application.TaskValidator;
-import com.arturjarosz.task.project.application.mapper.TaskDtoMapper;
+import com.arturjarosz.task.project.application.mapper.TaskMapper;
 import com.arturjarosz.task.project.domain.TaskDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
@@ -17,17 +17,17 @@ import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.function.Predicate;
 
+@Slf4j
+@RequiredArgsConstructor
 @ApplicationService
 public class TaskApplicationServiceImpl implements TaskApplicationService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(TaskApplicationServiceImpl.class);
 
     private final ProjectQueryService projectQueryService;
     private final ProjectRepository projectRepository;
@@ -36,18 +36,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     private final TaskDomainService taskDomainService;
     private final TaskValidator taskValidator;
     private final ContractWorkflowValidator contractWorkflowValidator;
-
-    public TaskApplicationServiceImpl(ProjectQueryService projectQueryService, ProjectRepository projectRepository,
-            ProjectValidator projectValidator, StageValidator stageValidator, TaskDomainService taskDomainService,
-            TaskValidator taskValidator, ContractWorkflowValidator contractWorkflowValidator) {
-        this.projectQueryService = projectQueryService;
-        this.projectRepository = projectRepository;
-        this.projectValidator = projectValidator;
-        this.stageValidator = stageValidator;
-        this.taskDomainService = taskDomainService;
-        this.taskValidator = taskValidator;
-        this.contractWorkflowValidator = contractWorkflowValidator;
-    }
+    private final TaskMapper taskMapper;
 
     @Transactional
     @Override
@@ -64,7 +53,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         project = this.projectRepository.save(project);
         LOG.debug("Task created.");
 
-        return TaskDtoMapper.INSTANCE.taskToTaskDto(this.getNewTaskWithId(project, stageId, task));
+        return this.taskMapper.taskToTaskDto(this.getNewTaskWithId(project, stageId, task));
     }
 
     @Transactional
@@ -94,11 +83,11 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         this.taskValidator.validateUpdateTaskDto(taskDto);
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
-        var taskInnerDto = TaskDtoMapper.INSTANCE.updateDtoToInnerDto(taskDto);
+        var taskInnerDto = this.taskMapper.updateDtoToInnerDto(taskDto);
         var task = this.taskDomainService.updateTask(project, stageId, taskId, taskInnerDto);
         this.projectRepository.save(project);
         LOG.debug("Task updated.");
-        return TaskDtoMapper.INSTANCE.taskToTaskDto(task);
+        return this.taskMapper.taskToTaskDto(task);
     }
 
     @Transactional
@@ -118,7 +107,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.projectRepository.save(project);
 
         LOG.debug("Task status updated.");
-        return TaskDtoMapper.INSTANCE.taskToTaskDto(this.getTaskById(project, stageId, taskId));
+        return this.taskMapper.taskToTaskDto(this.getTaskById(project, stageId, taskId));
     }
 
     @Transactional
@@ -144,7 +133,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
                 .stream()
                 .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .flatMap(stageOnProject -> stageOnProject.getTasks().stream())
-                .map(TaskDtoMapper.INSTANCE::taskToTaskBasicDto)
+                .map(this.taskMapper::taskToTaskBasicDto)
                 .toList();
 
     }
@@ -162,7 +151,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.taskDomainService.rejectTask(project, stageId, taskId);
         this.projectRepository.save(project);
 
-        return TaskDtoMapper.INSTANCE.taskToTaskDto(this.getTaskById(project, stageId, taskId));
+        return this.taskMapper.taskToTaskDto(this.getTaskById(project, stageId, taskId));
     }
 
     @Transactional
@@ -178,7 +167,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.taskDomainService.reopenTask(project, stageId, taskId);
         this.projectRepository.save(project);
 
-        return TaskDtoMapper.INSTANCE.taskToTaskDto(this.getTaskById(project, stageId, taskId));
+        return this.taskMapper.taskToTaskDto(this.getTaskById(project, stageId, taskId));
     }
 
     private Task getNewTaskWithId(Project project, Long stageId, Task task) {

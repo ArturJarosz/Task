@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.domain.impl
 import com.arturjarosz.task.dto.ProjectCreateDto
 import com.arturjarosz.task.dto.ProjectDto
 import com.arturjarosz.task.dto.ProjectTypeDto
+import com.arturjarosz.task.project.application.mapper.ProjectMapperImpl
 import com.arturjarosz.task.project.domain.ProjectDataValidator
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.status.project.ProjectStatus
@@ -27,9 +28,10 @@ class ProjectDomainServiceImplTest extends Specification {
     def projectDataValidator = Mock(ProjectDataValidator)
     def projectWorkflow = Mock(ProjectWorkflow)
     def projectStatusTransitionService = Mock(ProjectStatusTransitionServiceImpl)
+    def projectMapper = new ProjectMapperImpl()
 
     def projectDomainService = new ProjectDomainServiceImpl(projectDataValidator, projectWorkflow,
-            projectStatusTransitionService)
+            projectStatusTransitionService, projectMapper)
 
     def "createProject should call create on projectStatusTransitionService"() {
         given:

@@ -5,10 +5,12 @@ import com.arturjarosz.task.dto.CostDto;
 import com.arturjarosz.task.dto.InstallmentDto;
 import com.arturjarosz.task.dto.SupplyDto;
 import com.arturjarosz.task.dto.TotalProjectFinancialSummaryDto;
-import com.arturjarosz.task.finance.application.mapper.ContractorJobFields;
-import com.arturjarosz.task.finance.application.mapper.CostFields;
-import com.arturjarosz.task.finance.application.mapper.InstallmentFields;
-import com.arturjarosz.task.finance.application.mapper.SupplyFields;
+import com.arturjarosz.task.finance.application.mapper.ContractorJobMapper;
+import com.arturjarosz.task.finance.application.mapper.CostMapper;
+import com.arturjarosz.task.finance.application.mapper.FinancialDataMapper;
+import com.arturjarosz.task.finance.application.mapper.InstallmentMapper;
+import com.arturjarosz.task.finance.application.mapper.ProjectFinancialPartialSummaryMapper;
+import com.arturjarosz.task.finance.application.mapper.SupplyMapper;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
 import com.arturjarosz.task.finance.model.PartialFinancialDataType;
 import com.arturjarosz.task.finance.model.QContractorJob;
@@ -26,10 +28,8 @@ import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
 import com.arturjarosz.task.supervision.model.QSupervision;
 import com.arturjarosz.task.supervision.model.QSupervisionVisit;
-import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
-import com.querydsl.jpa.impl.JPAQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -46,46 +46,24 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     private static final QProjectFinancialPartialSummary PROJECT_FINANCIAL_PARTIAL_SUMMARY = QProjectFinancialPartialSummary.projectFinancialPartialSummary;
     private static final QProjectFinancialData PROJECT_FINANCIAL_DATA = QProjectFinancialData.projectFinancialData;
 
-    public FinancialDataQueryServiceImpl() {
+    private final FinancialDataMapper financialDataMapper;
+    private final ProjectFinancialPartialSummaryMapper projectFinancialPartialSummaryMapper;
+    private final CostMapper costMapper;
+    private final InstallmentMapper installmentMapper;
+    private final SupplyMapper supplyMapper;
+    private final ContractorJobMapper contractorJobMapper;
+
+    @Autowired
+    public FinancialDataQueryServiceImpl(FinancialDataMapper financialDataMapper,
+            ProjectFinancialPartialSummaryMapper projectFinancialPartialSummaryMapper, CostMapper costMapper,
+            InstallmentMapper installmentMapper, SupplyMapper supplyMapper, ContractorJobMapper contractorJobMapper) {
         super(FINANCIAL_DATA);
-    }
-
-    private static ConstructorExpression<TotalProjectFinancialSummaryDto> projectQueryToTotalProjectFinancialSummaryDto() {
-        return Projections.constructor(TotalProjectFinancialSummaryDto.class,
-                PROJECT_FINANCIAL_PARTIAL_SUMMARY.grossValue.value.doubleValue(),
-                PROJECT_FINANCIAL_PARTIAL_SUMMARY.netValue.value.doubleValue(),
-                PROJECT_FINANCIAL_PARTIAL_SUMMARY.vatTax.value.doubleValue(),
-                PROJECT_FINANCIAL_PARTIAL_SUMMARY.incomeTax.value.doubleValue());
-    }
-
-    private static QBean<CostDto> costToCostDto() {
-        return Projections.bean(CostDto.class, COST.id.as(CostFields.ID_FIELD),
-                COST.financialData.value.value.as(CostFields.VALUE_FIELD), COST.name.as(CostFields.NAME_FIELD),
-                COST.date.as(CostFields.DATE_FIELD), COST.note.as(CostFields.NOTE_FIELD),
-                COST.category.as(CostFields.CATEGORY_FIELD),
-                COST.financialData.hasInvoice.as(CostFields.HAS_INVOICE_FIELD),
-                COST.financialData.paid.as(CostFields.IS_PAID_FIELD));
-    }
-
-    private static QBean<ContractorJobDto> contractorJobToContractorJobDto() {
-        return Projections.bean(ContractorJobDto.class, CONTRACTOR_JOB.id.as(ContractorJobFields.ID_FIELD),
-                CONTRACTOR_JOB.name.as(ContractorJobFields.NAME_FILED),
-                CONTRACTOR_JOB.note.as(ContractorJobFields.NOTE_FILED),
-                CONTRACTOR_JOB.financialData.paid.as(ContractorJobFields.PAID_FIELD),
-                CONTRACTOR_JOB.financialData.hasInvoice.as(ContractorJobFields.HAS_INVOICE_FILED),
-                CONTRACTOR_JOB.financialData.value.value.as(ContractorJobFields.VALUE_FILED),
-                CONTRACTOR_JOB.financialData.payable.as(ContractorJobFields.PAYABLE_FILED),
-                CONTRACTOR_JOB.cooperatorId.as(ContractorJobFields.CONTRACTOR_ID_FILED));
-    }
-
-    private static QBean<SupplyDto> supplyToSupplyDto() {
-        return Projections.bean(SupplyDto.class, SUPPLY.id.as(SupplyFields.ID_FIELD),
-                SUPPLY.name.as(SupplyFields.NAME_FILED),
-                SUPPLY.note.as(SupplyFields.NOTE_FILED), SUPPLY.financialData.paid.as(SupplyFields.PAID_FIELD),
-                SUPPLY.financialData.hasInvoice.as(SupplyFields.HAS_INVOICE_FILED),
-                SUPPLY.financialData.value.value.as(SupplyFields.VALUE_FILED),
-                SUPPLY.financialData.payable.as(SupplyFields.PAYABLE_FILED),
-                SUPPLY.cooperatorId.as(SupplyFields.SUPPLIER_ID_FILED));
+        this.financialDataMapper = financialDataMapper;
+        this.projectFinancialPartialSummaryMapper = projectFinancialPartialSummaryMapper;
+        this.costMapper = costMapper;
+        this.installmentMapper = installmentMapper;
+        this.supplyMapper = supplyMapper;
+        this.contractorJobMapper = contractorJobMapper;
     }
 
     @Override
@@ -101,7 +79,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     }
 
     @Override
-    public List<SupervisionVisitFinancialDto> getVisitsFinancialDto(Long supervisionId) {
+    public List<SupervisionVisitFinancialDto> getVisitsFinancialDto(long supervisionId) {
         return this.query()
                 .from(SUPERVISION)
                 .where(SUPERVISION.id.eq(supervisionId))
@@ -114,67 +92,79 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
 
     @Override
     public List<FinancialDataDto> getCostsFinancialData(long projectId) {
-        JPAQuery<?> costsFinancialDataQuery = this.query()
+        var costsFinancialData = this.query()
                 .from(PROJECT_FINANCIAL_DATA)
                 .join(PROJECT_FINANCIAL_DATA.costs, COST)
                 .join(COST.financialData, FINANCIAL_DATA)
-                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId));
-        return this.getFinancialDataForFinancialDataAwareObjects(costsFinancialDataQuery);
+                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
+                .select(FINANCIAL_DATA)
+                .fetch();
+
+        return costsFinancialData.stream().map(this.financialDataMapper::map).toList();
     }
 
     @Override
     public List<FinancialDataDto> getSuppliesFinancialData(long projectId) {
-        JPAQuery<?> suppliesFinancialDataQuery = this.query()
+        var suppliesFinancialData = this.query()
                 .from(PROJECT_FINANCIAL_DATA)
                 .join(PROJECT_FINANCIAL_DATA.supplies, SUPPLY)
                 .join(SUPPLY.financialData, FINANCIAL_DATA)
-                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId));
-        return this.getFinancialDataForFinancialDataAwareObjects(suppliesFinancialDataQuery);
+                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
+                .select(FINANCIAL_DATA)
+                .fetch();
+
+        return suppliesFinancialData.stream().map(this.financialDataMapper::map).toList();
     }
 
     @Override
     public List<FinancialDataDto> getContractorsJobsFinancialData(long projectId) {
-        JPAQuery<?> contractorsJobsFinancialDataQuery = this.query()
+        var contractorsJobsFinancialData = this.query()
                 .from(PROJECT_FINANCIAL_DATA)
                 .join(PROJECT_FINANCIAL_DATA.contractorJobs, CONTRACTOR_JOB)
                 .join(CONTRACTOR_JOB.financialData, FINANCIAL_DATA)
-                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId));
-        return this.getFinancialDataForFinancialDataAwareObjects(contractorsJobsFinancialDataQuery);
+                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
+                .select(FINANCIAL_DATA)
+                .fetch();
+
+        return contractorsJobsFinancialData.stream().map(this.financialDataMapper::map).toList();
     }
 
     @Override
     public FinancialDataDto getSupervisionFinancialData(long projectId) {
-        return this.query()
+        var financialData = this.query()
                 .from(SUPERVISION)
                 .join(SUPERVISION.financialData, FINANCIAL_DATA)
                 .where(SUPERVISION.projectId.eq(projectId))
-                .select(Projections.bean(FinancialDataDto.class,
-                        FINANCIAL_DATA.payable.as(FinancialDataDto.PAYABLE_FIELD),
-                        FINANCIAL_DATA.hasInvoice.as(FinancialDataDto.HAS_INVOICE_FIELD),
-                        FINANCIAL_DATA.paid.as(FinancialDataDto.PAID_FIELD),
-                        FINANCIAL_DATA.value.value.as(FinancialDataDto.VALUE_FIELD)))
+                .select(FINANCIAL_DATA)
                 .fetchOne();
+
+        return this.financialDataMapper.map(financialData);
     }
 
     @Override
     public List<FinancialDataDto> getInstallmentsFinancialData(long projectId) {
-        JPAQuery<?> installmentsFinancialDataQuery = this.query()
+        var installmentsFinancialData = this.query()
                 .from(PROJECT_FINANCIAL_DATA)
                 .join(PROJECT_FINANCIAL_DATA.installments, INSTALLMENT)
                 .join(INSTALLMENT.financialData, FINANCIAL_DATA)
-                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId));
-        return this.getFinancialDataForFinancialDataAwareObjects(installmentsFinancialDataQuery);
+                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
+                .select(FINANCIAL_DATA)
+                .fetch();
+
+        return installmentsFinancialData.stream().map(this.financialDataMapper::map).toList();
     }
 
     @Override
     public TotalProjectFinancialSummaryDto getTotalProjectFinancialSummary(long projectId) {
-        return this.query()
+        var projectFinancialPartialSummary = this.query()
                 .from(PROJECT_FINANCIAL_SUMMARY)
                 .join(PROJECT_FINANCIAL_SUMMARY.partialSummaries, PROJECT_FINANCIAL_PARTIAL_SUMMARY)
                 .where(PROJECT_FINANCIAL_SUMMARY.projectId.eq(projectId)
                         .and(PROJECT_FINANCIAL_PARTIAL_SUMMARY.dataType.eq(PartialFinancialDataType.TOTAL)))
-                .select(projectQueryToTotalProjectFinancialSummaryDto())
+                .select(PROJECT_FINANCIAL_PARTIAL_SUMMARY)
                 .fetchOne();
+
+        return this.projectFinancialPartialSummaryMapper.map(projectFinancialPartialSummary);
     }
 
     @Override
@@ -184,34 +174,35 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
 
     @Override
     public CostDto getCostById(long costId) {
-        return this.query().from(COST).where(COST.id.eq(costId)).select(costToCostDto()).fetchOne();
+        var cost = this.query().from(COST).where(COST.id.eq(costId)).select(COST).fetchOne();
+
+        return this.costMapper.mapToDto(cost);
     }
 
     @Override
     public List<CostDto> getCostsByProjectId(long projectId) {
-        return this.query()
+        var costs = this.query()
                 .from(COST)
                 .leftJoin(PROJECT_FINANCIAL_DATA)
                 .on(COST.projectFinancialDataId.eq(PROJECT_FINANCIAL_DATA.id))
                 .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
-                .select(costToCostDto())
+                .select(COST)
                 .fetch();
+
+        return costs.stream().map(this.costMapper::mapToDto).toList();
     }
 
     @Override
     public List<InstallmentDto> getInstallmentsByProjectId(long projectId) {
-        return this.query()
+        var installments = this.query()
                 .from(INSTALLMENT)
                 .leftJoin(PROJECT_FINANCIAL_DATA)
                 .on(INSTALLMENT.projectFinancialDataId.eq(PROJECT_FINANCIAL_DATA.id))
                 .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
-                .select(Projections.bean(InstallmentDto.class, INSTALLMENT.id.as(InstallmentFields.ID_FIELD),
-                        INSTALLMENT.financialData.value.value.as(InstallmentFields.VALUE_FIELD),
-                        INSTALLMENT.note.as(InstallmentFields.NOTE_FIELD),
-                        INSTALLMENT.financialData.paid.as(InstallmentFields.IS_PAID_FIELD),
-                        INSTALLMENT.financialData.hasInvoice.as(InstallmentFields.HAS_INVOICE_FIELD),
-                        INSTALLMENT.financialData.paymentDate.as(InstallmentFields.PAYMENT_DATE)))
+                .select(INSTALLMENT)
                 .fetch();
+
+        return installments.stream().map(this.installmentMapper::mapToDto).toList();
     }
 
     @Override
@@ -222,32 +213,42 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .on(SUPPLY.projectFinancialDataId.eq(PROJECT_FINANCIAL_DATA.id))
                 .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId).and(SUPPLY.id.eq(supplyId)))
                 .select(SUPPLY.id)
-                .fetch().isEmpty();
+                .fetch()
+                .isEmpty();
     }
 
     @Override
-    public SupplyDto getSupplyById(Long supplyId) {
-        return this.query().from(SUPPLY).where(SUPPLY.id.eq(supplyId)).select(supplyToSupplyDto()).fetchOne();
+    public SupplyDto getSupplyById(long supplyId, long projectId) {
+        var supply = this.query().from(SUPPLY).where(SUPPLY.id.eq(supplyId)).select(SUPPLY).fetchOne();
+
+        return this.supplyMapper.mapToDto(supply, projectId);
     }
 
     @Override
-    public List<SupplyDto> getSuppliesForProject(Long projectId) {
-        return this.query()
+    public List<SupplyDto> getSuppliesForProject(long projectId) {
+        var supplies = this.query()
                 .from(SUPPLY)
                 .leftJoin(PROJECT_FINANCIAL_DATA)
                 .on(SUPPLY.projectFinancialDataId.eq(PROJECT_FINANCIAL_DATA.id))
                 .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
-                .select(supplyToSupplyDto())
+                .select(SUPPLY)
                 .fetch();
+
+        return supplies.stream().map(supply -> this.supplyMapper.mapToDto(supply, projectId)).toList();
     }
 
     @Override
-    public ContractorJobDto getContractorJobById(long contractorJobId) {
-        return this.query()
+    public ContractorJobDto getContractorJobById(long contractorJobId, long projectId) {
+        var contractorJob = this.query()
                 .from(CONTRACTOR_JOB)
                 .where(CONTRACTOR_JOB.id.eq(contractorJobId))
-                .select(contractorJobToContractorJobDto())
+                .select(CONTRACTOR_JOB)
                 .fetchOne();
+        if (contractorJob == null) {
+            return null;
+        }
+
+        return this.contractorJobMapper.mapToDto(contractorJob, projectId);
     }
 
     @Override
@@ -256,15 +257,8 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .from(INSTALLMENT)
                 .where(INSTALLMENT.id.eq(installmentId))
                 .select(INSTALLMENT)
-                .fetch().isEmpty();
-    }
-
-    private List<FinancialDataDto> getFinancialDataForFinancialDataAwareObjects(JPAQuery<?> jpaQuery) {
-        return jpaQuery.select(
-                Projections.bean(FinancialDataDto.class, FINANCIAL_DATA.payable.as(FinancialDataDto.PAYABLE_FIELD),
-                        FINANCIAL_DATA.hasInvoice.as(FinancialDataDto.HAS_INVOICE_FIELD),
-                        FINANCIAL_DATA.paid.as(FinancialDataDto.PAID_FIELD),
-                        FINANCIAL_DATA.value.value.as(FinancialDataDto.VALUE_FIELD))).fetch();
+                .fetch()
+                .isEmpty();
     }
 
 }

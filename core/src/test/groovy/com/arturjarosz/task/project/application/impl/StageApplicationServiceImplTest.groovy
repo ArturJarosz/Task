@@ -6,6 +6,7 @@ import com.arturjarosz.task.dto.StageTypeDto
 import com.arturjarosz.task.finance.application.InstallmentApplicationService
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
+import com.arturjarosz.task.project.application.mapper.StageMapper
 import com.arturjarosz.task.project.domain.StageDomainService
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
@@ -40,9 +41,10 @@ class StageApplicationServiceImplTest extends Specification {
     def stageDomainService = Mock(StageDomainService)
     def contractWorkflowValidator = Mock(ContractWorkflowValidator)
     def installmentApplicationService = Mock(InstallmentApplicationService)
+    def stageMapper = Mock(StageMapper)
 
     def stageApplicationService = new StageApplicationServiceImpl(projectQueryService, projectValidator,
-            projectRepository, stageDomainService, stageValidator, contractWorkflowValidator, installmentApplicationService)
+            projectRepository, stageDomainService, stageValidator, contractWorkflowValidator, installmentApplicationService, stageMapper)
 
     def "createStage should call validateProjectExistence on projectValidator"() {
         given:

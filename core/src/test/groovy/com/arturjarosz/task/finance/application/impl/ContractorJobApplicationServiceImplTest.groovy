@@ -1,6 +1,7 @@
 package com.arturjarosz.task.finance.application.impl
 
 import com.arturjarosz.task.dto.ContractorJobDto
+import com.arturjarosz.task.finance.application.mapper.ContractorJobMapperImpl
 import com.arturjarosz.task.finance.application.validator.ContractorJobValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.ContractorJob
@@ -31,17 +32,18 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def projectValidator = Mock(ProjectValidator)
     def projectFinancialDataRepository = Mock(ProjectFinancialDataRepository)
     def financialDataQueryService = Mock(FinancialDataQueryService)
+    def contractorJobMapper = new ContractorJobMapperImpl()
 
     def contractorJobApplicationService = new ContractorJobApplicationServiceImpl(contractorJobValidator,
             projectFinanceAwareObjectService, projectValidator, projectFinancialDataRepository,
-            financialDataQueryService)
+            financialDataQueryService, contractorJobMapper)
 
     def setup() {
         projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITH_CONTRACTOR_JOB_ID) >>
                 prepareProjectFinancialDataWithContactorJob()
         projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITHOUT_CONTRACTOR_JOB_ID) >>
                 prepareProjectFinancialDataWithoutContractorJob()
-        financialDataQueryService.getContractorJobById(EXISTING_CONTRACTOR_JOB_ID) >> new ContractorJobDto()
+        financialDataQueryService.getContractorJobById(EXISTING_CONTRACTOR_JOB_ID, _ as Long) >> new ContractorJobDto()
         projectValidator.validateProjectExistence(NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }
     }
 

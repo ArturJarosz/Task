@@ -4,12 +4,8 @@ import com.arturjarosz.task.dto.SupervisionVisitDto;
 import com.arturjarosz.task.supervision.model.SupervisionVisit;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface SupervisionVisitDtoMapper {
-    SupervisionVisitDtoMapper INSTANCE = Mappers.getMapper(SupervisionVisitDtoMapper.class);
-
-    SupervisionVisitDto supervisionVisitToSupervisionVisionDto(SupervisionVisit supervisionVisit);
-
+public interface SupervisionVisitMapper {
+    SupervisionVisitDto mapToDto(SupervisionVisit supervisionVisit);
 }

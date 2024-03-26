@@ -5,25 +5,22 @@ import com.arturjarosz.task.dto.ContractorDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface ContractorDtoMapper {
-
-    ContractorDtoMapper INSTANCE = Mappers.getMapper(ContractorDtoMapper.class);
+public interface ContractorMapper {
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "note", target = "note")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "telephone", target = "telephone")
     @Mapping(source = "category", target = "category")
-    Contractor createContractorDtoToContractor(ContractorDto contractorDto);
+    Contractor mapFromDto(ContractorDto contractorDto);
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "note", target = "note")
     @Mapping(source = "email", target = "email")
     @Mapping(source = "telephone", target = "telephone")
     @Mapping(source = "category", target = "category")
-    ContractorDto contractorToContractorDto(Contractor contractor);
+    ContractorDto mapToDto(Contractor contractor);
 
 }

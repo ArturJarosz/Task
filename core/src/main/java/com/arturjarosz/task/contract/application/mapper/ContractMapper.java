@@ -9,13 +9,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface ContractDtoMapper {
-    ContractDtoMapper INSTANCE = Mappers.getMapper(ContractDtoMapper.class);
+public interface ContractMapper {
 
     @Mapping(source = "offerValue", target = "offerValue")
     @Mapping(source = "deadline", target = "deadline")
@@ -28,7 +26,7 @@ public interface ContractDtoMapper {
     @Mapping(source = "startDate", target = "startDate")
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "contract", target = "nextStatuses", qualifiedByName = "getNextStatuses")
-    ContractDto contractToContractDto(Contract contract);
+    ContractDto mapToDto(Contract contract);
 
     @Named("moneyToDouble")
     default Double moneyToDouble(Money value) {

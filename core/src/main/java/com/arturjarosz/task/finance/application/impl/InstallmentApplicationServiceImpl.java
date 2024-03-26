@@ -3,7 +3,7 @@ package com.arturjarosz.task.finance.application.impl;
 import com.arturjarosz.task.dto.InstallmentDto;
 import com.arturjarosz.task.finance.application.InstallmentApplicationService;
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
-import com.arturjarosz.task.finance.application.mapper.InstallmentDtoMapper;
+import com.arturjarosz.task.finance.application.mapper.InstallmentMapper;
 import com.arturjarosz.task.finance.application.validator.InstallmentValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.model.Installment;
@@ -36,6 +36,8 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     private final InstallmentValidator installmentValidator;
     @NonNull
     private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
+    @NonNull
+    private final InstallmentMapper installmentDtoMapper;
 
     @Transactional
     @Override
@@ -47,14 +49,14 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.stageValidator.validateStageNotHavingInstallment(projectId, stageId);
 
         this.installmentValidator.validateCreateInstallmentDto(installmentDto);
-        var installment = InstallmentDtoMapper.INSTANCE.installmentDtoToInstallment(installmentDto, stageId);
+        var installment = this.installmentDtoMapper.mapFromDto(installmentDto, stageId);
 
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
         projectFinancialData.addInstallment(installment);
         projectFinancialData = this.projectFinancialDataRepository.save(projectFinancialData);
 
         LOG.debug("Installment created.");
-        var createdInstallment = InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(installment);
+        var createdInstallment = this.installmentDtoMapper.mapToDto(installment);
         createdInstallment.setId(this.getIdForCreatedInstallment(projectFinancialData, installment));
         this.projectFinanceAwareObjectService.onCreate(projectId);
         return createdInstallment;
@@ -77,7 +79,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.projectFinanceAwareObjectService.onUpdate(projectId);
 
         LOG.debug("Installment updated");
-        return InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(installment);
+        return this.installmentDtoMapper.mapToDto(installment);
     }
 
     @Transactional
@@ -111,7 +113,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.projectFinancialDataRepository.save(projectFinancialData);
 
         LOG.debug("Payment for Installment with id {} made", installmentId);
-        return InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(installment);
+        return this.installmentDtoMapper.mapToDto(installment);
     }
 
     @Override
@@ -130,12 +132,15 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
         var installment = projectFinancialData.getInstallment(installmentId);
 
-        return InstallmentDtoMapper.INSTANCE.installmentToInstallmentDto(installment);
+        return this.installmentDtoMapper.mapToDto(installment);
     }
 
     private Long getIdForCreatedInstallment(ProjectFinancialData financialData, Installment installment) {
-        return financialData.getInstallments().stream()
-                .filter(installmentOnStage -> installmentOnStage.equals(installment)).map(Installment::getId)
-                .findFirst().orElse(null);
+        return financialData.getInstallments()
+                .stream()
+                .filter(installmentOnStage -> installmentOnStage.equals(installment))
+                .map(Installment::getId)
+                .findFirst()
+                .orElse(null);
     }
 }

@@ -7,17 +7,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 
 import java.math.BigDecimal;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface SupervisionDtoMapper {
-    SupervisionDtoMapper INSTANCE = Mappers.getMapper(SupervisionDtoMapper.class);
+public interface SupervisionMapper {
 
     @Mapping(target = "hasInvoice", source = "financialData.hasInvoice")
     @Mapping(target = "value", source = "financialData.value", qualifiedByName = "moneyToBigDecimal")
-    SupervisionDto supervisionToSupervisionDto(Supervision supervision);
+    SupervisionDto mapToDto(Supervision supervision);
 
     @Named("moneyToBigDecimal")
     default BigDecimal moneyToBigDecimal(Money money) {

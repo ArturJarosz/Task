@@ -21,9 +21,9 @@ while getopts h: flag; do
 done
 
 # check if service is running
-SONAR_STATUS=$($SONAR_PATH_9 status | sed -n 2p)
+SONAR_STATUS=$($SONAR_PATH_10 status | sed -n 2p)
 if [[ $SONAR_STATUS = "SonarQube is not running." ]]; then
-    SONAR_PATH_9 start
+    $SONAR_PATH_10 start
     sleep 10
 fi
 

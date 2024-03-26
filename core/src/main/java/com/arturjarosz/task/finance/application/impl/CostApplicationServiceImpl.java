@@ -3,7 +3,7 @@ package com.arturjarosz.task.finance.application.impl;
 import com.arturjarosz.task.dto.CostDto;
 import com.arturjarosz.task.finance.application.CostApplicationService;
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
-import com.arturjarosz.task.finance.application.mapper.CostDtoMapper;
+import com.arturjarosz.task.finance.application.mapper.CostMapper;
 import com.arturjarosz.task.finance.application.validator.CostValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.model.Cost;
@@ -32,6 +32,8 @@ public class CostApplicationServiceImpl implements CostApplicationService {
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
     @NonNull
     private final FinancialDataQueryService financialDataQueryService;
+    @NonNull
+    private final CostMapper costMapper;
 
     @Transactional
     @Override
@@ -40,12 +42,12 @@ public class CostApplicationServiceImpl implements CostApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.costValidator.validateCostDto(costDto);
 
-        var cost = CostDtoMapper.INSTANCE.costCreateDtoToCost(costDto);
+        var cost = this.costMapper.mapFromDto(costDto);
         var financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
         financialData.addCost(cost);
         financialData = this.projectFinancialDataRepository.save(financialData);
 
-        CostDto createdCostDto = CostDtoMapper.INSTANCE.costToCostDto(cost);
+        CostDto createdCostDto = this.costMapper.mapToDto(cost);
         createdCostDto.setId(this.getIdForCreatedCost(financialData, cost));
         this.projectFinanceAwareObjectService.onCreate(projectId);
         return createdCostDto;
@@ -66,7 +68,7 @@ public class CostApplicationServiceImpl implements CostApplicationService {
         this.projectFinancialDataRepository.save(projectFinancialData);
         this.projectFinanceAwareObjectService.onUpdate(projectId);
 
-        return CostDtoMapper.INSTANCE.costToCostDto(cost);
+        return this.costMapper.mapToDto(cost);
     }
 
     @Override
@@ -95,8 +97,12 @@ public class CostApplicationServiceImpl implements CostApplicationService {
     }
 
     private Long getIdForCreatedCost(ProjectFinancialData financialData, Cost cost) {
-        return financialData.getCosts().stream().filter(costOnProject -> costOnProject.equals(cost)).map(Cost::getId)
-                .findFirst().orElse(null);
+        return financialData.getCosts()
+                .stream()
+                .filter(costOnProject -> costOnProject.equals(cost))
+                .map(Cost::getId)
+                .findFirst()
+                .orElse(null);
     }
 
 }
