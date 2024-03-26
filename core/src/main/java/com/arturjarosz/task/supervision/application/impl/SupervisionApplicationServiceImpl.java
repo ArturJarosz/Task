@@ -11,8 +11,8 @@ import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.supervision.application.SupervisionApplicationService;
 import com.arturjarosz.task.supervision.application.SupervisionValidator;
 import com.arturjarosz.task.supervision.application.SupervisionVisitValidator;
-import com.arturjarosz.task.supervision.application.mapper.SupervisionDtoMapper;
-import com.arturjarosz.task.supervision.application.mapper.SupervisionVisitDtoMapper;
+import com.arturjarosz.task.supervision.application.mapper.SupervisionMapper;
+import com.arturjarosz.task.supervision.application.mapper.SupervisionVisitMapper;
 import com.arturjarosz.task.supervision.infrastructure.repository.SupervisionRepository;
 import com.arturjarosz.task.supervision.model.Supervision;
 import com.arturjarosz.task.supervision.model.SupervisionVisit;
@@ -41,6 +41,10 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     private final ProjectFinancialSummaryService projectFinancialSummaryApplicationService;
     @NonNull
     private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
+    @NonNull
+    private final SupervisionMapper supervisionMapper;
+    @NonNull
+    private final SupervisionVisitMapper supervisionVisitMapper;
 
     @Transactional
     @Override
@@ -55,7 +59,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.projectFinanceAwareObjectService.onCreate(supervisionDto.getProjectId());
 
         LOG.debug("Supervision created.");
-        return SupervisionDtoMapper.INSTANCE.supervisionToSupervisionDto(supervision);
+        return this.supervisionMapper.mapToDto(supervision);
     }
 
     @Transactional
@@ -74,7 +78,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionRepository.save(supervision);
 
         LOG.debug("Supervision with id {} updated.", supervisionId);
-        return SupervisionDtoMapper.INSTANCE.supervisionToSupervisionDto(supervision);
+        return this.supervisionMapper.mapToDto(supervision);
     }
 
     @Transactional
@@ -95,7 +99,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         LOG.debug("Retrieving supervision with id {}.", supervisionId);
         var maybeSupervision = this.supervisionRepository.findById(supervisionId);
         this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
-        return SupervisionDtoMapper.INSTANCE.supervisionToSupervisionDto(
+        return this.supervisionMapper.mapToDto(
                 maybeSupervision.orElseThrow(ResourceNotFoundException::new));
     }
 
@@ -111,7 +115,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         var supervisionVisit = new SupervisionVisit(supervisionVisitDto.getDateOfVisit(),
                 supervisionVisitDto.getHoursCount(), supervisionVisitDto.getPayable());
         supervision.addSupervisionVisit(supervisionVisit);
-        var createdSupervisionVisitDto = SupervisionVisitDtoMapper.INSTANCE.supervisionVisitToSupervisionVisionDto(
+        var createdSupervisionVisitDto = this.supervisionVisitMapper.mapToDto(
                 supervisionVisit);
         this.updateSupervisionHoursCount(supervision);
         this.projectFinancialSummaryApplicationService.recalculateSupervision(supervisionId,
@@ -146,7 +150,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionRepository.save(supervision);
 
         LOG.debug("Supervision visit with id {} updated.", supervisionVisitId);
-        return SupervisionVisitDtoMapper.INSTANCE.supervisionVisitToSupervisionVisionDto(
+        return this.supervisionVisitMapper.mapToDto(
                 supervision.updateSupervisionVisit(supervisionVisitId, supervisionVisitDto));
     }
 

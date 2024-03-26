@@ -3,8 +3,6 @@ package com.arturjarosz.task.project.query;
 import com.arturjarosz.task.contract.status.ContractStatus;
 import com.arturjarosz.task.dto.StageDto;
 import com.arturjarosz.task.dto.TaskDto;
-import com.arturjarosz.task.project.domain.dto.ProjectStatusData;
-import com.arturjarosz.task.project.domain.dto.StageStatusData;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 
@@ -15,36 +13,32 @@ public interface ProjectQueryService {
     /**
      * Load Stage by given stageId.
      */
-    Stage getStageById(Long stageId);
+    Stage getStageById(long stageId);
 
     /**
      * Load list of Project for given Client with clientId.
      */
-    List<Project> getProjectsForClientId(Long clientId);
+    List<Project> getProjectsForClientId(long clientId);
 
     /**
      * Load list of Project for given Architect with architectId.
      */
-    List<Project> getProjectsForArchitect(Long architectId);
+    List<Project> getProjectsForArchitect(long architectId);
 
     /**
      * Retrieve Task as TaskDto of given TaskId.
      */
-    TaskDto getTaskByTaskId(Long taskId);
+    TaskDto getTaskByTaskId(long taskId);
 
     /**
      * Return List of Stages as StageDto for Project of given projectId.
      */
-    List<StageDto> getStagesForProjectById(Long projectId);
+    List<StageDto> getStagesForProjectById(long projectId);
 
     /**
      * Get contract status for Project with given projectId.
      */
     ContractStatus getContractStatusForProject(long projectId);
-
-    ProjectStatusData getProjectStatusData(long projectId);
-
-    StageStatusData getStageStatusData(long stageId);
 
     Boolean doesProjectExistByProjectId(long projectId);
 

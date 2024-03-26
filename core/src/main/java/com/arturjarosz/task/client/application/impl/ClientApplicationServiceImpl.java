@@ -2,7 +2,7 @@ package com.arturjarosz.task.client.application.impl;
 
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.ClientValidator;
-import com.arturjarosz.task.client.application.mapper.ClientDtoMapper;
+import com.arturjarosz.task.client.application.mapper.ClientMapper;
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository;
 import com.arturjarosz.task.dto.ClientDto;
 import com.arturjarosz.task.dto.ClientTypeDto;
@@ -23,6 +23,8 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     private final ClientRepository clientRepository;
     @NonNull
     private final ClientValidator clientValidator;
+    @NonNull
+    private final ClientMapper clientMapper;
 
     @Transactional
     @Override
@@ -38,11 +40,11 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
             this.clientValidator.validatePrivateClient(clientDto);
         }
 
-        var client = ClientDtoMapper.INSTANCE.clientDtoToClient(clientDto);
+        var client = this.clientMapper.clientDtoToClient(clientDto);
         client = this.clientRepository.save(client);
 
         LOG.debug("Client created");
-        return ClientDtoMapper.INSTANCE.clientToClientDto(client);
+        return this.clientMapper.mapToDto(client);
     }
 
     @Transactional
@@ -65,7 +67,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         this.clientValidator.validateClientExistence(maybeClient, clientId);
 
         LOG.debug("Client with id {} loaded.", clientId);
-        return ClientDtoMapper.INSTANCE.clientToClientDto(maybeClient.orElseThrow(ResourceNotFoundException::new));
+        return this.clientMapper.mapToDto(maybeClient.orElseThrow(ResourceNotFoundException::new));
     }
 
     @Transactional
@@ -80,27 +82,27 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
         if (client.isPrivate()) {
             this.clientValidator.validatePrivateClient(clientDto);
-            client = ClientDtoMapper.INSTANCE.clientDtoToPrivateClient(clientDto);
+            client = this.clientMapper.mapFromDtoToPrivateClient(clientDto);
         } else {
             this.clientValidator.validateCorporateClient(clientDto);
-            client = ClientDtoMapper.INSTANCE.clientDtoToCorporateClient(clientDto);
+            client = this.clientMapper.mapFromDtoToCorporateClient(clientDto);
         }
 
         this.clientRepository.save(client);
 
         LOG.debug("Client with id {} updated.", clientId);
-        return ClientDtoMapper.INSTANCE.clientToClientDto(client);
+        return this.clientMapper.mapToDto(client);
     }
 
     @Override
     public List<ClientDto> getClients() {
-        return this.clientRepository.findAll().stream().map(ClientDtoMapper.INSTANCE::clientToClientDto).toList();
+        return this.clientRepository.findAll().stream().map(this.clientMapper::mapToDto).toList();
     }
 
     @Override
     public ClientDto getClientBasicData(Long clientId) {
         var maybeClient = this.clientRepository.findById(clientId);
         this.clientValidator.validateClientExistence(maybeClient, clientId);
-        return ClientDtoMapper.INSTANCE.clientToClientDto(maybeClient.orElseThrow(ResourceNotFoundException::new));
+        return this.clientMapper.mapToDto(maybeClient.orElseThrow(ResourceNotFoundException::new));
     }
 }

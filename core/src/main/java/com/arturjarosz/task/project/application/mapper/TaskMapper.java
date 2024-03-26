@@ -9,14 +9,11 @@ import com.arturjarosz.task.project.status.task.TaskWorkflow;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
 @Mapper
-public interface TaskDtoMapper {
-
-    TaskDtoMapper INSTANCE = Mappers.getMapper(TaskDtoMapper.class);
+public interface TaskMapper {
 
     default Task createDtoToTask(TaskDto taskDto, TaskWorkflow taskWorkflow) {
         return new Task(taskDto.getName(), TaskType.valueOf(taskDto.getType().name()), taskWorkflow);

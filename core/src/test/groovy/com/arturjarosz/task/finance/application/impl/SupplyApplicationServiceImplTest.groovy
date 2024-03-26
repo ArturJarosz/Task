@@ -1,6 +1,7 @@
 package com.arturjarosz.task.finance.application.impl
 
 import com.arturjarosz.task.dto.SupplyDto
+import com.arturjarosz.task.finance.application.mapper.SupplyMapperImpl
 import com.arturjarosz.task.finance.application.validator.SupplyValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.ProjectFinancialData
@@ -33,10 +34,11 @@ class SupplyApplicationServiceImplTest extends Specification {
     def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectServiceImpl)
     def projectFinancialDataRepository = Mock(ProjectFinancialDataRepository)
     def financialDataQueryService = Mock(FinancialDataQueryService)
+    def supplyMapper = new SupplyMapperImpl()
 
     def supplyApplicationService = new SupplyApplicationServiceImpl(projectFinanceAwareObjectService, projectValidator,
             supplyValidator, projectFinancialDataRepository,
-            financialDataQueryService)
+            financialDataQueryService, supplyMapper)
 
     def setup() {
         projectValidator.validateProjectExistence(NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }
@@ -48,7 +50,7 @@ class SupplyApplicationServiceImplTest extends Specification {
                 prepareProjectFinancialDataWithoutSupply()
         projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITH_SUPPLY_ID) >>
                 prepareProjectFinancialDataWithSupply()
-        financialDataQueryService.getSupplyById(SUPPLY_ID) >> prepareSupplyDto(SUPPLY_ID)
+        financialDataQueryService.getSupplyById(SUPPLY_ID, _ as Long) >> prepareSupplyDto(SUPPLY_ID)
         financialDataQueryService.getSuppliesForProject(PROJECT_WITH_SUPPLY_ID) >> ([
                 prepareSupplyDto(SUPPLY_ID)] as List)
     }

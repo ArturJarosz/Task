@@ -6,7 +6,7 @@ import com.arturjarosz.task.finance.application.InstallmentApplicationService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.StageValidator;
-import com.arturjarosz.task.project.application.mapper.StageDtoMapper;
+import com.arturjarosz.task.project.application.mapper.StageMapper;
 import com.arturjarosz.task.project.domain.StageDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.project.model.Project;
@@ -32,6 +32,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     private final StageValidator stageValidator;
     private final ContractWorkflowValidator contractWorkflowValidator;
     private final InstallmentApplicationService installmentApplicationService;
+    private final StageMapper stageMapper;
 
     @Transactional
     @Override
@@ -47,7 +48,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         project = this.projectRepository.save(project);
 
         LOG.debug("Stage for Project with id {} created.", projectId);
-        return StageDtoMapper.INSTANCE.stageDtoFromStage(this.getCreatedStageWithId(project, stage));
+        return this.stageMapper.mapToDto(this.getCreatedStageWithId(project, stage));
     }
 
     @Transactional
@@ -85,7 +86,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.projectRepository.save(project);
 
         LOG.debug("Stage updated.");
-        return StageDtoMapper.INSTANCE.stageDtoFromStage(stage);
+        return this.stageMapper.mapToDto(stage);
     }
 
     @Transactional
@@ -98,7 +99,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         var stage = this.projectQueryService.getStageById(stageId);
 
         LOG.debug("Stage loaded.");
-        return StageDtoMapper.INSTANCE.stageDtoFromStage(stage);
+        return this.stageMapper.mapToDto(stage);
     }
 
     @Override
@@ -120,7 +121,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.stageDomainService.rejectStage(project, stageId);
         this.projectRepository.save(project);
 
-        return StageDtoMapper.INSTANCE.stageDtoFromStage(this.getStageById(project, stageId));
+        return this.stageMapper.mapToDto(this.getStageById(project, stageId));
     }
 
     @Transactional
@@ -133,16 +134,22 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.stageDomainService.reopenStage(project, stageId);
         this.projectRepository.save(project);
-        return StageDtoMapper.INSTANCE.stageDtoFromStage(this.getStageById(project, stageId));
+        return this.stageMapper.mapToDto(this.getStageById(project, stageId));
     }
 
     private Stage getCreatedStageWithId(Project project, Stage stage) {
-        return project.getStages().stream().filter(stageOnProject -> stageOnProject.equals(stage)).findFirst()
+        return project.getStages()
+                .stream()
+                .filter(stageOnProject -> stageOnProject.equals(stage))
+                .findFirst()
                 .orElse(null);
     }
 
     private Stage getStageById(Project project, Long stageId) {
-        return project.getStages().stream().filter(stageOnProject -> stageOnProject.getId().equals(stageId)).findFirst()
+        return project.getStages()
+                .stream()
+                .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
+                .findFirst()
                 .orElse(null);
     }
 

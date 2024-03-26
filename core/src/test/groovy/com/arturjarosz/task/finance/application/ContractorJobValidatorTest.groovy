@@ -4,7 +4,6 @@ import com.arturjarosz.task.contractor.query.impl.ContractorQueryServiceImpl
 import com.arturjarosz.task.dto.ContractorJobDto
 import com.arturjarosz.task.finance.application.validator.ContractorJobValidator
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
-import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -23,8 +22,8 @@ class ContractorJobValidatorTest extends Specification {
             financialDataQueryService)
 
     def setup() {
-        this.financialDataQueryService.getContractorJobById(NOT_EXISTING_CONTRACTOR_JOB_ID) >> null
-        this.financialDataQueryService.getContractorJobById(EXISTING_CONTRACTOR_JOB_ID) >> new ContractorJobDto()
+        this.financialDataQueryService.getContractorJobById(NOT_EXISTING_CONTRACTOR_JOB_ID, _ as Long) >> null
+        this.financialDataQueryService.getContractorJobById(EXISTING_CONTRACTOR_JOB_ID, _ as Long) >> new ContractorJobDto()
         this.contractorQueryService.contractorWithIdExists(EXISTING_CONTRACTOR_ID) >> true
         this.contractorQueryService.contractorWithIdExists(NOT_EXISTING_CONTRACTOR_ID) >> false
     }
@@ -105,7 +104,7 @@ class ContractorJobValidatorTest extends Specification {
         when:
             this.contractorValidator.validateContractorJobOnProjectExistence(PROJECT_ID, NOT_EXISTING_CONTRACTOR_JOB_ID)
         then:
-            thrown(IllegalArgumentException)
+            thrown(ResourceNotFoundException)
     }
 
     def "validateContractorJobOnProjectExistence does not throw any exception with existing contractorJobId"() {

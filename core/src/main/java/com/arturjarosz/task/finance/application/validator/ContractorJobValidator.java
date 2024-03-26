@@ -40,7 +40,7 @@ public class ContractorJobValidator {
     }
 
     public void validateContractorJobOnProjectExistence(Long projectId, Long contractorJobId) {
-        assertNotNull(this.financialDataQueryService.getContractorJobById(contractorJobId),
+        assertEntityNotNull(this.financialDataQueryService.getContractorJobById(contractorJobId, projectId),
                 createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.PROJECT,
                         ProjectExceptionCodes.CONTRACTOR_JOB), projectId, contractorJobId);
     }

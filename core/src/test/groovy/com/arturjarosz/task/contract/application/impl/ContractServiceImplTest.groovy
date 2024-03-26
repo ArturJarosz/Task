@@ -1,6 +1,7 @@
 package com.arturjarosz.task.contract.application.impl
 
 import com.arturjarosz.task.contract.application.ContractValidator
+import com.arturjarosz.task.contract.application.mapper.ContractMapperImpl
 import com.arturjarosz.task.contract.intrastructure.ContractRepository
 import com.arturjarosz.task.contract.model.Contract
 import com.arturjarosz.task.contract.status.ContractStatus
@@ -31,10 +32,11 @@ class ContractServiceImplTest extends Specification {
     def contractStatusWorkflow = Mock(ContractStatusWorkflow)
     def contractValidator = Mock(ContractValidator)
     def contractRepository = Mock(ContractRepository)
+    def contractMapper = new ContractMapperImpl()
 
     @Subject
     def contractService = new ContractServiceImpl(contractStatusTransitionService, contractStatusWorkflow,
-            contractValidator, contractRepository)
+            contractValidator, contractRepository, contractMapper)
 
     def "createContract does not create any contract on missing contractDto"() {
         given:

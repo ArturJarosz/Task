@@ -10,6 +10,8 @@ import com.arturjarosz.task.sharedkernel.model.Money
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import com.arturjarosz.task.supervision.application.SupervisionValidator
 import com.arturjarosz.task.supervision.application.SupervisionVisitValidator
+import com.arturjarosz.task.supervision.application.mapper.SupervisionMapperImpl
+import com.arturjarosz.task.supervision.application.mapper.SupervisionVisitMapperImpl
 import com.arturjarosz.task.supervision.infrastructure.repository.SupervisionRepository
 import com.arturjarosz.task.supervision.model.Supervision
 import com.arturjarosz.task.supervision.model.SupervisionVisit
@@ -45,11 +47,12 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def supervisionQueryService = Mock(SupervisionQueryService)
     def projectFinancialSummaryApplicationService = Mock(ProjectFinancialSummaryService)
     def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectService)
+    def supervisionMapper = new SupervisionMapperImpl()
+    def supervisionVisitMapper = new SupervisionVisitMapperImpl()
 
     def supervisionApplicationService = new SupervisionApplicationServiceImpl(projectValidator, supervisionValidator,
             supervisionVisitValidator, supervisionRepository, supervisionQueryService,
-            projectFinancialSummaryApplicationService, projectFinanceAwareObjectService
-    )
+            projectFinancialSummaryApplicationService, projectFinanceAwareObjectService, supervisionMapper, supervisionVisitMapper)
 
     def "createSupervision should call validateCreateSupervision from supervisionValidator"() {
         given:
@@ -230,17 +233,15 @@ class SupervisionApplicationServiceImplTest extends Specification {
         when:
             this.supervisionApplicationService.createSupervisionVisit(SUPERVISION_ID, supervisionVisitDto)
         then:
-            1 * this.supervisionRepository.save({
-                Supervision supervision ->
-                    supervision.supervisionVisits.size() == 1
-                    return supervision
-            } as Supervision) >> {
-                arguments ->
-                    Supervision supervisionToUpdate = arguments[0] as Supervision
-                    supervisionToUpdate = this.injectMockedId(supervisionToUpdate, SUPERVISION_ID)
-                    SupervisionVisit supervisionVisit = supervisionToUpdate.supervisionVisits.iterator().next()
-                    this.injectMockedId(supervisionVisit, SUPERVISION_VISIT_ID)
-                    return supervisionToUpdate
+            1 * this.supervisionRepository.save({ Supervision supervision ->
+                supervision.supervisionVisits.size() == 1
+                return supervision
+            } as Supervision) >> { arguments ->
+                Supervision supervisionToUpdate = arguments[0] as Supervision
+                supervisionToUpdate = this.injectMockedId(supervisionToUpdate, SUPERVISION_ID)
+                SupervisionVisit supervisionVisit = supervisionToUpdate.supervisionVisits.iterator().next()
+                this.injectMockedId(supervisionVisit, SUPERVISION_VISIT_ID)
+                return supervisionToUpdate
             }
     }
 
@@ -308,12 +309,11 @@ class SupervisionApplicationServiceImplTest extends Specification {
                     visit.getDateOfVisit() == UPDATED_DATE_OF_VISIT
 
                 }
-            }) >> {
-                arguments ->
-                    Supervision supervisionToUpdate = arguments[0] as Supervision
-                    SupervisionVisit supervisionVisit = supervisionToUpdate.supervisionVisits.iterator().next()
-                    this.injectMockedId(supervisionVisit, SUPERVISION_VISIT_ID)
-                    return supervisionToUpdate
+            }) >> { arguments ->
+                Supervision supervisionToUpdate = arguments[0] as Supervision
+                SupervisionVisit supervisionVisit = supervisionToUpdate.supervisionVisits.iterator().next()
+                this.injectMockedId(supervisionVisit, SUPERVISION_VISIT_ID)
+                return supervisionToUpdate
             }
     }
 
@@ -368,8 +368,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
     }
 
     private void mockValidateProjectExistenceWithNotExistingProjectId() {
-        this.projectValidator.validateProjectExistence(
-                NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }
+        this.projectValidator.validateProjectExistence(NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }
     }
 
     private void mockSupervisionRepositoryLoad() {
@@ -406,8 +405,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
                 .withValue(new Money(0))
                 .build()
         def supervisionVisit = new SupervisionVisitBuilder()
-                .withId(SUPERVISION_VISIT_ID).withDateOfVisit(DATE_OF_VISIT).withHoursCount(HOURS_COUNT).withIsPayable(
-                true).build()
+                .withId(SUPERVISION_VISIT_ID).withDateOfVisit(DATE_OF_VISIT).withHoursCount(HOURS_COUNT).withIsPayable(true).build()
         return new SupervisionBuilder()
                 .withFinancialData(financialData)
                 .withSupervisionVisit(supervisionVisit)
@@ -439,12 +437,11 @@ class SupervisionApplicationServiceImplTest extends Specification {
     }
 
     private void mockSupervisionRepositorySaveWithSupervisionVisit() {
-        this.supervisionRepository.save(_ as Supervision) >> {
-            arguments ->
-                Supervision supervisionToUpdate = arguments[0] as Supervision
-                SupervisionVisit supervisionVisit = supervisionToUpdate.supervisionVisits.iterator().next()
-                this.injectMockedId(supervisionVisit, SUPERVISION_VISIT_ID)
-                return supervisionToUpdate
+        this.supervisionRepository.save(_ as Supervision) >> { arguments ->
+            Supervision supervisionToUpdate = arguments[0] as Supervision
+            SupervisionVisit supervisionVisit = supervisionToUpdate.supervisionVisits.iterator().next()
+            this.injectMockedId(supervisionVisit, SUPERVISION_VISIT_ID)
+            return supervisionToUpdate
         }
     }
 

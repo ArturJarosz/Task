@@ -3,6 +3,7 @@ package com.arturjarosz.task.supplier.application.impl
 import com.arturjarosz.task.dto.SupplierCategoryDto
 import com.arturjarosz.task.dto.SupplierDto
 import com.arturjarosz.task.supplier.application.SupplierValidator
+import com.arturjarosz.task.supplier.application.mapper.SupplierMapperImpl
 import com.arturjarosz.task.supplier.infrastructure.SupplierRepository
 import com.arturjarosz.task.supplier.model.Supplier
 import com.arturjarosz.task.supplier.model.SupplierCategory
@@ -20,8 +21,9 @@ class SupplierApplicationServiceImplTest extends Specification {
 
     def supplierValidator = Mock(SupplierValidator)
     def supplierRepository = Mock(SupplierRepository)
+    def supplierMapper = new SupplierMapperImpl()
 
-    def supplierApplicationService = new SupplierApplicationServiceImpl(supplierRepository, supplierValidator)
+    def supplierApplicationService = new SupplierApplicationServiceImpl(supplierRepository, supplierValidator, supplierMapper)
 
     def "createSupplier should call validateCreateSupplierDto on supplierValidator"() {
         given:

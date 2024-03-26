@@ -8,6 +8,7 @@ import com.arturjarosz.task.dto.UpdateStatusRequestDto
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.TaskValidator
+import com.arturjarosz.task.project.application.mapper.TaskMapperImpl
 import com.arturjarosz.task.project.domain.TaskDomainService
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
@@ -40,8 +41,10 @@ class TaskApplicationServiceImplTest extends Specification {
     def taskValidator = Mock(TaskValidator)
     def contractWorkflowValidator = Mock(ContractWorkflowValidator)
 
+    def taskMapper = new TaskMapperImpl()
+
     def taskApplicationService = new TaskApplicationServiceImpl(projectQueryService, projectRepository,
-            projectValidator, stageValidator, taskDomainService, taskValidator, contractWorkflowValidator)
+            projectValidator, stageValidator, taskDomainService, taskValidator, contractWorkflowValidator, taskMapper)
 
     def "createTask should call validateProjectExistence on ProjectValidator"() {
         given:

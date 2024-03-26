@@ -1,7 +1,7 @@
 package com.arturjarosz.task.contractor.application.impl
 
-import com.arturjarosz.task.contract.intrastructure.ContractRepository
 import com.arturjarosz.task.contractor.application.ContractorValidator
+import com.arturjarosz.task.contractor.application.mapper.ContractorMapperImpl
 import com.arturjarosz.task.contractor.infrastructure.ContractorRepository
 import com.arturjarosz.task.contractor.model.Contractor
 import com.arturjarosz.task.contractor.model.ContractorCategory
@@ -20,11 +20,12 @@ class ContractorApplicationServiceImplTest extends Specification {
     final static String NOTE = "note"
     final static Long CONTRACTOR_ID = 1L
 
-    def contractorRepository = Mock(ContractRepository)
+    def contractorRepository = Mock(ContractorRepository)
     def contractorValidator = Mock(ContractorValidator)
+    def contractorMapper = new ContractorMapperImpl()
 
     @Subject
-    def contractorApplicationService = new ContractorApplicationServiceImpl(contractorRepository as ContractorRepository, contractorValidator)
+    def contractorApplicationService = new ContractorApplicationServiceImpl(contractorRepository, contractorValidator, contractorMapper)
 
 
     def "createContractor should call validateCreateContractorDto from contractorValidator"() {

@@ -2,7 +2,7 @@ package com.arturjarosz.task.finance.application.impl;
 
 import com.arturjarosz.task.dto.ContractorJobDto;
 import com.arturjarosz.task.finance.application.ContractorJobApplicationService;
-import com.arturjarosz.task.finance.application.mapper.ContractorJobDtoMapper;
+import com.arturjarosz.task.finance.application.mapper.ContractorJobMapper;
 import com.arturjarosz.task.finance.application.validator.ContractorJobValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
@@ -28,6 +28,8 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
     @NonNull
     private final FinancialDataQueryService financialDataQueryService;
+    @NonNull
+    private final ContractorJobMapper contractorJobMapper;
 
     @Transactional
     @Override
@@ -40,19 +42,20 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
 
         var financialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
 
-        var contractorJob = ContractorJobDtoMapper.INSTANCE.contractorJobDtoToContractorJob(contractorJobDto);
+        var contractorJob = this.contractorJobMapper.mapFromDto(contractorJobDto);
         financialData.addContractorJob(contractorJob);
 
         this.projectFinanceAwareObjectService.onCreate(projectId);
         this.projectFinancialDataRepository.save(financialData);
         LOG.debug("ContractorJob for Project with id {} created", projectId);
-        var createdContractorJobDto = ContractorJobDtoMapper.INSTANCE.contractorJobToContractorJobDto(contractorJob, projectId);
-        return createdContractorJobDto;
+
+        return this.contractorJobMapper.mapToDto(contractorJob, projectId);
     }
 
     @Transactional
     @Override
-    public ContractorJobDto updateContractorJob(Long projectId, Long contractorJobId, ContractorJobDto contractorJobDto) {
+    public ContractorJobDto updateContractorJob(Long projectId, Long contractorJobId,
+            ContractorJobDto contractorJobDto) {
         LOG.debug("Updating ContractorJob with id {} from Project with id {}", contractorJobId, projectId);
 
         this.projectValidator.validateProjectExistence(projectId);
@@ -65,14 +68,14 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         this.projectFinanceAwareObjectService.onUpdate(projectId);
 
         LOG.debug("ContractorJob with id {} updated on Project with id {}", contractorJobId, projectId);
-        return ContractorJobDtoMapper.INSTANCE.contractorJobToContractorJobDto(contractorJob, projectId);
+        return this.contractorJobMapper.mapToDto(contractorJob, projectId);
     }
 
     @Override
     public ContractorJobDto getContractorJob(Long projectId, Long contractorJobId) {
         LOG.debug("Loading ContractorJob with id {} for Project with id {}", contractorJobId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        var contractorJobDto = this.financialDataQueryService.getContractorJobById(contractorJobId);
+        var contractorJobDto = this.financialDataQueryService.getContractorJobById(contractorJobId, projectId);
         this.contractorJobValidator.validateContractorJobExistence(contractorJobDto, projectId, contractorJobId);
         return contractorJobDto;
     }
