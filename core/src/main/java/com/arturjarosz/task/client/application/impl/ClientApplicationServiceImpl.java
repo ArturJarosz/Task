@@ -82,10 +82,10 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
         if (client.isPrivate()) {
             this.clientValidator.validatePrivateClient(clientDto);
-            client = this.clientMapper.mapFromDtoToPrivateClient(clientDto);
+            this.clientMapper.updatePrivateClientFromDto(clientDto, client);
         } else {
             this.clientValidator.validateCorporateClient(clientDto);
-            client = this.clientMapper.mapFromDtoToCorporateClient(clientDto);
+            this.clientMapper.updateCorporateClientFromDto(clientDto, client);
         }
 
         this.clientRepository.save(client);
