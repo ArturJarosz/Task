@@ -3098,6 +3098,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ProjectStatus"
+        stages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Stage"
 
     Projects:
       type: array

@@ -6,8 +6,10 @@ import com.arturjarosz.task.dto.ClientDto;
 import com.arturjarosz.task.dto.ClientTypeDto;
 import com.arturjarosz.task.sharedkernel.model.Address;
 import com.arturjarosz.task.sharedkernel.model.Email;
+import com.arturjarosz.task.sharedkernel.model.PersonName;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
@@ -61,6 +63,11 @@ public interface ClientMapper {
         return new Email(text);
     }
 
+    @Named("personalNameFromDto")
+    default PersonName personalNameFromDto(ClientDto clientDto) {
+        return new PersonName(clientDto.getFirstName(), clientDto.getLastName());
+    }
+
     @Mapping(target = "companyName", ignore = true)
     @Mapping(target = "clientType", constant = "PRIVATE")
     @Mapping(target = "personName.firstName", source = "firstName")
@@ -76,4 +83,19 @@ public interface ClientMapper {
     @Mapping(target = "address", source = "contact.address", qualifiedByName = "addressDtoToAddress")
     @Mapping(target = "email", source = "contact.email", qualifiedByName = "textToEmail")
     Client mapFromDtoToCorporateClient(ClientDto clientDto);
+
+    @Mapping(target = "personName", source = "clientDto", qualifiedByName = "personalNameFromDto")
+    @Mapping(target = "companyName", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "telephone", source = "contact.telephone")
+    @Mapping(target = "address", source = "contact.address", qualifiedByName = "addressDtoToAddress")
+    @Mapping(target = "email", source = "contact.email", qualifiedByName = "textToEmail")
+    void updatePrivateClientFromDto(ClientDto clientDto, @MappingTarget Client client);
+
+    @Mapping(target = "personName", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "telephone", source = "contact.telephone")
+    @Mapping(target = "address", source = "contact.address", qualifiedByName = "addressDtoToAddress")
+    @Mapping(target = "email", source = "contact.email", qualifiedByName = "textToEmail")
+    void updateCorporateClientFromDto(ClientDto clientDto, @MappingTarget Client client);
 }

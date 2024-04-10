@@ -15,7 +15,7 @@ displayHelpForCompose() {
     echo "  -b      build type:"
     echo "          - full - full redeploy of the application, with dropping tables and applying schema and then running application"
     echo "          - only-update - applying updating database schema without running the application"
-    echo "          - run - starting database and application"
+    echo "          - only-run - starting database and application"
     echo "  -h      display this help"
     echo "Example: $0 local 0.6.2-SNAPSHOT full"
 }

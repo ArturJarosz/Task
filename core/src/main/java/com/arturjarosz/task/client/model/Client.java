@@ -32,10 +32,12 @@ public class Client extends AbstractAggregateRoot {
     @AttributeOverride(name = "value", column = @Column(name = "PROJECTS_VALUE"))
     private Money projectsValue;
 
+    @Setter
     @Getter
     @Embedded
     private PersonName personName;
 
+    @Setter
     @Getter
     @Column(name = "COMPANY_NAME")
     private String companyName;
@@ -84,17 +86,10 @@ public class Client extends AbstractAggregateRoot {
         return this.clientType.equals(ClientType.CORPORATE);
     }
 
-    public void setProjectsValue(Money newValue) {
-        this.projectsValue = newValue.copy();
-    }
 
     public void setPersonName(String firstName, String lastName) {
         this.personName.setFirstName(firstName);
         this.personName.setLastName(lastName);
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
     }
 
 
