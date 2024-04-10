@@ -18,7 +18,7 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = StageMapper.class)
 public interface ProjectMapper {
 
     @Mapping(target = "projectWorkflow", source = "projectWorkflow")
