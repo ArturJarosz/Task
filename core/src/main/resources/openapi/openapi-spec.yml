@@ -3190,6 +3190,7 @@ components:
       type: string
       enum:
         - AUTHORS_SUPERVISION
+        - TENANT_ALTERATIONS
         - EXECUTIVE_PROJECT
         - FUNCTIONAL_LAYOUT
         - VISUALISATIONS
