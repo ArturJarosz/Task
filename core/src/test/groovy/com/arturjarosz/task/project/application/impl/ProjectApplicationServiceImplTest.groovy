@@ -9,6 +9,7 @@ import com.arturjarosz.task.contract.application.mapper.ContractMapperImpl
 import com.arturjarosz.task.contract.model.Contract
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow
 import com.arturjarosz.task.dto.*
+import com.arturjarosz.task.finance.application.CostApplicationService
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService
 import com.arturjarosz.task.finance.application.impl.ProjectFinancialSummaryServiceImpl
 import com.arturjarosz.task.project.application.ProjectValidator
@@ -49,10 +50,11 @@ class ProjectApplicationServiceImplTest extends Specification {
     def projectFinancialDataService = Mock(ProjectFinancialDataService)
     def contractMapper = new ContractMapperImpl()
     def projectMapper = new ProjectMapperImpl()
+    def costApplicationService = Mock(CostApplicationService)
 
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator,
-            projectFinancialDataApplicationService, projectFinancialDataService, contractService, contractMapper, projectMapper)
+            projectFinancialDataApplicationService, projectFinancialDataService, contractService, contractMapper, projectMapper, costApplicationService)
 
     def "createProject should call validateProjectBasicDto on projectValidator"() {
         given:
