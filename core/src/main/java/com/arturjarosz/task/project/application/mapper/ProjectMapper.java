@@ -5,6 +5,7 @@ import com.arturjarosz.task.dto.ArchitectDto;
 import com.arturjarosz.task.dto.ClientDto;
 import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.dto.ContractStatusDto;
+import com.arturjarosz.task.dto.CostDto;
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
 import com.arturjarosz.task.dto.ProjectStatusDto;
@@ -18,7 +19,7 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = StageMapper.class)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {StageMapper.class})
 public interface ProjectMapper {
 
     @Mapping(target = "projectWorkflow", source = "projectWorkflow")
@@ -43,8 +44,9 @@ public interface ProjectMapper {
     @Mapping(source = "architectDto", target = "architect")
     @Mapping(source = "project", target = "nextStatuses", qualifiedByName = "getNextStatuses")
     @Mapping(source = "contractDto", target = "contract")
-    ProjectDto mapToDto(ClientDto clientDto, ArchitectDto architectDto, Project project,
-            ContractDto contractDto);
+    @Mapping(source = "costDtos", target = "costs")
+    ProjectDto mapToDto(ClientDto clientDto, ArchitectDto architectDto, Project project, ContractDto contractDto,
+            List<CostDto> costDtos);
 
     @Mapping(source = "project.projectType", target = "type")
     @Mapping(source = "project.name", target = "name")

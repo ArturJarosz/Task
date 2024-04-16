@@ -8,6 +8,7 @@ import com.arturjarosz.task.contract.application.ContractService;
 import com.arturjarosz.task.contract.application.mapper.ContractMapper;
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
+import com.arturjarosz.task.finance.application.CostApplicationService;
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
@@ -53,6 +54,8 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final ContractMapper contractMapper;
     @NonNull
     private final ProjectMapper projectMapper;
+    @NonNull
+    private final CostApplicationService costApplicationService;
 
     @Transactional
     @Override
@@ -85,9 +88,10 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         var clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
         var architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
         var contractDto = this.contractService.getContractForProject(project.getContractId());
+        var projectCosts = this.costApplicationService.getCosts(projectId);
 
         LOG.debug("Project with id {} loaded.", projectId);
-        return this.projectMapper.mapToDto(clientDto, architectDto, project, contractDto);
+        return this.projectMapper.mapToDto(clientDto, architectDto, project, contractDto, projectCosts);
     }
 
     @Transactional
