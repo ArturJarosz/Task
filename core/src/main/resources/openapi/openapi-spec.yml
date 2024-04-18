@@ -3406,3 +3406,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ConfigurationEntry"
+        costCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
