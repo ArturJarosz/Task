@@ -1,7 +1,7 @@
 {
-  "name": "test contractor",
-  "category": "PLUMBER",
-  "note": "some test note",
-  "telephone": "123456789",
-  "email": "test@test.pl"
+    "name": "test contractor",
+    "category": "PLUMBER",
+    "note": "test note",
+    "telephone": "223456789",
+    "email": "test@test.pl"
 }

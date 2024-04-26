@@ -133,7 +133,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
                 .stream()
                 .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .flatMap(stageOnProject -> stageOnProject.getTasks().stream())
-                .map(this.taskMapper::taskToTaskBasicDto)
+                .map(this.taskMapper::taskToTaskDto)
                 .toList();
 
     }

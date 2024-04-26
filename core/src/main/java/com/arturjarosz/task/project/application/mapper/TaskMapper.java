@@ -29,12 +29,10 @@ public interface TaskMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "type", target = "type")
     @Mapping(source = "status", target = "status")
-    @Mapping(target = "note", ignore = true)
-    @Mapping(target = "startDate", ignore = true)
-    @Mapping(target = "endDate", ignore = true)
-    TaskDto taskToTaskBasicDto(Task task);
-
+    @Mapping(source = "startDate", target = "startDate")
+    @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "task", target = "nextStatuses", qualifiedByName = "getNextStatuses")
+    @Mapping(source = "note", target = "note")
     TaskDto taskToTaskDto(Task task);
 
     @Named("getNextStatuses")
