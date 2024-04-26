@@ -11,12 +11,13 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {TaskMapper.class})
 public interface StageMapper {
 
     @Mapping(source = "stageWorkflow", target = "stageWorkflow")
     @Mapping(source = "stageDto.name", target = "name")
     @Mapping(source = "stageDto.type", target = "stageType")
+    @Mapping(target = "tasks", ignore = true)
     Stage mapFromDto(StageDto stageDto, StageWorkflow stageWorkflow);
 
     @Mapping(source = "stageType", target = "type")

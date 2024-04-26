@@ -3178,6 +3178,10 @@ components:
           $ref: "#/components/schemas/Installment"
         tasksNumber:
           type: integer
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
         status:
           $ref: "#/components/schemas/StageStatus"
         nextStatuses:
