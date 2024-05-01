@@ -57,13 +57,4 @@ public class TaskRestController implements TaskApi {
         return new ResponseEntity<>(this.taskApplicationService.getTaskList(projectId, stageId), HttpStatus.OK);
     }
 
-    @Override
-    public ResponseEntity<TaskDto> rejectTask(Long projectId, Long stageId, Long taskId) {
-        return new ResponseEntity<>(this.taskApplicationService.rejectTask(projectId, stageId, taskId), HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<TaskDto> reopenTask(Long projectId, Long stageId, Long taskId) {
-        return new ResponseEntity<>(this.taskApplicationService.reopenTask(projectId, stageId, taskId), HttpStatus.OK);
-    }
 }

@@ -138,38 +138,6 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
 
     }
 
-    @Transactional
-    @Override
-    public TaskDto rejectTask(Long projectId, Long stageId, Long taskId) {
-        LOG.debug("Rejecting Task with id {}", taskId);
-
-        var maybeProject = this.projectRepository.findById(projectId);
-        this.projectValidator.validateProjectExistence(maybeProject, projectId);
-        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
-        var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
-        this.taskDomainService.rejectTask(project, stageId, taskId);
-        this.projectRepository.save(project);
-
-        return this.taskMapper.taskToTaskDto(this.getTaskById(project, stageId, taskId));
-    }
-
-    @Transactional
-    @Override
-    public TaskDto reopenTask(Long projectId, Long stageId, Long taskId) {
-        LOG.debug("Reopening Task with id {}", taskId);
-
-        var maybeProject = this.projectRepository.findById(projectId);
-        this.projectValidator.validateProjectExistence(maybeProject, projectId);
-        this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
-        this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
-        var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
-        this.taskDomainService.reopenTask(project, stageId, taskId);
-        this.projectRepository.save(project);
-
-        return this.taskMapper.taskToTaskDto(this.getTaskById(project, stageId, taskId));
-    }
-
     private Task getNewTaskWithId(Project project, Long stageId, Task task) {
         Predicate<Stage> stagePredicate = stage -> stage.getId().equals(stageId);
         Predicate<Task> taskPredicate = taskOnStage -> taskOnStage.equals(task);

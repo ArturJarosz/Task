@@ -44,15 +44,4 @@ public interface TaskApplicationService {
      */
     List<TaskDto> getTaskList(Long projectId, Long stageId);
 
-    /**
-     * Set Task with taskId as rejected for Stage with stageId on Project with ProjectId. If Project, Stage or Task
-     * does not exist, new exception will be thrown.
-     */
-    TaskDto rejectTask(Long projectId, Long stageId, Long taskId);
-
-    /**
-     * Allows continuing work on Task, changing its status to TO_DO. If Project, Stage or Task do not exist,
-     * new exception will be thrown.
-     */
-    TaskDto reopenTask(Long projectId, Long stageId, Long taskId);
 }
