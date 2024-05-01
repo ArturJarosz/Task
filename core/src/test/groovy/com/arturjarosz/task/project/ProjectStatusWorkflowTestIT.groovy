@@ -639,11 +639,17 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.createTask(projectDto.id, stageDto.id)
             this.createTask(projectDto.id, stageDto.id)
             this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatusDto.REJECTED)
+            def updateStatusDto = new TaskDto(status: TaskStatusDto.TO_DO)
+            def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
         when:
             def reopenTask11 = this.mockMvc.perform(MockMvcRequestBuilders
                     .post(URI
                             .create(this.createTaskUri(projectDto.id, stageDto.id,
-                                    taskDto11.id) + "/reopen"))).andReturn().response
+                                    taskDto11.id) + "/status"))
+                    .header("Content-Type", "application/json")
+                    .content(requestBody))
+                    .andReturn().response
+
         then:
             reopenTask11.status == HttpStatus.OK.value()
         and: "Stage status is TO_DO"
@@ -662,11 +668,16 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.createTask(projectDto.id, stageDto.id)
             this.updateTaskStatus(projectDto.id, stageDto.id, taskDto11.id, TaskStatusDto.REJECTED)
             this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatusDto.IN_PROGRESS)
+            def updateStatusDto = new TaskDto(status: TaskStatusDto.TO_DO)
+            def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
         when:
             def reopenTask11 = this.mockMvc.perform(MockMvcRequestBuilders
                     .post(URI
                             .create(this.createTaskUri(projectDto.id, stageDto.id,
-                                    taskDto11.id) + "/reopen"))).andReturn().response
+                                    taskDto11.id) + "/status"))
+                    .header("Content-Type", "application/json")
+                    .content(requestBody))
+                    .andReturn().response
         then:
             reopenTask11.status == HttpStatus.OK.value()
         and: "Stage status is IN_PROGRESS"
@@ -688,11 +699,16 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             this.updateTaskStatus(projectDto.id, stageDto.id, taskDto12.id, TaskStatusDto.DONE)
             this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatusDto.IN_PROGRESS)
             this.updateTaskStatus(projectDto.id, stageDto.id, taskDto13.id, TaskStatusDto.DONE)
+            def updateStatusDto = new TaskDto(status: TaskStatusDto.TO_DO)
+            def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
         when:
             def reopenTask11 = this.mockMvc.perform(MockMvcRequestBuilders
                     .post(URI
                             .create(this.createTaskUri(projectDto.id, stageDto.id,
-                                    taskDto11.id) + "/reopen"))).andReturn().response
+                                    taskDto11.id) + "/status"))
+                    .header("Content-Type", "application/json")
+                    .content(requestBody))
+                    .andReturn().response
         then:
             reopenTask11.status == HttpStatus.OK.value()
         and: "Stage status is IN_PROGRESS"

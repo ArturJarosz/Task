@@ -23,14 +23,4 @@ public interface TaskDomainService {
      */
     void updateTaskStatus(Project project, Long stageId, Long taskId, TaskStatus status);
 
-    /**
-     * Mark Task with given taskId on given Stage with stageId for Project as Rejected.
-     */
-    void rejectTask(Project project, Long stageId, Long taskId);
-
-    /**
-     * Reopen rejected Task with given taskId on given Stage with stageId for Project to work.
-     */
-    void reopenTask(Project project, Long stageId, Long taskId);
-
 }

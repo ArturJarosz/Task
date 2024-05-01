@@ -38,13 +38,4 @@ public class TaskDomainServiceImpl implements TaskDomainService {
         this.taskStatusTransitionService.changeTaskStatus(project, stageId, taskId, status);
     }
 
-    @Override
-    public void rejectTask(Project project, Long stageId, Long taskId) {
-        this.taskStatusTransitionService.reject(project, stageId, taskId);
-    }
-
-    @Override
-    public void reopenTask(Project project, Long stageId, Long taskId) {
-        this.taskStatusTransitionService.reopen(project, stageId, taskId);
-    }
 }
