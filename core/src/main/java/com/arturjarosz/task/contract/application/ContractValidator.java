@@ -17,6 +17,13 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 @Component
 public class ContractValidator {
 
+    public void validateBaseContractDto(ContractDto contractDto) {
+        assertNotNull(contractDto, createMessageCode(ExceptionCodes.NULL, ContractExceptionCodes.PROJECT,
+                ContractExceptionCodes.CONTRACT));
+        assertNotNull(contractDto.getStatus(), ExceptionCodes.NULL, ContractExceptionCodes.CONTRACT,
+                ContractExceptionCodes.STATUS);
+    }
+
     public void validateOffer(ContractDto contractDto) {
         assertNotNull(contractDto, createMessageCode(ExceptionCodes.NULL, ContractExceptionCodes.PROJECT,
                 ContractExceptionCodes.CONTRACT));

@@ -29,38 +29,8 @@ public class ContractStatusTransitionServiceImpl implements ContractStatusTransi
     }
 
     @Override
-    public void makeNewOffer(Contract contract) {
-        this.contractWorkflowService.changeContractStatus(contract, ContractStatus.OFFER);
-    }
-
-    @Override
-    public void acceptOffer(Contract contract) {
-        this.contractWorkflowService.changeContractStatus(contract, ContractStatus.ACCEPTED);
-    }
-
-    @Override
     public void rejectAcceptedOffer(Contract contract) {
         this.contractWorkflowService.changeContractStatus(contract, ContractStatus.REJECTED);
-    }
-
-    @Override
-    public void signContract(Contract contract) {
-        this.contractWorkflowService.changeContractStatus(contract, ContractStatus.SIGNED);
-    }
-
-    @Override
-    public void terminateContract(Contract contract) {
-        this.contractWorkflowService.changeContractStatus(contract, ContractStatus.TERMINATED);
-    }
-
-    @Override
-    public void resumeContract(Contract contract) {
-        this.contractWorkflowService.changeContractStatus(contract, ContractStatus.SIGNED);
-    }
-
-    @Override
-    public void completeContract(Contract contract) {
-        this.contractWorkflowService.changeContractStatus(contract, ContractStatus.COMPLETED);
     }
 
     @Override
@@ -75,6 +45,15 @@ public class ContractStatusTransitionServiceImpl implements ContractStatusTransi
                             ProjectExceptionCodes.STATUS, ProjectExceptionCodes.TRANSITION),
                     contract.getStatus() != null ? contract.getStatus().getStatusName() : "null",
                     ContractStatus.REJECTED.getStatusName());
+        }
+    }
+
+    @Override
+    public void changeStatus(Contract contract, ContractStatus newStatus) {
+        if (ContractStatus.REJECTED == newStatus) {
+            this.reject(contract);
+        } else {
+            this.contractWorkflowService.changeContractStatus(contract, newStatus);
         }
     }
 }

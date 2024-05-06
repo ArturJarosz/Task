@@ -16,38 +16,8 @@ public class ContractRestController implements ContractApi {
     private final ContractService contractService;
 
     @Override
-    public ResponseEntity<ContractDto> rejectOffer(Long contractId) {
-        return new ResponseEntity<>(this.contractService.reject(contractId), HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<ContractDto> makeNewOffer(ContractDto contractDto, Long contractId) {
-        return new ResponseEntity<>(this.contractService.makeNewOffer(contractId, contractDto), HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<ContractDto> acceptOffer(Long contractId) {
-        return new ResponseEntity<>(this.contractService.acceptOffer(contractId), HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<ContractDto> sign(ContractDto contractDto, Long contractId) {
-        return new ResponseEntity<>(this.contractService.sign(contractId, contractDto), HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<ContractDto> terminate(ContractDto contractDto, Long contractId) {
-        return new ResponseEntity<>(this.contractService.terminate(contractId, contractDto), HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<ContractDto> resume(Long contractId) {
-        return new ResponseEntity<>(this.contractService.resume(contractId), HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<ContractDto> complete(ContractDto contractDto, Long contractId) {
-        return new ResponseEntity<>(this.contractService.complete(contractId, contractDto), HttpStatus.OK);
+    public ResponseEntity<ContractDto> changeStatus(ContractDto contractDto, Long contractId) throws Exception {
+        return new ResponseEntity<>(this.contractService.changeStatus(contractId, contractDto), HttpStatus.OK);
     }
 
 }

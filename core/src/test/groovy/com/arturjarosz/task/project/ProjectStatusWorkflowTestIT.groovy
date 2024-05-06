@@ -1613,7 +1613,11 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     }
 
     private MockHttpServletResponse acceptContractOffer(long contractId) {
-        return this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createContractUri(contractId) + "/accept-offer"))).andReturn().response
+        def contractDto = new ContractDto()
+        contractDto.status(ContractStatusDto.ACCEPTED)
+        def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(contractDto)
+        return this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createContractUri(contractId) + "/status")).header("Content-Type", "application/json")
+                .content(requestBody)).andReturn().response
     }
 
     private MockHttpServletResponse rejectProject(long projectId) {

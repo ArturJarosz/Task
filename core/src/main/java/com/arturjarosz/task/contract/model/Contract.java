@@ -83,6 +83,26 @@ public class Contract extends AbstractAggregateRoot implements WorkflowAware<Con
         this.deadline = deadline;
     }
 
+    public void updateValue(Double offerValue) {
+        this.offerValue = new Money(offerValue);
+    }
+
+    public void updateDeadline(LocalDate deadline) {
+        this.deadline = deadline;
+    }
+
+    public void updateStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public void updateEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public void updateSigningDate(LocalDate signingDate) {
+        this.signingDate = signingDate;
+    }
+
     public void sign(ContractDto contractDto) {
         this.offerValue = new Money(contractDto.getOfferValue());
         this.deadline = contractDto.getDeadline();

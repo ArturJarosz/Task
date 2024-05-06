@@ -6,19 +6,7 @@ public interface ContractService {
 
     ContractDto createContract(ContractDto contractDto);
 
-    ContractDto reject(Long contractId);
-
-    ContractDto makeNewOffer(Long contractId, ContractDto contractDto);
-
-    ContractDto acceptOffer(Long contractId);
-
-    ContractDto sign(Long contractId, ContractDto contractDto);
-
-    ContractDto terminate(Long contractId, ContractDto contractDto);
-
-    ContractDto resume(Long contractId);
-
-    ContractDto complete(Long contractId, ContractDto contractDto);
+    ContractDto changeStatus(Long contractId, ContractDto contractDto);
 
     ContractDto getContractForProject(Long projectId);
 }
