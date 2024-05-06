@@ -8,19 +8,9 @@ public interface ContractStatusTransitionService {
 
     void rejectOffer(Contract contract);
 
-    void makeNewOffer(Contract contract);
-
-    void acceptOffer(Contract contract);
-
     void rejectAcceptedOffer(Contract contract);
 
-    void signContract(Contract contract);
-
-    void terminateContract(Contract contract);
-
-    void resumeContract(Contract contract);
-
-    void completeContract(Contract contract);
-
     void reject(Contract contract);
+
+    void changeStatus(Contract contract, ContractStatus newStatus);
 }

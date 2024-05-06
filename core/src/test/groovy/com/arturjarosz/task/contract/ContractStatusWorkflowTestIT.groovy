@@ -21,21 +21,24 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     static final String PROJECTS_URI = "/projects"
     static final ObjectMapper MAPPER = new ObjectMapper()
     static final Double NEW_OFFER = 55000.00d
-    static final LocalDate END_DATE = LocalDate.of(2022, 10, 10)
+    static final LocalDate END_DATE = LocalDate.of(2030, 10, 10)
+    static final LocalDate SIGNING_DATE = LocalDate.of(2022, 10, 10)
+    static final LocalDate DEADLINE = LocalDate.of(2035, 10, 10)
+    static final LocalDate START_DATE = SIGNING_DATE.plusDays(10)
 
-    final ArchitectDto architect = MAPPER.readValue(new File(getClass().classLoader.getResource('json/architect/architect.json').file),
+    final architect = MAPPER.readValue(new File(getClass().classLoader.getResource('json/architect/architect.json').file),
             ArchitectDto)
-    final ClientDto privateClientDto = MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/privateClient.json').file),
+    final privateClientDto = MAPPER.readValue(new File(getClass().classLoader.getResource('json/client/privateClient.json').file),
             ClientDto)
-    final ContractDto signContractDto = MAPPER.readValue(new File(getClass().classLoader.getResource('json/contract/signContract.json').file),
+    final signContractDto = MAPPER.readValue(new File(getClass().classLoader.getResource('json/contract/signContract.json').file),
             ContractDto)
-    final ContractDto offerContractDto = MAPPER.readValue(new File(getClass().classLoader.getResource('json/contract/offer.json').file),
+    final offerContractDto = MAPPER.readValue(new File(getClass().classLoader.getResource('json/contract/offer.json').file),
             ContractDto)
-    final ProjectCreateDto properProjectDto = MAPPER.readValue(new File(getClass().classLoader.getResource('json/project/properProject.json').file),
+    final properProjectDto = MAPPER.readValue(new File(getClass().classLoader.getResource('json/project/properProject.json').file),
             ProjectCreateDto)
-    final StageDto stageDto = MAPPER.readValue(new File(getClass().classLoader.getResource('json/stage/properStage.json').file),
+    final stageDto = MAPPER.readValue(new File(getClass().classLoader.getResource('json/stage/properStage.json').file),
             StageDto)
-    final TaskDto taskDto = MAPPER.readValue(new File(getClass().classLoader.getResource('json/task/properTask.json').file),
+    final taskDto = MAPPER.readValue(new File(getClass().classLoader.getResource('json/task/properTask.json').file),
             TaskDto)
 
     @Autowired
@@ -99,11 +102,13 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     def "Accepting offer changes contract status to OFFER"() {
         given:
             def projectDto = this.createProject()
+            def updateStatusDto = new ContractDto(status: ContractStatusDto.ACCEPTED)
+            def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
         when:
             def updateContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
-                    .post(this.createContractUri(projectDto.contract.id) + "/accept-offer")
+                    .post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
-
+                    .content(requestBody)
             ).andReturn().response
         then:
             updateContractResponse.status == HttpStatus.OK.value()
@@ -148,19 +153,21 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     def "Rejecting offer changes status of contract to REJECTED"() {
         given:
             def projectDto = this.createProject()
+            def contractDto = new ContractDto(status: ContractStatusDto.REJECTED)
+            def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(contractDto)
         when:
             def updateContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
-                    .post(this.createContractUri(projectDto.contract.id) + "/reject")
+                    .post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
-
+                    .content(requestBody)
             ).andReturn().response
         then:
             updateContractResponse.status == HttpStatus.OK.value()
-            def contractDto = MAPPER.readValue(updateContractResponse.contentAsString, ContractDto)
-            contractDto.status == ContractStatusDto.REJECTED
-            contractDto.id != null
+            def updatedContractDto = MAPPER.readValue(updateContractResponse.contentAsString, ContractDto)
+            updatedContractDto.status == ContractStatusDto.REJECTED
+            updatedContractDto.id != null
         and:
-            !contractDto.nextStatuses.empty
+            !updatedContractDto.nextStatuses.empty
     }
 
     @Transactional
@@ -202,7 +209,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             this.rejectContract(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
         when:
-            def signContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/sign")
+            def signContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
                     .content(signContractText)).andReturn().response
         then:
@@ -220,7 +227,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def offerRequestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.offerContractDto)
         when:
             def newOfferContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
-                    .post(this.createContractUri(projectDto.contract.id) + "/new-offer")
+                    .post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
                     .content(offerRequestText)).andReturn().response
         then:
@@ -238,7 +245,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def offerRequestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.offerContractDto)
         when:
             def newOfferContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
-                    .post(this.createContractUri(projectDto.contract.id) + "/new-offer")
+                    .post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
                     .content(offerRequestText)).andReturn().response
         then:
@@ -255,7 +262,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def offerRequestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.offerContractDto)
         when:
             def newOfferContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
-                    .post(this.createContractUri(projectDto.contract.id) + "/new-offer")
+                    .post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
                     .content(offerRequestText)).andReturn().response
         then:
@@ -274,7 +281,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             this.signContract(projectDto.contract.id, signContractText)
         when:
             def newOfferContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
-                    .post(this.createContractUri(projectDto.contract.id) + "/new-offer")
+                    .post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
                     .content(offerRequestText)).andReturn().response
         then:
@@ -289,7 +296,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def projectDto = this.createProject()
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
         when:
-            def signContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/sign")
+            def signContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
                     .content(signContractText)).andReturn().response
         then:
@@ -305,7 +312,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
         when:
-            def signContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/sign")
+            def signContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
                     .content(signContractText)).andReturn().response
         then:
@@ -358,10 +365,10 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
-            def terminateContractDto = new ContractDto(endDate: END_DATE)
+            def terminateContractDto = new ContractDto(endDate: END_DATE, status: ContractStatusDto.TERMINATED)
             def terminateRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(terminateContractDto)
         when:
-            def terminateContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/terminate")
+            def terminateContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
                     .content(terminateRequest)).andReturn().response
         then:
@@ -380,7 +387,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
-            def terminateContractDto = new ContractDto(endDate: END_DATE)
+            def terminateContractDto = new ContractDto(endDate: END_DATE, status: ContractStatusDto.TERMINATED)
             def terminateRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(terminateContractDto)
             this.terminateContract(projectDto.contract.id, terminateRequest)
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
@@ -401,7 +408,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
-            def terminateContractDto = new ContractDto(endDate: END_DATE)
+            def terminateContractDto = new ContractDto(endDate: END_DATE, status: ContractStatusDto.TERMINATED)
             def terminateRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(terminateContractDto)
             def createdStageDto = this.createStage(projectDto.id)
             def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id)
@@ -422,12 +429,16 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
-            def terminateContractDto = new ContractDto(endDate: END_DATE)
+            def terminateContractDto = new ContractDto(endDate: END_DATE, status: ContractStatusDto.TERMINATED)
             def terminateRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(terminateContractDto)
             this.terminateContract(projectDto.contract.id, terminateRequest)
+            def resumeContractDto = new ContractDto(status: ContractStatusDto.SIGNED, offerValue: 100.00d, signingDate: SIGNING_DATE, deadline: DEADLINE, startDate: START_DATE)
+            def resumeRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(resumeContractDto)
         when:
-            def resumeContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/resume")
-                    .header("Content-Type", "application/json")).andReturn().response
+            def resumeContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/status")
+                    .header("Content-Type", "application/json")
+                    .content(resumeRequestBody))
+                    .andReturn().response
         then:
             resumeContractResponse.status == HttpStatus.OK.value()
             def contractDto = MAPPER.readValue(resumeContractResponse.contentAsString, ContractDto)
@@ -441,10 +452,10 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
-            def completeContractDto = new ContractDto(endDate: END_DATE)
+            def completeContractDto = new ContractDto(endDate: END_DATE, status: ContractStatusDto.COMPLETED)
             def completeRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(completeContractDto)
         when:
-            def completeContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/complete")
+            def completeContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
                     .content(completeRequest)).andReturn().response
         then:
@@ -535,41 +546,51 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     }
 
     private ContractDto acceptContractOffer(long contractId) {
+        def updateStatusDto = new ContractDto(status: ContractStatusDto.ACCEPTED)
+        def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
         def acceptContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
-                .post(this.createContractUri(contractId) + "/accept-offer")
+                .post(this.createContractUri(contractId) + "/status")
                 .header("Content-Type", "application/json")
-
+                .content(requestBody)
         ).andReturn().response
         return MAPPER.readValue(acceptContractResponse.contentAsString, ContractDto)
     }
 
     private ContractDto signContract(long contractId, String signContractDataText) {
-        def signResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(contractId) + "/sign")
+        def signResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(contractId) + "/status")
                 .header("Content-Type", "application/json")
-                .content(signContractDataText)).andReturn().response
+                .content(signContractDataText)
+        ).andReturn().response
         return MAPPER.readValue(signResponse.contentAsString, ContractDto)
     }
 
     private ContractDto rejectContract(long contractId) {
+        def updateStatusDto = new ContractDto(status: ContractStatusDto.REJECTED)
+        def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
         def rejectedContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
-                .post(this.createContractUri(contractId) + "/reject")
+                .post(this.createContractUri(contractId) + "/status")
                 .header("Content-Type", "application/json")
-
+                .content(requestBody)
         ).andReturn().response
         return MAPPER.readValue(rejectedContractResponse.contentAsString, ContractDto)
     }
 
     private ContractDto terminateContract(long contractId, String requestText) {
-        def terminateContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(contractId) + "/terminate")
+        def terminateContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(contractId) + "/status")
                 .header("Content-Type", "application/json")
-                .content(requestText)).andReturn().response
+                .content(requestText)
+        ).andReturn().response
         return MAPPER.readValue(terminateContractResponse.contentAsString, ContractDto)
     }
 
     private ContractDto completeContract(long contractId, String requestText) {
-        def completeContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(contractId) + "/complete")
+        def updateStatusDto = new ContractDto(status: ContractStatusDto.COMPLETED, endDate: END_DATE)
+        def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
+        def completeContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(contractId) + "/status")
                 .header("Content-Type", "application/json")
-                .content(requestText)).andReturn().response
+                .content(requestText)
+                .content(requestBody)
+        ).andReturn().response
         return MAPPER.readValue(completeContractResponse.contentAsString, ContractDto)
     }
 

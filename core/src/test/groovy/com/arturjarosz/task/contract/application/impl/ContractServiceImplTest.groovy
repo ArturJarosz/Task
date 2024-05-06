@@ -2,48 +2,54 @@ package com.arturjarosz.task.contract.application.impl
 
 import com.arturjarosz.task.contract.application.ContractValidator
 import com.arturjarosz.task.contract.application.mapper.ContractMapperImpl
+import com.arturjarosz.task.contract.domain.ContractDomainService
 import com.arturjarosz.task.contract.intrastructure.ContractRepository
 import com.arturjarosz.task.contract.model.Contract
 import com.arturjarosz.task.contract.status.ContractStatus
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow
-import com.arturjarosz.task.contract.status.impl.ContractStatusTransitionServiceImpl
 import com.arturjarosz.task.contract.utils.ContractBuilder
 import com.arturjarosz.task.dto.ContractDto
 import com.arturjarosz.task.dto.ContractStatusDto
+import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.Money
 import spock.lang.Specification
-import spock.lang.Subject
 
 import java.time.LocalDate
 
 class ContractServiceImplTest extends Specification {
 
-    static final long EXISTING_CONTRACT_ID = 1L
-    static final long NOT_EXISTING_CONTRACT_ID = 2L
-    static final double OFFER_VALUE = 100.00d
-    static final double NEW_OFFER_VALUE = 200.00D
-    static final LocalDate DEADLINE = LocalDate.of(2100, 1, 1)
-    static final LocalDate NEW_DEADLINE = LocalDate.of(2101, 1, 1)
-    static final LocalDate SIGNING_DATE = LocalDate.of(2050, 1, 1)
-    static final LocalDate START_DATE = LocalDate.of(2051, 1, 1)
-    static final LocalDate END_DATE = LocalDate.of(2052, 1, 1)
+    static final EXISTING_CONTRACT_ID = 1L
+    static final NOT_EXISTING_CONTRACT_ID = 2L
+    static final ACCEPTED_CONTRACT_ID = 3L
+    static final OFFER_VALUE = 100.00d
+    static final DEADLINE = LocalDate.of(2100, 1, 1)
+    static final CONTRACT_STATUS_WORKFLOW = new ContractStatusWorkflow()
 
-    def contractStatusTransitionService = Mock(ContractStatusTransitionServiceImpl)
-    def contractStatusWorkflow = Mock(ContractStatusWorkflow)
     def contractValidator = Mock(ContractValidator)
     def contractRepository = Mock(ContractRepository)
     def contractMapper = new ContractMapperImpl()
+    def contractDomainService = Mock(ContractDomainService)
 
-    @Subject
-    def contractService = new ContractServiceImpl(contractStatusTransitionService, contractStatusWorkflow,
-            contractValidator, contractRepository, contractMapper)
+    def subject = new ContractServiceImpl(contractValidator, contractRepository, contractMapper, contractDomainService)
+
+    def setup() {
+        var newContract = new Contract(OFFER_VALUE, DEADLINE, CONTRACT_STATUS_WORKFLOW)
+        newContract.changeStatus(ContractStatus.OFFER)
+        this.contractDomainService.createContract(_ as ContractDto) >> newContract
+        var acceptedOffer = new Contract(OFFER_VALUE, DEADLINE, CONTRACT_STATUS_WORKFLOW)
+        acceptedOffer.changeStatus(ContractStatus.ACCEPTED)
+        this.contractRepository.findById(ACCEPTED_CONTRACT_ID) >> Optional.of(acceptedOffer)
+        var contract = new Contract(OFFER_VALUE, DEADLINE, CONTRACT_STATUS_WORKFLOW)
+        contract.changeStatus(ContractStatus.ACCEPTED)
+        this.contractRepository.findById(EXISTING_CONTRACT_ID) >> Optional.of(contract)
+    }
 
     def "createContract does not create any contract on missing contractDto"() {
         given:
             def contractDto = null
             this.mockValidatorThrowsAnExceptionOnNullContractDto()
         when:
-            def contract = this.contractService.createContract(contractDto)
+            def contract = this.subject.createContract(contractDto)
         then:
             thrown(Exception)
             contract == null
@@ -54,7 +60,7 @@ class ContractServiceImplTest extends Specification {
             def contractDto = new ContractDto()
             this.mockValidatorThrowsAnExceptionOnContractDtoWithMissingData(contractDto)
         when:
-            def contract = this.contractService.createContract(contractDto)
+            def contract = this.subject.createContract(contractDto)
         then:
             thrown(Exception)
             contract == null
@@ -63,9 +69,8 @@ class ContractServiceImplTest extends Specification {
     def "createContract creates and saves new contract with offer status on proper contractDto"() {
         given:
             def contractDto = new ContractDto(deadline: DEADLINE, offerValue: OFFER_VALUE)
-            this.mockContractStatusTransitionServiceCreateOfferReturnContractWithOfferStatus()
         when:
-            def contract = this.contractService.createContract(contractDto)
+            def contract = this.subject.createContract(contractDto)
         then:
             noExceptionThrown()
             1 * this.contractRepository.save({ def savedContract ->
@@ -77,224 +82,73 @@ class ContractServiceImplTest extends Specification {
             contract.id == EXISTING_CONTRACT_ID
     }
 
-    def "contractReject throws an exception and do not reject offer on id of not existing contract"() {
+    def "changeStatus should not update status if base validation fails"() {
         given:
-            this.mockContractValidatorThrowsAnExceptionOnNotExistingContract()
+            def contractDto = new ContractDto(status: ContractStatusDto.OFFER)
+            mockBaseValidationThrowsAnException()
         when:
-            def contractDto = this.contractService.reject(NOT_EXISTING_CONTRACT_ID)
+            def contract = subject.changeStatus(EXISTING_CONTRACT_ID, contractDto)
         then:
             thrown(Exception)
-            0 * this.contractStatusTransitionService.rejectOffer(_ as Contract)
-            contractDto == null
+            contract == null
+            0 * this.contractDomainService.updateContractStatus(_ as Contract, _ as ContractDto)
     }
 
-    def "contractReject rejects contract on id of existing contract"() {
+    def "changeStatus should not update status if contract does not exits"() {
         given:
-            this.mockLoadContractFromContractRepository()
-            this.mockContractStatusTransitionServiceRejectOffer()
+            def contractDto = new ContractDto(status: ContractStatusDto.ACCEPTED, id: NOT_EXISTING_CONTRACT_ID)
         when:
-            def contractDto = this.contractService.reject(EXISTING_CONTRACT_ID)
+            def contract = subject.changeStatus(NOT_EXISTING_CONTRACT_ID, contractDto)
+        then:
+            thrown(Exception)
+            contract == null
+            0 * this.contractDomainService.updateContractStatus(_ as Contract, _ as ContractDto)
+    }
+
+    def "changeStatus should fail if validator for particular status change fails"() {
+        given:
+            def contractDto = new ContractDto(status: ContractStatusDto.SIGNED, id: ACCEPTED_CONTRACT_ID)
+            mockSignStatusValidatorThrowsAnException()
+        when:
+            def contract = subject.changeStatus(ACCEPTED_CONTRACT_ID, contractDto)
+        then:
+            thrown(Exception)
+            contract == null
+            0 * this.contractDomainService.updateContractStatus(_ as Contract, _ as ContractDto)
+    }
+
+    def "changeStatus should change status of the contract if data is correct"() {
+        given:
+            def contractDto = new ContractDto(status: ContractStatusDto.SIGNED, id: ACCEPTED_CONTRACT_ID)
+            def updatedContract = new Contract(OFFER_VALUE, DEADLINE, CONTRACT_STATUS_WORKFLOW)
+            updatedContract.changeStatus(ContractStatus.SIGNED)
+        when:
+            def contract = subject.changeStatus(ACCEPTED_CONTRACT_ID, contractDto)
         then:
             noExceptionThrown()
-            contractDto.status == ContractStatusDto.REJECTED
+            contract != null
+            1 * this.contractDomainService.updateContractStatus(_ as Contract, _ as ContractDto) >> updatedContract
+            contract.status == ContractStatusDto.SIGNED
     }
 
-    def "makeNewOffer does not update offer on not existing contract throws an exception"() {
+    def "getContractForProject should not return contract if it does not exist"() {
         given:
-            def contractOfferDto = new ContractDto(offerValue: NEW_OFFER_VALUE)
-            this.mockContractValidatorThrowsAnExceptionOnNotExistingContract()
+            mockExistenceThrowsAnException()
         when:
-            def contractDto = this.contractService.makeNewOffer(NOT_EXISTING_CONTRACT_ID, contractOfferDto)
+            def contract = subject.getContractForProject(NOT_EXISTING_CONTRACT_ID)
         then:
             thrown(Exception)
-            0 * this.contractStatusTransitionService.makeNewOffer(_ as Contract)
-            contractDto == null
+            contract == null
     }
 
-    def "makeNewOffer does not update offer on not proper contractDto of offer throws an exception"() {
+    def "getContractForProject should return contract if exists"() {
         given:
-            def contractOfferDto = new ContractDto(offerValue: NEW_OFFER_VALUE)
-            this.mockContractValidatorThrowsAnExceptionOnWrongSignData()
         when:
-            def contractDto = this.contractService.makeNewOffer(NOT_EXISTING_CONTRACT_ID, contractOfferDto)
-        then:
-            thrown(Exception)
-            0 * this.contractStatusTransitionService.makeNewOffer(_ as Contract)
-            contractDto == null
-    }
-
-    def "makeNewOffer updates offer status to OFFER and data for existing contract"() {
-        given:
-            def contractOfferDto = new ContractDto(offerValue: NEW_OFFER_VALUE, deadline: NEW_DEADLINE)
-            this.mockLoadContractFromContractRepository()
-            this.mockContractStatusTransitionMakeNewOffer()
-        when:
-            def contractDto = this.contractService.makeNewOffer(EXISTING_CONTRACT_ID, contractOfferDto)
+            def contract = subject.getContractForProject(EXISTING_CONTRACT_ID)
         then:
             noExceptionThrown()
-            contractDto.status == ContractStatusDto.OFFER
-            contractDto.offerValue == NEW_OFFER_VALUE
+            contract != null
     }
-
-    def "acceptOffer does not accept not existing offer and throws an exception"() {
-        given:
-            this.mockContractValidatorThrowsAnExceptionOnNotExistingContract()
-        when:
-            def contractDto = this.contractService.acceptOffer(NOT_EXISTING_CONTRACT_ID)
-        then:
-            thrown(Exception)
-            0 * this.contractStatusTransitionService.acceptOffer(_ as Contract)
-            contractDto == null
-    }
-
-    def "acceptOffer updates data on offer and changes status to ACCEPTED"() {
-        given:
-            this.mockLoadContractFromContractRepository()
-            this.mockContractStatusTransitionAcceptOffer()
-        when:
-            def contractDto = this.contractService.acceptOffer(EXISTING_CONTRACT_ID)
-        then:
-            noExceptionThrown()
-            contractDto.status == ContractStatusDto.ACCEPTED
-    }
-
-    def "sign throws an exception and do not change contract status on not existing contract"() {
-        given:
-            def signContractDto = new ContractDto()
-            this.mockContractValidatorThrowsAnExceptionOnNotExistingContract()
-        when:
-            def contractDto = this.contractService.sign(NOT_EXISTING_CONTRACT_ID, signContractDto)
-        then:
-            thrown(Exception)
-            0 * this.contractStatusTransitionService.signContract(_ as Contract)
-            contractDto == null
-    }
-
-    def "sing throws an exception and do not change contract status on not proper contractDto"() {
-        given:
-            def signContractDto = new ContractDto()
-            this.mockContractValidatorThrowsAnExceptionOnWrongSignData()
-        when:
-            def contractDto = this.contractService.sign(EXISTING_CONTRACT_ID, signContractDto)
-        then:
-            thrown(Exception)
-            0 * this.contractStatusTransitionService.signContract(_ as Contract)
-            contractDto == null
-    }
-
-    def "sing updated contract data and changes contract status to SIGNED"() {
-        given:
-            def signContractDto = new ContractDto(offerValue: OFFER_VALUE, signingDate: SIGNING_DATE,
-                    startDate: START_DATE, deadline: DEADLINE)
-            this.mockLoadContractFromContractRepository()
-            this.mockContractStatusTransitionSign()
-        when:
-            def contractDto = this.contractService.sign(EXISTING_CONTRACT_ID, signContractDto)
-        then:
-            noExceptionThrown()
-            contractDto.status == ContractStatusDto.SIGNED
-            contractDto.startDate == START_DATE
-            contractDto.signingDate == SIGNING_DATE
-            contractDto.deadline == DEADLINE
-    }
-
-    def "terminate throws an exception and do not update status on not existing contract"() {
-        given:
-            ContractDto terminateContractDto = new ContractDto()
-            this.mockContractValidatorThrowsAnExceptionOnNotExistingContract()
-        when:
-            ContractDto contractDto = this.contractService.terminate(NOT_EXISTING_CONTRACT_ID, terminateContractDto)
-        then:
-            thrown(Exception)
-            0 * this.contractStatusTransitionService.terminateContract(_ as Contract)
-            contractDto == null
-    }
-
-    def "terminate throws an exception and do not update status on not proper terminate contractDto"() {
-        given:
-            def terminateContractDto = new ContractDto()
-            this.mockContractValidatorThrowsAnExceptionOnWrongTerminateData()
-        when:
-            def contractDto = this.contractService.terminate(EXISTING_CONTRACT_ID, terminateContractDto)
-        then:
-            thrown(Exception)
-            0 * this.contractStatusTransitionService.terminateContract(_ as Contract)
-            contractDto == null
-    }
-
-    def "terminate changes contract status to TERMINATED and updates contract data"() {
-        given:
-            def terminateContractDto = new ContractDto(endDate: END_DATE)
-            this.mockLoadContractFromContractRepository()
-            this.mockContractStatusTransitionTerminate()
-        when:
-            def contractDto = this.contractService.terminate(EXISTING_CONTRACT_ID, terminateContractDto)
-        then:
-            noExceptionThrown()
-            contractDto.status == ContractStatusDto.TERMINATED
-            contractDto.endDate == END_DATE
-    }
-
-    def "resume throws an exception and does not update contract status"() {
-        given:
-            this.mockContractValidatorThrowsAnExceptionOnNotExistingContract()
-        when:
-            def contractDto = this.contractService.resume(NOT_EXISTING_CONTRACT_ID)
-        then:
-            thrown(Exception)
-            0 * this.contractStatusTransitionService.resumeContract(NOT_EXISTING_CONTRACT_ID)
-            contractDto == null
-    }
-
-    def "resume changes contract status to SIGNED and updates contract data of existing contract"() {
-        given:
-            this.mockLoadContractFromContractRepository()
-            this.mockContractStatusTransitionResume()
-        when:
-            def contractDto = this.contractService.resume(EXISTING_CONTRACT_ID)
-        then:
-            noExceptionThrown()
-            contractDto.status == ContractStatusDto.SIGNED
-            contractDto.endDate == null
-    }
-
-    def "complete throws an exception and do not update status on not existing contract"() {
-        given:
-            def completeContractDto = new ContractDto()
-            this.mockContractValidatorThrowsAnExceptionOnNotExistingContract()
-        when:
-            def contractDto = this.contractService.complete(NOT_EXISTING_CONTRACT_ID, completeContractDto)
-        then:
-            thrown(Exception)
-            0 * this.contractStatusTransitionService.terminateContract(_ as Contract)
-            contractDto == null
-    }
-
-    def "complete throws an exception and do not update status on not proper complete contractDto"() {
-        given:
-            def completeContractDto = new ContractDto()
-            this.mockContractValidatorThrowsAnExceptionOnWrongTerminateData()
-        when:
-            def contractDto = this.contractService.complete(EXISTING_CONTRACT_ID, completeContractDto)
-        then:
-            thrown(Exception)
-            0 * this.contractStatusTransitionService.terminateContract(_ as Contract)
-            contractDto == null
-    }
-
-    def "complete changes contract status to COMPLETED and updates contract data"() {
-        given:
-            def completeContractDto = new ContractDto(endDate: END_DATE)
-            this.mockLoadContractFromContractRepository()
-            this.mockContractStatusTransitionComplete()
-        when:
-            def contractDto = this.contractService.complete(EXISTING_CONTRACT_ID, completeContractDto)
-        then:
-            noExceptionThrown()
-            contractDto.status == ContractStatusDto.COMPLETED
-            contractDto.endDate == END_DATE
-    }
-
 
     private void mockValidatorThrowsAnExceptionOnNullContractDto() {
         this.contractValidator.validateOffer(null) >> { throw new IllegalArgumentException() }
@@ -304,61 +158,16 @@ class ContractServiceImplTest extends Specification {
         this.contractValidator.validateOffer(contractDto) >> { throw new IllegalArgumentException() }
     }
 
-    private void mockContractStatusTransitionServiceCreateOfferReturnContractWithOfferStatus() {
-        1 * this.contractStatusTransitionService.createOffer({ Contract contract -> contract.changeStatus(ContractStatus.OFFER)
-        })
+    private void mockBaseValidationThrowsAnException() {
+        this.contractValidator.validateBaseContractDto(_ as ContractDto) >> { throw new IllegalArgumentException() }
     }
 
-    private mockContractValidatorThrowsAnExceptionOnNotExistingContract() {
-        this.contractValidator.validateContractExistence(null,
-                NOT_EXISTING_CONTRACT_ID) >> { throw new IllegalArgumentException() }
-    }
-
-    private mockLoadContractFromContractRepository() {
-        this.contractRepository.findById(EXISTING_CONTRACT_ID) >> Optional.of(new ContractBuilder()
-                .withId(EXISTING_CONTRACT_ID).withContractValue(new Money(OFFER_VALUE)).build())
-    }
-
-    private mockContractStatusTransitionServiceRejectOffer() {
-        1 * this.contractStatusTransitionService.rejectOffer({ Contract contract -> contract.changeStatus(ContractStatus.REJECTED)
-        })
-    }
-
-    private mockContractStatusTransitionMakeNewOffer() {
-        1 * this.contractStatusTransitionService.makeNewOffer({ Contract contract -> contract.changeStatus(ContractStatus.OFFER)
-        })
-    }
-
-    private mockContractStatusTransitionAcceptOffer() {
-        1 * this.contractStatusTransitionService.acceptOffer({ Contract contract -> contract.changeStatus(ContractStatus.ACCEPTED)
-        })
-    }
-
-    private mockContractValidatorThrowsAnExceptionOnWrongSignData() {
+    private void mockSignStatusValidatorThrowsAnException() {
         this.contractValidator.validateSignContractDto(_ as ContractDto) >> { throw new IllegalArgumentException() }
     }
 
-    private mockContractStatusTransitionSign() {
-        1 * this.contractStatusTransitionService.signContract({ Contract contract -> contract.changeStatus(ContractStatus.SIGNED)
-        })
+    private void mockExistenceThrowsAnException() {
+        this.contractValidator.validateContractExistence(_ as Optional<Contract>, _ as Long) >> { throw new IllegalArgumentException() }
     }
 
-    private mockContractValidatorThrowsAnExceptionOnWrongTerminateData() {
-        this.contractValidator.validateTerminateContractDto(_ as ContractDto) >> { throw new IllegalArgumentException() }
-    }
-
-    private mockContractStatusTransitionTerminate() {
-        1 * this.contractStatusTransitionService.terminateContract({ Contract contract -> contract.changeStatus(ContractStatus.TERMINATED)
-        })
-    }
-
-    private mockContractStatusTransitionResume() {
-        1 * this.contractStatusTransitionService.resumeContract({ Contract contract -> contract.changeStatus(ContractStatus.SIGNED)
-        })
-    }
-
-    private mockContractStatusTransitionComplete() {
-        1 * this.contractStatusTransitionService.completeContract({ Contract contract -> contract.changeStatus(ContractStatus.COMPLETED)
-        })
-    }
 }
