@@ -36,7 +36,6 @@ public class StageRestController implements StageApi {
 
     @Override
     public ResponseEntity<StageDto> updateStage(StageDto stageDto, Long projectId, Long stageId) {
-
         return new ResponseEntity<>(this.stageApplicationService.updateStage(projectId, stageId, stageDto),
                 HttpStatus.OK);
     }

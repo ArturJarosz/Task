@@ -7,6 +7,8 @@ import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.time.LocalDate;
@@ -21,21 +23,28 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @Serial
     private static final long serialVersionUID = 5437961881026141924L;
 
+    @Getter
+    @Setter
     @Column(name = "NAME", nullable = false)
     private String name;
 
+    @Getter
     @Column(name = "ARCHITECT_ID", nullable = false)
     private Long architectId;
 
+    @Getter
     @Column(name = "CLIENT_ID", nullable = false)
     private Long clientId;
 
+    @Getter
     @Column(name = "START_DATE")
     private LocalDate startDate;
 
+    @Getter
     @Column(name = "END_DATE")
     private LocalDate endDate;
 
+    @Getter
     @Column(name = "NOTE")
     private String note;
 
@@ -43,6 +52,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @JoinColumn(name = "PROJECT_ID", nullable = false)
     private Set<Stage> stages;
 
+    @Getter
     @Enumerated(EnumType.STRING)
     @Column(name = "PROJECT_TYPE")
     private ProjectType projectType;
@@ -80,38 +90,6 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         this.note = note;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getArchitectId() {
-        return this.architectId;
-    }
-
-    public Long getClientId() {
-        return this.clientId;
-    }
-
-    public ProjectType getProjectType() {
-        return this.projectType;
-    }
-
-    public LocalDate getStartDate() {
-        return this.startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return this.endDate;
-    }
-
-    public String getNote() {
-        return this.note;
-    }
-
     public void addStage(Stage stage) {
         if (this.stages == null) {
             this.stages = new HashSet<>();
@@ -128,15 +106,6 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
 
     public void removeStage(Long stageId) {
         this.stages.removeIf(stage -> stageId.equals(stage.getId()));
-    }
-
-    public Stage updateStage(Long stageId, String stageName, String note, StageType stageType, LocalDate deadline) {
-        Stage stageToUpdate = this.stages.stream()
-                .filter(stage -> stage.getId().equals(stageId))
-                .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
-        stageToUpdate.update(stageName, note, stageType, deadline);
-        return stageToUpdate;
     }
 
     public void addTaskToStage(Long stageId, Task task) {

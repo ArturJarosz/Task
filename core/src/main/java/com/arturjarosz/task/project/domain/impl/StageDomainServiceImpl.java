@@ -6,17 +6,56 @@ import com.arturjarosz.task.project.domain.StageDomainService;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.StageType;
+import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.project.status.stage.StageStatusTransitionService;
 import com.arturjarosz.task.project.status.stage.StageWorkflow;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
-import lombok.RequiredArgsConstructor;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@RequiredArgsConstructor
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 @DomainService
 public class StageDomainServiceImpl implements StageDomainService {
     private final StageWorkflow stageWorkflow;
     private final StageStatusTransitionService stageStatusTransitionService;
     private final StageMapper stageMapper;
+
+    private Map<StageStatus, BiConsumer<Stage, StageDto>> statusToUpdater;
+
+    @Autowired
+    public StageDomainServiceImpl(StageWorkflow stageWorkflow,
+            StageStatusTransitionService stageStatusTransitionService, StageMapper stageMapper) {
+        this.stageWorkflow = stageWorkflow;
+        this.stageStatusTransitionService = stageStatusTransitionService;
+        this.stageMapper = stageMapper;
+        this.prepareStageUpdater();
+    }
+
+    private void prepareStageUpdater() {
+        this.statusToUpdater = new HashMap<>();
+        this.statusToUpdater.put(StageStatus.TO_DO,
+                (stage, stageDto) -> stage.update(stageDto.getName(), stageDto.getNote(),
+                        StageType.valueOf(stageDto.getType().getValue()), stageDto.getDeadline()));
+        this.statusToUpdater.put(StageStatus.IN_PROGRESS, (stage, stageDto) -> {
+            stage.update(stageDto.getName(), stageDto.getNote(), StageType.valueOf(stageDto.getType().getValue()),
+                    stageDto.getDeadline());
+            stage.setStartDate(stageDto.getStartDate());
+        });
+        this.statusToUpdater.put(StageStatus.DONE, (stage, stageDto) -> {
+            stage.update(stageDto.getName(), stageDto.getNote(), StageType.valueOf(stageDto.getType().getValue()),
+                    stageDto.getDeadline());
+            stage.setStartDate(stageDto.getStartDate());
+            stage.setEndDate(stageDto.getEndDate());
+        });
+        this.statusToUpdater.put(StageStatus.REJECTED, (stage, stageDto) -> {
+            stage.update(stageDto.getName(), stageDto.getNote(), StageType.valueOf(stageDto.getType().getValue()),
+                    stageDto.getDeadline());
+            stage.setStartDate(stageDto.getStartDate());
+        });
+    }
 
     @Override
     public Stage createStage(Project project, StageDto stageDto) {
@@ -28,8 +67,15 @@ public class StageDomainServiceImpl implements StageDomainService {
 
     @Override
     public Stage updateStage(Project project, Long stageId, StageDto stageDto) {
-        return project.updateStage(stageId, stageDto.getName(), stageDto.getNote(),
-                StageType.valueOf(stageDto.getType().name()), stageDto.getDeadline());
+        var maybeStage = project.getStages().stream().filter(stage -> stage.getId().equals(stageId)).findFirst();
+        if (maybeStage.isEmpty()) {
+            throw new ResourceNotFoundException();
+        }
+        var stage = maybeStage.get();
+        var stageUpdater = this.statusToUpdater.get(stage.getStatus());
+        stageUpdater.accept(stage, stageDto);
+
+        return stage;
     }
 
     @Override

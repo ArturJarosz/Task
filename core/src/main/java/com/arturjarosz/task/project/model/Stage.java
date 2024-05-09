@@ -6,6 +6,8 @@ import com.arturjarosz.task.project.status.stage.StageWorkflow;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.time.LocalDate;
@@ -21,6 +23,7 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
     @Serial
     private static final long serialVersionUID = 3201266147496282083L;
 
+    @Getter
     @Column(name = "NAME")
     private String name;
 
@@ -28,22 +31,30 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
     @JoinColumn(name = "STAGE_ID", nullable = false)
     private List<Task> tasks;
 
+    @Getter
+    @Setter
     @Column(name = "START_DATE")
     private LocalDate startDate;
 
+    @Getter
+    @Setter
     @Column(name = "END_DATE")
     private LocalDate endDate;
 
+    @Getter
     @Column(name = "DEADLINE")
     private LocalDate deadline;
 
+    @Getter
     @Column(name = "NOTE")
     private String note;
 
+    @Getter
     @Enumerated(EnumType.STRING)
     @Column(name = "STAGE_TYPE", nullable = false)
     private StageType stageType;
 
+    @Setter
     @Column(name = "STATUS", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private StageStatus status;
@@ -93,37 +104,9 @@ public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> 
         return taskToUpdate;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public LocalDate getStartDate() {
-        return this.startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return this.endDate;
-    }
-
-    public LocalDate getDeadline() {
-        return this.deadline;
-    }
-
-    public String getNote() {
-        return this.note;
-    }
-
-    public StageType getStageType() {
-        return this.stageType;
-    }
-
     @Override
     public StageStatus getStatus() {
         return this.status;
-    }
-
-    public void setStatus(StageStatus status) {
-        this.status = status;
     }
 
     @Override
