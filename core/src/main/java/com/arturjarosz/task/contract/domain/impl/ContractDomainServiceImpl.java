@@ -9,7 +9,7 @@ import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
 import lombok.NonNull;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -32,7 +32,7 @@ public class ContractDomainServiceImpl implements ContractDomainService {
     }
 
     private void prepareContractUpdater() {
-        this.statusToUpdater = new HashMap<>();
+        this.statusToUpdater = new EnumMap<>(ContractStatus.class);
         this.statusToUpdater.put(ContractStatus.OFFER,
                 (contract, contractDto) -> contract.update(contractDto.getOfferValue(), contractDto.getDeadline()));
         this.statusToUpdater.put(ContractStatus.SIGNED, (contract, contractDto) -> {

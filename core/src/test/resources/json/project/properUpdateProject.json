@@ -1,5 +1,8 @@
 {
-  "name": "Lublin 01",
-  "type": "CONCEPT",
-  "note": "some note about project"
+    "name": "Lublin 01",
+    "type": "CONCEPT",
+    "note": "some note about project",
+    "architect": {
+        "id": "101"
+    }
 }

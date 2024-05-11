@@ -6,14 +6,18 @@ import com.arturjarosz.task.project.application.mapper.ProjectMapper;
 import com.arturjarosz.task.project.domain.ProjectDataValidator;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.model.ProjectType;
+import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectStatusTransitionService;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
 import com.arturjarosz.task.sharedkernel.annotations.DomainService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
-@RequiredArgsConstructor
 @DomainService
 public class ProjectDomainServiceImpl implements ProjectDomainService {
 
@@ -22,17 +26,64 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
     private final ProjectStatusTransitionService projectStatusTransitionService;
     private final ProjectMapper projectMapper;
 
+    private Map<ProjectStatus, BiConsumer<Project, ProjectDto>> statusToUpdater;
+
+    @Autowired
+    public ProjectDomainServiceImpl(ProjectDataValidator projectDataValidator, ProjectWorkflow projectWorkflow,
+            ProjectStatusTransitionService projectStatusTransitionService, ProjectMapper projectMapper) {
+        this.projectDataValidator = projectDataValidator;
+        this.projectWorkflow = projectWorkflow;
+        this.projectStatusTransitionService = projectStatusTransitionService;
+        this.projectMapper = projectMapper;
+        this.prepareUpdaters();
+    }
+
+    private void prepareUpdaters() {
+        this.statusToUpdater = new EnumMap<>(ProjectStatus.class);
+        this.statusToUpdater.put(ProjectStatus.TO_DO, (project, projectDto) -> {
+            project.updateProjectBasicData(projectDto.getName(), projectDto.getNote());
+            project.setArchitectId(projectDto.getArchitect().getId());
+            project.setProjectType(ProjectType.valueOf(projectDto.getType().getValue()));
+            project.setEndDate(null);
+        });
+        this.statusToUpdater.put(ProjectStatus.IN_PROGRESS, (project, projectDto) -> {
+            project.updateProjectBasicData(projectDto.getName(), projectDto.getNote());
+            project.setArchitectId(projectDto.getArchitect().getId());
+            project.setProjectType(ProjectType.valueOf(projectDto.getType().getValue()));
+            project.setStartDate(projectDto.getStartDate());
+            project.setEndDate(null);
+        });
+        this.statusToUpdater.put(ProjectStatus.DONE, (project, projectDto) -> {
+            project.updateProjectBasicData(projectDto.getName(), projectDto.getNote());
+            project.setArchitectId(projectDto.getArchitect().getId());
+            project.setStartDate(projectDto.getStartDate());
+        });
+        this.statusToUpdater.put(ProjectStatus.COMPLETED, (project, projectDto) -> {
+            project.updateProjectBasicData(projectDto.getName(), projectDto.getNote());
+            project.setArchitectId(projectDto.getArchitect().getId());
+            project.setStartDate(projectDto.getStartDate());
+        });
+        this.statusToUpdater.put(ProjectStatus.REJECTED, (project, projectDto) -> {
+            project.updateProjectBasicData(projectDto.getName(), projectDto.getNote());
+            project.setArchitectId(projectDto.getArchitect().getId());
+            project.setProjectType(ProjectType.valueOf(projectDto.getType().getValue()));
+            project.setStartDate(projectDto.getStartDate());
+            project.setEndDate(null);
+        });
+
+    }
+
     @Override
     public Project createProject(ProjectCreateDto projectCreateDto, Long contractId) {
-        var project = this.projectMapper.mapFromCreateDto(projectCreateDto, contractId,
-                this.projectWorkflow);
+        var project = this.projectMapper.mapFromCreateDto(projectCreateDto, contractId, this.projectWorkflow);
         this.projectStatusTransitionService.create(project);
         return project;
     }
 
     @Override
     public Project updateProject(Project project, ProjectDto projectDto) {
-        project.updateProjectData(projectDto.getName(), projectDto.getNote());
+        var updater = this.statusToUpdater.get(project.getStatus());
+        updater.accept(project, projectDto);
         return project;
     }
 

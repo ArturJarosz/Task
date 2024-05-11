@@ -21,32 +21,32 @@ services:
         limits:
           memory: 2G
 
-  task-backend:
-    image: azjarosz/task-backend:${APP_VERSION}
-    container_name: task-backend
-    build:
-      context: ../core
-      dockerfile: core.Dockerfile
-      args:
-        - GITHUB_MAVEN_TOKEN=${GITHUB_TOKEN}
-    networks:
-      task-network:
-    ports:
-      - "${BACKEND_PORT}:8100"
-    depends_on:
-      task-database:
-        condition: service_healthy
-
-  task-fe:
-    image: azjarosz/task-fe:${APP_VERSION}
-    container_name: task-fe
-    networks:
-      task-network:
-    ports:
-      - "${FE_PORT}:80"
-    depends_on:
-      task-backend:
-        condition: service_started
+#  task-backend:
+#    image: azjarosz/task-backend:${APP_VERSION}
+#    container_name: task-backend
+#    build:
+#      context: ../core
+#      dockerfile: core.Dockerfile
+#      args:
+#        - GITHUB_MAVEN_TOKEN=${GITHUB_TOKEN}
+#    networks:
+#      task-network:
+#    ports:
+#      - "${BACKEND_PORT}:8100"
+#    depends_on:
+#      task-database:
+#        condition: service_healthy
+#
+#  task-fe:
+#    image: azjarosz/task-fe:${APP_VERSION}
+#    container_name: task-fe
+#    networks:
+#      task-network:
+#    ports:
+#      - "${FE_PORT}:80"
+#    depends_on:
+#      task-backend:
+#        condition: service_started
 
 networks:
   task-network:

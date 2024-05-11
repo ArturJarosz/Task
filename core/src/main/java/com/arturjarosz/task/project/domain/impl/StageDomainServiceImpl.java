@@ -13,7 +13,7 @@ import com.arturjarosz.task.sharedkernel.annotations.DomainService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -35,7 +35,7 @@ public class StageDomainServiceImpl implements StageDomainService {
     }
 
     private void prepareStageUpdater() {
-        this.statusToUpdater = new HashMap<>();
+        this.statusToUpdater = new EnumMap<>(StageStatus.class);
         this.statusToUpdater.put(StageStatus.TO_DO,
                 (stage, stageDto) -> stage.update(stageDto.getName(), stageDto.getNote(),
                         StageType.valueOf(stageDto.getType().getValue()), stageDto.getDeadline()));
@@ -43,6 +43,7 @@ public class StageDomainServiceImpl implements StageDomainService {
             stage.update(stageDto.getName(), stageDto.getNote(), StageType.valueOf(stageDto.getType().getValue()),
                     stageDto.getDeadline());
             stage.setStartDate(stageDto.getStartDate());
+            stage.setEndDate(null);
         });
         this.statusToUpdater.put(StageStatus.DONE, (stage, stageDto) -> {
             stage.update(stageDto.getName(), stageDto.getNote(), StageType.valueOf(stageDto.getType().getValue()),
