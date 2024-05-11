@@ -29,6 +29,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     private String name;
 
     @Getter
+    @Setter
     @Column(name = "ARCHITECT_ID", nullable = false)
     private Long architectId;
 
@@ -37,10 +38,12 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     private Long clientId;
 
     @Getter
+    @Setter
     @Column(name = "START_DATE")
     private LocalDate startDate;
 
     @Getter
+    @Setter
     @Column(name = "END_DATE")
     private LocalDate endDate;
 
@@ -53,6 +56,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     private Set<Stage> stages;
 
     @Getter
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "PROJECT_TYPE")
     private ProjectType projectType;
@@ -85,7 +89,7 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         this.endDate = endDate;
     }
 
-    public void updateProjectData(String name, String note) {
+    public void updateProjectBasicData(String name, String note) {
         this.name = name;
         this.note = note;
     }

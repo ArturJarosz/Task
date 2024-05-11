@@ -9,9 +9,11 @@ import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityPresent;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotNull;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -30,7 +32,7 @@ public class ProjectValidator {
         this.projectQueryService = projectQueryService;
     }
 
-    private static void validateProjectName(String projectName) {
+    private void validateProjectName(String projectName) {
         assertNotNull(projectName,
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.NAME));
         assertNotEmpty(projectName,
@@ -39,7 +41,7 @@ public class ProjectValidator {
 
     public void validateProjectBasicDto(ProjectCreateDto projectCreateDto) {
         assertNotNull(projectCreateDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT));
-        validateProjectName(projectCreateDto.getName());
+        this.validateProjectName(projectCreateDto.getName());
         assertNotNull(projectCreateDto.getClientId(),
                 BaseValidator.createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
                         ProjectExceptionCodes.CLIENT));
@@ -65,7 +67,34 @@ public class ProjectValidator {
     public void validateUpdateProjectDto(ProjectDto projectDto) {
         assertNotNull(projectDto,
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.UPDATE));
-        validateProjectName(projectDto.getName());
+        this.validateProjectName(projectDto.getName());
+        this.validateStartDate(projectDto.getStartDate());
+        this.validateEndDate(projectDto.getEndDate());
+        this.validateStartAndEndDate(projectDto.getStartDate(), projectDto.getEndDate());
+    }
+
+    public void validateStartDate(LocalDate startDate) {
+        if (startDate != null) {
+            assertIsTrue(!startDate.isAfter(LocalDate.now()),
+                    createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.PROJECT,
+                            ProjectExceptionCodes.START_DATE));
+        }
+    }
+
+    public void validateEndDate(LocalDate endDate) {
+        if (endDate != null) {
+            assertIsTrue(!endDate.isAfter(LocalDate.now()),
+                    createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.PROJECT,
+                            ProjectExceptionCodes.END_DATE));
+        }
+    }
+
+    public void validateStartAndEndDate(LocalDate startDate, LocalDate endDate) {
+        if (startDate != null && endDate != null) {
+            assertIsTrue(!endDate.isBefore(startDate),
+                    createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.PROJECT,
+                            ProjectExceptionCodes.START_DATE, ProjectExceptionCodes.END_DATE));
+        }
     }
 
 }

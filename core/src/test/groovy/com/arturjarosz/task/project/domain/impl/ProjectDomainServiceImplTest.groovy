@@ -1,11 +1,14 @@
 package com.arturjarosz.task.project.domain.impl
 
+
+import com.arturjarosz.task.dto.ArchitectDto
 import com.arturjarosz.task.dto.ProjectCreateDto
 import com.arturjarosz.task.dto.ProjectDto
 import com.arturjarosz.task.dto.ProjectTypeDto
 import com.arturjarosz.task.project.application.mapper.ProjectMapperImpl
 import com.arturjarosz.task.project.domain.ProjectDataValidator
 import com.arturjarosz.task.project.model.Project
+import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
 import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionServiceImpl
@@ -18,12 +21,18 @@ import java.time.LocalDate
 class ProjectDomainServiceImplTest extends Specification {
     static final String NAME = "projectName"
     static final String NEW_NAME = "newProjectName"
+    static final String NOTE = "note"
     static final String NEW_NOTE = "newNote"
-    static final String STAGE_NAME = "stageName"
     static final Long ARCHITECT_ID = 100L
+    static final Long NEW_ARCHITECT_ID = 101L
+    static final LocalDate START_DATE = LocalDate.of(2022, 01, 01)
+    static final LocalDate NEW_START_DATE = LocalDate.of(2022, 01, 02)
+    static final LocalDate END_DATE = LocalDate.of(2023, 01, 01)
+    static final LocalDate NEW_END_DATE = LocalDate.of(2023, 01, 02)
+    static final ProjectType TYPE = ProjectType.ARCHITECTURE_HOUSE
+    static final ProjectType NEW_TYPE = ProjectType.CONCEPT
     static final Long CLIENT_ID = 1000L
     static final Long CONTRACT_ID = 50L
-    static final double OFFER_VALUE = 5000.0
 
     def projectDataValidator = Mock(ProjectDataValidator)
     def projectWorkflow = Mock(ProjectWorkflow)
@@ -49,23 +58,45 @@ class ProjectDomainServiceImplTest extends Specification {
         when:
             def project = this.projectDomainService.createProject(projectCreateDto, CONTRACT_ID)
         then:
-            1 * this.projectStatusTransitionService.create({
-                Project createdProject ->
-                    TestUtils.setFieldForObject(createdProject, "status", ProjectStatus.TO_DO)
+            1 * this.projectStatusTransitionService.create({ Project createdProject -> TestUtils.setFieldForObject(createdProject, "status", ProjectStatus.TO_DO)
             }) >> {}
             project.name == projectCreateDto.name
             project.status == ProjectStatus.TO_DO
     }
 
-    def "updateProject should change data on project and return updated instance"() {
+    def "updateProject should change only some data on project and return updated instance"() {
         given:
-            def projectDto = this.prepareUpdateProjectDto()
-            def project = this.prepareProjectWithStatus(ProjectStatus.TO_DO)
+            def projectDto = new ProjectDto()
+                    .name(NEW_NAME)
+                    .note(NEW_NOTE)
+                    .architect(new ArchitectDto().id(NEW_ARCHITECT_ID))
+                    .type(ProjectTypeDto.fromValue(NEW_TYPE.name()))
+                    .startDate(NEW_START_DATE)
+            def project = new ProjectBuilder()
+                    .withName(NAME)
+                    .withNote(NOTE)
+                    .withArchitectId(ARCHITECT_ID)
+                    .withType(TYPE)
+                    .withStartDate(START_DATE)
+                    .withEndDate(END_DATE)
+                    .withStatus(givenProjectStatus)
+                    .build()
         when:
             def updatedProject = this.projectDomainService.updateProject(project, projectDto)
         then:
-            updatedProject.name == NEW_NAME
-            updatedProject.note == NEW_NOTE
+            updatedProject.name == name
+            updatedProject.note == note
+            updatedProject.architectId == architectId
+            updatedProject.projectType == type
+            updatedProject.startDate == startDate
+            updatedProject.endDate == endDate
+        where:
+            givenProjectStatus        | name     | note     | architectId      | type     | startDate      | endDate
+            ProjectStatus.TO_DO       | NEW_NAME | NEW_NOTE | NEW_ARCHITECT_ID | NEW_TYPE | START_DATE     | null
+            ProjectStatus.IN_PROGRESS | NEW_NAME | NEW_NOTE | NEW_ARCHITECT_ID | NEW_TYPE | NEW_START_DATE | null
+            ProjectStatus.DONE        | NEW_NAME | NEW_NOTE | NEW_ARCHITECT_ID | TYPE     | NEW_START_DATE | END_DATE
+            ProjectStatus.REJECTED    | NEW_NAME | NEW_NOTE | NEW_ARCHITECT_ID | NEW_TYPE | NEW_START_DATE | null
+            ProjectStatus.COMPLETED   | NEW_NAME | NEW_NOTE | NEW_ARCHITECT_ID | TYPE     | NEW_START_DATE | END_DATE
     }
 
     def "finishProject should set endDate to today, if endDate is not provided"() {
@@ -96,7 +127,6 @@ class ProjectDomainServiceImplTest extends Specification {
             1 * project.finishProject(_)
     }
 
-    //TODO TA-194: analyze finishing project
     def "finishProject should call completeWork on projectStatusTransitionService"() {
         given:
             Project project = this.prepareProjectInProgressWithStatus()
@@ -106,16 +136,13 @@ class ProjectDomainServiceImplTest extends Specification {
             1 * projectStatusTransitionService.complete(_ as Project)
     }
 
-    //TODO TA-194: analyze finishing project
     def "finishProject should changeProject status to COMPLETED"() {
         given:
             def project = this.prepareProjectInProgressWithStatus()
         when:
             def finishedProject = this.projectDomainService.finishProject(project, null)
         then:
-            1 * projectStatusTransitionService.complete({
-                Project projectToChange ->
-                    TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.COMPLETED)
+            1 * projectStatusTransitionService.complete({ Project projectToChange -> TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.COMPLETED)
             })
             finishedProject.status == ProjectStatus.COMPLETED
     }
@@ -135,9 +162,7 @@ class ProjectDomainServiceImplTest extends Specification {
         when:
             def rejectedProject = this.projectDomainService.rejectProject(project)
         then:
-            1 * this.projectStatusTransitionService.reject({
-                Project projectToChange ->
-                    TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.REJECTED)
+            1 * this.projectStatusTransitionService.reject({ Project projectToChange -> TestUtils.setFieldForObject(projectToChange, "status", ProjectStatus.REJECTED)
             })
             rejectedProject.status == ProjectStatus.REJECTED
     }
@@ -179,7 +204,7 @@ class ProjectDomainServiceImplTest extends Specification {
     }
 
     private ProjectDto prepareUpdateProjectDto() {
-        def projectDto = new ProjectDto(name: NEW_NAME, note: NEW_NOTE)
+        def projectDto = new ProjectDto(name: NEW_NAME, note: NEW_NOTE, architect: new ArchitectDto(id: ARCHITECT_ID), type: ProjectTypeDto.ARCHITECTURE_HOUSE)
         return projectDto
     }
 }
