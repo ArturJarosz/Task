@@ -97,6 +97,7 @@ class StageTestIT extends BaseTestIT {
             stageDto.name == properStageDto.name
             stageDto.id != null
             stageDto.status == StageStatusDto.TO_DO
+            stageDto.createdDateTime != null
         and:
             !stageDto.nextStatuses.empty
     }
@@ -224,6 +225,7 @@ class StageTestIT extends BaseTestIT {
             stageUpdateDto.note == properStageUpdateDto.note
             stageUpdateDto.type == properStageUpdateDto.type
             stageUpdateDto.deadline == properStageUpdateDto.deadline
+            stageUpdateDto.lastModifiedDateTime != null
         and:
             !stageDto.nextStatuses.empty
     }

@@ -71,6 +71,7 @@ class ContractorJobTestIT extends BaseTestIT {
             def createdContractorJob = MAPPER.readValue(response.contentAsString, ContractorJobDto)
             createdContractorJob.name == createContractorJobDto.name
             createdContractorJob.value == createContractorJobDto.value
+            createdContractorJob.createdDateTime != null
         and:
             response.getHeader(LOCATION) == "$PROJECTS_URI/${project.id}$CONTRACTOR_JOBS_URI/${createdContractorJob.id}"
     }

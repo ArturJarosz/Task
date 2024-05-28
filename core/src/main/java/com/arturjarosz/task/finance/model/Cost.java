@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.model;
 
-import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
+import com.arturjarosz.task.sharedkernel.model.AbstractHistoryAwareEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import jakarta.persistence.*;
 
@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "cost_sequence", allocationSize = 1)
 @Table(name = "COST")
-public class Cost extends AbstractEntity implements PartialFinancialData {
+public class Cost extends AbstractHistoryAwareEntity implements PartialFinancialData {
     @Serial
     private static final long serialVersionUID = 4833869293487851155L;
 

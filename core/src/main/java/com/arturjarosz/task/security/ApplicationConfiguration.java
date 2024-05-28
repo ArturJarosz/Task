@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
@@ -27,6 +28,7 @@ import java.util.List;
 @EnableWebSecurity
 @EnableConfigurationProperties(SecurityProperties.class)
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+@EnableJpaAuditing
 public class ApplicationConfiguration {
     private static final String MATCH_ALL = "/**";
 
@@ -60,4 +62,5 @@ public class ApplicationConfiguration {
         source.registerCorsConfiguration(MATCH_ALL, corsConfiguration);
         return source;
     }
+
 }

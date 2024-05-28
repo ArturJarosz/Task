@@ -44,6 +44,7 @@ class SupplierTestIT extends BaseTestIT {
             createdSupplier != null
             createdSupplier.category == createSupplierDto.category
             createdSupplier.name == createSupplierDto.name
+            createdSupplier.createdDateTime != null
         and:
             response.getHeader(LOCATION) == "$SUPPLIERS_URI/${createdSupplier.id}"
     }
@@ -78,6 +79,7 @@ class SupplierTestIT extends BaseTestIT {
         and:
             def updatedSupplier = MAPPER.readValue(response.contentAsString, SupplierDto)
             updatedSupplier.id == createdSupplier.id
+            updatedSupplier.lastModifiedDateTime != null
     }
 
     @Transactional

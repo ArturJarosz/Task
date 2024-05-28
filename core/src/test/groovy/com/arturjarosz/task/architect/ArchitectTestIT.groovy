@@ -32,17 +32,16 @@ class ArchitectTestIT extends BaseTestIT {
             def requestArchitectDto = this.prepareArchitectDto(FIRST_NAME, LAST_NAME)
             def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(requestArchitectDto)
         when:
-            def response = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response
+            def response = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
+                    .header("Content-Type", "application/json")
+                    .content(requestBody)).andReturn().response
         then:
             response.status == HttpStatus.CREATED.value()
         and:
             ArchitectDto architectDto = MAPPER.readValue(response.contentAsString, ArchitectDto)
             architectDto.firstName == FIRST_NAME
             architectDto.lastName == LAST_NAME
+            architectDto.createdDateTime != null
         and:
             response.getHeader("Location") == ARCHITECTS_URI + "/" + architectDto.id
 
@@ -54,11 +53,9 @@ class ArchitectTestIT extends BaseTestIT {
             def architectDto = this.prepareArchitectDto(null, LAST_NAME)
             def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectDto)
         when:
-            def response = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response
+            def response = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
+                    .header("Content-Type", "application/json")
+                    .content(requestBody)).andReturn().response
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
     }
@@ -69,18 +66,14 @@ class ArchitectTestIT extends BaseTestIT {
         given:
             def requestArchitectDto = this.prepareArchitectDto(FIRST_NAME, LAST_NAME)
             def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(requestArchitectDto)
-            def createdArchitectString = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response.contentAsString
+            def createdArchitectString = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
+                    .header("Content-Type", "application/json")
+                    .content(requestBody)).andReturn().response.contentAsString
             def architectDto = MAPPER.readValue(createdArchitectString, ArchitectDto)
         when:
-            def response = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .delete(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + architectDto.id))
-                            .header("Content-Type", "application/json")
-            ).andReturn().response
+            def response = this.mockMvc.perform(MockMvcRequestBuilders
+                    .delete(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + architectDto.id))
+                    .header("Content-Type", "application/json")).andReturn().response
         then:
             response.status == HttpStatus.OK.value()
     }
@@ -89,11 +82,9 @@ class ArchitectTestIT extends BaseTestIT {
     def "Removing not existing Architect will give code 404 and error message about not existing Architect"() {
         given:
         when:
-            def response = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .delete(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + 2000))
-                            .header("Content-Type", "application/json")
-            ).andReturn().response
+            def response = this.mockMvc.perform(MockMvcRequestBuilders
+                    .delete(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + 2000))
+                    .header("Content-Type", "application/json")).andReturn().response
         then:
             response.status == HttpStatus.NOT_FOUND.value()
         and:
@@ -106,18 +97,14 @@ class ArchitectTestIT extends BaseTestIT {
         given:
             def architectDto = this.prepareArchitectDto(FIRST_NAME, LAST_NAME)
             def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectDto)
-            def createdArchitectString = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
-                            .header("Content-Type", "application/json")
-                            .content(requestBody)
-            ).andReturn().response.contentAsString
+            def createdArchitectString = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
+                    .header("Content-Type", "application/json")
+                    .content(requestBody)).andReturn().response.contentAsString
             def createdArchitectDto = MAPPER.readValue(createdArchitectString, ArchitectDto)
         when:
-            def response = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .get(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + createdArchitectDto.id))
-                            .header("Content-Type", "application/json")
-            ).andReturn().response
+            def response = this.mockMvc.perform(MockMvcRequestBuilders
+                    .get(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + createdArchitectDto.id))
+                    .header("Content-Type", "application/json")).andReturn().response
         then:
             response.status == HttpStatus.OK.value()
         and:
@@ -130,11 +117,9 @@ class ArchitectTestIT extends BaseTestIT {
     def "Calling /get with not existing Architect id should return error message about not existing Architect"() {
         given:
         when:
-            def response = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .get(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + 2000))
-                            .header("Content-Type", "application/json")
-            ).andReturn().response
+            def response = this.mockMvc.perform(MockMvcRequestBuilders
+                    .get(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + 2000))
+                    .header("Content-Type", "application/json")).andReturn().response
         then:
             response.status == HttpStatus.NOT_FOUND.value()
         and:
@@ -148,28 +133,25 @@ class ArchitectTestIT extends BaseTestIT {
             def architectDto = this.prepareArchitectDto(FIRST_NAME, LAST_NAME)
             String requestBodyCreate =
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectDto)
-            def createdArchitectString = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
-                            .header("Content-Type", "application/json")
-                            .content(requestBodyCreate)
-            ).andReturn().response.contentAsString
+            def createdArchitectString = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
+                    .header("Content-Type", "application/json")
+                    .content(requestBodyCreate)).andReturn().response.contentAsString
             def createdArchitectDto = MAPPER.readValue(createdArchitectString, ArchitectDto)
             def updateArchitectDto = this.prepareArchitectDto(NEW_FIRST_NAME, NEW_LAST_NAME)
             String requestBodyUpdate =
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateArchitectDto)
         when:
-            def updatedArchitectString = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .put(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + createdArchitectDto.id))
-                            .header("Content-Type", "application/json")
-                            .content(requestBodyUpdate)
-            ).andReturn().response
+            def updatedArchitectString = this.mockMvc.perform(MockMvcRequestBuilders
+                    .put(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + createdArchitectDto.id))
+                    .header("Content-Type", "application/json")
+                    .content(requestBodyUpdate)).andReturn().response
         then:
             updatedArchitectString.status == HttpStatus.OK.value()
         and:
             def architect = MAPPER.readValue(updatedArchitectString.contentAsString, ArchitectDto)
             architect.firstName == NEW_FIRST_NAME
             architect.lastName == NEW_LAST_NAME
+            architect.lastModifiedDateTime != null
     }
 
     @Transactional
@@ -178,22 +160,18 @@ class ArchitectTestIT extends BaseTestIT {
             def architectDto = this.prepareArchitectDto(FIRST_NAME, LAST_NAME)
             String requestBodyCreate =
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(architectDto)
-            def createdArchitectString = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
-                            .header("Content-Type", "application/json")
-                            .content(requestBodyCreate)
-            ).andReturn().response.contentAsString
+            def createdArchitectString = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + ARCHITECTS_URI))
+                    .header("Content-Type", "application/json")
+                    .content(requestBodyCreate)).andReturn().response.contentAsString
             def createdArchitectDto = MAPPER.readValue(createdArchitectString, ArchitectDto)
             def updateArchitectDto = this.prepareArchitectDto("", NEW_LAST_NAME)
             String requestBodyUpdate =
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateArchitectDto)
         when:
-            def response = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .put(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + createdArchitectDto.id))
-                            .header("Content-Type", "application/json")
-                            .content(requestBodyUpdate)
-            ).andReturn().response
+            def response = this.mockMvc.perform(MockMvcRequestBuilders
+                    .put(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + createdArchitectDto.id))
+                    .header("Content-Type", "application/json")
+                    .content(requestBodyUpdate)).andReturn().response
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
         and:
@@ -208,12 +186,10 @@ class ArchitectTestIT extends BaseTestIT {
             String requestBodyUpdate =
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateArchitectDto)
         when:
-            def response = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .put(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + 2000))
-                            .header("Content-Type", "application/json")
-                            .content(requestBodyUpdate)
-            ).andReturn().response
+            def response = this.mockMvc.perform(MockMvcRequestBuilders
+                    .put(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + 2000))
+                    .header("Content-Type", "application/json")
+                    .content(requestBodyUpdate)).andReturn().response
         then:
             response.status == HttpStatus.NOT_FOUND.value()
         and:

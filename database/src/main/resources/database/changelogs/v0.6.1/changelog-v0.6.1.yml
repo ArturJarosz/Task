@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: "audit/audit-changes.yml"
+      relativeToChangelogFile: true
+  - changeSet:
+      author: "liquibase"
+      id: "tag-version_0.6.1"
+      changes:
+        - tagDatabase:
+            tag: "v0.6.1"

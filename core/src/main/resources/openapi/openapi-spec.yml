@@ -2506,6 +2506,12 @@ components:
           type: string
         lastName:
           type: string
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     Architects:
       type: array
@@ -2554,6 +2560,12 @@ components:
           type: string
         clientType:
           $ref: "#/components/schemas/ClientType"
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     Clients:
       type: array
@@ -2592,6 +2604,12 @@ components:
         nextStatuses:
           items:
             $ref: "#/components/schemas/ContractStatus"
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     ContractStatus:
       type: string
@@ -2619,6 +2637,12 @@ components:
           type: string
         category:
           $ref: "#/components/schemas/ContractorCategory"
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     Contractors:
       type: array
@@ -2656,6 +2680,12 @@ components:
           type: boolean
         paid:
           type: boolean
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     Cost:
       type: object
@@ -2680,6 +2710,12 @@ components:
           type: boolean
         paid:
           type: boolean
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     Costs:
       type: array
@@ -2712,6 +2748,12 @@ components:
           type: boolean
         note:
           type: string
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     Installments:
       type: array
@@ -2742,6 +2784,12 @@ components:
         projectId:
           type: integer
           format: int64
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     Supplies:
       type: array
@@ -2808,6 +2856,12 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Cost"
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     Projects:
       type: array
@@ -2855,6 +2909,7 @@ components:
           type: string
           format: date
 
+
     Stage:
       type: object
       properties:
@@ -2890,6 +2945,12 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/StageStatus"
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     Stages:
       type: array
@@ -2937,6 +2998,12 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/TaskStatus"
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     Tasks:
       type: array
@@ -2981,6 +3048,12 @@ components:
           type: number
         note:
           type: string
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     SupervisionVisit:
       type: object
@@ -2998,6 +3071,12 @@ components:
           type: boolean
         hoursCount:
           type: integer
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     Supplier:
       type: object
@@ -3015,6 +3094,12 @@ components:
           type: string
         category:
           $ref: "#/components/schemas/SupplierCategory"
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     Suppliers:
       type: array
@@ -3049,6 +3134,12 @@ components:
           type: string
         singleValue:
           type: boolean
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
 
     SystemParameters:
       type: array

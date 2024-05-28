@@ -64,6 +64,7 @@ class ProjectTestIT extends BaseTestIT {
             projectDto.contract.offerValue != null
             projectDto.contract.status != null
             projectDto.contract.nextStatuses != null
+            projectDto.createdDateTime != null
     }
 
     @Transactional
@@ -213,6 +214,8 @@ class ProjectTestIT extends BaseTestIT {
             createdProject.name == projectDto.name
             createdProject.note == projectDto.note
             createdProject.type == projectDto.type
+            projectDto.lastModifiedDateTime != null
+
         and:
             !projectDto.nextStatuses.empty
             !projectDto.contract.nextStatuses.empty
