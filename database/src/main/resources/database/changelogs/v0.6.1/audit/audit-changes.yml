@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: 'create-last-modified-datetime-columns.yml'
+      relativeToChangelogFile: true

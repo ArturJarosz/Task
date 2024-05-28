@@ -240,6 +240,12 @@
                                 <annotationLibrary>none</annotationLibrary>
                                 <useTags>true</useTags>
                                 <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
+                                <typeMappings>
+                                    <typeMapping>time=LocalTime</typeMapping>
+                                </typeMappings>
+                                <importMappings>
+                                    <importMapping>LocalTime=java.time.LocalDateTime</importMapping>
+                                </importMappings>
                             </configOptions>
                         </configuration>
                     </execution>

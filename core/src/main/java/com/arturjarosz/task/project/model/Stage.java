@@ -3,7 +3,7 @@ package com.arturjarosz.task.project.model;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.project.status.stage.StageWorkflow;
-import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
+import com.arturjarosz.task.sharedkernel.model.AbstractHistoryAwareEntity;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,7 +19,7 @@ import java.util.Objects;
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "stage_sequence", allocationSize = 1)
 @Table(name = "STAGE")
-public class Stage extends AbstractEntity implements WorkflowAware<StageStatus> {
+public class Stage extends AbstractHistoryAwareEntity implements WorkflowAware<StageStatus> {
     @Serial
     private static final long serialVersionUID = 3201266147496282083L;
 

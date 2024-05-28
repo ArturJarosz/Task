@@ -71,6 +71,7 @@ class SupplyTestIT extends BaseTestIT {
             def createdSupply = MAPPER.readValue(response.contentAsString, SupplyDto)
         and:
             response.getHeader(LOCATION) == "$PROJECTS_URI/${project.id}$SUPPLIES_URI/${createdSupply.id}"
+            createdSupply.createdDateTime != null
     }
 
     @Transactional
@@ -126,6 +127,7 @@ class SupplyTestIT extends BaseTestIT {
             updatedSupply.name == updateSupplyDto.name
             updatedSupply.note == updateSupplyDto.note
             updatedSupply.value == updateSupplyDto.value
+            updatedSupply.lastModifiedDateTime != null
     }
 
     @Transactional

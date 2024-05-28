@@ -9,7 +9,7 @@ import java.io.Serial;
  */
 
 @MappedSuperclass
-public abstract class AbstractAggregateRoot extends AbstractEntity {
+public abstract class AbstractAggregateRoot extends AbstractHistoryAwareEntity {
     @Serial
     private static final long serialVersionUID = -1097600977230597412L;
 

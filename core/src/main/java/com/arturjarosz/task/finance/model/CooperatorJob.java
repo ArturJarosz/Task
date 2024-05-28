@@ -1,6 +1,6 @@
 package com.arturjarosz.task.finance.model;
 
-import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
+import com.arturjarosz.task.sharedkernel.model.AbstractHistoryAwareEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import jakarta.persistence.*;
 
@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @MappedSuperclass
 @DiscriminatorColumn(name = "TYPE")
 @Table(name = "COOPERATOR_JOB")
-public abstract class CooperatorJob extends AbstractEntity {
+public abstract class CooperatorJob extends AbstractHistoryAwareEntity {
     @Serial
     private static final long serialVersionUID = -2817735161319438104L;
 

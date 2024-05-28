@@ -11,9 +11,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
-import org.mapstruct.ReportingPolicy;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper()
 public interface ClientMapper {
 
     @Mapping(source = "personName.firstName", target = "firstName")
@@ -90,6 +89,8 @@ public interface ClientMapper {
     @Mapping(target = "telephone", source = "contact.telephone")
     @Mapping(target = "address", source = "contact.address", qualifiedByName = "addressDtoToAddress")
     @Mapping(target = "email", source = "contact.email", qualifiedByName = "textToEmail")
+    @Mapping(target = "lastModifiedDateTime", ignore = true)
+    @Mapping(target = "createdDateTime", ignore = true)
     void updatePrivateClientFromDto(ClientDto clientDto, @MappingTarget Client client);
 
     @Mapping(target = "personName", ignore = true)
@@ -97,5 +98,7 @@ public interface ClientMapper {
     @Mapping(target = "telephone", source = "contact.telephone")
     @Mapping(target = "address", source = "contact.address", qualifiedByName = "addressDtoToAddress")
     @Mapping(target = "email", source = "contact.email", qualifiedByName = "textToEmail")
+    @Mapping(target = "lastModifiedDateTime", ignore = true)
+    @Mapping(target = "createdDateTime", ignore = true)
     void updateCorporateClientFromDto(ClientDto clientDto, @MappingTarget Client client);
 }

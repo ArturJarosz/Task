@@ -3,7 +3,7 @@ package com.arturjarosz.task.project.model;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.status.task.TaskStatus;
 import com.arturjarosz.task.project.status.task.TaskWorkflow;
-import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
+import com.arturjarosz.task.sharedkernel.model.AbstractHistoryAwareEntity;
 import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "task_sequence", allocationSize = 1)
 @Table(name = "TASK")
-public class Task extends AbstractEntity implements WorkflowAware<TaskStatus> {
+public class Task extends AbstractHistoryAwareEntity implements WorkflowAware<TaskStatus> {
     @Serial
     private static final long serialVersionUID = 9208147376126632528L;
 

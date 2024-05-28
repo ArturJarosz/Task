@@ -45,6 +45,7 @@ class ClientTestIT extends BaseTestIT {
             def createdClient = MAPPER.readValue(response.contentAsString, ClientDto)
         and:
             response.getHeader("Location") == CLIENTS_URI + "/" + createdClient.id
+            createdClient.createdDateTime != null
     }
 
     @Transactional
@@ -150,6 +151,7 @@ class ClientTestIT extends BaseTestIT {
                     address.flatNumber == updateClient.contact.address.flatNumber
                     email == updateClient.contact.email
                     telephone == updatedClient.contact.telephone
+                    lastModifiedDateTime != null
                 }
             }
     }

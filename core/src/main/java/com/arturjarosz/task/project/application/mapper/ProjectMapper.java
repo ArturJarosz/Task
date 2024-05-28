@@ -45,6 +45,8 @@ public interface ProjectMapper {
     @Mapping(source = "project", target = "nextStatuses", qualifiedByName = "getNextStatuses")
     @Mapping(source = "contractDto", target = "contract")
     @Mapping(source = "costDtos", target = "costs")
+    @Mapping(source = "project.createdDateTime", target = "createdDateTime")
+    @Mapping(source = "project.lastModifiedDateTime", target = "lastModifiedDateTime")
     ProjectDto mapToDto(ClientDto clientDto, ArchitectDto architectDto, Project project, ContractDto contractDto,
             List<CostDto> costDtos);
 
@@ -57,6 +59,8 @@ public interface ProjectMapper {
     @Mapping(source = "project.endDate", target = "endDate")
     @Mapping(source = "project", target = "nextStatuses", qualifiedByName = "getNextStatuses")
     @Mapping(source = "contract", target = "contract")
+    @Mapping(source = "project.createdDateTime", target = "createdDateTime")
+    @Mapping(source = "project.lastModifiedDateTime", target = "lastModifiedDateTime")
     ProjectDto mapToDto(Project project, ContractDto contract);
 
     @Mapping(source = "projectType", target = "type")
@@ -78,6 +82,8 @@ public interface ProjectMapper {
     @Mapping(source = "clientDto.companyName", target = "client.companyName")
     @Mapping(source = "clientDto.clientType", target = "client.clientType")
     @Mapping(source = "architectDto", target = "architect")
+    @Mapping(source = "project.createdDateTime", target = "createdDateTime")
+    @Mapping(source = "project.lastModifiedDateTime", target = "lastModifiedDateTime")
     ProjectDto mapToDto(ClientDto clientDto, ArchitectDto architectDto, Project project);
 
     @Named("moneyToDouble")

@@ -1,7 +1,7 @@
 package com.arturjarosz.task.supervision.model;
 
 import com.arturjarosz.task.dto.SupervisionVisitDto;
-import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
+import com.arturjarosz.task.sharedkernel.model.AbstractHistoryAwareEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.SequenceGenerator;
@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "supervision_visit_sequence", allocationSize = 1)
 @Table(name = "SUPERVISION_VISIT")
-public class SupervisionVisit extends AbstractEntity {
+public class SupervisionVisit extends AbstractHistoryAwareEntity {
     @Serial
     private static final long serialVersionUID = 6142572844344116972L;
 

@@ -119,6 +119,7 @@ class TaskTestIT extends BaseTestIT {
             createdTaskDto.id != null
             createdTaskDto.name == properTaskDto.name
             createdTaskDto.type == properTaskDto.type
+            createdTaskDto.createdDateTime != null
         and:
             !createdTaskDto.nextStatuses.empty
     }
@@ -243,6 +244,7 @@ class TaskTestIT extends BaseTestIT {
             def updatedTaskDto = MAPPER.readValue(taskUpdateResponse.contentAsString, TaskDto)
             updatedTaskDto.name == properTaskUpdateDto.name
             updatedTaskDto.note == properTaskUpdateDto.note
+            updatedTaskDto.lastModifiedDateTime != null
         and:
             !createdTaskDto.nextStatuses.empty
     }

@@ -1,0 +1,193 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-creation-and-modification-dates"
+      changes:
+        - addColumn:
+            tableName: "ARCHITECT"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "CLIENT"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "CONTRACT"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "CONTRACTOR"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "COOPERATOR_JOB"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "COST"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "FINANCIAL_DATA"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "INSTALLMENT"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "PROJECT"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "PROJECT_FINANCIAL_DATA"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "PROJECT_FINANCIAL_SUMMARY"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "STAGE"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "SUPERVISION"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "SUPERVISION_VISIT"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "SUPPLIER"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "SYSTEM_PARAMETER"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "TASK"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+

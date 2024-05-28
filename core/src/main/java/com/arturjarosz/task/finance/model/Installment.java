@@ -1,7 +1,7 @@
 package com.arturjarosz.task.finance.model;
 
 import com.arturjarosz.task.dto.InstallmentDto;
-import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
+import com.arturjarosz.task.sharedkernel.model.AbstractHistoryAwareEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "installment_sequence", allocationSize = 1)
 @Table(name = "INSTALLMENT")
-public class Installment extends AbstractEntity implements PartialFinancialData {
+public class Installment extends AbstractHistoryAwareEntity implements PartialFinancialData {
     @Serial
     private static final long serialVersionUID = -8420590861357070177L;
 

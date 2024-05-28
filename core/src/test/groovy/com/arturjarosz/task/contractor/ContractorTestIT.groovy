@@ -39,6 +39,7 @@ class ContractorTestIT extends BaseTestIT {
             def createdContractor = MAPPER.readValue(response.contentAsString, ContractorDto)
             createdContractor.name == createContractorDto.name
             createdContractor.category == createContractorDto.category
+            createdContractor.createdDateTime != null
         and:
             response.getHeader(LOCATION) == "$CONTRACTORS_URI/${createdContractor.id}"
     }
@@ -77,6 +78,7 @@ class ContractorTestIT extends BaseTestIT {
             updatedContractor.telephone == updateContractorDto.telephone
             updatedContractor.email == updateContractorDto.email
             updatedContractor.note == updateContractorDto.note
+            updatedContractor.lastModifiedDateTime != null
     }
 
     @Transactional
