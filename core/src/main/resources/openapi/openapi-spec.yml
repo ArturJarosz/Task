@@ -2521,10 +2521,6 @@ components:
           type: string
         street:
           type: string
-        houseNumber:
-          type: string
-        flatNumber:
-          type: string
 
     Contact:
       type: object

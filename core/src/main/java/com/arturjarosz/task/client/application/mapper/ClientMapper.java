@@ -54,8 +54,7 @@ public interface ClientMapper {
         if (addressDto == null) {
             return null;
         }
-        return new Address(addressDto.getPostCode(), addressDto.getCity(), addressDto.getStreet(),
-                addressDto.getHouseNumber(), addressDto.getFlatNumber());
+        return new Address(addressDto.getPostCode(), addressDto.getCity(), addressDto.getStreet());
     }
 
     @Named("textToEmail")

@@ -146,8 +146,6 @@ class ClientTestIT extends BaseTestIT {
                     address.city == updateClient.contact.address.city
                     address.postCode == updateClient.contact.address.postCode
                     address.street == updateClient.contact.address.street
-                    address.houseNumber == updatedClient.contact.address.houseNumber
-                    address.flatNumber == updateClient.contact.address.flatNumber
                     email == updateClient.contact.email
                     telephone == updatedClient.contact.telephone
                 }
