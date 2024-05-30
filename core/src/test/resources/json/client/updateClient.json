@@ -1,16 +1,14 @@
 {
-  "firstName": "Johnny",
-  "lastName": "Bravo",
-  "contact": {
-    "address": {
-      "city": "New York",
-      "postCode": "1NYEC3",
-      "street": "High Street",
-      "houseNumber": "102",
-      "flatNumber": "1"
+    "firstName": "Johnny",
+    "lastName": "Bravo",
+    "contact": {
+        "address": {
+            "city": "New York",
+            "postCode": "1NYEC3",
+            "street": "High Street"
+        },
+        "email": "johhnybravo@example.com",
+        "telephone": "604258789"
     },
-    "email": "johhnybravo@example.com",
-    "telephone": "604258789"
-  },
-  "note": "some additional information about client"
+    "note": "some additional information about client"
 }

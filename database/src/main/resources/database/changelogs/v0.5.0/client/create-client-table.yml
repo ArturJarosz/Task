@@ -52,12 +52,6 @@ databaseChangeLog:
               - column:
                   name: "STREET"
                   type: "VARCHAR2(30 ${char.unit})"
-              - column:
-                  name: "HOUSE_NUMBER"
-                  type: "VARCHAR2(5 ${char.unit})"
-              - column:
-                  name: "FLAT_NUMBER"
-                  type: "VARCHAR2(5 ${char.unit})"
         - addPrimaryKey:
             tableName: "CLIENT"
             columnNames: "ID"

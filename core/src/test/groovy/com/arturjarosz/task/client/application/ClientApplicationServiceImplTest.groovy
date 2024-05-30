@@ -22,10 +22,8 @@ class ClientApplicationServiceImplTest extends Specification {
     static final String COMPANY_NAME = "companyName"
     static final String NEW_EMAIL = "newEmail@test.pl"
     static final String NEW_CITY = "newCity"
-    static final String NEW_STREET = "newStreet"
+    static final String NEW_STREET = "newStreet 12"
     static final String NEW_POST_CODE = "11-111"
-    static final String NEW_HOUSE_NUMBER = "2"
-    static final String NEW_FLAT_NUMBER = "20"
     static final String NEW_NOTE = "note2"
     static final String NEW_TELEPHONE = "22334455"
     static final Long EXISTING_PRIVATE_ID = 1L
@@ -158,8 +156,6 @@ class ClientApplicationServiceImplTest extends Specification {
                 note == NEW_NOTE
                 contact.telephone == NEW_TELEPHONE
                 contact.address.city == NEW_CITY
-                contact.address.flatNumber == NEW_FLAT_NUMBER
-                contact.address.houseNumber == NEW_HOUSE_NUMBER
                 contact.address.postCode == NEW_POST_CODE
                 contact.address.street == NEW_STREET
             }
@@ -205,8 +201,7 @@ class ClientApplicationServiceImplTest extends Specification {
     }
 
     private AddressDto prepareAddressDto() {
-        return new AddressDto(city: NEW_CITY, houseNumber: NEW_HOUSE_NUMBER,
-                flatNumber: NEW_FLAT_NUMBER, postCode: NEW_POST_CODE, street: NEW_STREET)
+        return new AddressDto(city: NEW_CITY, postCode: NEW_POST_CODE, street: NEW_STREET)
     }
 
 }

@@ -11,9 +11,7 @@
             "address": {
                 "city": "Zielona Góra",
                 "postCode": "16-461",
-                "street": "Gajdy",
-                "houseNumber": "1",
-                "flatNumber": ""
+                "street": "Gajdy 1"
             }
         }
     },
@@ -28,9 +26,7 @@
             "address": {
                 "city": "Lublin",
                 "postCode": "20-701",
-                "street": "Nałęczowska",
-                "houseNumber": "18A",
-                "flatNumber": "U18"
+                "street": "Nałęczowska 18A/18"
             }
         }
     },
@@ -46,9 +42,7 @@
             "address": {
                 "city": "Bytom",
                 "postCode": "64-103",
-                "street": "Sosnowa",
-                "houseNumber": "71",
-                "flatNumber": "2"
+                "street": "Sosnowa 71/2"
             }
         }
     },
@@ -64,9 +58,7 @@
             "address": {
                 "city": "Olsztyn",
                 "postCode": "12-915",
-                "street": "Kołłątaja",
-                "houseNumber": "1",
-                "flatNumber": "13"
+                "street": "Kołłątaja 1/13"
             }
         }
     },
@@ -82,9 +74,7 @@
             "address": {
                 "city": "Kraków",
                 "postCode": "08-774",
-                "street": "Rolna",
-                "houseNumber": "2",
-                "flatNumber": "15"
+                "street": "Rolna 2/15"
             }
         }
     },
@@ -100,9 +90,7 @@
             "address": {
                 "city": "Mysłowice",
                 "postCode": "48-062",
-                "street": "Sikorskiego",
-                "houseNumber": "17a",
-                "flatNumber": ""
+                "street": "Sikorskiego 17a"
             }
         }
     },
@@ -118,9 +106,7 @@
             "address": {
                 "city": "Warszawa",
                 "postCode": "95-790",
-                "street": "Jarzębinowa",
-                "houseNumber": "112",
-                "flatNumber": "67"
+                "street": "Jarzębinowa 112/67"
             }
         }
     },
@@ -136,9 +122,7 @@
             "address": {
                 "city": "Lublin",
                 "postCode": "08-478",
-                "street": "Słowiańska",
-                "houseNumber": "53c",
-                "flatNumber": "7"
+                "street": "Słowiańska 53c/7"
             }
         }
     },
@@ -154,9 +138,7 @@
             "address": {
                 "city": "Lublin",
                 "postCode": "00-629",
-                "street": "Widok",
-                "houseNumber": "39",
-                "flatNumber": "9"
+                "street": "Widok 39/9"
             }
         }
     }
