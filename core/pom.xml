@@ -51,6 +51,11 @@
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
         </dependency>
+        <!--HIBERNATE-->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-envers</artifactId>
+        </dependency>
         <!--LOGGING-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

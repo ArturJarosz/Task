@@ -10,9 +10,14 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
-      hibernate.cache.use_query_cache: false
-      hibernate.generate_statistics: false
-      hibernate.default_schema: task_schema
+      hibernate:
+        cache:
+          use_query_cache: false
+        generate_statistics: false
+        default_schema: task_schema
+        integration:
+          envers:
+            enabled: ${ENABLE_HISTORY}
   main:
     log-startup-info: false
   jackson:

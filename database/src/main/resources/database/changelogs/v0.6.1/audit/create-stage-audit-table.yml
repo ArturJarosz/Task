@@ -1,0 +1,58 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-stage-audit-table"
+      changes:
+        - createTable:
+            tableName: "STAGE_AUD"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "REV"
+                  type: "${integer.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "REVTYPE"
+                  type: "${integer.type}"
+              - column:
+                  name: "NAME"
+                  type: "VARCHAR2(60 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "STAGE_TYPE"
+                  type: "VARCHAR2(30 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "START_DATE"
+                  type: "${date.type}"
+              - column:
+                  name: "END_DATE"
+                  type: "${date.type}"
+              - column:
+                  name: "DEADLINE"
+                  type: "${date.type}"
+              - column:
+                  name: "NOTE"
+                  type: "VARCHAR2(1000 ${char.unit})"
+              - column:
+                  name: "STATUS"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "STAGE_AUD"
+            columnNames: "ID, REV"
+            constraintName: "PK_STAGE_AUD"
+        - addForeignKeyConstraint:
+            baseTableName: "STAGE_AUD"
+            baseColumnNames: "REV"
+            referencedTableName: "REVINFO"
+            referencedColumnNames: "REV"
+            constraintName: "STAGE_AUD_REV_FK"

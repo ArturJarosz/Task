@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-contract-audit-table"
+      changes:
+        - createTable:
+            tableName: "CONTRACT_AUD"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "REV"
+                  type: "${integer.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "REVTYPE"
+                  type: "${integer.type}"
+              - column:
+                  name: "VALUE"
+                  type: "${big_decimal.type}"
+                  defaultValue: "0.0"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "STATUS"
+                  type: "VARCHAR2(50 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "SIGNING_DATE"
+                  type: "${date.type}"
+              - column:
+                  name: "DEADLINE"
+                  type: "${date.type}"
+              - column:
+                  name: "START_DATE"
+                  type: "${date.type}"
+              - column:
+                  name: "END_DATE"
+                  type: "${date.type}"
+        - addPrimaryKey:
+            tableName: "CONTRACT_AUD"
+            columnNames: "ID, REV"
+            constraintName: "PK_CONTRACT_AUD"
+        - addForeignKeyConstraint:
+            baseTableName: "CONTRACT_AUD"
+            baseColumnNames: "REV"
+            referencedTableName: "REVINFO"
+            referencedColumnNames: "REV"
+            constraintName: "CONTRACT_AUD_REV_FK"
