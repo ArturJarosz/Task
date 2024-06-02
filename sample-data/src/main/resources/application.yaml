@@ -5,6 +5,10 @@ spring:
     properties:
       hibernate:
         default_schema: task_schema
+        dupa: sraka
+        integration:
+          envers:
+            enabled: true
   output:
     ansi:
       enabled: always

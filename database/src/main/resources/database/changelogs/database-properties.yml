@@ -9,6 +9,10 @@ databaseChangeLog:
       name: "big_decimal.type"
       value: "DECIMAL(19,6)"
       dbms: "h2"
+  # biginteger
+  - property:
+      name: "big_integer.type"
+      value: "BIGINT"
   # boolean
   - property:
       name: "boolean.type"

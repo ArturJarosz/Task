@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-audit-tables"
+      changes:
+        - createTable:
+            tableName: "REVINFO"
+            columns:
+              - column:
+                  name: "REV"
+                  type: "${integer.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "REVTSTMP"
+                  type: "${big_integer.type}"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "REVINFO"
+            columnNames: "REV"
+            constraintName: "PK_REVINFO"
+        - createSequence:
+            sequenceName: "revinfo_seqence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1

@@ -2,3 +2,21 @@ databaseChangeLog:
   - include:
       file: 'create-last-modified-datetime-columns.yml'
       relativeToChangelogFile: true
+  - include:
+      file: 'create-audit-tables.yml'
+      relativeToChangelogFile: true
+  - include:
+      file: 'create-client-audit-table.yml'
+      relativeToChangelogFile: true
+  - include:
+      file: 'create-contract-audit-table.yml'
+      relativeToChangelogFile: true
+  - include:
+      file: 'create-project-audit-table.yml'
+      relativeToChangelogFile: true
+  - include:
+      file: 'create-stage-audit-table.yml'
+      relativeToChangelogFile: true
+  - include:
+      file: 'create-task-audit-table.yml'
+      relativeToChangelogFile: true

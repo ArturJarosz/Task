@@ -15,6 +15,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
 
 import java.io.Serial;
 
@@ -32,31 +33,37 @@ public class Client extends AbstractAggregateRoot {
     @AttributeOverride(name = "value", column = @Column(name = "PROJECTS_VALUE"))
     private Money projectsValue;
 
+    @Audited
     @Setter
     @Getter
     @Embedded
     private PersonName personName;
 
+    @Audited
     @Setter
     @Getter
     @Column(name = "COMPANY_NAME")
     private String companyName;
 
+    @Audited
     @Getter
     @Setter
     @Embedded
     private Address address;
 
+    @Audited
     @Getter
     @Setter
     @Embedded
     private Email email;
 
+    @Audited
     @Getter
     @Setter
     @Column(name = "NOTE")
     private String note;
 
+    @Audited
     @Getter
     @Setter
     @Column(name = "TELEPHONE")
