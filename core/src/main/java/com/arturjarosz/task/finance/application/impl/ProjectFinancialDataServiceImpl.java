@@ -61,6 +61,7 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
     public ProjectFinancialData createProjectFinancialData(Long projectId) {
         this.projectValidator.validateProjectExistence(projectId);
         var projectFinancialData = new ProjectFinancialData(projectId);
+        this.initializePartialFinancialData(projectFinancialData);
         projectFinancialData = this.projectFinancialDataRepository.save(projectFinancialData);
         return projectFinancialData;
     }
@@ -137,5 +138,12 @@ public class ProjectFinancialDataServiceImpl implements ProjectFinancialDataServ
             }
         }
         return totalFinancialData;
+    }
+
+    private void initializePartialFinancialData(ProjectFinancialData projectFinancialData) {
+        var zeroValue = new FinancialValueDto();
+        this.typeToPartialFinancialDataServices.keySet()
+                .forEach(type -> projectFinancialData.updatePartialData(type, zeroValue));
+        projectFinancialData.updatePartialData(PartialFinancialDataType.TOTAL, zeroValue);
     }
 }
