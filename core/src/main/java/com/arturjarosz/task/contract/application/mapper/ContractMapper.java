@@ -1,5 +1,6 @@
 package com.arturjarosz.task.contract.application.mapper;
 
+import com.arturjarosz.task.common.mapper.MoneyMapper;
 import com.arturjarosz.task.contract.model.Contract;
 import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.dto.ContractStatusDto;
@@ -12,7 +13,7 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {MoneyMapper.class})
 public interface ContractMapper {
 
     @Mapping(source = "offerValue", target = "offerValue")

@@ -114,17 +114,6 @@ databaseChangeLog:
                   name: "LAST_MODIFIED_DATETIME"
                   type: "${time.type}"
         - addColumn:
-            tableName: "PROJECT_FINANCIAL_SUMMARY"
-            columns:
-              - column:
-                  name: "CREATED_DATETIME"
-                  type: "${time.type}"
-                  constraints:
-                    nullable: false
-              - column:
-                  name: "LAST_MODIFIED_DATETIME"
-                  type: "${time.type}"
-        - addColumn:
             tableName: "STAGE"
             columns:
               - column:

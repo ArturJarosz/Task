@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
       author: "liquibase"
-      id: "create-project-financial-partial-summary-sequence"
+      id: "create-project-financial-partial-data-sequence"
       changes:
         - createSequence:
-            sequenceName: "project_financial_partial_summary_sequence"
+            sequenceName: "project_financial_partial_data_sequence"
             startValue: 100
             cacheSize: 10
             incrementBy: 1

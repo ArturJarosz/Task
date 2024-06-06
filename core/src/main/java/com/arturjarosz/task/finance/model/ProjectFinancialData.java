@@ -4,23 +4,21 @@ package com.arturjarosz.task.finance.model;
 import com.arturjarosz.task.dto.ContractorJobDto;
 import com.arturjarosz.task.dto.InstallmentDto;
 import com.arturjarosz.task.dto.SupplyDto;
+import com.arturjarosz.task.finance.application.dto.FinancialValueDto;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import com.arturjarosz.task.sharedkernel.model.Money;
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Where;
 
 import java.io.Serial;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
@@ -31,6 +29,7 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
 
     @Serial
     private static final long serialVersionUID = -6717212464303174748L;
+    @Setter
     @Getter
     @Column(name = "PROJECT_ID", nullable = false)
     private Long projectId;
@@ -56,15 +55,18 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
     @Where(clause = "TYPE = 'SUPPLY'")
     private Set<Supply> supplies;
 
+    @Getter
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "PROJECT_FINANCIAL_DATA_ID", nullable = false)
+    @MapKeyColumn(name = "DATA_TYPE")
+    @MapKeyEnumerated(EnumType.STRING)
+    private Map<PartialFinancialDataType, ProjectFinancialPartialData> partialSummaries;
+
     protected ProjectFinancialData() {
         // needed by JPA
     }
 
     public ProjectFinancialData(Long projectId) {
-        this.projectId = projectId;
-    }
-
-    public void setProjectId(Long projectId) {
         this.projectId = projectId;
     }
 
@@ -173,4 +175,20 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
         installment.payInstallment(payDate);
         return installment;
     }
+
+    public void updatePartialData(PartialFinancialDataType type, FinancialValueDto financialValueDto) {
+        if (this.partialSummaries == null) {
+            this.partialSummaries = new EnumMap<>(PartialFinancialDataType.class);
+        }
+        if (this.partialSummaries.containsKey(type)) {
+            ProjectFinancialPartialData partialSummary = this.partialSummaries.get(type);
+            partialSummary.setGrossValue(new Money(financialValueDto.getGrossValue()));
+            partialSummary.setNetValue(new Money(financialValueDto.getNetValue()));
+            partialSummary.setIncomeTax(new Money(financialValueDto.getIncomeTax()));
+            partialSummary.setVatTax(new Money(financialValueDto.getVatTax()));
+        } else {
+            this.partialSummaries.put(type, new ProjectFinancialPartialData(type, financialValueDto));
+        }
+    }
+
 }

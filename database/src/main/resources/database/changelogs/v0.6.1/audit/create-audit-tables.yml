@@ -13,7 +13,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: "REVTSTMP"
-                  type: "${big_integer.type}"
+                  type: "${time.type}"
                   constraints:
                     nullable: false
         - addPrimaryKey:
