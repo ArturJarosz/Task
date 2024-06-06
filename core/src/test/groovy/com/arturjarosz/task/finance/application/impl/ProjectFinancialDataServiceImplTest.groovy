@@ -39,7 +39,7 @@ class ProjectFinancialDataServiceImplTest extends Specification {
     def financialDataQueryService = Mock(FinancialDataQueryServiceImpl)
     def financialDataRepository = Mock(FinancialDataRepository)
     def partialFinancialDataService = Mock(PartialFinancialDataService)
-    List<PartialFinancialDataService> partialFinancialDataServices = Arrays.asList(partialFinancialDataService)
+    def partialFinancialDataServices = [partialFinancialDataService]
 
     def setup() {
         this.partialFinancialDataService.getType() >> PartialFinancialDataType.COST
@@ -52,6 +52,10 @@ class ProjectFinancialDataServiceImplTest extends Specification {
 
     def "createProjectFinancialData should call validateProjectExistence on projectValidator"() {
         given:
+            projectFinancialDataService = new ProjectFinancialDataServiceImpl
+                    (projectFinancialDataRepository, projectValidator, financialDataQueryService, financialDataRepository,
+                            [])
+            projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_ID) >> new ProjectFinancialData(PROJECT_ID)
         when:
             this.projectFinancialDataService.createProjectFinancialData(PROJECT_ID)
         then:
@@ -60,6 +64,10 @@ class ProjectFinancialDataServiceImplTest extends Specification {
 
     def "createProjectFinancialData should save projectFinancialData with repository"() {
         given:
+            projectFinancialDataService = new ProjectFinancialDataServiceImpl
+                    (projectFinancialDataRepository, projectValidator, financialDataQueryService, financialDataRepository,
+                            [])
+            projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_ID) >> new ProjectFinancialData(PROJECT_ID)
         when:
             this.projectFinancialDataService.createProjectFinancialData(PROJECT_ID)
         then:
@@ -68,6 +76,10 @@ class ProjectFinancialDataServiceImplTest extends Specification {
 
     def "createProjectFinancialData should return projectFinancialData with correct projectId"() {
         given:
+            projectFinancialDataService = new ProjectFinancialDataServiceImpl
+                    (projectFinancialDataRepository, projectValidator, financialDataQueryService, financialDataRepository,
+                            [])
+            projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_ID) >> new ProjectFinancialData(PROJECT_ID)
             mockProjectFinancialDataRepositorySave()
         when:
             def projectFinancialData = this.projectFinancialDataService.createProjectFinancialData(PROJECT_ID)
