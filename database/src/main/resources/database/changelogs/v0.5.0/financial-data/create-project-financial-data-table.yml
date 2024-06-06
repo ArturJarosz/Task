@@ -31,3 +31,9 @@ databaseChangeLog:
             referencedTableName: "PROJECT"
             referencedColumnNames: "ID"
             constraintName: "FK_PROJECT_FINANCIAL_DATA_PROJECT"
+        - createIndex:
+            indexName: "IDX_PROJECT_FINANCIAL_PROJECT"
+            tableName: "PROJECT_FINANCIAL_DATA"
+            unique: true
+            column:
+              name: "PROJECT_ID"

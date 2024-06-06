@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
       author: "liquibase"
-      id: "create-project-financial-summary-table"
+      id: "create-project-financial-data-table"
       changes:
         - createTable:
-            tableName: "PROJECT_FINANCIAL_PARTIAL_SUMMARY"
+            tableName: "PROJECT_FINANCIAL_PARTIAL_DATA"
             columns:
               - column:
                   name: "ID"
@@ -17,7 +17,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: "PROJECT_FINANCIAL_SUMMARY_ID"
+                  name: "PROJECT_FINANCIAL_DATA_ID"
                   type: "${long.type}"
                   constraints:
                     nullable: false
@@ -51,13 +51,13 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - addPrimaryKey:
-            tableName: "PROJECT_FINANCIAL_PARTIAL_SUMMARY"
+            tableName: "PROJECT_FINANCIAL_PARTIAL_DATA"
             columnNames: "ID"
-            constraintName: "PROJECT_FINANCIAL_PARTIAL_SUMMARY_ID"
+            constraintName: "PROJECT_FINANCIAL_PARTIAL_DATA_ID"
         - addForeignKeyConstraint:
-            baseTableName: "PROJECT_FINANCIAL_PARTIAL_SUMMARY"
-            baseColumnNames: "PROJECT_FINANCIAL_SUMMARY_ID"
-            referencedTableName: "PROJECT_FINANCIAL_SUMMARY"
+            baseTableName: "PROJECT_FINANCIAL_PARTIAL_DATA"
+            baseColumnNames: "PROJECT_FINANCIAL_DATA_ID"
+            referencedTableName: "PROJECT_FINANCIAL_DATA"
             referencedColumnNames: "ID"
-            constraintName: "FK_PARTIAL_PROJECT_FINANCIAL_SUMMARY"
+            constraintName: "FK_PARTIAL_PROJECT_FINANCIAL_DATA"
 

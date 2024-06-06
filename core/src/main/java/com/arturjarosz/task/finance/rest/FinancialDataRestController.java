@@ -1,7 +1,7 @@
 package com.arturjarosz.task.finance.rest;
 
 import com.arturjarosz.task.dto.TotalProjectFinancialSummaryDto;
-import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
+import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.rest.FinancialDataApi;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class FinancialDataRestController implements FinancialDataApi {
 
     @NonNull
-    private final ProjectFinancialSummaryService projectFinancialSummaryService;
+    private final ProjectFinancialDataService projectFinancialDataService;
 
     public ResponseEntity<TotalProjectFinancialSummaryDto> getTotalProjectFinancialSummary(
             @PathVariable("projectId") Long projectId) {
-        return new ResponseEntity<>(this.projectFinancialSummaryService.getTotalProjectFinancialSummary(projectId),
+        return new ResponseEntity<>(this.projectFinancialDataService.getTotalProjectFinancialData(projectId),
                 HttpStatus.OK);
     }
 }

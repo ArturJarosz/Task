@@ -9,7 +9,7 @@ import com.arturjarosz.task.finance.application.mapper.ContractorJobMapper;
 import com.arturjarosz.task.finance.application.mapper.CostMapper;
 import com.arturjarosz.task.finance.application.mapper.FinancialDataMapper;
 import com.arturjarosz.task.finance.application.mapper.InstallmentMapper;
-import com.arturjarosz.task.finance.application.mapper.ProjectFinancialPartialSummaryMapper;
+import com.arturjarosz.task.finance.application.mapper.ProjectFinancialPartialDataMapper;
 import com.arturjarosz.task.finance.application.mapper.SupplyMapper;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
 import com.arturjarosz.task.finance.model.PartialFinancialDataType;
@@ -18,8 +18,7 @@ import com.arturjarosz.task.finance.model.QCost;
 import com.arturjarosz.task.finance.model.QFinancialData;
 import com.arturjarosz.task.finance.model.QInstallment;
 import com.arturjarosz.task.finance.model.QProjectFinancialData;
-import com.arturjarosz.task.finance.model.QProjectFinancialPartialSummary;
-import com.arturjarosz.task.finance.model.QProjectFinancialSummary;
+import com.arturjarosz.task.finance.model.QProjectFinancialPartialData;
 import com.arturjarosz.task.finance.model.QSupply;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
@@ -42,12 +41,11 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     private static final QSupervision SUPERVISION = QSupervision.supervision;
     private static final QSupervisionVisit SUPERVISION_VISIT = QSupervisionVisit.supervisionVisit;
     private static final QSupply SUPPLY = QSupply.supply;
-    private static final QProjectFinancialSummary PROJECT_FINANCIAL_SUMMARY = QProjectFinancialSummary.projectFinancialSummary;
-    private static final QProjectFinancialPartialSummary PROJECT_FINANCIAL_PARTIAL_SUMMARY = QProjectFinancialPartialSummary.projectFinancialPartialSummary;
+    private static final QProjectFinancialPartialData PROJECT_FINANCIAL_PARTIAL_DATA = QProjectFinancialPartialData.projectFinancialPartialData;
     private static final QProjectFinancialData PROJECT_FINANCIAL_DATA = QProjectFinancialData.projectFinancialData;
 
     private final FinancialDataMapper financialDataMapper;
-    private final ProjectFinancialPartialSummaryMapper projectFinancialPartialSummaryMapper;
+    private final ProjectFinancialPartialDataMapper projectFinancialPartialDataMapper;
     private final CostMapper costMapper;
     private final InstallmentMapper installmentMapper;
     private final SupplyMapper supplyMapper;
@@ -55,11 +53,11 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
 
     @Autowired
     public FinancialDataQueryServiceImpl(FinancialDataMapper financialDataMapper,
-            ProjectFinancialPartialSummaryMapper projectFinancialPartialSummaryMapper, CostMapper costMapper,
+            ProjectFinancialPartialDataMapper projectFinancialPartialDataMapper, CostMapper costMapper,
             InstallmentMapper installmentMapper, SupplyMapper supplyMapper, ContractorJobMapper contractorJobMapper) {
         super(FINANCIAL_DATA);
         this.financialDataMapper = financialDataMapper;
-        this.projectFinancialPartialSummaryMapper = projectFinancialPartialSummaryMapper;
+        this.projectFinancialPartialDataMapper = projectFinancialPartialDataMapper;
         this.costMapper = costMapper;
         this.installmentMapper = installmentMapper;
         this.supplyMapper = supplyMapper;
@@ -157,14 +155,14 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     @Override
     public TotalProjectFinancialSummaryDto getTotalProjectFinancialSummary(long projectId) {
         var projectFinancialPartialSummary = this.query()
-                .from(PROJECT_FINANCIAL_SUMMARY)
-                .join(PROJECT_FINANCIAL_SUMMARY.partialSummaries, PROJECT_FINANCIAL_PARTIAL_SUMMARY)
-                .where(PROJECT_FINANCIAL_SUMMARY.projectId.eq(projectId)
-                        .and(PROJECT_FINANCIAL_PARTIAL_SUMMARY.dataType.eq(PartialFinancialDataType.TOTAL)))
-                .select(PROJECT_FINANCIAL_PARTIAL_SUMMARY)
+                .from(PROJECT_FINANCIAL_DATA)
+                .join(PROJECT_FINANCIAL_DATA.partialSummaries, PROJECT_FINANCIAL_PARTIAL_DATA)
+                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId)
+                        .and(PROJECT_FINANCIAL_PARTIAL_DATA.dataType.eq(PartialFinancialDataType.TOTAL)))
+                .select(PROJECT_FINANCIAL_PARTIAL_DATA)
                 .fetchOne();
 
-        return this.projectFinancialPartialSummaryMapper.map(projectFinancialPartialSummary);
+        return this.projectFinancialPartialDataMapper.map(projectFinancialPartialSummary);
     }
 
     @Override

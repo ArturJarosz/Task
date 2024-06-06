@@ -10,7 +10,6 @@ import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
 import com.arturjarosz.task.finance.application.CostApplicationService;
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
-import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.mapper.ProjectMapper;
@@ -45,8 +44,6 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @NonNull
     private final ProjectValidator projectValidator;
     @NonNull
-    private final ProjectFinancialSummaryService projectFinancialSummaryService;
-    @NonNull
     private final ProjectFinancialDataService projectFinancialDataService;
     @NonNull
     private final ContractService contractService;
@@ -71,8 +68,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         var project = this.projectDomainService.createProject(projectCreateDto, contract.getId());
         project = this.projectRepository.save(project);
 
-        this.projectFinancialSummaryService.createProjectFinancialSummary(project.getId());
-        this.projectFinancialDataService.joinFinancialDataWithProject(project.getId());
+        this.projectFinancialDataService.createProjectFinancialData(project.getId());
 
         LOG.debug("Project created.");
         return this.projectMapper.mapToDto(project, contract);
@@ -116,8 +112,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         LOG.debug("Removing Project with id {}.", projectId);
 
         this.projectValidator.validateProjectExistence(projectId);
-        this.projectFinancialSummaryService.removeFinancialSummaryForProject(projectId);
-        this.projectFinancialDataService.removeProjectFinancialData(projectId);
+        this.projectFinancialDataService.removeFinancialDataForProject(projectId);
         this.projectRepository.deleteById(projectId);
 
         LOG.debug("Project with id {} removed.", projectId);

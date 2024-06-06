@@ -3,7 +3,7 @@ package com.arturjarosz.task.supervision.application.impl
 import com.arturjarosz.task.dto.SupervisionDto
 import com.arturjarosz.task.dto.SupervisionVisitDto
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService
-import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService
+import com.arturjarosz.task.finance.application.ProjectFinancialDataService
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.Money
@@ -45,7 +45,7 @@ class SupervisionApplicationServiceImplTest extends Specification {
     def supervisionVisitValidator = Mock(SupervisionVisitValidator)
     def supervisionRepository = Mock(SupervisionRepository)
     def supervisionQueryService = Mock(SupervisionQueryService)
-    def projectFinancialSummaryApplicationService = Mock(ProjectFinancialSummaryService)
+    def projectFinancialSummaryApplicationService = Mock(ProjectFinancialDataService)
     def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectService)
     def supervisionMapper = new SupervisionMapperImpl()
     def supervisionVisitMapper = new SupervisionVisitMapperImpl()

@@ -3,7 +3,7 @@ package com.arturjarosz.task.supervision.application.impl;
 import com.arturjarosz.task.dto.SupervisionDto;
 import com.arturjarosz.task.dto.SupervisionVisitDto;
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
-import com.arturjarosz.task.finance.application.ProjectFinancialSummaryService;
+import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
@@ -38,7 +38,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     @NonNull
     private final SupervisionQueryService supervisionQueryService;
     @NonNull
-    private final ProjectFinancialSummaryService projectFinancialSummaryApplicationService;
+    private final ProjectFinancialDataService projectFinancialSummaryApplicationService;
     @NonNull
     private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
     @NonNull
