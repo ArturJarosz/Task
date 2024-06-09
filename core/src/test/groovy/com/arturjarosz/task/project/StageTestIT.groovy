@@ -103,6 +103,30 @@ class StageTestIT extends BaseTestIT {
     }
 
     @Transactional
+    def "Creating stage for existing project with installment data should return code 201, created stage dto with installment and location header"() {
+        given:
+            def createdProject = this.createProject()
+            def stageWithInstallment = properStageDto
+            stageWithInstallment.setInstallment(new InstallmentDto(hasInvoice: true, value: BigDecimal.valueOf(500.00D)))
+            def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
+        when:
+            def stageResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
+                            .header("Content-Type", "application/json")
+                            .content(stageRequestBody)
+            ).andReturn().response
+        then:
+            stageResponse.status == HttpStatus.CREATED.value()
+        and:
+            def stageDto = MAPPER.readValue(stageResponse.contentAsString, StageDto)
+            stageDto.id != null
+        and:
+            stageDto.installment != null
+            stageDto.installment.id != null
+
+    }
+
+    @Transactional
     def "Removing not existing stage should return code 404 and error message"() {
         given:
             def createdProject = this.createProject()

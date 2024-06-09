@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.application.impl
 
 import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator
+import com.arturjarosz.task.dto.InstallmentDto
 import com.arturjarosz.task.dto.StageDto
 import com.arturjarosz.task.dto.StageTypeDto
 import com.arturjarosz.task.finance.application.InstallmentApplicationService
@@ -43,7 +44,7 @@ class StageApplicationServiceImplTest extends Specification {
     def installmentApplicationService = Mock(InstallmentApplicationService)
     def stageMapper = Mock(StageMapper)
 
-    def stageApplicationService = new StageApplicationServiceImpl(projectQueryService, projectValidator,
+    def subject = new StageApplicationServiceImpl(projectQueryService, projectValidator,
             projectRepository, stageDomainService, stageValidator, contractWorkflowValidator, installmentApplicationService, stageMapper)
 
     def "createStage should call validateProjectExistence on projectValidator"() {
@@ -52,7 +53,7 @@ class StageApplicationServiceImplTest extends Specification {
             def stageDto = new StageDto()
             this.mockProjectRepositorySaveProjectWithStage()
         when:
-            this.stageApplicationService.createStage(PROJECT_ID, stageDto)
+            this.subject.createStage(PROJECT_ID, stageDto)
         then:
             1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_ID)
     }
@@ -63,7 +64,7 @@ class StageApplicationServiceImplTest extends Specification {
             def stageDto = new StageDto()
             this.mockProjectRepositorySaveProjectWithStage()
         when:
-            this.stageApplicationService.createStage(PROJECT_ID, stageDto)
+            this.subject.createStage(PROJECT_ID, stageDto)
         then:
             1 * this.stageValidator.validateCreateStageDto(_ as StageDto)
     }
@@ -74,7 +75,7 @@ class StageApplicationServiceImplTest extends Specification {
             def stageDto = new StageDto()
             this.mockProjectRepositorySaveProjectWithStage()
         when:
-            this.stageApplicationService.createStage(PROJECT_ID, stageDto)
+            this.subject.createStage(PROJECT_ID, stageDto)
         then:
             1 * this.contractWorkflowValidator.validateContractAllowsForWorkObjectsCreation(PROJECT_ID)
     }
@@ -84,7 +85,7 @@ class StageApplicationServiceImplTest extends Specification {
             def stageDto = new StageDto()
             this.mockProjectRepositorySaveProjectWithStage()
         when:
-            this.stageApplicationService.createStage(PROJECT_ID, stageDto)
+            this.subject.createStage(PROJECT_ID, stageDto)
         then:
             1 * this.projectRepository.findById(PROJECT_ID) >> Optional.of(this.prepareProject())
     }
@@ -95,7 +96,7 @@ class StageApplicationServiceImplTest extends Specification {
             def stageDto = new StageDto()
             this.mockProjectRepositorySaveProjectWithStage()
         when:
-            this.stageApplicationService.createStage(PROJECT_ID, stageDto)
+            this.subject.createStage(PROJECT_ID, stageDto)
         then:
             1 * this.stageDomainService.createStage(_ as Project, _ as StageDto)
     }
@@ -105,16 +106,37 @@ class StageApplicationServiceImplTest extends Specification {
             this.mockProjectRepositoryLoad()
             def stageDto = new StageDto()
         when:
-            this.stageApplicationService.createStage(PROJECT_ID, stageDto)
+            this.subject.createStage(PROJECT_ID, stageDto)
         then:
             1 * this.projectRepository.save(_ as Project) >> this.prepareProjectWithStage()
+    }
+
+    def "createStage should create installment if installment data passed"() {
+        given:
+            var stage = this.prepareStage();
+            var project = new ProjectBuilder()
+                    .withId(PROJECT_WITH_STAGE_ID)
+                    .withStage(stage)
+                    .build()
+            this.projectRepository.findById(PROJECT_ID) >> Optional.of(project)
+            var installmentDto = new InstallmentDto()
+            def stageDto = new StageDto(installment: installmentDto)
+            this.stageDomainService.createStage(_ as Project, _ as StageDto) >> stage
+            this.projectRepository.save(project) >> project
+            this.stageMapper.mapToDto(_ as Stage) >> stageDto
+        when:
+            def result = this.subject.createStage(PROJECT_ID, stageDto)
+        then:
+            1 * this.installmentApplicationService.createInstallment(PROJECT_ID, _, _ as InstallmentDto) >> installmentDto
+            result.installment != null
+
     }
 
     def "removeStage should call validateProjectExistence on projectValidator"() {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_WITH_STAGE_ID)
     }
@@ -123,7 +145,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.stageValidator.validateExistenceOfStageInProject(PROJECT_WITH_STAGE_ID, STAGE_ID)
     }
@@ -132,7 +154,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.projectRepository.findById(PROJECT_WITH_STAGE_ID) >> Optional.of(this.prepareProjectWithStage())
     }
@@ -141,7 +163,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.projectRepository.save(_ as Project)
     }
@@ -150,7 +172,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.projectRepository.save({ Project project -> project.stages.size() == 0
             })
@@ -161,7 +183,7 @@ class StageApplicationServiceImplTest extends Specification {
             this.mockProjectRepositoryLoadProjectWithStage()
             this.mockLoadRelatedInstallmentId()
         when:
-            this.stageApplicationService.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.removeStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.installmentApplicationService.removeInstallment(PROJECT_WITH_STAGE_ID, INSTALLMENT_ID)
     }
@@ -171,7 +193,7 @@ class StageApplicationServiceImplTest extends Specification {
             this.mockProjectRepositoryLoadProjectWithStage()
             def stageDto = this.prepareStageDtoForUpdate()
         when:
-            this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
+            this.subject.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
             1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_WITH_STAGE_ID)
     }
@@ -181,7 +203,7 @@ class StageApplicationServiceImplTest extends Specification {
             this.mockProjectRepositoryLoadProjectWithStage()
             def stageDto = this.prepareStageDtoForUpdate()
         when:
-            this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
+            this.subject.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
             1 * this.stageValidator.validateExistenceOfStageInProject(PROJECT_WITH_STAGE_ID, STAGE_ID)
     }
@@ -191,7 +213,7 @@ class StageApplicationServiceImplTest extends Specification {
             this.mockProjectRepositoryLoadProjectWithStage()
             def stageDto = this.prepareStageDtoForUpdate()
         when:
-            this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
+            this.subject.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
             1 * this.projectRepository.findById(PROJECT_WITH_STAGE_ID) >> Optional.of(this.prepareProjectWithStage())
     }
@@ -201,7 +223,7 @@ class StageApplicationServiceImplTest extends Specification {
             this.mockProjectRepositoryLoadProjectWithStage()
             def stageDto = this.prepareStageDtoForUpdate()
         when:
-            this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
+            this.subject.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
             1 * this.stageValidator.validateUpdateStageDto(_ as StageDto)
     }
@@ -211,7 +233,7 @@ class StageApplicationServiceImplTest extends Specification {
             this.mockProjectRepositoryLoadProjectWithStage()
             def stageDto = this.prepareStageDtoForUpdate()
         when:
-            this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
+            this.subject.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
             1 * this.projectRepository.save(_ as Project)
     }
@@ -221,7 +243,7 @@ class StageApplicationServiceImplTest extends Specification {
             this.mockProjectRepositoryLoadProjectWithStage()
             def stageDto = this.prepareStageDtoForUpdate()
         when:
-            this.stageApplicationService.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
+            this.subject.updateStage(PROJECT_WITH_STAGE_ID, STAGE_ID, stageDto)
         then:
             1 * this.stageDomainService.updateStage(_ as Project, STAGE_ID, _ as StageDto)
     }
@@ -230,7 +252,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectQueryServiceGetStageById()
         when:
-            this.stageApplicationService.getStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.getStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.projectValidator.validateProjectExistence(PROJECT_WITH_STAGE_ID)
     }
@@ -239,7 +261,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectQueryServiceGetStageById()
         when:
-            this.stageApplicationService.getStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.getStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.stageValidator.validateExistenceOfStageInProject(PROJECT_WITH_STAGE_ID, STAGE_ID)
     }
@@ -248,7 +270,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectQueryServiceGetStageById()
         when:
-            this.stageApplicationService.getStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.getStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.projectQueryService.getStageById(STAGE_ID) >> this.prepareStage()
     }
@@ -257,7 +279,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectQueryServiceGetStagesForProjectById()
         when:
-            this.stageApplicationService.getStageListForProject(PROJECT_ID)
+            this.subject.getStageListForProject(PROJECT_ID)
         then:
             1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
     }
@@ -266,7 +288,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectQueryServiceGetStagesForProjectById()
         when:
-            List<StageDto> stages = this.stageApplicationService.getStageListForProject(PROJECT_ID)
+            List<StageDto> stages = this.subject.getStageListForProject(PROJECT_ID)
         then:
             1 * this.projectQueryService.getStagesForProjectById(PROJECT_ID) >> this.prepareStageDtoList()
             stages.size() == 1
@@ -276,7 +298,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_WITH_STAGE_ID)
     }
@@ -285,7 +307,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.stageValidator.validateExistenceOfStageInProject(PROJECT_WITH_STAGE_ID, STAGE_ID)
     }
@@ -294,7 +316,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.projectRepository.findById(PROJECT_WITH_STAGE_ID) >> Optional.of(this.prepareProjectWithStage())
     }
@@ -303,7 +325,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.stageDomainService.rejectStage(_ as Project, STAGE_ID)
     }
@@ -312,7 +334,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
+            this.subject.rejectStage(PROJECT_WITH_STAGE_ID, STAGE_ID)
         then:
             1 * this.projectRepository.save(_ as Project)
     }
@@ -322,7 +344,7 @@ class StageApplicationServiceImplTest extends Specification {
             this.mockProjectQueryServiceGetStageByIdWithTasks()
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
+            this.subject.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
         then:
             1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, PROJECT_WITH_STAGE_ID)
     }
@@ -332,7 +354,7 @@ class StageApplicationServiceImplTest extends Specification {
             this.mockProjectQueryServiceGetStageByIdWithTasks()
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
+            this.subject.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
         then:
             1 * this.stageValidator.
                     validateExistenceOfStageInProject(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
@@ -342,7 +364,7 @@ class StageApplicationServiceImplTest extends Specification {
         given:
             this.mockProjectQueryServiceGetStageByIdWithTasks()
         when:
-            this.stageApplicationService.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
+            this.subject.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
         then:
             1 * this.projectRepository.findById(PROJECT_WITH_STAGE_ID) >> Optional.of(this.prepareProjectWithStage())
     }
@@ -352,7 +374,7 @@ class StageApplicationServiceImplTest extends Specification {
             this.mockProjectQueryServiceGetStageByIdWithTasks()
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
+            this.subject.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
         then:
             1 * this.stageDomainService.reopenStage(_ as Project, STAGE_WITH_TASKS_IN_TODO_ID)
     }
@@ -362,7 +384,7 @@ class StageApplicationServiceImplTest extends Specification {
             this.mockProjectQueryServiceGetStageByIdWithTasks()
             this.mockProjectRepositoryLoadProjectWithStage()
         when:
-            this.stageApplicationService.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
+            this.subject.reopenStage(PROJECT_WITH_STAGE_ID, STAGE_WITH_TASKS_IN_TODO_ID)
         then:
             1 * this.projectRepository.save(_ as Project)
     }

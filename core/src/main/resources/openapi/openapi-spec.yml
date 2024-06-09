@@ -2905,7 +2905,6 @@ components:
           type: string
           format: date
 
-
     Stage:
       type: object
       properties:
