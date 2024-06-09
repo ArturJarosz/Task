@@ -79,6 +79,9 @@ public class StageValidator {
     public void validateStageNotHavingInstallment(Long projectId, Long stageId) {
         ProjectFinancialData projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(
                 projectId);
+        if (projectFinancialData.getInstallments() == null) {
+            return;
+        }
         Optional<Installment> maybeInstallment = projectFinancialData.getInstallments()
                 .stream()
                 .filter(projectInstallment -> projectInstallment.getStageId().equals(stageId))

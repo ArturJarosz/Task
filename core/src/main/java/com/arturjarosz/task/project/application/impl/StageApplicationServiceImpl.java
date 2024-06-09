@@ -47,8 +47,17 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         var stage = this.stageDomainService.createStage(project, stageDto);
         project = this.projectRepository.save(project);
 
+        var newlyCreatedStage = this.getCreatedStageWithId(project, stage);
+        var newlyCreatedStageDto = this.stageMapper.mapToDto(newlyCreatedStage);
+        if (stageDto.getInstallment() != null) {
+            var installmentDto = this.installmentApplicationService.createInstallment(projectId,
+                    newlyCreatedStage.getId(),
+                    stageDto.getInstallment());
+            newlyCreatedStageDto.setInstallment(installmentDto);
+        }
+
         LOG.debug("Stage for Project with id {} created.", projectId);
-        return this.stageMapper.mapToDto(this.getCreatedStageWithId(project, stage));
+        return newlyCreatedStageDto;
     }
 
     @Transactional
