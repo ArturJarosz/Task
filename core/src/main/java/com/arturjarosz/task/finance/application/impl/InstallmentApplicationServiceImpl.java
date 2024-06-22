@@ -1,9 +1,11 @@
 package com.arturjarosz.task.finance.application.impl;
 
 import com.arturjarosz.task.dto.InstallmentDto;
+import com.arturjarosz.task.dto.InstallmentProjectDataDto;
 import com.arturjarosz.task.finance.application.InstallmentApplicationService;
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
 import com.arturjarosz.task.finance.application.mapper.InstallmentMapper;
+import com.arturjarosz.task.finance.application.mapper.InstallmentProjectSummaryMapper;
 import com.arturjarosz.task.finance.application.validator.InstallmentValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.model.Installment;
@@ -16,8 +18,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,6 +38,8 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
     @NonNull
     private final InstallmentMapper installmentDtoMapper;
+    @NonNull
+    private final InstallmentProjectSummaryMapper installmentProjectSummaryMapper;
 
     @Transactional
     @Override
@@ -117,11 +119,15 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     }
 
     @Override
-    public List<InstallmentDto> getProjectInstallments(Long projectId) {
+    public InstallmentProjectDataDto getProjectInstallments(Long projectId) {
         LOG.debug("Getting list of Installment for project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
 
-        return this.financialDataQueryService.getInstallmentsByProjectId(projectId);
+        var installmentProjectSummary = this.financialDataQueryService.getInstallmentDataForProject(projectId);
+        var installments = this.financialDataQueryService.getInstallmentsByProjectId(projectId);
+
+        return this.installmentProjectSummaryMapper.mapToProjectFinancialPartialDataDto(installmentProjectSummary,
+                installments);
     }
 
     @Override

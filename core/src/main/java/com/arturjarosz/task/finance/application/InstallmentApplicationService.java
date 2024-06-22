@@ -1,8 +1,7 @@
 package com.arturjarosz.task.finance.application;
 
 import com.arturjarosz.task.dto.InstallmentDto;
-
-import java.util.List;
+import com.arturjarosz.task.dto.InstallmentProjectDataDto;
 
 public interface InstallmentApplicationService {
 
@@ -29,9 +28,9 @@ public interface InstallmentApplicationService {
     InstallmentDto payInstallment(Long projectId, Long installmentId, InstallmentDto installmentDto);
 
     /**
-     * Loads all installments for given Project with projectId.
+     * Loads data related to project installments for given projectId.
      */
-    List<InstallmentDto> getProjectInstallments(Long projectId);
+    InstallmentProjectDataDto getProjectInstallments(Long projectId);
 
     /**
      * Loads Installments with given installmentId on Project with given projectId.
