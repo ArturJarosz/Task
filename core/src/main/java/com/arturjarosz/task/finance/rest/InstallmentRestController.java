@@ -1,6 +1,7 @@
 package com.arturjarosz.task.finance.rest;
 
 import com.arturjarosz.task.dto.InstallmentDto;
+import com.arturjarosz.task.dto.InstallmentProjectDataDto;
 import com.arturjarosz.task.finance.application.InstallmentApplicationService;
 import com.arturjarosz.task.rest.InstallmentApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
@@ -10,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -60,7 +59,7 @@ public class InstallmentRestController implements InstallmentApi {
     }
 
     @Override
-    public ResponseEntity<List<InstallmentDto>> getInstallmentsForProject(Long projectId) {
+    public ResponseEntity<InstallmentProjectDataDto> getInstallmentsForProject(Long projectId) {
         return new ResponseEntity<>(this.installmentApplicationService.getProjectInstallments(projectId),
                 HttpStatus.OK);
     }

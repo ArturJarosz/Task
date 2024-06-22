@@ -1028,7 +1028,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Installments"
+                $ref: "#/components/schemas/InstallmentProjectData"
 
   /projects/{projectId}/supplies:
     post:
@@ -2807,6 +2807,34 @@ components:
         incomeTax:
           type: number
           format: double
+
+    ProjectFinancialPartialData:
+      type: object
+      properties:
+        count:
+          type: integer
+        netValue:
+          type: number
+          format: double
+        grossValue:
+          type: number
+          format: double
+        vatTax:
+          type: number
+          format: double
+        incomeTax:
+          type: number
+          format: double
+
+    InstallmentProjectData:
+      type: object
+      properties:
+        financialData:
+          $ref: "#/components/schemas/ProjectFinancialPartialData"
+        installments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Installment"
 
     Project:
       type: object

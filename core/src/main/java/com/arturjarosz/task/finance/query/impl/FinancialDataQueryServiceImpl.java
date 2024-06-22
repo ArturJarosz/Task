@@ -13,6 +13,7 @@ import com.arturjarosz.task.finance.application.mapper.ProjectFinancialPartialDa
 import com.arturjarosz.task.finance.application.mapper.SupplyMapper;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
 import com.arturjarosz.task.finance.model.PartialFinancialDataType;
+import com.arturjarosz.task.finance.model.ProjectFinancialPartialData;
 import com.arturjarosz.task.finance.model.QContractorJob;
 import com.arturjarosz.task.finance.model.QCost;
 import com.arturjarosz.task.finance.model.QFinancialData;
@@ -257,6 +258,16 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .select(INSTALLMENT)
                 .fetch()
                 .isEmpty();
+    }
+
+    @Override
+    public ProjectFinancialPartialData getInstallmentDataForProject(long projectId) {
+        return this.query()
+                .from(PROJECT_FINANCIAL_PARTIAL_DATA)
+                .where(PROJECT_FINANCIAL_PARTIAL_DATA.projectFinancialDataId.eq(projectId))
+                .where(PROJECT_FINANCIAL_PARTIAL_DATA.dataType.eq(PartialFinancialDataType.INSTALLMENT))
+                .select(PROJECT_FINANCIAL_PARTIAL_DATA)
+                .fetchOne();
     }
 
 }

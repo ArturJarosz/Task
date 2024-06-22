@@ -6,6 +6,7 @@ import com.arturjarosz.task.dto.InstallmentDto;
 import com.arturjarosz.task.dto.SupplyDto;
 import com.arturjarosz.task.dto.TotalProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
+import com.arturjarosz.task.finance.model.ProjectFinancialPartialData;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 
@@ -46,4 +47,6 @@ public interface FinancialDataQueryService {
     SupplyDto getSupplyById(long supplyId, long projectId);
 
     List<SupplyDto> getSuppliesForProject(long projectId);
+
+    ProjectFinancialPartialData getInstallmentDataForProject(long projectId);
 }
