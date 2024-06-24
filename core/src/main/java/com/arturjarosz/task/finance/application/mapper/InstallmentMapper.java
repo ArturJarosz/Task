@@ -14,14 +14,15 @@ public interface InstallmentMapper {
         return new Installment(installmentDto, stageId);
     }
 
-    @Mapping(source = "amount", target = "value", qualifiedByName = "moneyToDouble")
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "paid", target = "paid")
-    @Mapping(source = "note", target = "note")
-    @Mapping(source = "hasInvoice", target = "hasInvoice")
-    @Mapping(source = "paymentDate", target = "paymentDate")
-    @Mapping(source = "stageId", target = "stageId")
-    InstallmentDto mapToDto(Installment installment);
+    @Mapping(source = "installment.amount", target = "value", qualifiedByName = "moneyToDouble")
+    @Mapping(source = "installment.id", target = "id")
+    @Mapping(source = "installment.paid", target = "paid")
+    @Mapping(source = "installment.note", target = "note")
+    @Mapping(source = "installment.hasInvoice", target = "hasInvoice")
+    @Mapping(source = "installment.paymentDate", target = "paymentDate")
+    @Mapping(source = "installment.stageId", target = "stageId")
+    @Mapping(source = "stageName", target = "stageName")
+    InstallmentDto mapToDto(Installment installment, String stageName);
 
     @Named("moneyToDouble")
     default Double moneyToDouble(Money money) {

@@ -58,7 +58,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         projectFinancialData = this.projectFinancialDataRepository.save(projectFinancialData);
 
         LOG.debug("Installment created.");
-        var createdInstallment = this.installmentDtoMapper.mapToDto(installment);
+        var createdInstallment = this.installmentDtoMapper.mapToDto(installment, "");
         createdInstallment.setId(this.getIdForCreatedInstallment(projectFinancialData, installment));
         this.projectFinanceAwareObjectService.onCreate(projectId);
         return createdInstallment;
@@ -81,7 +81,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.projectFinanceAwareObjectService.onUpdate(projectId);
 
         LOG.debug("Installment updated");
-        return this.installmentDtoMapper.mapToDto(installment);
+        return this.installmentDtoMapper.mapToDto(installment, "");
     }
 
     @Transactional
@@ -115,7 +115,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.projectFinancialDataRepository.save(projectFinancialData);
 
         LOG.debug("Payment for Installment with id {} made", installmentId);
-        return this.installmentDtoMapper.mapToDto(installment);
+        return this.installmentDtoMapper.mapToDto(installment, "");
     }
 
     @Override
@@ -138,7 +138,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
         var installment = projectFinancialData.getInstallment(installmentId);
 
-        return this.installmentDtoMapper.mapToDto(installment);
+        return this.installmentDtoMapper.mapToDto(installment, "");
     }
 
     private Long getIdForCreatedInstallment(ProjectFinancialData financialData, Installment installment) {
