@@ -12,22 +12,16 @@ import com.arturjarosz.task.finance.application.mapper.InstallmentMapper;
 import com.arturjarosz.task.finance.application.mapper.ProjectFinancialPartialDataMapper;
 import com.arturjarosz.task.finance.application.mapper.SupplyMapper;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
-import com.arturjarosz.task.finance.model.PartialFinancialDataType;
-import com.arturjarosz.task.finance.model.ProjectFinancialPartialData;
-import com.arturjarosz.task.finance.model.QContractorJob;
-import com.arturjarosz.task.finance.model.QCost;
-import com.arturjarosz.task.finance.model.QFinancialData;
-import com.arturjarosz.task.finance.model.QInstallment;
-import com.arturjarosz.task.finance.model.QProjectFinancialData;
-import com.arturjarosz.task.finance.model.QProjectFinancialPartialData;
-import com.arturjarosz.task.finance.model.QSupply;
+import com.arturjarosz.task.finance.model.*;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
+import com.arturjarosz.task.project.model.QStage;
 import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
 import com.arturjarosz.task.supervision.model.QSupervision;
 import com.arturjarosz.task.supervision.model.QSupervisionVisit;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -44,6 +38,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     private static final QSupply SUPPLY = QSupply.supply;
     private static final QProjectFinancialPartialData PROJECT_FINANCIAL_PARTIAL_DATA = QProjectFinancialPartialData.projectFinancialPartialData;
     private static final QProjectFinancialData PROJECT_FINANCIAL_DATA = QProjectFinancialData.projectFinancialData;
+    private static final QStage STAGE = QStage.stage;
 
     private final FinancialDataMapper financialDataMapper;
     private final ProjectFinancialPartialDataMapper projectFinancialPartialDataMapper;
@@ -193,15 +188,18 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
 
     @Override
     public List<InstallmentDto> getInstallmentsByProjectId(long projectId) {
-        var installments = this.query()
+        List<Tuple> installments = this.query()
                 .from(INSTALLMENT)
                 .leftJoin(PROJECT_FINANCIAL_DATA)
                 .on(INSTALLMENT.projectFinancialDataId.eq(PROJECT_FINANCIAL_DATA.id))
+                .leftJoin(STAGE)
+                .on(INSTALLMENT.stageId.eq(STAGE.id))
                 .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
-                .select(INSTALLMENT)
+                .select(INSTALLMENT, STAGE.name)
                 .fetch();
 
-        return installments.stream().map(this.installmentMapper::mapToDto).toList();
+        return installments.stream().map(installmentAndName -> this.installmentMapper.mapToDto(installmentAndName.get(0,
+                Installment.class), installmentAndName.get(1, String.class))).toList();
     }
 
     @Override

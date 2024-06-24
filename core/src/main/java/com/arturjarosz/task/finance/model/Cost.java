@@ -3,6 +3,8 @@ package com.arturjarosz.task.finance.model;
 import com.arturjarosz.task.sharedkernel.model.AbstractHistoryAwareEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -16,22 +18,28 @@ public class Cost extends AbstractHistoryAwareEntity implements PartialFinancial
     @Serial
     private static final long serialVersionUID = 4833869293487851155L;
 
+    @Getter
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Getter
     @Column(name = "CATEGORY", nullable = false)
     @Enumerated(EnumType.STRING)
     private CostCategory category;
 
+    @Getter
     @Column(name = "DATE")
     private LocalDate date;
 
+    @Getter
     @Column(name = "NOTE")
     private String note;
 
+    @Setter
     @Column(name = "PROJECT_FINANCIAL_DATA_ID", insertable = false, updatable = false)
     private Long projectFinancialDataId;
 
+    @Getter
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "FINANCIAL_DATA_ID", referencedColumnName = "ID", nullable = false)
     private FinancialData financialData;
@@ -49,9 +57,6 @@ public class Cost extends AbstractHistoryAwareEntity implements PartialFinancial
         this.financialData = new FinancialData(new Money(value), hasInvoice, payable);
     }
 
-    public String getName() {
-        return this.name;
-    }
 
     public BigDecimal getValue() {
         return this.financialData.getValue().getValue();
@@ -59,18 +64,6 @@ public class Cost extends AbstractHistoryAwareEntity implements PartialFinancial
 
     public void setValue(BigDecimal value) {
         this.financialData.setValue(new Money(value));
-    }
-
-    public CostCategory getCategory() {
-        return this.category;
-    }
-
-    public LocalDate getDate() {
-        return this.date;
-    }
-
-    public String getNote() {
-        return this.note;
     }
 
     public void updateCost(String name, BigDecimal value, LocalDate date, String note, CostCategory category) {
@@ -85,7 +78,4 @@ public class Cost extends AbstractHistoryAwareEntity implements PartialFinancial
         return this.projectFinancialDataId;
     }
 
-    public void setProjectFinancialDataId(Long projectFinancialDataId) {
-        this.projectFinancialDataId = projectFinancialDataId;
-    }
 }
