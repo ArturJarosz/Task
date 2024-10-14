@@ -51,6 +51,11 @@
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
         </dependency>
+        <!-- AUTH -->
+        <dependency>
+            <groupId>com.okta.spring</groupId>
+            <artifactId>okta-spring-boot-starter</artifactId>
+        </dependency>
         <!--HIBERNATE-->
         <dependency>
             <groupId>org.hibernate.orm</groupId>

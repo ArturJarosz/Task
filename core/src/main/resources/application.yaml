@@ -29,6 +29,14 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
+okta:
+  oauth2:
+    issuer: ${AUTH0_ISSUER}
+    client-id: ${AUTH0_BE_CLIENT_ID}
+    client-secret: ${AUTH0_CLIENT_SECRET}
+    audience: ${AUTH0_AUDIENCE}
+
 task:
   language: en
   encoding: UTF-8
