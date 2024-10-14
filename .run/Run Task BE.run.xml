@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run Task BE" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
-    <option name="ACTIVE_PROFILES" value="local" />
+    <option name="ACTIVE_PROFILES" value="local,secured" />
     <option name="envFilePaths">
       <option value="$PROJECT_DIR$/docker/env/local.env" />
     </option>

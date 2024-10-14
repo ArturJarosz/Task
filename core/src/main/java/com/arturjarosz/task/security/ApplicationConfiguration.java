@@ -2,10 +2,12 @@ package com.arturjarosz.task.security;
 
 import com.arturjarosz.task.properties.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
@@ -23,29 +25,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Slf4j
+@Profile("secured")
 @Configuration
+@Import(SecurityAutoConfiguration.class)
 @EnableWebSecurity
 @EnableConfigurationProperties(SecurityProperties.class)
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
-@EnableJpaAuditing
 public class ApplicationConfiguration {
     private static final String MATCH_ALL = "/**";
 
     private static final List<String> HEADERS = List.of(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
             HttpHeaders.AUTHORIZATION, HttpHeaders.CACHE_CONTROL, HttpHeaders.CONTENT_TYPE, HttpHeaders.SET_COOKIE);
     private static final List<String> API_METHODS = Arrays.asList(HttpMethod.GET.name(), HttpMethod.POST.name(),
-            HttpMethod.PATCH.name(), HttpMethod.PUT.name(), HttpMethod.DELETE.name());
+            HttpMethod.PATCH.name(), HttpMethod.PUT.name(), HttpMethod.DELETE.name(), HttpMethod.OPTIONS.name());
 
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(request -> request.requestMatchers(new AntPathRequestMatcher(MATCH_ALL))
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
+                .csrf(csrf -> csrf.ignoringRequestMatchers(MATCH_ALL))
+                .authorizeHttpRequests(
+                        request -> request.requestMatchers(new AntPathRequestMatcher(MATCH_ALL)).authenticated())
+                .oauth2Login(withDefaults())
+                .oauth2ResourceServer((oauth) -> oauth.jwt(Customizer.withDefaults()))
                 .httpBasic(Customizer.withDefaults());
         return http.build();
     }
