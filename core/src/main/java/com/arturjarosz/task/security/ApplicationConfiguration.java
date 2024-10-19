@@ -2,11 +2,9 @@ package com.arturjarosz.task.security;
 
 import com.arturjarosz.task.properties.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -30,7 +28,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Slf4j
 @Profile("secured")
 @Configuration
-@Import(SecurityAutoConfiguration.class)
 @EnableWebSecurity
 @EnableConfigurationProperties(SecurityProperties.class)
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)

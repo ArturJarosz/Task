@@ -345,6 +345,43 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
 
+  /contracts/{contractId}:
+    put:
+      tags:
+        - contract
+      summary: Update contract data
+      operationId: updateContract
+      parameters:
+        - name: contractId
+          in: path
+          description: "A unique identifier of the contract"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of contract to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Contract"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
   /contractors:
     post:
       tags:

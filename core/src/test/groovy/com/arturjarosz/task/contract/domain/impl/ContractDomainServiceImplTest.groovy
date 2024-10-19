@@ -18,8 +18,11 @@ class ContractDomainServiceImplTest extends Specification {
     static final DEADLINE = LocalDate.of(2100, 1, 1)
     static final NEW_DEADLINE = LocalDate.of(2101, 1, 1)
     static final START_DATE = LocalDate.of(2102, 1, 1)
+    static final NEW_START_DATE = LocalDate.of(2102, 5, 1)
     static final END_DATE = LocalDate.of(2104, 1, 1)
+    static final NEW_END_DATE = LocalDate.of(2104, 5, 1)
     static final SIGNING_DATE = LocalDate.of(2105, 1, 1)
+    static final NEW_SIGNING_DATE = LocalDate.of(2105, 5, 1)
 
     def contractWorkflow = new ContractStatusWorkflow()
     def contractStatusTransitionService = new ContractStatusTransitionServiceTest()
@@ -64,6 +67,39 @@ class ContractDomainServiceImplTest extends Specification {
             ContractStatusDto.REJECTED   || ContractStatus.REJECTED   | new Money(OFFER_VALUE)     | DEADLINE     | null         | null       | null
             ContractStatusDto.TERMINATED || ContractStatus.TERMINATED | new Money(OFFER_VALUE)     | DEADLINE     | null         | END_DATE   | null
 
+    }
+
+    def "updateContract should update appropriate values one the contract based on the contract status"() {
+        given:
+            def contract = new Contract(OFFER_VALUE, DEADLINE, CONTRACT_STATUS_WORKFLOW)
+            contract.updateEndDate(END_DATE)
+            contract.changeStatus(ContractStatus.valueOf(status.name()))
+            def contractDto = new ContractDto()
+                    .status(status)
+                    .deadline(NEW_DEADLINE)
+                    .offerValue(NEW_OFFER_VALUE)
+                    .startDate(NEW_START_DATE)
+                    .endDate(NEW_END_DATE)
+                    .signingDate(NEW_SIGNING_DATE)
+
+        when:
+            def updatedContract = subject.updateContract(contract, contractDto)
+
+        then:
+            updatedContract.offerValue == newValue
+            updatedContract.deadline == newDeadline
+            updatedContract.startDate == newStartDate
+            updatedContract.endDate == newEndDate
+            updatedContract.signingDate == newSigningDate
+
+        where:
+            status                       || newValue                   | newDeadline  | newStartDate   | newEndDate   | newSigningDate
+            ContractStatusDto.OFFER      || new Money(NEW_OFFER_VALUE) | NEW_DEADLINE | null           | END_DATE     | null
+            ContractStatusDto.SIGNED     || new Money(NEW_OFFER_VALUE) | NEW_DEADLINE | NEW_START_DATE | null         | NEW_SIGNING_DATE
+            ContractStatusDto.ACCEPTED   || new Money(OFFER_VALUE)     | DEADLINE     | null           | END_DATE     | null
+            ContractStatusDto.COMPLETED  || new Money(OFFER_VALUE)     | DEADLINE     | null           | NEW_END_DATE | null
+            ContractStatusDto.REJECTED   || new Money(OFFER_VALUE)     | DEADLINE     | null           | END_DATE     | null
+            ContractStatusDto.TERMINATED || new Money(OFFER_VALUE)     | DEADLINE     | null           | NEW_END_DATE | null
     }
 }
 

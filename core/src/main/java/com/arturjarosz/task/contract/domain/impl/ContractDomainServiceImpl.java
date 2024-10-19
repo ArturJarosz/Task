@@ -66,4 +66,11 @@ public class ContractDomainServiceImpl implements ContractDomainService {
         return contract;
     }
 
+    @Override
+    public Contract updateContract(Contract contract, ContractDto contractDto) {
+        Optional.ofNullable(this.statusToUpdater.get(contract.getStatus()))
+                .ifPresent(updater -> updater.accept(contract, contractDto));
+        return contract;
+    }
+
 }

@@ -9,4 +9,6 @@ public interface ContractService {
     ContractDto changeStatus(Long contractId, ContractDto contractDto);
 
     ContractDto getContractForProject(Long projectId);
+
+    ContractDto updateContract(Long contractId, ContractDto contractDto);
 }

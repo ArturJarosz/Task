@@ -7,4 +7,6 @@ public interface ContractDomainService {
     Contract createContract(ContractDto contractDto);
 
     Contract updateContractStatus(Contract contract, ContractDto contractDto);
+
+    Contract updateContract(Contract contract, ContractDto contractDto);
 }
