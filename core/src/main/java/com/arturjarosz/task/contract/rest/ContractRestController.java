@@ -16,8 +16,13 @@ public class ContractRestController implements ContractApi {
     private final ContractService contractService;
 
     @Override
-    public ResponseEntity<ContractDto> changeStatus(ContractDto contractDto, Long contractId) throws Exception {
+    public ResponseEntity<ContractDto> changeStatus(ContractDto contractDto, Long contractId) {
         return new ResponseEntity<>(this.contractService.changeStatus(contractId, contractDto), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ContractDto> updateContract(ContractDto contractDto, Long contractId) {
+        return null;
     }
 
 }

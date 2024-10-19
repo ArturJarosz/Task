@@ -73,6 +73,7 @@ public class ContractServiceImpl implements ContractService {
         return this.contractMapper.mapToDto(contract);
     }
 
+    @Transactional
     @Override
     public ContractDto changeStatus(Long contractId, ContractDto contractDto) {
         LOG.debug("Changing contract status");
@@ -98,6 +99,25 @@ public class ContractServiceImpl implements ContractService {
         var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
+
+        return this.contractMapper.mapToDto(contract);
+    }
+
+    @Transactional
+    @Override
+    public ContractDto updateContract(Long contractId, ContractDto contractDto) {
+        LOG.debug("Updating contract with id {} with data: {}", contractId, contractDto);
+
+        var maybeContract = this.contractRepository.findById(contractId);
+        this.contractValidator.validateContractExistence(maybeContract, contractId);
+        var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
+        Optional.ofNullable(this.statusToValidator.get(contract.getStatus()))
+                .ifPresent(statusValidator -> statusValidator.accept(maybeContract, contractDto, contractId));
+
+        contract = this.contractDomainService.updateContract(contract, contractDto);
+        this.contractRepository.save(contract);
+
+        LOG.debug("Contract data for contract with id {} was updated.", contractId);
 
         return this.contractMapper.mapToDto(contract);
     }

@@ -22,7 +22,14 @@ class ContractServiceImplTest extends Specification {
     static final NOT_EXISTING_CONTRACT_ID = 2L
     static final ACCEPTED_CONTRACT_ID = 3L
     static final OFFER_VALUE = 100.00d
+    static final NEW_OFFER_VALUE = 200.00d
     static final DEADLINE = LocalDate.of(2100, 1, 1)
+    static final NEW_DEADLINE = LocalDate.of(2105, 1, 1)
+    static final NEW_START_DATE = LocalDate.of(2000, 1, 1)
+    static final NEW_END_DATE = LocalDate.of(2105, 1, 1)
+    static final NEW_STATUS = ContractStatusDto.REJECTED
+
+    static final NEW_SIGNING_DATE = LocalDate.of(2000, 1, 1)
     static final CONTRACT_STATUS_WORKFLOW = new ContractStatusWorkflow()
 
     def contractValidator = Mock(ContractValidator)
@@ -148,6 +155,33 @@ class ContractServiceImplTest extends Specification {
         then:
             noExceptionThrown()
             contract != null
+    }
+
+    def "updateContract should not update contract if validation fails"() {
+        given:
+            def updateContract = new ContractDto(NOT_EXISTING_CONTRACT_ID, NEW_OFFER_VALUE, NEW_SIGNING_DATE, NEW_DEADLINE, NEW_START_DATE, NEW_END_DATE, NEW_STATUS, null, null, null)
+            mockExistenceThrowsAnException()
+        when:
+            def result = subject.updateContract(NOT_EXISTING_CONTRACT_ID, updateContract)
+        then:
+            thrown(Exception)
+            result == null
+    }
+
+    def "updateContract should update contract data based on the status"() {
+        given:
+            def contract = new Contract(OFFER_VALUE, DEADLINE, CONTRACT_STATUS_WORKFLOW)
+            contract.changeStatus(ContractStatus.OFFER)
+            contractRepository.findById(100L) >> Optional.of(contract)
+            def updateContractDto = new ContractDto(100L, NEW_OFFER_VALUE, NEW_SIGNING_DATE, NEW_DEADLINE, NEW_START_DATE, NEW_END_DATE, NEW_STATUS, [ContractStatusDto.OFFER], null, null)
+            def updatedContract = new Contract(NEW_OFFER_VALUE, NEW_DEADLINE, CONTRACT_STATUS_WORKFLOW)
+            updatedContract.changeStatus(ContractStatus.ACCEPTED)
+            contractDomainService.updateContract(_ as Contract, _ as ContractDto) >> updatedContract
+        when:
+            def result = subject.updateContract(100L, updateContractDto)
+        then:
+            result.offerValue == NEW_OFFER_VALUE
+
     }
 
     private void mockValidatorThrowsAnExceptionOnNullContractDto() {
