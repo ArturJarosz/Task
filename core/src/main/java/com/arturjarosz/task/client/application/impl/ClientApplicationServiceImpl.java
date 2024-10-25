@@ -3,12 +3,15 @@ package com.arturjarosz.task.client.application.impl;
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.ClientValidator;
 import com.arturjarosz.task.client.application.mapper.ClientMapper;
+import com.arturjarosz.task.client.application.mapper.ProjectsToClientProjectsSummaryDtoMapper;
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository;
+import com.arturjarosz.task.contract.query.ContractQueryService;
 import com.arturjarosz.task.dto.ClientDto;
+import com.arturjarosz.task.dto.ClientProjectsSummaryDto;
 import com.arturjarosz.task.dto.ClientTypeDto;
+import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +22,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @ApplicationService
 public class ClientApplicationServiceImpl implements ClientApplicationService {
-    @NonNull
+
     private final ClientRepository clientRepository;
-    @NonNull
     private final ClientValidator clientValidator;
-    @NonNull
     private final ClientMapper clientMapper;
+    private final ProjectQueryService projectQueryService;
+    private final ContractQueryService contractQueryService;
+    private final ProjectsToClientProjectsSummaryDtoMapper projectsToClientProjectsSummaryDtoMapper;
 
     @Transactional
     @Override
@@ -100,9 +104,19 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     }
 
     @Override
+    public ClientProjectsSummaryDto getClientProjectsSummary(Long clientId) {
+        this.clientValidator.validateClientExistence(clientId);
+
+        var projects = this.projectQueryService.getProjectsForClientId(clientId);
+        var contractValueByProjectId = this.contractQueryService.getContractValuesForProjectsByClientId(clientId);
+        return this.projectsToClientProjectsSummaryDtoMapper.mapToProjectSummaryDto(projects, contractValueByProjectId);
+    }
+
+    @Override
     public ClientDto getClientBasicData(Long clientId) {
         var maybeClient = this.clientRepository.findById(clientId);
         this.clientValidator.validateClientExistence(maybeClient, clientId);
         return this.clientMapper.mapToDto(maybeClient.orElseThrow(ResourceNotFoundException::new));
     }
+
 }
