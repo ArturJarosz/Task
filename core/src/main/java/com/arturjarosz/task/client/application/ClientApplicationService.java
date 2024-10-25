@@ -2,6 +2,7 @@ package com.arturjarosz.task.client.application;
 
 
 import com.arturjarosz.task.dto.ClientDto;
+import com.arturjarosz.task.dto.ClientProjectsSummaryDto;
 
 import java.util.List;
 
@@ -46,4 +47,9 @@ public interface ClientApplicationService {
      * Loads list of basic clients data or all existing clients.
      */
     List<ClientDto> getClients();
+
+    /**
+     * Returns all projects summary for client with given clientId.
+     */
+    ClientProjectsSummaryDto getClientProjectsSummary(Long clientId);
 }
