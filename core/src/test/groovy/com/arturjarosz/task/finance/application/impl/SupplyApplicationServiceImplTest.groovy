@@ -2,6 +2,7 @@ package com.arturjarosz.task.finance.application.impl
 
 import com.arturjarosz.task.dto.SupplyDto
 import com.arturjarosz.task.finance.application.mapper.SupplyMapperImpl
+import com.arturjarosz.task.finance.application.mapper.SupplyProjectDataMapperImpl
 import com.arturjarosz.task.finance.application.validator.SupplyValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.ProjectFinancialData
@@ -35,10 +36,11 @@ class SupplyApplicationServiceImplTest extends Specification {
     def projectFinancialDataRepository = Mock(ProjectFinancialDataRepository)
     def financialDataQueryService = Mock(FinancialDataQueryService)
     def supplyMapper = new SupplyMapperImpl()
+    def supplyProjectDataMapper = new SupplyProjectDataMapperImpl()
 
     def supplyApplicationService = new SupplyApplicationServiceImpl(projectFinanceAwareObjectService, projectValidator,
             supplyValidator, projectFinancialDataRepository,
-            financialDataQueryService, supplyMapper)
+            financialDataQueryService, supplyMapper, supplyProjectDataMapper)
 
     def setup() {
         projectValidator.validateProjectExistence(NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }
@@ -227,19 +229,19 @@ class SupplyApplicationServiceImplTest extends Specification {
     def "getSupplyForProject should not return supplies if project existence fails"() {
         given:
         when:
-            def supplies = this.supplyApplicationService.getSuppliesForProject(NOT_EXISTING_PROJECT_ID)
+            def supplies = this.supplyApplicationService.getProjectSuppliesData(NOT_EXISTING_PROJECT_ID)
         then:
             thrown(IllegalArgumentException)
             null == supplies
     }
 
-    def "getSupplyForProject should return list of all supplies for project with given projectId"() {
+    def "getProjectSuppliesData should return list of all supplies for project with given projectId"() {
         given:
         when:
-            def supplies = this.supplyApplicationService.getSuppliesForProject(PROJECT_WITH_SUPPLY_ID)
+            def supplies = this.supplyApplicationService.getProjectSuppliesData(PROJECT_WITH_SUPPLY_ID)
         then:
             null != supplies
-            1 == supplies.size()
+            1 == supplies.supplies.size()
     }
 
     private SupplyDto prepareCreateSupplyDto(Long supplierId) {

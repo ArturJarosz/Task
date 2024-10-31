@@ -1,8 +1,7 @@
 package com.arturjarosz.task.finance.application;
 
 import com.arturjarosz.task.dto.SupplyDto;
-
-import java.util.List;
+import com.arturjarosz.task.dto.SupplyProjectDataDto;
 
 public interface SupplyApplicationService {
 
@@ -36,5 +35,5 @@ public interface SupplyApplicationService {
      * then exception with be exception will be thrown. If Project does not have any supplies, then the list will be
      * empty.
      */
-    List<SupplyDto> getSuppliesForProject(Long projectId);
+    SupplyProjectDataDto getProjectSuppliesData(Long projectId);
 }

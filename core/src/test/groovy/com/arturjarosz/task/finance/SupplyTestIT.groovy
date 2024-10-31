@@ -17,6 +17,7 @@ class SupplyTestIT extends BaseTestIT {
     static final String PROJECTS_URI = "/projects"
     static final String SUPPLIERS_URI = "/suppliers"
     static final String SUPPLIES_URI = "/supplies"
+    static final String SUPPLIES_DATA_URI = "/supplies-data"
 
     static final NOT_EXISTING_SUPPLIER_ID = Integer.MAX_VALUE
     static final NOT_EXISTING_SUPPLY_ID = Integer.MAX_VALUE
@@ -188,7 +189,7 @@ class SupplyTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "fetching supplies for not existing project should return code 404 and error message"() {
+    def "fetching supplies data for not existing project should return code 404 and error message"() {
         given:
             def project = createProject()
             def supplier = createSupplier()
@@ -196,7 +197,7 @@ class SupplyTestIT extends BaseTestIT {
             createSupply(project.id, supplier.id)
             createSupply(project.id, supplier.id)
         when:
-            def response = this.mockMvc.perform(MockMvcRequestBuilders.get("$PROJECTS_URI/${NOT_EXISTING_PROJECT_ID}$SUPPLIES_URI"))
+            def response = this.mockMvc.perform(MockMvcRequestBuilders.get("$PROJECTS_URI/${NOT_EXISTING_PROJECT_ID}$SUPPLIES_DATA_URI"))
                     .andReturn().response
         then:
             response.status == HttpStatus.NOT_FOUND.value()
@@ -206,7 +207,7 @@ class SupplyTestIT extends BaseTestIT {
     }
 
     @Transactional
-    def "fetching supplies for project should return code 200 and list of supplies"() {
+    def "fetching supplies data for project should return code 200 and list of supplies"() {
         given:
             def project = createProject()
             def supplier = createSupplier()
@@ -214,13 +215,13 @@ class SupplyTestIT extends BaseTestIT {
             createSupply(project.id, supplier.id)
             createSupply(project.id, supplier.id)
         when:
-            def response = this.mockMvc.perform(MockMvcRequestBuilders.get("$PROJECTS_URI/${project.id}$SUPPLIES_URI"))
+            def response = this.mockMvc.perform(MockMvcRequestBuilders.get("$PROJECTS_URI/${project.id}$SUPPLIES_DATA_URI"))
                     .andReturn().response
         then:
             response.status == HttpStatus.OK.value()
         and:
-            def supplies = MAPPER.readValue(response.contentAsString, List<SupplyDto>)
-            supplies.size() == 3
+            def supplies = MAPPER.readValue(response.contentAsString, SupplyProjectDataDto)
+            supplies.supplies.size() == 3
     }
 
     private ProjectDto createProject() {

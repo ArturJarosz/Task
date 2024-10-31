@@ -1,6 +1,7 @@
 package com.arturjarosz.task.finance.rest;
 
 import com.arturjarosz.task.dto.CostDto;
+import com.arturjarosz.task.dto.CostProjectDataDto;
 import com.arturjarosz.task.finance.application.CostApplicationService;
 import com.arturjarosz.task.rest.CostApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
@@ -47,6 +48,11 @@ public class CostRestController implements CostApi {
     public ResponseEntity<Void> deleteCost(Long projectId, Long costId) {
         this.costApplicationService.deleteCost(projectId, costId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<CostProjectDataDto> getProjectCostsData(Long projectId) {
+        return new ResponseEntity<>(this.costApplicationService.getProjectCostData(projectId), HttpStatus.OK);
     }
 
 }
