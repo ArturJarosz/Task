@@ -259,11 +259,12 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     }
 
     @Override
-    public ProjectFinancialPartialData getInstallmentDataForProject(long projectId) {
+    public ProjectFinancialPartialData getProjectPartialFinancialDataByType(long projectId,
+            PartialFinancialDataType dataType) {
         return this.query()
                 .from(PROJECT_FINANCIAL_PARTIAL_DATA)
                 .where(PROJECT_FINANCIAL_PARTIAL_DATA.projectFinancialDataId.eq(projectId))
-                .where(PROJECT_FINANCIAL_PARTIAL_DATA.dataType.eq(PartialFinancialDataType.INSTALLMENT))
+                .where(PROJECT_FINANCIAL_PARTIAL_DATA.dataType.eq(dataType))
                 .select(PROJECT_FINANCIAL_PARTIAL_DATA)
                 .fetchOne();
     }

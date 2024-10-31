@@ -30,7 +30,7 @@ public interface InstallmentApplicationService {
     /**
      * Loads data related to project installments for given projectId.
      */
-    InstallmentProjectDataDto getProjectInstallments(Long projectId);
+    InstallmentProjectDataDto getProjectInstallmentsData(Long projectId);
 
     /**
      * Loads Installments with given installmentId on Project with given projectId.

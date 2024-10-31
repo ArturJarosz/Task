@@ -5,7 +5,7 @@ import com.arturjarosz.task.dto.InstallmentDto
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto
 import com.arturjarosz.task.finance.application.mapper.InstallmentMapperImpl
-import com.arturjarosz.task.finance.application.mapper.InstallmentProjectSummaryMapperImpl
+import com.arturjarosz.task.finance.application.mapper.InstallmentProjectDataMapperImpl
 import com.arturjarosz.task.finance.application.validator.InstallmentValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.Installment
@@ -42,7 +42,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
     def stageValidator = Mock(StageValidator)
     def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectService)
     def installmentMapper = new InstallmentMapperImpl()
-    def installmentProjectSummaryMapper = new InstallmentProjectSummaryMapperImpl()
+    def installmentProjectSummaryMapper = new InstallmentProjectDataMapperImpl()
 
     def installmentApplicationService = new InstallmentApplicationServiceImpl(projectValidator, stageValidator,
             projectFinancialDataRepository, financialDataQueryService, installmentValidator,
@@ -60,7 +60,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
         this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITH_INSTALLMENT_ID) >> prepareProjectFinancialDataWithInstallment(PROJECT_WITH_INSTALLMENT_ID, INSTALLMENT_ID)
         this.installmentValidator.validateInstallmentExistence(NOT_EXISTING_INSTALLMENT_ID) >> { throw new IllegalArgumentException() }
         this.financialDataQueryService.getInstallmentsByProjectId(PROJECT_WITH_INSTALLMENT_ID) >> ([new InstallmentDto()] as List)
-        this.financialDataQueryService.getInstallmentDataForProject(PROJECT_WITH_INSTALLMENT_ID) >> prepareInstallmentData()
+        this.financialDataQueryService.getProjectPartialFinancialDataByType(PROJECT_WITH_INSTALLMENT_ID, PartialFinancialDataType.INSTALLMENT) >> prepareInstallmentData()
     }
 
     def "createInstallment should not create installment if project existence validation fails"() {
@@ -225,7 +225,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
         given:
         when:
             List<InstallmentDto> installments =
-                    this.installmentApplicationService.getProjectInstallments(NOT_EXISTING_PROJECT_ID)
+                    this.installmentApplicationService.getProjectInstallmentsData(NOT_EXISTING_PROJECT_ID)
         then:
             thrown(IllegalArgumentException)
             null == installments
@@ -235,7 +235,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
         given:
         when:
             def installmentData =
-                    this.installmentApplicationService.getProjectInstallments(PROJECT_WITH_INSTALLMENT_ID)
+                    this.installmentApplicationService.getProjectInstallmentsData(PROJECT_WITH_INSTALLMENT_ID)
         then:
             noExceptionThrown()
             installmentData.financialData.count == 1

@@ -1,38 +1,33 @@
 package com.arturjarosz.task.finance.application.impl;
 
 import com.arturjarosz.task.dto.SupplyDto;
+import com.arturjarosz.task.dto.SupplyProjectDataDto;
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
 import com.arturjarosz.task.finance.application.SupplyApplicationService;
 import com.arturjarosz.task.finance.application.mapper.SupplyMapper;
+import com.arturjarosz.task.finance.application.mapper.SupplyProjectDataMapper;
 import com.arturjarosz.task.finance.application.validator.SupplyValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
+import com.arturjarosz.task.finance.model.PartialFinancialDataType;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 @ApplicationService
 public class SupplyApplicationServiceImpl implements SupplyApplicationService {
 
-    @NonNull
     private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
-    @NonNull
     private final ProjectValidator projectValidator;
-    @NonNull
     private final SupplyValidator supplyValidator;
-    @NonNull
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
-    @NonNull
     private final FinancialDataQueryService financialDataQueryService;
-    @NonNull
     private final SupplyMapper supplyMapper;
+    private final SupplyProjectDataMapper supplyProjectDataMapper;
 
     @Transactional
     @Override
@@ -97,11 +92,15 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
     }
 
     @Override
-    public List<SupplyDto> getSuppliesForProject(Long projectId) {
+    public SupplyProjectDataDto getProjectSuppliesData(Long projectId) {
         LOG.debug("Loading list of supplies for Project with id {}", projectId);
-
         this.projectValidator.validateProjectExistence(projectId);
-        return this.financialDataQueryService.getSuppliesForProject(projectId);
+
+        var projectFinancialData = this.financialDataQueryService.getProjectPartialFinancialDataByType(projectId,
+                PartialFinancialDataType.SUPPLY);
+        var supplies = this.financialDataQueryService.getSuppliesForProject(projectId);
+
+        return this.supplyProjectDataMapper.map(projectFinancialData, supplies);
     }
 
 }

@@ -59,8 +59,8 @@ public class InstallmentRestController implements InstallmentApi {
     }
 
     @Override
-    public ResponseEntity<InstallmentProjectDataDto> getInstallmentsForProject(Long projectId) {
-        return new ResponseEntity<>(this.installmentApplicationService.getProjectInstallments(projectId),
+    public ResponseEntity<InstallmentProjectDataDto> getProjectInstallmentsData(Long projectId) {
+        return new ResponseEntity<>(this.installmentApplicationService.getProjectInstallmentsData(projectId),
                 HttpStatus.OK);
     }
 

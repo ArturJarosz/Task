@@ -1,6 +1,7 @@
 package com.arturjarosz.task.finance.rest;
 
 import com.arturjarosz.task.dto.SupplyDto;
+import com.arturjarosz.task.dto.SupplyProjectDataDto;
 import com.arturjarosz.task.finance.application.SupplyApplicationService;
 import com.arturjarosz.task.rest.SupplyApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
@@ -9,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -45,7 +44,7 @@ public class SupplyRestController implements SupplyApi {
     }
 
     @Override
-    public ResponseEntity<List<SupplyDto>> getSuppliesForProject(Long projectId) {
-        return new ResponseEntity<>(this.supplyApplicationService.getSuppliesForProject(projectId), HttpStatus.OK);
+    public ResponseEntity<SupplyProjectDataDto> getProjectSuppliesData(Long projectId) {
+        return new ResponseEntity<>(this.supplyApplicationService.getProjectSuppliesData(projectId), HttpStatus.OK);
     }
 }

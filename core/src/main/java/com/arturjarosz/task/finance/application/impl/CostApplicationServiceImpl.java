@@ -1,39 +1,38 @@
 package com.arturjarosz.task.finance.application.impl;
 
 import com.arturjarosz.task.dto.CostDto;
+import com.arturjarosz.task.dto.CostProjectDataDto;
 import com.arturjarosz.task.finance.application.CostApplicationService;
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
 import com.arturjarosz.task.finance.application.mapper.CostMapper;
+import com.arturjarosz.task.finance.application.mapper.CostProjectDataMapper;
 import com.arturjarosz.task.finance.application.validator.CostValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.model.Cost;
 import com.arturjarosz.task.finance.model.CostCategory;
+import com.arturjarosz.task.finance.model.PartialFinancialDataType;
 import com.arturjarosz.task.finance.model.ProjectFinancialData;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @ApplicationService
 public class CostApplicationServiceImpl implements CostApplicationService {
-    @NonNull
     private final CostValidator costValidator;
-    @NonNull
     private final ProjectValidator projectValidator;
-    @NonNull
     private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
-    @NonNull
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
-    @NonNull
     private final FinancialDataQueryService financialDataQueryService;
-    @NonNull
     private final CostMapper costMapper;
+    private final CostProjectDataMapper costProjectDataMapper;
 
     @Transactional
     @Override
@@ -94,6 +93,18 @@ public class CostApplicationServiceImpl implements CostApplicationService {
 
         this.projectFinancialDataRepository.save(projectFinancialData);
         this.projectFinanceAwareObjectService.onRemove(projectId);
+    }
+
+    @Override
+    public CostProjectDataDto getProjectCostData(Long projectId) {
+        LOG.debug("Loading cost project data for project with it: {}", projectId);
+        this.projectValidator.validateProjectExistence(projectId);
+
+        var projectCostFinancialData = this.financialDataQueryService.getProjectPartialFinancialDataByType(projectId,
+                PartialFinancialDataType.COST);
+        var costs = this.financialDataQueryService.getCostsByProjectId(projectId);
+
+        return this.costProjectDataMapper.map(projectCostFinancialData, costs);
     }
 
     private Long getIdForCreatedCost(ProjectFinancialData financialData, Cost cost) {

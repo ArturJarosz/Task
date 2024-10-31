@@ -5,16 +5,16 @@ import com.arturjarosz.task.dto.InstallmentProjectDataDto;
 import com.arturjarosz.task.finance.application.InstallmentApplicationService;
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService;
 import com.arturjarosz.task.finance.application.mapper.InstallmentMapper;
-import com.arturjarosz.task.finance.application.mapper.InstallmentProjectSummaryMapper;
+import com.arturjarosz.task.finance.application.mapper.InstallmentProjectDataMapper;
 import com.arturjarosz.task.finance.application.validator.InstallmentValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.model.Installment;
+import com.arturjarosz.task.finance.model.PartialFinancialDataType;
 import com.arturjarosz.task.finance.model.ProjectFinancialData;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,22 +24,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @ApplicationService
 public class InstallmentApplicationServiceImpl implements InstallmentApplicationService {
-    @NonNull
+
     private final ProjectValidator projectValidator;
-    @NonNull
     private final StageValidator stageValidator;
-    @NonNull
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
-    @NonNull
     private final FinancialDataQueryService financialDataQueryService;
-    @NonNull
     private final InstallmentValidator installmentValidator;
-    @NonNull
     private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
-    @NonNull
     private final InstallmentMapper installmentDtoMapper;
-    @NonNull
-    private final InstallmentProjectSummaryMapper installmentProjectSummaryMapper;
+    private final InstallmentProjectDataMapper installmentProjectDataMapper;
 
     @Transactional
     @Override
@@ -119,14 +112,15 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     }
 
     @Override
-    public InstallmentProjectDataDto getProjectInstallments(Long projectId) {
+    public InstallmentProjectDataDto getProjectInstallmentsData(Long projectId) {
         LOG.debug("Getting list of Installment for project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
 
-        var installmentProjectSummary = this.financialDataQueryService.getInstallmentDataForProject(projectId);
+        var installmentProjectSummary = this.financialDataQueryService.getProjectPartialFinancialDataByType(projectId,
+                PartialFinancialDataType.INSTALLMENT);
         var installments = this.financialDataQueryService.getInstallmentsByProjectId(projectId);
 
-        return this.installmentProjectSummaryMapper.mapToProjectFinancialPartialDataDto(installmentProjectSummary,
+        return this.installmentProjectDataMapper.mapToProjectFinancialPartialDataDto(installmentProjectSummary,
                 installments);
     }
 

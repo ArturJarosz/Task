@@ -1,6 +1,7 @@
 package com.arturjarosz.task.finance.application;
 
 import com.arturjarosz.task.dto.CostDto;
+import com.arturjarosz.task.dto.CostProjectDataDto;
 
 import java.util.List;
 
@@ -37,4 +38,6 @@ public interface CostApplicationService {
      * If Project or Cost does not exist new exception is thrown.
      */
     CostDto updateCost(Long projectId, Long costId, CostDto costDto);
+
+    CostProjectDataDto getProjectCostData(Long projectId);
 }
