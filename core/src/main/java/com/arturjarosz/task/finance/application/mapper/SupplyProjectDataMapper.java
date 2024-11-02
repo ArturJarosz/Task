@@ -14,14 +14,13 @@ import java.util.List;
 @Mapper(uses = {MoneyMapper.class}, builder = @Builder(disableBuilder = true))
 public interface SupplyProjectDataMapper {
 
-    @Mapping(target = "financialData.count", source = "supplyDtos", qualifiedByName = "numberOfSupplies")
+    @Mapping(target = "financialData.count", source = "supplies", qualifiedByName = "numberOfSupplies")
     @Mapping(target = "financialData.netValue", source = "partialData.netValue")
     @Mapping(target = "financialData.grossValue", source = "partialData.grossValue")
     @Mapping(target = "financialData.vatTax", source = "partialData.vatTax")
     @Mapping(target = "financialData.incomeTax", source = "partialData.incomeTax")
-    @Mapping(target = "supplies", source = "supplyDtos")
-    SupplyProjectDataDto map(ProjectFinancialPartialData partialData,
-            List<SupplyDto> supplyDtos);
+    @Mapping(target = "supplies", source = "supplies")
+    SupplyProjectDataDto map(ProjectFinancialPartialData partialData, List<SupplyDto> supplies);
 
     @Named("numberOfSupplies")
     default Integer numberOfSupplies(final List<SupplyDto> supplyDtos) {

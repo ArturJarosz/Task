@@ -4,6 +4,7 @@ import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -15,6 +16,7 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertN
  * Class that represents an address.
  */
 
+@Getter
 @Embeddable
 public class Address extends AbstractValueObject<Address> implements ValueObject<Address> {
     @Serial
@@ -39,27 +41,11 @@ public class Address extends AbstractValueObject<Address> implements ValueObject
         this.street = street;
     }
 
-    public String getPostCode() {
-        return this.postCode;
-    }
-
-    public String getCity() {
-        return this.city;
-    }
-
     public void setCity(String city) {
         assertNotEmpty(city, BaseValidator
                 .createMessageCode(ExceptionCodes.NULL, ModelExceptionCodes.ADDRESS,
                         ModelExceptionCodes.CITY));
         this.city = city;
-    }
-
-    public String getStreet() {
-        return this.street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
     }
 
     @Override

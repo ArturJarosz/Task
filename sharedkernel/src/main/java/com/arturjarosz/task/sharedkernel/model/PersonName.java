@@ -2,11 +2,15 @@ package com.arturjarosz.task.sharedkernel.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serial;
 
+@Getter
+@Setter
 @Embeddable
 public class PersonName extends AbstractValueObject<PersonName> implements ValueObject<PersonName> {
     @Serial
@@ -25,22 +29,6 @@ public class PersonName extends AbstractValueObject<PersonName> implements Value
     public PersonName(String firstName, String lastName) {
         this.setFirstName(firstName);
         this.setLastName(lastName);
-    }
-
-    public String getFirstName() {
-        return this.firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return this.lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     @Override

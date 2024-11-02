@@ -1,6 +1,7 @@
 package com.arturjarosz.task.finance.application;
 
 import com.arturjarosz.task.dto.ContractorJobDto;
+import com.arturjarosz.task.dto.ContractorJobProjectDataDto;
 
 public interface ContractorJobApplicationService {
     /**
@@ -27,4 +28,6 @@ public interface ContractorJobApplicationService {
      * ContractorJob does not belong to that Project, new exception will be thrown.
      */
     ContractorJobDto getContractorJob(Long projectId, Long contractorJobId);
+
+    ContractorJobProjectDataDto getProjectContractorJobsData(Long projectId);
 }

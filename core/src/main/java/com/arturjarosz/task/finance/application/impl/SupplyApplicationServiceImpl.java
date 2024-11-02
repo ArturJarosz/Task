@@ -93,7 +93,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
 
     @Override
     public SupplyProjectDataDto getProjectSuppliesData(Long projectId) {
-        LOG.debug("Loading list of supplies for Project with id {}", projectId);
+        LOG.debug("Loading supplies data for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
 
         var projectFinancialData = this.financialDataQueryService.getProjectPartialFinancialDataByType(projectId,

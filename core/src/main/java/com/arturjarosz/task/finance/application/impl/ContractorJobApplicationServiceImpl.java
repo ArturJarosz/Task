@@ -1,14 +1,16 @@
 package com.arturjarosz.task.finance.application.impl;
 
 import com.arturjarosz.task.dto.ContractorJobDto;
+import com.arturjarosz.task.dto.ContractorJobProjectDataDto;
 import com.arturjarosz.task.finance.application.ContractorJobApplicationService;
 import com.arturjarosz.task.finance.application.mapper.ContractorJobMapper;
+import com.arturjarosz.task.finance.application.mapper.ContractorJobProjectDataMapper;
 import com.arturjarosz.task.finance.application.validator.ContractorJobValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
+import com.arturjarosz.task.finance.model.PartialFinancialDataType;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,18 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 @ApplicationService
 public class ContractorJobApplicationServiceImpl implements ContractorJobApplicationService {
 
-    @NonNull
     private final ContractorJobValidator contractorJobValidator;
-    @NonNull
     private final ProjectFinanceAwareObjectServiceImpl projectFinanceAwareObjectService;
-    @NonNull
     private final ProjectValidator projectValidator;
-    @NonNull
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
-    @NonNull
     private final FinancialDataQueryService financialDataQueryService;
-    @NonNull
     private final ContractorJobMapper contractorJobMapper;
+    private final ContractorJobProjectDataMapper contractorJobProjectDataMapper;
 
     @Transactional
     @Override
@@ -78,6 +75,17 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         var contractorJobDto = this.financialDataQueryService.getContractorJobById(contractorJobId, projectId);
         this.contractorJobValidator.validateContractorJobExistence(contractorJobDto, projectId, contractorJobId);
         return contractorJobDto;
+    }
+
+    @Override
+    public ContractorJobProjectDataDto getProjectContractorJobsData(Long projectId) {
+        LOG.debug("Loading contractor jobs data for Project with id {}", projectId);
+        this.projectValidator.validateProjectExistence(projectId);
+
+        var projectFinancialData = this.financialDataQueryService.getProjectPartialFinancialDataByType(projectId,
+                PartialFinancialDataType.CONTRACTOR_JOB);
+        var contractorJobs = this.financialDataQueryService.getContractorJobsForProject(projectId);
+        return this.contractorJobProjectDataMapper.map(projectFinancialData, contractorJobs);
     }
 
     @Transactional

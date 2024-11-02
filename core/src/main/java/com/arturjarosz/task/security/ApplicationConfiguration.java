@@ -48,7 +48,7 @@ public class ApplicationConfiguration {
                 .authorizeHttpRequests(
                         request -> request.requestMatchers(new AntPathRequestMatcher(MATCH_ALL)).authenticated())
                 .oauth2Login(withDefaults())
-                .oauth2ResourceServer((oauth) -> oauth.jwt(Customizer.withDefaults()))
+                .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))
                 .httpBasic(Customizer.withDefaults());
         return http.build();
     }

@@ -15,7 +15,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.TriConsumer;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -45,19 +45,18 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private void prepareContractValidators() {
-        this.statusToValidator = new HashMap<>();
-        this.statusToValidator.put(ContractStatus.COMPLETED, (maybeContract, contractDto, contractId) -> {
-            this.contractValidator.validateCompleteContractDto(contractDto);
-        });
-        this.statusToValidator.put(ContractStatus.SIGNED, (maybeContract, contractDto, contractId) -> {
-            this.contractValidator.validateSignContractDto(contractDto);
-        });
-        this.statusToValidator.put(ContractStatus.OFFER, (maybeContract, contractDto, contractId) -> {
-            this.contractValidator.validateOffer(contractDto);
-        });
-        this.statusToValidator.put(ContractStatus.TERMINATED, (maybeContract, contractDto, contractId) -> {
-            this.contractValidator.validateTerminateContractDto(contractDto);
-        });
+        this.statusToValidator = new EnumMap<>(ContractStatus.class);
+        this.statusToValidator.put(ContractStatus.COMPLETED,
+                (maybeContract, contractDto, contractId) -> this.contractValidator.validateCompleteContractDto(
+                        contractDto));
+        this.statusToValidator.put(ContractStatus.SIGNED,
+                (maybeContract, contractDto, contractId) -> this.contractValidator.validateSignContractDto(
+                        contractDto));
+        this.statusToValidator.put(ContractStatus.OFFER,
+                (maybeContract, contractDto, contractId) -> this.contractValidator.validateOffer(contractDto));
+        this.statusToValidator.put(ContractStatus.TERMINATED,
+                (maybeContract, contractDto, contractId) -> this.contractValidator.validateTerminateContractDto(
+                        contractDto));
     }
 
     @Transactional
