@@ -696,6 +696,30 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
 
+  /projects/{projectId}/contractor-jobs-data:
+    get:
+      tags:
+        - contractor-job
+      summary: Get contractor jobs data for project and contractor jobs summary
+      operationId: getProjectContractorJobsData
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractorJobProjectData"
+
   /projects/{projectId}/costs:
     post:
       tags:
@@ -2910,6 +2934,16 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Supply"
+
+    ContractorJobProjectData:
+      type: object
+      properties:
+        financialData:
+          $ref: "#/components/schemas/ProjectFinancialPartialData"
+        contractorJobs:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContractorJob"
 
     TotalProjectFinancialSummary:
       type: object

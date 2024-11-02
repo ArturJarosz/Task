@@ -256,11 +256,6 @@ class SupplyApplicationServiceImplTest extends Specification {
         return supplyDto
     }
 
-    private Supply prepareSupply(long supplyId) {
-        def supply = new Supply(NAME, SUPPLIER_ID, VALUE, true, true)
-        TestUtils.setFieldForObject(supply, "id", supplyId)
-        return supply
-    }
 
     private SupplyDto prepareSupplyDto(long supplyId) {
         def supplyDto = new SupplyDto()

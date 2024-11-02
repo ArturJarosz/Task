@@ -1,11 +1,16 @@
 package com.arturjarosz.task.finance.application.impl
 
+import com.arturjarosz.task.common.mapper.MoneyMapperImpl
 import com.arturjarosz.task.dto.ContractorJobDto
+import com.arturjarosz.task.finance.application.dto.FinancialValueDto
 import com.arturjarosz.task.finance.application.mapper.ContractorJobMapperImpl
+import com.arturjarosz.task.finance.application.mapper.ContractorJobProjectDataMapperImpl
 import com.arturjarosz.task.finance.application.validator.ContractorJobValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.ContractorJob
+import com.arturjarosz.task.finance.model.PartialFinancialDataType
 import com.arturjarosz.task.finance.model.ProjectFinancialData
+import com.arturjarosz.task.finance.model.ProjectFinancialPartialData
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
@@ -33,16 +38,16 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def projectFinancialDataRepository = Mock(ProjectFinancialDataRepository)
     def financialDataQueryService = Mock(FinancialDataQueryService)
     def contractorJobMapper = new ContractorJobMapperImpl()
+    def moneyMapper = new MoneyMapperImpl()
+    def contractorJobProjectDataMapper = new ContractorJobProjectDataMapperImpl(moneyMapper)
 
-    def contractorJobApplicationService = new ContractorJobApplicationServiceImpl(contractorJobValidator,
+    def subject = new ContractorJobApplicationServiceImpl(contractorJobValidator,
             projectFinanceAwareObjectService, projectValidator, projectFinancialDataRepository,
-            financialDataQueryService, contractorJobMapper)
+            financialDataQueryService, contractorJobMapper, contractorJobProjectDataMapper)
 
     def setup() {
-        projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITH_CONTRACTOR_JOB_ID) >>
-                prepareProjectFinancialDataWithContactorJob()
-        projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITHOUT_CONTRACTOR_JOB_ID) >>
-                prepareProjectFinancialDataWithoutContractorJob()
+        projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITH_CONTRACTOR_JOB_ID) >> prepareProjectFinancialDataWithContactorJob()
+        projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITHOUT_CONTRACTOR_JOB_ID) >> prepareProjectFinancialDataWithoutContractorJob()
         financialDataQueryService.getContractorJobById(EXISTING_CONTRACTOR_JOB_ID, _ as Long) >> new ContractorJobDto()
         projectValidator.validateProjectExistence(NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }
     }
@@ -52,7 +57,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         given:
             def contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
         when:
-            this.contractorJobApplicationService.createContractorJob(NOT_EXISTING_PROJECT_ID, contractorJobDto)
+            this.subject.createContractorJob(NOT_EXISTING_PROJECT_ID, contractorJobDto)
         then:
             thrown(IllegalArgumentException)
             0 * projectFinancialDataRepository.save(_ as ProjectFinancialData)
@@ -63,7 +68,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
             mockValidatingContractorJobDtoThrowsException()
             def contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
         when:
-            this.contractorJobApplicationService.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
+            this.subject.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
                     contractorJobDto)
         then:
             thrown(IllegalArgumentException)
@@ -75,7 +80,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
             mockValidatorContractorExistenceThrowsException()
             def contractorJobDto = this.prepareContractorJobDto(NOT_EXISING_CONTRACTOR_ID)
         when:
-            this.contractorJobApplicationService.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
+            this.subject.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
                     contractorJobDto)
         then:
             thrown(IllegalArgumentException)
@@ -86,7 +91,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         given:
             def contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
         when:
-            this.contractorJobApplicationService.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
+            this.subject.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
                     contractorJobDto)
         then:
             1 * projectFinancialDataRepository.save(_ as ProjectFinancialData)
@@ -96,12 +101,10 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         given:
             def contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
         when:
-            this.contractorJobApplicationService.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
+            this.subject.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
                     contractorJobDto)
         then:
-            1 * this.projectFinancialDataRepository.save({
-                ProjectFinancialData financialData ->
-                    financialData.contractorJobs.size() == 1
+            1 * this.projectFinancialDataRepository.save({ ProjectFinancialData financialData -> financialData.contractorJobs.size() == 1
             })
     }
 
@@ -109,7 +112,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         given:
             def contractorJobDto = this.prepareContractorJobDto(CONTRACTOR_ID)
         when:
-            this.contractorJobApplicationService.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
+            this.subject.createContractorJob(PROJECT_WITHOUT_CONTRACTOR_JOB_ID,
                     contractorJobDto)
         then:
             1 * this.projectFinanceAwareObjectService.onCreate(PROJECT_WITHOUT_CONTRACTOR_JOB_ID)
@@ -118,7 +121,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def "deleteContractorJob should not remove contractorJob if validating project existence fails"() {
         given:
         when:
-            this.contractorJobApplicationService.deleteContractorJob(NOT_EXISTING_PROJECT_ID,
+            this.subject.deleteContractorJob(NOT_EXISTING_PROJECT_ID,
                     EXISTING_CONTRACTOR_JOB_ID)
         then:
             thrown(IllegalArgumentException)
@@ -129,7 +132,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         given:
             this.mockValidatingContractorJobOnProjectExistenceThrowsException()
         when:
-            this.contractorJobApplicationService.deleteContractorJob(NOT_EXISTING_PROJECT_ID,
+            this.subject.deleteContractorJob(NOT_EXISTING_PROJECT_ID,
                     EXISTING_CONTRACTOR_JOB_ID)
         then:
             thrown(IllegalArgumentException)
@@ -139,19 +142,17 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def "deleteContractorJob should remove contractorJob from projectFinancialData and save object via repository"() {
         given:
         when:
-            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
+            this.subject.deleteContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID)
         then:
-            1 * projectFinancialDataRepository.save({
-                ProjectFinancialData projectFinancialData ->
-                    projectFinancialData.contractorJobs.size() == 0
+            1 * projectFinancialDataRepository.save({ ProjectFinancialData projectFinancialData -> projectFinancialData.contractorJobs.size() == 0
             })
     }
 
     def "deleteContractorJob should call onRemove on projectFinanceAwareObjectService"() {
         given:
         when:
-            this.contractorJobApplicationService.deleteContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
+            this.subject.deleteContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID)
         then:
             1 * this.projectFinanceAwareObjectService.onRemove(PROJECT_WITH_CONTRACTOR_JOB_ID)
@@ -161,7 +162,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         given:
             def contractorJobDto = this.prepareContractorJobDtoForUpdate()
         when:
-            this.contractorJobApplicationService.updateContractorJob(NOT_EXISTING_PROJECT_ID,
+            this.subject.updateContractorJob(NOT_EXISTING_PROJECT_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
         then:
             thrown(IllegalArgumentException)
@@ -173,7 +174,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
             this.mockValidatingContractorJobOnProjectExistenceThrowsException()
             def contractorJobDto = this.prepareContractorJobDtoForUpdate()
         when:
-            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
+            this.subject.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
         then:
             thrown(IllegalArgumentException)
@@ -185,7 +186,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
             this.mockValidatingUpdateContractorJobDtoThrowsException()
             def contractorJobDto = this.prepareContractorJobDtoForUpdate()
         when:
-            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
+            this.subject.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
         then:
             thrown(IllegalArgumentException)
@@ -197,7 +198,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
             def contractorJobDto = this.prepareContractorJobDtoForUpdate()
         when:
             def updatedContractorJob =
-                    this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
+                    this.subject.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                             EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
         then:
             updatedContractorJob.name == NEW_NAME
@@ -209,7 +210,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         given:
             def contractorJobDto = this.prepareContractorJobDtoForUpdate()
         when:
-            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
+            this.subject.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
         then:
             1 * projectFinancialDataRepository.save(_ as ProjectFinancialData)
@@ -219,7 +220,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         given:
             def contractorJobDto = this.prepareContractorJobDtoForUpdate()
         when:
-            this.contractorJobApplicationService.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
+            this.subject.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
                     EXISTING_CONTRACTOR_JOB_ID, contractorJobDto)
         then:
             1 * this.projectFinanceAwareObjectService.onUpdate(PROJECT_WITH_CONTRACTOR_JOB_ID)
@@ -228,7 +229,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def "getContractorJob should fail when project existence fails"() {
         given:
         when:
-            def contractorJobDto = this.contractorJobApplicationService
+            def contractorJobDto = this.subject
                     .getContractorJob(NOT_EXISTING_PROJECT_ID, EXISTING_CONTRACTOR_JOB_ID)
         then:
             thrown(IllegalArgumentException)
@@ -239,7 +240,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
         given:
             mockValidationContractorJobExistenceFails()
         when:
-            def contractorJobDto = this.contractorJobApplicationService
+            def contractorJobDto = this.subject
                     .getContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID, NOT_EXISTING_CONTRACTOR_JOB_ID)
         then:
             thrown(IllegalArgumentException)
@@ -249,10 +250,29 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     def "getContractorJob should return contractorJobDto"() {
         given:
         when:
-            def contractorJobDto = this.contractorJobApplicationService
+            def contractorJobDto = this.subject
                     .getContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID, EXISTING_CONTRACTOR_JOB_ID)
         then:
             contractorJobDto != null
+    }
+
+    def "getProjectContractorJobsData should not return data if project existence validation fails"() {
+        given:
+        when:
+            def result = subject.getProjectContractorJobsData(NOT_EXISTING_PROJECT_ID)
+        then:
+            thrown(IllegalArgumentException)
+            result == null
+    }
+
+    def "getProjectContractorJobsData should return properly mapped contractors jobs data for given project"() {
+        given:
+            mockGetProjectContractorJobs()
+        when:
+            def result = subject.getProjectContractorJobsData(PROJECT_WITH_CONTRACTOR_JOB_ID)
+        then:
+            result.contractorJobs.size() == 1
+            result.financialData.netValue == VALUE.doubleValue()
     }
 
     private ContractorJobDto prepareContractorJobDto(Long contractorId) {
@@ -268,23 +288,19 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     }
 
     private void mockValidatorContractorExistenceThrowsException() {
-        contractorJobValidator.validateContractorExistence(NOT_EXISING_CONTRACTOR_ID)
-                >> { throw new IllegalArgumentException() }
+        contractorJobValidator.validateContractorExistence(NOT_EXISING_CONTRACTOR_ID) >> { throw new IllegalArgumentException() }
     }
 
     private void mockValidatingContractorJobDtoThrowsException() {
-        contractorJobValidator.validateCreateContractorJobDto(_ as ContractorJobDto)
-                >> { throw new IllegalArgumentException() }
+        contractorJobValidator.validateCreateContractorJobDto(_ as ContractorJobDto) >> { throw new IllegalArgumentException() }
     }
 
     private void mockValidatingContractorJobOnProjectExistenceThrowsException() {
-        contractorJobValidator.validateContractorJobOnProjectExistence(_ as Long, _ as Long)
-                >> { throw new IllegalArgumentException() }
+        contractorJobValidator.validateContractorJobOnProjectExistence(_ as Long, _ as Long) >> { throw new IllegalArgumentException() }
     }
 
     private void mockValidatingUpdateContractorJobDtoThrowsException() {
-        contractorJobValidator.validateUpdateContractorJobDto(_ as ContractorJobDto)
-                >> { throw new IllegalArgumentException() }
+        contractorJobValidator.validateUpdateContractorJobDto(_ as ContractorJobDto) >> { throw new IllegalArgumentException() }
     }
 
     private ProjectFinancialData prepareProjectFinancialDataWithContactorJob() {
@@ -300,7 +316,17 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     }
 
     private void mockValidationContractorJobExistenceFails() {
-        this.contractorJobValidator.validateContractorJobExistence(null, _ as Long, _ as Long)
-                >> { throw new IllegalArgumentException() }
+        this.contractorJobValidator.validateContractorJobExistence(null, _ as Long, _ as Long) >> { throw new IllegalArgumentException() }
+    }
+
+    private void mockGetProjectContractorJobs() {
+        var contractorJob = new ContractorJob(NAME, CONTRACTOR_ID, VALUE, true, true)
+        TestUtils.setFieldForObject(contractorJob, "id", EXISTING_CONTRACTOR_JOB_ID)
+        this.financialDataQueryService.getContractorJobsForProject(PROJECT_WITH_CONTRACTOR_JOB_ID) >> [contractorJob]
+        var financialValueDto = new FinancialValueDto()
+        financialValueDto.netValue = VALUE.doubleValue()
+        var projectFinancialPartialData = new ProjectFinancialPartialData(PartialFinancialDataType.CONTRACTOR_JOB, financialValueDto)
+        this.financialDataQueryService.getProjectPartialFinancialDataByType(PROJECT_WITH_CONTRACTOR_JOB_ID,
+                PartialFinancialDataType.CONTRACTOR_JOB) >> projectFinancialPartialData
     }
 }

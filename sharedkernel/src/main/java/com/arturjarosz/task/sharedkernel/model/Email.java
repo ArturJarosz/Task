@@ -4,11 +4,13 @@ import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serial;
 import java.util.regex.Pattern;
 
+@Getter
 @Embeddable
 public class Email extends AbstractValueObject<Email> implements ValueObject<Email> {
     @Serial
@@ -26,10 +28,6 @@ public class Email extends AbstractValueObject<Email> implements ValueObject<Ema
 
     public Email(String value) {
         this.setValue(value);
-    }
-
-    public String getValue() {
-        return this.value;
     }
 
     public void setValue(String value) {

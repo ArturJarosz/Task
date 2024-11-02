@@ -1,6 +1,7 @@
 package com.arturjarosz.task.finance.rest;
 
 import com.arturjarosz.task.dto.ContractorJobDto;
+import com.arturjarosz.task.dto.ContractorJobProjectDataDto;
 import com.arturjarosz.task.finance.application.ContractorJobApplicationService;
 import com.arturjarosz.task.rest.ContractorJobApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
@@ -19,8 +20,10 @@ public class ContractorJobRestController implements ContractorJobApi {
 
     @Override
     public ResponseEntity<ContractorJobDto> createContractorJob(ContractorJobDto contractorJobDto, Long projectId) {
-        var createdContractorJobDto = this.contractorJobApplicationService.createContractorJob(projectId, contractorJobDto);
-        var headers = new HttpHeadersBuilder().withLocation("/projects/{projectId}/contractor-jobs/{contractorJobId}", projectId, createdContractorJobDto.getId()).build();
+        var createdContractorJobDto = this.contractorJobApplicationService.createContractorJob(projectId,
+                contractorJobDto);
+        var headers = new HttpHeadersBuilder().withLocation("/projects/{projectId}/contractor-jobs/{contractorJobId}",
+                projectId, createdContractorJobDto.getId()).build();
         return new ResponseEntity<>(createdContractorJobDto, headers, HttpStatus.CREATED);
     }
 
@@ -31,12 +34,22 @@ public class ContractorJobRestController implements ContractorJobApi {
     }
 
     @Override
-    public ResponseEntity<ContractorJobDto> updateContractorJob(ContractorJobDto contractorJobDto, Long projectId, Long contractorJobId) {
-        return new ResponseEntity<>(this.contractorJobApplicationService.updateContractorJob(projectId, contractorJobId, contractorJobDto), HttpStatus.OK);
+    public ResponseEntity<ContractorJobDto> updateContractorJob(ContractorJobDto contractorJobDto, Long projectId,
+            Long contractorJobId) {
+        return new ResponseEntity<>(
+                this.contractorJobApplicationService.updateContractorJob(projectId, contractorJobId, contractorJobDto),
+                HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<ContractorJobDto> getContractorJob(Long projectId, Long contractorJobId) {
-        return new ResponseEntity<>(this.contractorJobApplicationService.getContractorJob(projectId, contractorJobId), HttpStatus.OK);
+        return new ResponseEntity<>(this.contractorJobApplicationService.getContractorJob(projectId, contractorJobId),
+                HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ContractorJobProjectDataDto> getProjectContractorJobsData(Long projectId) {
+        return new ResponseEntity<>(this.contractorJobApplicationService.getProjectContractorJobsData(projectId),
+                HttpStatus.OK);
     }
 }

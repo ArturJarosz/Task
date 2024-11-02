@@ -3,6 +3,8 @@ package com.arturjarosz.task.sharedkernel.model;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -17,6 +19,8 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertI
  * currency. Any arithmetic expressions should be only possible when currency is same on both objects.
  */
 
+@Setter
+@Getter
 @Embeddable
 public class Money extends AbstractValueObject<Money> implements ValueObject<Money>, Comparable<Money> {
     @Serial
@@ -34,14 +38,6 @@ public class Money extends AbstractValueObject<Money> implements ValueObject<Mon
     }
 
     public Money(BigDecimal value) {
-        this.value = value;
-    }
-
-    public BigDecimal getValue() {
-        return this.value;
-    }
-
-    public void setValue(BigDecimal value) {
         this.value = value;
     }
 

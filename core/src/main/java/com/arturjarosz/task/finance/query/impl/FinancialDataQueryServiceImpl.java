@@ -198,8 +198,10 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .select(INSTALLMENT, STAGE.name)
                 .fetch();
 
-        return installments.stream().map(installmentAndName -> this.installmentMapper.mapToDto(installmentAndName.get(0,
-                Installment.class), installmentAndName.get(1, String.class))).toList();
+        return installments.stream()
+                .map(installmentAndName -> this.installmentMapper.mapToDto(installmentAndName.get(0, Installment.class),
+                        installmentAndName.get(1, String.class)))
+                .toList();
     }
 
     @Override
@@ -227,7 +229,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .from(SUPPLY)
                 .leftJoin(PROJECT_FINANCIAL_DATA)
                 .on(SUPPLY.projectFinancialDataId.eq(PROJECT_FINANCIAL_DATA.id))
-                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
+                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId).and(SUPPLY.type.eq(CooperatorJobType.SUPPLY)))
                 .select(SUPPLY)
                 .fetch();
 
@@ -267,6 +269,22 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .where(PROJECT_FINANCIAL_PARTIAL_DATA.dataType.eq(dataType))
                 .select(PROJECT_FINANCIAL_PARTIAL_DATA)
                 .fetchOne();
+    }
+
+    @Override
+    public List<ContractorJobDto> getContractorJobsForProject(Long projectId) {
+        var contractorJobs = this.query()
+                .from(CONTRACTOR_JOB)
+                .leftJoin(PROJECT_FINANCIAL_DATA)
+                .on(CONTRACTOR_JOB.projectFinancialDataId.eq(PROJECT_FINANCIAL_DATA.id))
+                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId)
+                        .and(CONTRACTOR_JOB.type.eq(CooperatorJobType.CONTRACTOR_JOB)))
+                .select(CONTRACTOR_JOB)
+                .fetch();
+
+        return contractorJobs.stream()
+                .map(contractorJob -> this.contractorJobMapper.mapToDto(contractorJob, projectId))
+                .toList();
     }
 
 }
