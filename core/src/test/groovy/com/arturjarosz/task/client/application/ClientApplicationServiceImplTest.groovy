@@ -2,7 +2,6 @@ package com.arturjarosz.task.client.application
 
 import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
 import com.arturjarosz.task.client.application.mapper.ClientMapperImpl
-import com.arturjarosz.task.client.application.mapper.ProjectsToClientProjectsSummaryDtoMapperImpl
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository
 import com.arturjarosz.task.client.model.Client
 import com.arturjarosz.task.client.model.ClientType
@@ -11,6 +10,7 @@ import com.arturjarosz.task.dto.AddressDto
 import com.arturjarosz.task.dto.ClientDto
 import com.arturjarosz.task.dto.ClientTypeDto
 import com.arturjarosz.task.dto.ContactDto
+import com.arturjarosz.task.project.application.mapper.ProjectsToEntityProjectsSummaryDtoMapperImpl
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.query.ProjectQueryService
@@ -54,7 +54,7 @@ class ClientApplicationServiceImplTest extends Specification {
     def clientMapper = new ClientMapperImpl()
     def projectQueryService = Mock(ProjectQueryService)
     def contractQueryService = Mock(ContractQueryService)
-    def projectsToClientProjectsSummaryDtoMapper = new ProjectsToClientProjectsSummaryDtoMapperImpl()
+    def projectsToClientProjectsSummaryDtoMapper = new ProjectsToEntityProjectsSummaryDtoMapperImpl()
 
     def clientApplicationServiceImpl = new ClientApplicationServiceImpl(clientRepository, clientValidator, clientMapper,
             projectQueryService, contractQueryService, projectsToClientProjectsSummaryDtoMapper)

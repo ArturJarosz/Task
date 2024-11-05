@@ -1,6 +1,6 @@
-package com.arturjarosz.task.client.application.mapper;
+package com.arturjarosz.task.project.application.mapper;
 
-import com.arturjarosz.task.dto.ClientProjectsSummaryDto;
+import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
 import com.arturjarosz.task.dto.ProjectSummaryDto;
 import com.arturjarosz.task.project.model.Project;
 import org.mapstruct.Mapper;
@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper()
-public interface ProjectsToClientProjectsSummaryDtoMapper {
+public interface ProjectsToEntityProjectsSummaryDtoMapper {
 
-    default ClientProjectsSummaryDto mapToProjectSummaryDto(List<Project> projects,
+    default EntityProjectsSummaryDto mapToProjectSummaryDto(List<Project> projects,
             Map<Long, BigDecimal> contractValueByProjectId) {
-        var projectsSummaryDto = new ClientProjectsSummaryDto();
+        var projectsSummaryDto = new EntityProjectsSummaryDto();
         projectsSummaryDto.setNumberOfProjects(projects.size());
         projectsSummaryDto.setTotalValue(
                 contractValueByProjectId.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add).doubleValue());

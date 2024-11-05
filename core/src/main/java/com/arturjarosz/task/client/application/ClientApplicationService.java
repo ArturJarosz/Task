@@ -1,8 +1,7 @@
 package com.arturjarosz.task.client.application;
 
-
 import com.arturjarosz.task.dto.ClientDto;
-import com.arturjarosz.task.dto.ClientProjectsSummaryDto;
+import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
 
 import java.util.List;
 
@@ -51,5 +50,5 @@ public interface ClientApplicationService {
     /**
      * Returns all projects summary for client with given clientId.
      */
-    ClientProjectsSummaryDto getClientProjectsSummary(Long clientId);
+    EntityProjectsSummaryDto getClientProjectsSummary(Long clientId);
 }

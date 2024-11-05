@@ -44,8 +44,8 @@ done
 
 if [[ -n "$NEW_VERSION" && -n "$FUTURE_VERSION" ]]; then
     cd ..
-    echo "Using $NEW_VERSION for release"
-    echo "Using $FUTURE_VERSION for future develop"
+    echo " === Using $NEW_VERSION for release"
+    echo " === Using $FUTURE_VERSION for future develop"
 
     echo "1. Creating release branch - release_$NEW_VERSION"
     git checkout -b release/release_"$NEW_VERSION"
@@ -69,7 +69,8 @@ if [[ -n "$NEW_VERSION" && -n "$FUTURE_VERSION" ]]; then
     echo "6. Committing new version $FUTURE_VERSION-SNAPSHOT"
     git commit -m "Changing version to $FUTURE_VERSION-SNAPSHOT"
 
-    echo "Furthers steps that need to be taken."
+    echo " === Automatic changes done."
+    echo "Furthers steps that need to be taken manually."
     echo "Because of possible conflicts no auto merging is being done."
     echo "Please merge release/release_$NEW_VERSION" to main branch.
     echo "Please merge update/NO_JIRA_update_develop_to_$FUTURE_VERSION to develop."
