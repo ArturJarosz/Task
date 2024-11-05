@@ -2,7 +2,7 @@ package com.arturjarosz.task.client.rest;
 
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.dto.ClientDto;
-import com.arturjarosz.task.dto.ClientProjectsSummaryDto;
+import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
 import com.arturjarosz.task.rest.ClientApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
 import lombok.NonNull;
@@ -42,7 +42,7 @@ public class ClientRestController implements ClientApi {
     }
 
     @Override
-    public ResponseEntity<ClientProjectsSummaryDto> getClientProjectsSummary(Long clientId) {
+    public ResponseEntity<EntityProjectsSummaryDto> getClientProjectsSummary(Long clientId) {
         return new ResponseEntity<>(this.clientApplicationService.getClientProjectsSummary(clientId), HttpStatus.OK);
     }
 

@@ -4,10 +4,14 @@ import com.arturjarosz.task.architect.application.ArchitectApplicationService;
 import com.arturjarosz.task.architect.application.ArchitectValidator;
 import com.arturjarosz.task.architect.application.mapper.ArchitectMapper;
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository;
+import com.arturjarosz.task.contract.query.ContractQueryService;
 import com.arturjarosz.task.dto.ArchitectDto;
+import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
+import com.arturjarosz.task.project.application.mapper.ProjectsToEntityProjectsSummaryDtoMapper;
+import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +25,13 @@ import static com.arturjarosz.task.architect.application.ArchitectValidator.vali
 @RequiredArgsConstructor
 @ApplicationService
 public class ArchitectApplicationServiceImpl implements ArchitectApplicationService {
-    @NonNull
+
     private final ArchitectRepository architectRepository;
-    @NonNull
     private final ArchitectValidator architectValidator;
-    @NonNull
     private final ArchitectMapper architectMapper;
+    private final ProjectQueryService projectQueryService;
+    private final ContractQueryService contractQueryService;
+    private final ProjectsToEntityProjectsSummaryDtoMapper projectsToEntityProjectsSummaryDtoMapper;
 
     @Transactional
     @Override
@@ -84,5 +89,15 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
                 .stream()
                 .map(this.architectMapper::mapToDto)
                 .toList();
+    }
+
+    @Override
+    public EntityProjectsSummaryDto getProjectsSummary(Long architectId) {
+        this.architectValidator.validateArchitectExistence(architectId);
+
+        var projects = this.projectQueryService.getProjectsForArchitect(architectId);
+        var contractValueByProjectId = this.contractQueryService.getContractValuesForProjects(projects.stream().map(
+                Project::getId).toList());
+        return this.projectsToEntityProjectsSummaryDtoMapper.mapToProjectSummaryDto(projects, contractValueByProjectId);
     }
 }

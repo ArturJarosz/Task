@@ -2,6 +2,7 @@ package com.arturjarosz.task.architect.application;
 
 import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.dto.ArchitectDto;
+import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
 
 import java.util.List;
 
@@ -42,4 +43,6 @@ public interface ArchitectApplicationService {
      * Loads list of basic architect data or all existing architects.
      */
     List<ArchitectDto> getArchitects();
+
+    EntityProjectsSummaryDto getProjectsSummary(Long architectId);
 }

@@ -9,6 +9,7 @@ import com.arturjarosz.task.sharedkernel.model.Money;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -26,14 +27,28 @@ public class ContractQueryServiceImpl extends AbstractQueryService<QContract> im
 
     @Override
     public Map<Long, BigDecimal> getContractValuesForProjectsByClientId(long clientId) {
-        return query().from(CONTRACT)
+        return this.query()
+                .from(CONTRACT)
                 .join(PROJECT)
                 .on(CONTRACT.id.eq(PROJECT.contractId))
                 .where(PROJECT.clientId.eq(clientId))
                 .select(PROJECT.id, CONTRACT.offerValue)
                 .fetch()
                 .stream()
-                .peek(object -> LOG.info("object: {}", object))
+                .collect(Collectors.toMap(projectIdAndValue -> projectIdAndValue.get(0, Long.class),
+                        projectIdAndValue -> Objects.requireNonNull(projectIdAndValue.get(1, Money.class)).getValue()));
+    }
+
+    @Override
+    public Map<Long, BigDecimal> getContractValuesForProjects(List<Long> projectIds) {
+        return this.query()
+                .from(CONTRACT)
+                .join(PROJECT)
+                .on(CONTRACT.id.eq(PROJECT.contractId))
+                .where(PROJECT.id.in(projectIds))
+                .select(PROJECT.id, CONTRACT.offerValue)
+                .fetch()
+                .stream()
                 .collect(Collectors.toMap(projectIdAndValue -> projectIdAndValue.get(0, Long.class),
                         projectIdAndValue -> Objects.requireNonNull(projectIdAndValue.get(1, Money.class)).getValue()));
     }

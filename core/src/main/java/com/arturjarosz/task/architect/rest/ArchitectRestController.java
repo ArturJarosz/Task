@@ -2,6 +2,7 @@ package com.arturjarosz.task.architect.rest;
 
 import com.arturjarosz.task.architect.application.ArchitectApplicationService;
 import com.arturjarosz.task.dto.ArchitectDto;
+import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
 import com.arturjarosz.task.rest.ArchitectApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
 import lombok.NonNull;
@@ -47,5 +48,10 @@ public class ArchitectRestController implements ArchitectApi {
     @Override
     public ResponseEntity<List<ArchitectDto>> getArchitects() {
         return new ResponseEntity<>(this.architectApplicationService.getArchitects(), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<EntityProjectsSummaryDto> getArchitectProjectsSummary(Long architectId) {
+        return new ResponseEntity<>(this.architectApplicationService.getProjectsSummary(architectId), HttpStatus.OK);
     }
 }

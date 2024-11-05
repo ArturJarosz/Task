@@ -3,12 +3,12 @@ package com.arturjarosz.task.client.application.impl;
 import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.ClientValidator;
 import com.arturjarosz.task.client.application.mapper.ClientMapper;
-import com.arturjarosz.task.client.application.mapper.ProjectsToClientProjectsSummaryDtoMapper;
 import com.arturjarosz.task.client.infrastructure.repository.ClientRepository;
 import com.arturjarosz.task.contract.query.ContractQueryService;
 import com.arturjarosz.task.dto.ClientDto;
-import com.arturjarosz.task.dto.ClientProjectsSummaryDto;
 import com.arturjarosz.task.dto.ClientTypeDto;
+import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
+import com.arturjarosz.task.project.application.mapper.ProjectsToEntityProjectsSummaryDtoMapper;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
@@ -28,7 +28,7 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     private final ClientMapper clientMapper;
     private final ProjectQueryService projectQueryService;
     private final ContractQueryService contractQueryService;
-    private final ProjectsToClientProjectsSummaryDtoMapper projectsToClientProjectsSummaryDtoMapper;
+    private final ProjectsToEntityProjectsSummaryDtoMapper projectsToEntityProjectsSummaryDtoMapper;
 
     @Transactional
     @Override
@@ -104,12 +104,12 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     }
 
     @Override
-    public ClientProjectsSummaryDto getClientProjectsSummary(Long clientId) {
+    public EntityProjectsSummaryDto getClientProjectsSummary(Long clientId) {
         this.clientValidator.validateClientExistence(clientId);
 
         var projects = this.projectQueryService.getProjectsForClientId(clientId);
         var contractValueByProjectId = this.contractQueryService.getContractValuesForProjectsByClientId(clientId);
-        return this.projectsToClientProjectsSummaryDtoMapper.mapToProjectSummaryDto(projects, contractValueByProjectId);
+        return this.projectsToEntityProjectsSummaryDtoMapper.mapToProjectSummaryDto(projects, contractValueByProjectId);
     }
 
     @Override

@@ -11,6 +11,8 @@ LOCAL_SONAR_TOKEN=sqa_495f7dd5ae43f79b742b1ddb00274fc7d339e091
 SONAR_PATH_9=~/Desktop/Task/sonarqube-9.8.0.63668/bin/linux-x86-64/sonar.sh
 SONAR_PATH_10=~/Desktop/Task/sonarqube-10.4.1.88267/bin/linux-x86-64/sonar.sh
 
+#export SONAR_JAVA_PATH="/usr/lib/jvm/java-1.17.0-openjdk-amd64/bin"
+
 while getopts h: flag; do
     case "${flag}" in
     h)
@@ -21,18 +23,21 @@ while getopts h: flag; do
 done
 
 # check if service is running
-SONAR_STATUS=$($SONAR_PATH_10 status | sed -n 2p)
-if [[ $SONAR_STATUS = "SonarQube is not running." ]]; then
+echo " == Making sure that SonarQube is running"
+SONAR_STATUS=$("$SONAR_PATH_10" status | sed -n 2p)
+echo "Sonar status = $SONAR_STATUS"
+if [[ "$SONAR_STATUS" = "SonarQube is not running." ]]; then
     $SONAR_PATH_10 start
     sleep 10
+    echo $SONAR_PATH_10 status
 fi
 
 BRANCH=$(git name-rev --name-only HEAD)
-echo $BRANCH
+echo " == Using branch: $BRANCH"
 TASK_NUMBER=$(echo $BRANCH | sed 's/[^0-9]*//g')
-echo $TASK_NUMBER
+echo " == Task number: $TASK_NUMBER"
 cd ~/Desktop/Task/Task/
 mvn clean verify -T 1C
 mvn sonar:sonar -Dsonar.projectKey=Task-BE -Dsonar.host.url=$SONAR_SERVER_URL -Dsonar.token=$LOCAL_SONAR_TOKEN -Dsonar.pullrequest.key=$TASK_NUMBER -Dsonar.pullrequest.branch=$BRANCH -Dsonar.pullrequest.base=develop
 # check main branch
-# mvn sonar:sonar -Dsonar.projectKey=Task-BE -Dsonar.host.url=http://localhost:9000 -Dsonar.token=sqa_495f7dd5ae43f79b742b1ddb00274fc7d339e091
+# mvn sonar:sonar -Dsonar.projectKey=Task-BE -Dsonar.host.url=http://localhost:9000 -Dsonar.token=$LOCAL_SONAR_TOKEN
