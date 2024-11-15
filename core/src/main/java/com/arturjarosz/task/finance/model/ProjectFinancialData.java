@@ -11,7 +11,6 @@ import com.arturjarosz.task.sharedkernel.model.Money;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Where;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -46,13 +45,11 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
     @Getter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_FINANCIAL_DATA_ID", nullable = false)
-    @Where(clause = "TYPE = 'CONTRACTOR_JOB'")
     private Set<ContractorJob> contractorJobs;
 
     @Getter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_FINANCIAL_DATA_ID", nullable = false)
-    @Where(clause = "TYPE = 'SUPPLY'")
     private Set<Supply> supplies;
 
     @Getter

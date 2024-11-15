@@ -1,36 +1,56 @@
 package com.arturjarosz.task.finance.model;
 
 import com.arturjarosz.task.dto.ContractorJobDto;
+import com.arturjarosz.task.sharedkernel.model.AbstractHistoryAwareEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
-import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import lombok.Getter;
 
 import java.io.Serial;
 import java.math.BigDecimal;
 
 @Entity
-@DiscriminatorValue(value = "CONTRACTOR_JOB")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@Table(name = "COOPERATOR_JOB")
-public class ContractorJob extends CooperatorJob implements PartialFinancialData {
+@SequenceGenerator(name = "sequence_generator", sequenceName = "contractor_job_sequence", allocationSize = 1)
+@Table(name = "CONTRACTOR_JOB")
+public class ContractorJob extends AbstractHistoryAwareEntity implements PartialFinancialData {
 
     @Serial
     private static final long serialVersionUID = -1136428951751738340L;
+
+    @Getter
+    @Column(name = "NAME", nullable = false)
+    String name;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "FINANCIAL_DATA_ID", referencedColumnName = "ID", nullable = false)
+    FinancialData financialData;
+
+    @Getter
+    @Column(name = "NOTE")
+    String note;
+
+    @Getter
+    @Column(name = "CONTRACTOR_ID", nullable = false)
+    long contractorId;
+
+    @Getter
+    @Column(name = "PROJECT_FINANCIAL_DATA_ID", insertable = false, updatable = false)
+    private Long projectFinancialDataId;
 
     protected ContractorJob() {
     }
 
     public ContractorJob(String name, Long contractorId, BigDecimal value, boolean hasInvoice, boolean payable) {
-        super(name, contractorId, CooperatorJobType.CONTRACTOR_JOB, value, hasInvoice, payable);
-    }
-
-    @Transient
-    public long getContractorId() {
-        return this.getCooperatorId();
+        this.name = name;
+        this.contractorId = contractorId;
+        this.financialData = new FinancialData(new Money(value), hasInvoice, payable);
     }
 
     public void update(ContractorJobDto contractorJobDto) {
@@ -40,4 +60,26 @@ public class ContractorJob extends CooperatorJob implements PartialFinancialData
         this.financialData.setHasInvoice(contractorJobDto.getHasInvoice());
         this.financialData.setPayable(contractorJobDto.getPayable());
     }
+
+    public BigDecimal getValue() {
+        return this.financialData.getValue().getValue();
+    }
+
+    public void setValue(BigDecimal value) {
+        this.financialData.setValue(new Money(value));
+    }
+
+    public boolean isHasInvoice() {
+        return this.financialData.isHasInvoice();
+    }
+
+    public boolean isPayable() {
+        return this.financialData.isPayable();
+    }
+
+    public boolean isPaid() {
+        return this.financialData.isPaid();
+    }
+
+
 }

@@ -229,7 +229,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .from(SUPPLY)
                 .leftJoin(PROJECT_FINANCIAL_DATA)
                 .on(SUPPLY.projectFinancialDataId.eq(PROJECT_FINANCIAL_DATA.id))
-                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId).and(SUPPLY.type.eq(CooperatorJobType.SUPPLY)))
+                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
                 .select(SUPPLY)
                 .fetch();
 
@@ -277,8 +277,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .from(CONTRACTOR_JOB)
                 .leftJoin(PROJECT_FINANCIAL_DATA)
                 .on(CONTRACTOR_JOB.projectFinancialDataId.eq(PROJECT_FINANCIAL_DATA.id))
-                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId)
-                        .and(CONTRACTOR_JOB.type.eq(CooperatorJobType.CONTRACTOR_JOB)))
+                .where(PROJECT_FINANCIAL_DATA.projectId.eq(projectId))
                 .select(CONTRACTOR_JOB)
                 .fetch();
 

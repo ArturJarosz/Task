@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
       author: "liquibase"
-      id: "create-cooperator-job-table"
+      id: "create-supply-table"
       changes:
         - createTable:
-            tableName: "COOPERATOR_JOB"
+            tableName: "SUPPLY"
             columns:
               - column:
                   name: "ID"
@@ -30,13 +30,8 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: "COOPERATOR_ID"
+                  name: "SUPPLIER_ID"
                   type: "${long.type}"
-                  constraints:
-                    nullable: false
-              - column:
-                  name: "TYPE"
-                  type: "VARCHAR2(50 ${char.unit})"
                   constraints:
                     nullable: false
               - column:
@@ -45,12 +40,12 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - addPrimaryKey:
-            tableName: "COOPERATOR_JOB"
+            tableName: "SUPPLY"
             columnNames: "ID"
-            constraintName: "PK_COOPERATOR_JOB"
+            constraintName: "PK_SUPPLY"
         - addForeignKeyConstraint:
-            baseTableName: "COOPERATOR_JOB"
+            baseTableName: "SUPPLY"
             baseColumnNames: "PROJECT_FINANCIAL_DATA_ID"
             referencedTableName: "PROJECT_FINANCIAL_DATA"
             referencedColumnNames: "ID"
-            constraintName: "FK_COOPERATOR_JOB_PROJECT_FINANCIAL_DATA"
+            constraintName: "FK_CSUPPLY_PROJECT_FINANCIAL_DATA"
