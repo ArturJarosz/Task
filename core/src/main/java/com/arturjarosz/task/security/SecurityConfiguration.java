@@ -31,12 +31,18 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @EnableConfigurationProperties(SecurityProperties.class)
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
-public class ApplicationConfiguration {
+public class SecurityConfiguration {
     private static final String MATCH_ALL = "/**";
 
-    private static final List<String> HEADERS = List.of(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
-            HttpHeaders.AUTHORIZATION, HttpHeaders.CACHE_CONTROL, HttpHeaders.CONTENT_TYPE, HttpHeaders.SET_COOKIE);
-    private static final List<String> API_METHODS = Arrays.asList(HttpMethod.GET.name(), HttpMethod.POST.name(),
+    private static final List<String> HEADERS = List.of(
+            HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
+            HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
+            HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+            HttpHeaders.AUTHORIZATION,
+            HttpHeaders.CACHE_CONTROL,
+            HttpHeaders.CONTENT_TYPE,
+            HttpHeaders.SET_COOKIE);
+    private static final List<String> ALLOWED_API_METHODS = Arrays.asList(HttpMethod.GET.name(), HttpMethod.POST.name(),
             HttpMethod.PATCH.name(), HttpMethod.PUT.name(), HttpMethod.DELETE.name(), HttpMethod.OPTIONS.name());
 
 
@@ -60,7 +66,7 @@ public class ApplicationConfiguration {
         corsConfiguration.setAllowedOrigins(new ArrayList<>(securityProperties.allowedOrigins()));
         corsConfiguration.setAllowedHeaders(HEADERS);
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setAllowedMethods(API_METHODS);
+        corsConfiguration.setAllowedMethods(ALLOWED_API_METHODS);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration(MATCH_ALL, corsConfiguration);
         return source;

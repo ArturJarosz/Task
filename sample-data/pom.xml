@@ -21,6 +21,12 @@
             <groupId>com.arturjarosz</groupId>
             <artifactId>task-core</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.okta.spring</groupId>
+                    <artifactId>okta-spring-boot-starter</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
