@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-supply-sequence"
+      changes:
+        - createSequence:
+            sequenceName: "supply_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1

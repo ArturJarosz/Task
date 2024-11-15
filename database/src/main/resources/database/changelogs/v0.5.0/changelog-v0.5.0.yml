@@ -21,7 +21,10 @@ databaseChangeLog:
       file: "supervision/supervision-tables.yml"
       relativeToChangelogFile: true
   - include:
-      file: "cooperator-job/cooperator-job-tables.yml"
+      file: "contractor-job/contractor-job-tables.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "supply/supply-tables.yml"
       relativeToChangelogFile: true
   - include:
       file: "system-parameter/system-parameter-tables.yml"

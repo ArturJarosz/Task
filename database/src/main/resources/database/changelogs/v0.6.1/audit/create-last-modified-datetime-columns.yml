@@ -48,7 +48,7 @@ databaseChangeLog:
                   name: "LAST_MODIFIED_DATETIME"
                   type: "${time.type}"
         - addColumn:
-            tableName: "COOPERATOR_JOB"
+            tableName: "CONTRACTOR_JOB"
             columns:
               - column:
                   name: "CREATED_DATETIME"
@@ -148,6 +148,17 @@ databaseChangeLog:
                   type: "${time.type}"
         - addColumn:
             tableName: "SUPPLIER"
+            columns:
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "${time.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "${time.type}"
+        - addColumn:
+            tableName: "SUPPLY"
             columns:
               - column:
                   name: "CREATED_DATETIME"
