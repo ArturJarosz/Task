@@ -14,6 +14,9 @@ public interface CostMapper {
 
     @Mapping(source = "value", target = "value")
     @Mapping(source = "financialData.hasInvoice", target = "hasInvoice")
+    @Mapping(source = "financialData.paid", target = "paid")
+    @Mapping(source = "date", target = "date")
+    @Mapping(source = "financialData.paymentDate", target = "paymentDate")
     CostDto mapToDto(Cost cost);
 
 }

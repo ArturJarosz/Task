@@ -2867,6 +2867,9 @@ components:
           type: boolean
         paid:
           type: boolean
+        paymentDate:
+          type: string
+          format: date
         createdDateTime:
           type: string
           format: time

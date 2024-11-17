@@ -263,7 +263,7 @@ class CostApplicationServiceImplTest extends Specification {
 
     private ProjectFinancialData prepareProjectFinancialDataWithCost(Long projectId) {
         def financialData = new ProjectFinancialData(projectId)
-        def cost = new Cost(NAME, VALUE, CostCategory.FUEL, DATE, NOTE, true, true)
+        def cost = new Cost(NAME, VALUE, CostCategory.FUEL, DATE, NOTE, true, true, true, DATE)
         TestUtils.setFieldForObject(cost, "id", COST_ID)
         financialData.addCost(cost)
         return financialData

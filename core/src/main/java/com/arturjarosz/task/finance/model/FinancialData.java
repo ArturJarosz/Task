@@ -58,6 +58,13 @@ public class FinancialData extends AbstractAggregateRoot {
         this.paid = paid;
     }
 
+    public FinancialData(Money value, boolean hasInvoice, boolean payable, boolean paid, LocalDate paymentDate) {
+        this(value, hasInvoice, payable);
+        if (paid) {
+            this.pay(paymentDate);
+        }
+    }
+
     public void pay(LocalDate paymentDate) {
         this.paid = true;
         this.paymentDate = paymentDate;
