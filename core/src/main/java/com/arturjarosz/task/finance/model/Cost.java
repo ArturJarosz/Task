@@ -49,12 +49,12 @@ public class Cost extends AbstractHistoryAwareEntity implements PartialFinancial
     }
 
     public Cost(String name, BigDecimal value, CostCategory category, LocalDate date, String note, boolean hasInvoice,
-            boolean payable) {
+            boolean payable, boolean paid, LocalDate paymentDate) {
         this.name = name;
         this.category = category;
         this.date = date;
         this.note = note;
-        this.financialData = new FinancialData(new Money(value), hasInvoice, payable);
+        this.financialData = new FinancialData(new Money(value), hasInvoice, payable, paid, paymentDate);
     }
 
 
