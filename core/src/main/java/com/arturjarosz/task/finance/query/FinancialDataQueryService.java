@@ -52,4 +52,6 @@ public interface FinancialDataQueryService {
     ProjectFinancialPartialData getProjectPartialFinancialDataByType(long projectId, PartialFinancialDataType dataType);
 
     List<ContractorJobDto> getContractorJobsForProject(Long projectId);
+
+    List<Long> getStagesWithoutInstallmentIds(long projectId);
 }
