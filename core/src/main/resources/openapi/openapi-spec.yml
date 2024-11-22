@@ -3021,6 +3021,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Installment"
+        stagesWithoutInstallment:
+          type: array
+          items:
+            type: integer
+            format: int64
 
     CostProjectData:
       type: object

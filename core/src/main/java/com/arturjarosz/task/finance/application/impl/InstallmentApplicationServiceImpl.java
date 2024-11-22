@@ -119,9 +119,10 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         var installmentProjectSummary = this.financialDataQueryService.getProjectPartialFinancialDataByType(projectId,
                 PartialFinancialDataType.INSTALLMENT);
         var installments = this.financialDataQueryService.getInstallmentsByProjectId(projectId);
+        var stagesWithoutInstallmentIds = this.financialDataQueryService.getStagesWithoutInstallmentIds(projectId);
 
         return this.installmentProjectDataMapper.mapToProjectFinancialPartialDataDto(installmentProjectSummary,
-                installments);
+                installments, stagesWithoutInstallmentIds);
     }
 
     @Override

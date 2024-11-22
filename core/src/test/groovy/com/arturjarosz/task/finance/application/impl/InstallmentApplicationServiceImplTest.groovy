@@ -61,6 +61,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
         this.installmentValidator.validateInstallmentExistence(NOT_EXISTING_INSTALLMENT_ID) >> { throw new IllegalArgumentException() }
         this.financialDataQueryService.getInstallmentsByProjectId(PROJECT_WITH_INSTALLMENT_ID) >> ([new InstallmentDto()] as List)
         this.financialDataQueryService.getProjectPartialFinancialDataByType(PROJECT_WITH_INSTALLMENT_ID, PartialFinancialDataType.INSTALLMENT) >> prepareInstallmentData()
+        this.financialDataQueryService.getStagesWithoutInstallmentIds(PROJECT_WITH_INSTALLMENT_ID) >> [STAGE_WITHOUT_INSTALLMENT_ID]
     }
 
     def "createInstallment should not create installment if project existence validation fails"() {
@@ -244,7 +245,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
             installmentData.financialData.vatTax == 23.00d
             installmentData.financialData.incomeTax == 19.00d
             installmentData.installments.size() == 1
-
+            installmentData.stagesWithoutInstallment == [30L]
     }
 
     def "getInstallment should throw an and not return installment if project existence validation fails"() {
