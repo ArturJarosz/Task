@@ -1,12 +1,20 @@
 package com.arturjarosz.task.supplier.application.impl
 
+import com.arturjarosz.task.configuration.UserProperties
 import com.arturjarosz.task.dto.SupplierCategoryDto
 import com.arturjarosz.task.dto.SupplierDto
+import com.arturjarosz.task.dto.SupplyDto
+import com.arturjarosz.task.finance.domain.dto.FinancialDataDto
+import com.arturjarosz.task.finance.model.SupplierSupplyDataDto
+import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
+import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import com.arturjarosz.task.supplier.application.SupplierValidator
 import com.arturjarosz.task.supplier.application.mapper.SupplierMapperImpl
+import com.arturjarosz.task.supplier.application.mapper.SupplierSuppliesMapperImpl
 import com.arturjarosz.task.supplier.infrastructure.SupplierRepository
 import com.arturjarosz.task.supplier.model.Supplier
 import com.arturjarosz.task.supplier.model.SupplierCategory
+import com.arturjarosz.task.supplier.query.SupplierQueryService
 import spock.lang.Specification
 
 class SupplierApplicationServiceImplTest extends Specification {
@@ -18,19 +26,22 @@ class SupplierApplicationServiceImplTest extends Specification {
     final static String TELEPHONE = "123456789"
     final static String NOTE = "note"
     final static Long SUPPLIER_ID = 1L
+    final static Long NOT_EXISTING_SUPPLIER_ID = 2L
 
     def supplierValidator = Mock(SupplierValidator)
+    def supplierQueryService = Mock(SupplierQueryService)
     def supplierRepository = Mock(SupplierRepository)
     def supplierMapper = new SupplierMapperImpl()
+    def supplierSuppliesMapper = new SupplierSuppliesMapperImpl()
 
-    def supplierApplicationService = new SupplierApplicationServiceImpl(supplierRepository, supplierValidator, supplierMapper)
+    def subject = new SupplierApplicationServiceImpl(supplierRepository, supplierQueryService, supplierValidator, supplierMapper, supplierSuppliesMapper)
 
     def "createSupplier should call validateCreateSupplierDto on supplierValidator"() {
         given:
             def supplierDto = new SupplierDto(name: NAME, category: CATEGORY)
 
         when:
-            this.supplierApplicationService.createSupplier(supplierDto)
+            this.subject.createSupplier(supplierDto)
 
         then:
             1 * this.supplierValidator.validateCreateSupplierDto(supplierDto)
@@ -41,7 +52,7 @@ class SupplierApplicationServiceImplTest extends Specification {
             def supplierDto = new SupplierDto(name: NAME, category: CATEGORY)
 
         when:
-            def createdSupplier = this.supplierApplicationService.createSupplier(supplierDto)
+            def createdSupplier = this.subject.createSupplier(supplierDto)
 
         then:
             createdSupplier != null
@@ -54,7 +65,7 @@ class SupplierApplicationServiceImplTest extends Specification {
             def supplierDto = new SupplierDto(name: NAME, category: CATEGORY)
 
         when:
-            this.supplierApplicationService.createSupplier(supplierDto)
+            this.subject.createSupplier(supplierDto)
 
         then:
             1 * this.supplierRepository.save(_ as Supplier)
@@ -68,7 +79,7 @@ class SupplierApplicationServiceImplTest extends Specification {
             this.mockSupplierRepositoryLoad(SUPPLIER_ID)
 
         when:
-            this.supplierApplicationService.updateSupplier(SUPPLIER_ID, updateSupplierDto)
+            this.subject.updateSupplier(SUPPLIER_ID, updateSupplierDto)
 
         then:
             1 * this.supplierValidator.validateSupplierExistence(_ as Optional<Supplier>, SUPPLIER_ID)
@@ -82,7 +93,7 @@ class SupplierApplicationServiceImplTest extends Specification {
             this.mockSupplierRepositoryLoad(SUPPLIER_ID)
 
         when:
-            this.supplierApplicationService.updateSupplier(SUPPLIER_ID, updateSupplierDto)
+            this.subject.updateSupplier(SUPPLIER_ID, updateSupplierDto)
 
         then:
             1 * this.supplierValidator.validateUpdateSupplierDto(updateSupplierDto)
@@ -96,7 +107,7 @@ class SupplierApplicationServiceImplTest extends Specification {
             this.mockSupplierRepositoryLoad(SUPPLIER_ID)
 
         when:
-            this.supplierApplicationService.updateSupplier(SUPPLIER_ID, updateSupplierDto)
+            this.subject.updateSupplier(SUPPLIER_ID, updateSupplierDto)
 
         then:
             1 * this.supplierRepository.save({ Supplier supplier ->
@@ -117,7 +128,7 @@ class SupplierApplicationServiceImplTest extends Specification {
             this.mockSupplierRepositorySave()
 
         when:
-            def updatedSupplier = this.supplierApplicationService.updateSupplier(SUPPLIER_ID, updateSupplierDto)
+            def updatedSupplier = this.subject.updateSupplier(SUPPLIER_ID, updateSupplierDto)
 
         then:
             updatedSupplier != null
@@ -133,7 +144,7 @@ class SupplierApplicationServiceImplTest extends Specification {
             this.mockSupplierRepositoryLoad(SUPPLIER_ID)
 
         when:
-            this.supplierApplicationService.deleteSupplier(SUPPLIER_ID)
+            this.subject.deleteSupplier(SUPPLIER_ID)
 
         then:
             1 * this.supplierValidator.validateSupplierExistence(SUPPLIER_ID)
@@ -144,7 +155,7 @@ class SupplierApplicationServiceImplTest extends Specification {
             this.mockSupplierRepositoryLoad(SUPPLIER_ID)
 
         when:
-            this.supplierApplicationService.deleteSupplier(SUPPLIER_ID)
+            this.subject.deleteSupplier(SUPPLIER_ID)
 
         then:
             1 * this.supplierValidator.validateSupplierHasNoSupply(SUPPLIER_ID)
@@ -155,7 +166,7 @@ class SupplierApplicationServiceImplTest extends Specification {
             this.mockSupplierRepositoryLoad(SUPPLIER_ID)
 
         when:
-            this.supplierApplicationService.deleteSupplier(SUPPLIER_ID)
+            this.subject.deleteSupplier(SUPPLIER_ID)
 
         then:
             1 * this.supplierRepository.deleteById(SUPPLIER_ID)
@@ -166,7 +177,7 @@ class SupplierApplicationServiceImplTest extends Specification {
             this.mockSupplierRepositoryLoad(SUPPLIER_ID)
 
         when:
-            this.supplierApplicationService.getSupplier(SUPPLIER_ID)
+            this.subject.getSupplier(SUPPLIER_ID)
 
         then:
             1 * this.supplierValidator.validateSupplierExistence(SUPPLIER_ID)
@@ -177,11 +188,37 @@ class SupplierApplicationServiceImplTest extends Specification {
             this.mockSupplierRepositoryLoad(SUPPLIER_ID)
 
         when:
-            def supplierDto = this.supplierApplicationService.getSupplier(SUPPLIER_ID)
+            def supplierDto = this.subject.getSupplier(SUPPLIER_ID)
 
         then:
             supplierDto.name == NAME
             supplierDto.category == CATEGORY
+    }
+
+    def "getSuppliesData should throw exception if given supplier does not exist"() {
+        given:
+            this.supplierValidator.validateSupplierExistence(NOT_EXISTING_SUPPLIER_ID) >> { throw new IllegalArgumentException() }
+
+        when:
+            def result = this.subject.getSuppliesData(NOT_EXISTING_SUPPLIER_ID)
+
+        then:
+            thrown(IllegalArgumentException)
+    }
+
+    def "getSupplies should return SupplierSuppliesDataDto for existing supplier"() {
+        given:
+            def userProperties = new UserProperties(incomeTax: 0.1D, vatTax: 0.23D)
+            TestUtils.setFieldForObject(supplierSuppliesMapper, "userProperties", userProperties)
+            var supplierSupplyDataDto = new SupplierSupplyDataDto(new SupplyDto(value: 1.0D), new FinancialDataDto(hasInvoice: true, value: 1.0D))
+            this.supplierQueryService.getSupplierSuppliesData(SUPPLIER_ID) >> ([supplierSupplyDataDto] as Set)
+
+        when:
+            def result = this.subject.getSuppliesData(SUPPLIER_ID)
+
+        then:
+            noExceptionThrown()
+            result != null
     }
 
     private void mockSupplierRepositoryLoad(Long supplierId) {

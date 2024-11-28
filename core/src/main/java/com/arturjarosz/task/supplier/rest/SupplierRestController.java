@@ -1,6 +1,7 @@
 package com.arturjarosz.task.supplier.rest;
 
 import com.arturjarosz.task.dto.SupplierDto;
+import com.arturjarosz.task.dto.SupplierSuppliesDataDto;
 import com.arturjarosz.task.rest.SupplierApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
 import com.arturjarosz.task.supplier.application.SupplierApplicationService;
@@ -47,5 +48,10 @@ public class SupplierRestController implements SupplierApi {
     @Override
     public ResponseEntity<List<SupplierDto>> getSuppliers() {
         return new ResponseEntity<>(this.supplierApplicationService.getBasicSuppliers(), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<SupplierSuppliesDataDto> getSuppliesData(Long supplierId) {
+        return new ResponseEntity<>(this.supplierApplicationService.getSuppliesData(supplierId), HttpStatus.OK);
     }
 }

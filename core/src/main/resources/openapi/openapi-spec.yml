@@ -2556,6 +2556,36 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
 
+  /suppliers/{supplierId}/supplies:
+    get:
+      tags:
+        - supplier
+      summary: Get all supplies data for given supplier
+      operationId: getSuppliesData
+      parameters:
+        - name: supplierId
+          in: path
+          description: "A unique identifier of the supplier"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierSuppliesData"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
   /system-parameters:
     get:
       tags:
@@ -2962,7 +2992,7 @@ components:
       type: object
       properties:
         financialData:
-          $ref: "#/components/schemas/ProjectFinancialPartialData"
+          $ref: "#/components/schemas/FinancialPartialData"
         supplies:
           type: array
           items:
@@ -2972,7 +3002,7 @@ components:
       type: object
       properties:
         financialData:
-          $ref: "#/components/schemas/ProjectFinancialPartialData"
+          $ref: "#/components/schemas/FinancialPartialData"
         contractorJobs:
           type: array
           items:
@@ -2994,7 +3024,7 @@ components:
           type: number
           format: double
 
-    ProjectFinancialPartialData:
+    FinancialPartialData:
       type: object
       properties:
         count:
@@ -3016,7 +3046,7 @@ components:
       type: object
       properties:
         financialData:
-          $ref: "#/components/schemas/ProjectFinancialPartialData"
+          $ref: "#/components/schemas/FinancialPartialData"
         installments:
           type: array
           items:
@@ -3031,7 +3061,7 @@ components:
       type: object
       properties:
         financialData:
-          $ref: "#/components/schemas/ProjectFinancialPartialData"
+          $ref: "#/components/schemas/FinancialPartialData"
         costs:
           type: array
           items:
@@ -3351,6 +3381,18 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/Supplier"
+
+    SupplierSuppliesData:
+      type:
+        object
+      properties:
+        supplies:
+          $ref: "#/components/schemas/Supplies"
+        financialData:
+          $ref: "#/components/schemas/FinancialPartialData"
+        averageFinancialData:
+          $ref: "#/components/schemas/FinancialPartialData"
+
 
     SupplierCategory:
       type: string
