@@ -1,13 +1,16 @@
 package com.arturjarosz.task.supplier.application.impl;
 
 import com.arturjarosz.task.dto.SupplierDto;
+import com.arturjarosz.task.dto.SupplierSuppliesDataDto;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.supplier.application.SupplierApplicationService;
 import com.arturjarosz.task.supplier.application.SupplierValidator;
 import com.arturjarosz.task.supplier.application.mapper.SupplierMapper;
+import com.arturjarosz.task.supplier.application.mapper.SupplierSuppliesMapper;
 import com.arturjarosz.task.supplier.infrastructure.SupplierRepository;
 import com.arturjarosz.task.supplier.model.SupplierCategory;
+import com.arturjarosz.task.supplier.query.SupplierQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,8 +23,10 @@ import java.util.List;
 public class SupplierApplicationServiceImpl implements SupplierApplicationService {
 
     private final SupplierRepository supplierRepository;
+    private final SupplierQueryService supplierQueryService;
     private final SupplierValidator supplierValidator;
     private final SupplierMapper supplierMapper;
+    private final SupplierSuppliesMapper supplierSuppliesMapper;
 
     @Transactional
     @Override
@@ -80,5 +85,15 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     public List<SupplierDto> getBasicSuppliers() {
         LOG.debug("Loading Suppliers list");
         return this.supplierRepository.findAll().stream().map(this.supplierMapper::mapToDto).toList();
+    }
+
+    @Override
+    public SupplierSuppliesDataDto getSuppliesData(Long supplierId) {
+        LOG.debug("Loading Supply data for Supplier with id {}", supplierId);
+
+        this.supplierValidator.validateSupplierExistence(supplierId);
+        var data = this.supplierQueryService.getSupplierSuppliesData(supplierId);
+
+        return this.supplierSuppliesMapper.mapToSupplierSuppliesDataDto(data);
     }
 }

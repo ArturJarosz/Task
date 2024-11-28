@@ -1,6 +1,7 @@
 package com.arturjarosz.task.supplier.application;
 
 import com.arturjarosz.task.dto.SupplierDto;
+import com.arturjarosz.task.dto.SupplierSuppliesDataDto;
 
 import java.util.List;
 
@@ -34,4 +35,9 @@ public interface SupplierApplicationService {
      * Get list of SupplierDto with basic Supplier data.
      */
     List<SupplierDto> getBasicSuppliers();
+
+    /**
+     * Returns Supplies data for Supplier with given supplierId.
+     */
+    SupplierSuppliesDataDto getSuppliesData(Long supplierId);
 }
