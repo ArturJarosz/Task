@@ -18,15 +18,17 @@ import com.arturjarosz.task.supplier.query.SupplierQueryService
 import spock.lang.Specification
 
 class SupplierApplicationServiceImplTest extends Specification {
-    final static String NAME = "name"
-    final static String UPDATED_NAME = "updated name"
-    final static SupplierCategoryDto CATEGORY = SupplierCategoryDto.BATHROOM_CERAMICS_SHOP
-    final static SupplierCategoryDto UPDATED_CATEGORY = SupplierCategoryDto.FLOORING_SHOP
-    final static String UPDATED_EMAIL = "email@email.com"
-    final static String TELEPHONE = "123456789"
-    final static String NOTE = "note"
-    final static Long SUPPLIER_ID = 1L
-    final static Long NOT_EXISTING_SUPPLIER_ID = 2L
+    final static NAME = "name"
+    final static UPDATED_NAME = "updated name"
+    final static CATEGORY = SupplierCategoryDto.BATHROOM_CERAMICS_SHOP
+    final static UPDATED_CATEGORY = SupplierCategoryDto.FLOORING_SHOP
+    final static UPDATED_EMAIL = "email@email.com"
+    final static TELEPHONE = "123456789"
+    final static NOTE = "note"
+    static final EMAIL = "some@mail.com"
+    final static SUPPLIER_ID = 1L
+    final static SUPPLIER_ID_2 = 2L
+    final static NOT_EXISTING_SUPPLIER_ID = 3L
 
     def supplierValidator = Mock(SupplierValidator)
     def supplierQueryService = Mock(SupplierQueryService)
@@ -219,6 +221,30 @@ class SupplierApplicationServiceImplTest extends Specification {
         then:
             noExceptionThrown()
             result != null
+    }
+
+    def "getSuppliers should return list of suppliers"() {
+        given:
+            def supplier1 = new Supplier(NAME, SupplierCategory.FLOORING_SHOP, EMAIL, TELEPHONE, NOTE)
+            TestUtils.setFieldForObject(supplier1, "id", SUPPLIER_ID)
+            def supplier2 = new Supplier(NAME, SupplierCategory.FLOORING_SHOP, EMAIL, TELEPHONE, NOTE)
+            TestUtils.setFieldForObject(supplier2, "id", SUPPLIER_ID_2)
+            this.supplierQueryService.getNumberOfSupplierPerSupplier() >> [(SUPPLIER_ID): 3L, (SUPPLIER_ID_2): 0L]
+            this.supplierRepository.findAll() >> [supplier1, supplier2]
+
+        when:
+            def result = this.subject.getSuppliers()
+
+        then:
+            result.size() == 2
+            with(result[0]) {
+                name == NAME
+                note == NOTE
+                email == EMAIL
+                TELEPHONE == TELEPHONE
+                category == SupplierCategoryDto.FLOORING_SHOP
+                numberOfSupplies == 3
+            }
     }
 
     private void mockSupplierRepositoryLoad(Long supplierId) {

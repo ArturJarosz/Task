@@ -38,6 +38,6 @@ TASK_NUMBER=$(echo $BRANCH | sed 's/[^0-9]*//g')
 echo " == Task number: $TASK_NUMBER"
 cd ~/Desktop/Task/Task/
 mvn clean verify -T 1C
-mvn sonar:sonar -Dsonar.projectKey=Task-BE -Dsonar.host.url=$SONAR_SERVER_URL -Dsonar.token=$LOCAL_SONAR_TOKEN -Dsonar.pullrequest.key=$TASK_NUMBER -Dsonar.pullrequest.branch=$BRANCH -Dsonar.pullrequest.base=develop
+#mvn sonar:sonar -Dsonar.projectKey=Task-BE -Dsonar.host.url=$SONAR_SERVER_URL -Dsonar.token=$LOCAL_SONAR_TOKEN -Dsonar.pullrequest.key=$TASK_NUMBER -Dsonar.pullrequest.branch=$BRANCH -Dsonar.pullrequest.base=develop
 # check main branch
-# mvn sonar:sonar -Dsonar.projectKey=Task-BE -Dsonar.host.url=http://localhost:9000 -Dsonar.token=$LOCAL_SONAR_TOKEN
+ mvn sonar:sonar -Dsonar.projectKey=Task-BE -Dsonar.host.url=http://localhost:9000 -Dsonar.token=$LOCAL_SONAR_TOKEN

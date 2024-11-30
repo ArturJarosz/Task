@@ -32,6 +32,6 @@ public interface ContractorApplicationService {
     /**
      * Get list of ContractorDto with basic Contractor data.
      */
-    List<ContractorDto> getBasicContractors();
+    List<ContractorDto> getContractors();
 
 }

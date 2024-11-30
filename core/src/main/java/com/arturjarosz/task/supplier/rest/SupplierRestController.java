@@ -47,7 +47,7 @@ public class SupplierRestController implements SupplierApi {
 
     @Override
     public ResponseEntity<List<SupplierDto>> getSuppliers() {
-        return new ResponseEntity<>(this.supplierApplicationService.getBasicSuppliers(), HttpStatus.OK);
+        return new ResponseEntity<>(this.supplierApplicationService.getSuppliers(), HttpStatus.OK);
     }
 
     @Override

@@ -34,7 +34,7 @@ public interface SupplierApplicationService {
     /**
      * Get list of SupplierDto with basic Supplier data.
      */
-    List<SupplierDto> getBasicSuppliers();
+    List<SupplierDto> getSuppliers();
 
     /**
      * Returns Supplies data for Supplier with given supplierId.

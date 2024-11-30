@@ -82,9 +82,14 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     }
 
     @Override
-    public List<SupplierDto> getBasicSuppliers() {
+    public List<SupplierDto> getSuppliers() {
         LOG.debug("Loading Suppliers list");
-        return this.supplierRepository.findAll().stream().map(this.supplierMapper::mapToDto).toList();
+        var numberOfSupplierBySupplierId = this.supplierQueryService.getNumberOfSupplierPerSupplier();
+        return this.supplierRepository.findAll()
+                .stream()
+                .map(supplier -> this.supplierMapper.mapToDto(supplier,
+                        numberOfSupplierBySupplierId.get(supplier.getId())))
+                .toList();
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
 import com.arturjarosz.task.supplier.model.QSupplier;
 import com.arturjarosz.task.supplier.query.SupplierQueryService;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,4 +52,20 @@ public class SupplierQueryServiceImpl extends AbstractQueryService<QSupplier> im
                         this.financialDataMapper.map(supplyAndProjectId.get(SUPPLY).getFinancialData())))
                 .collect(Collectors.toSet());
     }
+
+    @Override
+    public Map<Long, Long> getNumberOfSupplierPerSupplier() {
+        return this.query()
+                .from(SUPPLIER)
+                .leftJoin(SUPPLY)
+                .on(SUPPLIER.id.eq(SUPPLY.supplierId))
+                .select(SUPPLIER.id, SUPPLY.count())
+                .groupBy(SUPPLIER.id)
+                .fetch()
+                .stream()
+                .collect(Collectors.toMap(supplierIdToCount -> supplierIdToCount.get(SUPPLIER.id),
+                        supplierIdToCount -> supplierIdToCount.get(SUPPLY.count())));
+    }
+
+
 }

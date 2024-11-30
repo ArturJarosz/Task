@@ -23,4 +23,12 @@ public interface ContractorMapper {
     @Mapping(source = "category", target = "category")
     ContractorDto mapToDto(Contractor contractor);
 
+    @Mapping(source = "contractor.name", target = "name")
+    @Mapping(source = "contractor.note", target = "note")
+    @Mapping(source = "contractor.email", target = "email")
+    @Mapping(source = "contractor.telephone", target = "telephone")
+    @Mapping(source = "contractor.category", target = "category")
+    @Mapping(source = "count", target = "numberOfContractorJobs")
+    ContractorDto mapToDto(Contractor contractor, Long count);
+
 }

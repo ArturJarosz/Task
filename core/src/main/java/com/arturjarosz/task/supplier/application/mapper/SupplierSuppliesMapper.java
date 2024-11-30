@@ -21,19 +21,21 @@ public abstract class SupplierSuppliesMapper {
     @Autowired
     private UserProperties userProperties;
 
-    private static FinancialPartialDataDto getFinancialPartialDataDto(FinancialValueDto financialSummary,
-            FinancialPartialDataDto financialSummaryDto) {
+    private static FinancialPartialDataDto calculateAverage(FinancialValueDto financialSummary, int count) {
         var averageSummary = new FinancialPartialDataDto();
-        var count = financialSummaryDto.getCount();
         if (count > 0) {
             averageSummary.setNetValue(financialSummary.getNetValue()
-                    .divide(BigDecimal.valueOf(financialSummaryDto.getCount()), 2, RoundingMode.HALF_UP).doubleValue());
+                    .divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP)
+                    .doubleValue());
             averageSummary.setGrossValue(financialSummary.getGrossValue()
-                    .divide(BigDecimal.valueOf(financialSummaryDto.getCount()), 2, RoundingMode.HALF_UP).doubleValue());
+                    .divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP)
+                    .doubleValue());
             averageSummary.setVatTax(financialSummary.getVatTax()
-                    .divide(BigDecimal.valueOf(financialSummaryDto.getCount()), 2, RoundingMode.HALF_UP).doubleValue());
+                    .divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP)
+                    .doubleValue());
             averageSummary.setIncomeTax(financialSummary.getIncomeTax()
-                    .divide(BigDecimal.valueOf(financialSummaryDto.getCount()), 2, RoundingMode.HALF_UP).doubleValue());
+                    .divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP)
+                    .doubleValue());
         } else {
             averageSummary.setNetValue(0.0);
             averageSummary.setGrossValue(0.0);
@@ -45,11 +47,13 @@ public abstract class SupplierSuppliesMapper {
 
     public SupplierSuppliesDataDto mapToSupplierSuppliesDataDto(Set<SupplierSupplyDataDto> supplierSupplyDataDtos) {
         var supplySupplierData = new SupplierSuppliesDataDto();
+
         supplySupplierData.setSupplies(supplierSupplyDataDtos.stream().map(SupplierSupplyDataDto::supply).toList());
+
         var financialSummary = new FinancialValueDto();
         for (SupplierSupplyDataDto supplierSupplyDataDto : supplierSupplyDataDtos) {
-            var supplyFinanceDetails = supplierSupplyDataDto.financialData();
-            var recalculatedSupplyFinancialDetails = TaxCalculator.recalculateObjectTaxes(supplyFinanceDetails,
+            var supplyFinancialDetails = supplierSupplyDataDto.financialData();
+            var recalculatedSupplyFinancialDetails = TaxCalculator.recalculateObjectTaxes(supplyFinancialDetails,
                     this.userProperties);
             financialSummary.addValues(recalculatedSupplyFinancialDetails);
         }
@@ -59,7 +63,7 @@ public abstract class SupplierSuppliesMapper {
         financialSummaryDto.setCount(supplierSupplyDataDtos.size());
         supplySupplierData.setFinancialData(financialSummaryDto);
 
-        var averageSummary = getFinancialPartialDataDto(financialSummary, financialSummaryDto);
+        var averageSummary = calculateAverage(financialSummary, financialSummaryDto.getCount());
         supplySupplierData.setAverageFinancialData(averageSummary);
 
         return supplySupplierData;
