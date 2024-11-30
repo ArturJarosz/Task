@@ -23,7 +23,8 @@ public class ContractorRestService implements ContractorApi {
     @Override
     public ResponseEntity<ContractorDto> createContractor(ContractorDto contractorDto) {
         var createdContractor = this.contractorApplicationService.createContractor(contractorDto);
-        var headers = new HttpHeadersBuilder().withLocation("%s/{contractorId}".formatted(CONTRACTORS_API), createdContractor.getId()).build();
+        var headers = new HttpHeadersBuilder().withLocation("%s/{contractorId}".formatted(CONTRACTORS_API),
+                createdContractor.getId()).build();
         return new ResponseEntity<>(createdContractor, headers, HttpStatus.CREATED);
     }
 
@@ -46,6 +47,6 @@ public class ContractorRestService implements ContractorApi {
 
     @Override
     public ResponseEntity<List<ContractorDto>> getContractors() {
-        return new ResponseEntity<>(this.contractorApplicationService.getBasicContractors(), HttpStatus.OK);
+        return new ResponseEntity<>(this.contractorApplicationService.getContractors(), HttpStatus.OK);
     }
 }

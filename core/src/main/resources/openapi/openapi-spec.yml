@@ -2830,6 +2830,9 @@ components:
         lastModifiedDateTime:
           type: string
           format: time
+        numberOfContractorJobs:
+          type: integer
+          format: int64
 
     Contractors:
       type: array
@@ -3376,6 +3379,9 @@ components:
         lastModifiedDateTime:
           type: string
           format: time
+        numberOfSupplies:
+          type: integer
+          format: int64
 
     Suppliers:
       type: array

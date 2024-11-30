@@ -5,10 +5,10 @@ import com.arturjarosz.task.contractor.application.ContractorValidator;
 import com.arturjarosz.task.contractor.application.mapper.ContractorMapper;
 import com.arturjarosz.task.contractor.infrastructure.ContractorRepository;
 import com.arturjarosz.task.contractor.model.ContractorCategory;
+import com.arturjarosz.task.contractor.query.ContractorQueryService;
 import com.arturjarosz.task.dto.ContractorDto;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +20,10 @@ import java.util.List;
 @ApplicationService
 public class ContractorApplicationServiceImpl implements ContractorApplicationService {
 
-    @NonNull
     private final ContractorRepository contractorRepository;
-    @NonNull
     private final ContractorValidator contractorValidator;
-    @NonNull
     private final ContractorMapper contractorMapper;
+    private final ContractorQueryService contractorQueryService;
 
 
     @Transactional
@@ -84,11 +82,13 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     }
 
     @Override
-    public List<ContractorDto> getBasicContractors() {
+    public List<ContractorDto> getContractors() {
         LOG.debug("Loading Contractors list");
+        var numberOfJobsByContractorId = this.contractorQueryService.getNumberOfJobsPerContractor();
         return this.contractorRepository.findAll()
                 .stream()
-                .map(this.contractorMapper::mapToDto)
+                .map(contractor -> this.contractorMapper.mapToDto(contractor,
+                        numberOfJobsByContractorId.get(contractor.getId())))
                 .toList();
     }
 }

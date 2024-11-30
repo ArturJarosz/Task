@@ -16,10 +16,18 @@ public interface SupplierMapper {
     @Mapping(source = "category", target = "category")
     Supplier mapFromDto(SupplierDto supplierDto);
 
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "note", target = "note")
-    @Mapping(source = "email", target = "email")
-    @Mapping(source = "telephone", target = "telephone")
-    @Mapping(source = "category", target = "category")
+    @Mapping(source = "supplier.name", target = "name")
+    @Mapping(source = "supplier.note", target = "note")
+    @Mapping(source = "supplier.email", target = "email")
+    @Mapping(source = "supplier.telephone", target = "telephone")
+    @Mapping(source = "supplier.category", target = "category")
+    @Mapping(source = "numberOfSupplies", target = "numberOfSupplies")
+    SupplierDto mapToDto(Supplier supplier, Long numberOfSupplies);
+
+    @Mapping(source = "supplier.name", target = "name")
+    @Mapping(source = "supplier.note", target = "note")
+    @Mapping(source = "supplier.email", target = "email")
+    @Mapping(source = "supplier.telephone", target = "telephone")
+    @Mapping(source = "supplier.category", target = "category")
     SupplierDto mapToDto(Supplier supplier);
 }
