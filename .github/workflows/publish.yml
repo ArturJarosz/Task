@@ -110,14 +110,3 @@ jobs:
       latest: true
       chosen-module: "task-backend"
 
-  redeploy_environment:
-    needs:
-      - build-and-publish-docker-task-task-backend
-      - build-and-publish-docker-task-sample-data
-      - build-and-publish-docker-task-schema
-    uses: arturjarosz/Task/.github/workflows/redeploy-environment.yml@develop
-    with:
-      drop_db: true
-      load_sample_data: true
-      chosen_environment: test
-    secrets: inherit
