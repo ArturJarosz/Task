@@ -42,4 +42,4 @@ task:
   encoding: UTF-8
   security:
     allowed-origins:
-      - ${ALLOWED_ORIGIN}
+      - ${ALLOWED_ORIGIN_HTTP}
