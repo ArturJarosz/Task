@@ -87,13 +87,15 @@ services:
     networks:
       task-network:
     ports:
-      - "${FE_PORT}:80"
+      - "${HTTPS_PORT}:443"
     env_file:
       - ${ENV_FILE}
     deploy:
       resources:
         limits:
           memory: 1G
+    volumes:
+      - ./ssl-cert:/home/task/ssl-cert
     depends_on:
       task-backend:
         condition: service_started

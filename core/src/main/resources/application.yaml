@@ -43,3 +43,5 @@ task:
   security:
     allowed-origins:
       - ${ALLOWED_ORIGIN_HTTP}
+      - ${ALLOWED_ORIGIN_HTTPS}
+
