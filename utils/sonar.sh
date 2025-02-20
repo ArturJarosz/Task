@@ -8,7 +8,6 @@ Scan runs against the current branch and will be available in sonar under PR-<br
 "
 SONAR_SERVER_URL="http://localhost:9000"
 LOCAL_SONAR_TOKEN=sqa_495f7dd5ae43f79b742b1ddb00274fc7d339e091
-SONAR_PATH_9=~/Desktop/Task/sonarqube-9.8.0.63668/bin/linux-x86-64/sonar.sh
 SONAR_PATH_10=~/Desktop/Task/sonarqube-10.4.1.88267/bin/linux-x86-64/sonar.sh
 
 #export SONAR_JAVA_PATH="/usr/lib/jvm/java-1.17.0-openjdk-amd64/bin"

@@ -1,4 +1,4 @@
-FROM maven:3.8.7-eclipse-temurin-17-alpine as build
+FROM maven:3.8.7-eclipse-temurin-17-alpine AS build
 
 ARG GITHUB_MAVEN_TOKEN
 
@@ -10,7 +10,7 @@ WORKDIR /core-build
 
 RUN mvn clean package -P fatJar -Dmaven.test.skip=true
 
-FROM eclipse-temurin:17-jre-alpine as core-base
+FROM eclipse-temurin:17-jre-alpine AS core-base
 
 RUN mkdir /core-app
 RUN addgroup task && adduser --disabled-password task --ingroup task
