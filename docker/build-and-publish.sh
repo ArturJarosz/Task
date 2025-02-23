@@ -2,7 +2,7 @@
 
 set -e
 
-. ./utils.sh
+. ./script/utils.sh
 
 DEFAULT_ENV="github"
 CONTINUE="true"

@@ -96,6 +96,7 @@ services:
           memory: 1G
     volumes:
       - ./ssl-cert:/home/task/ssl-cert
+      - ./task-fe/default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       task-backend:
         condition: service_started

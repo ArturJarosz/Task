@@ -151,3 +151,10 @@ displayCurrentVersion() {
     echo "Current version is: ${currentVersion}"
 }
 
+prepareNginxConf() {
+    echo "Preparing nginx configuration"
+    echo " -- Setting base url to $BASE_URL"
+    export BASE_URL=$BASE_URL
+    envsubst '$BASE_URL' < ./task-fe/nginx.conf > ./task-fe/default.conf
+}
+

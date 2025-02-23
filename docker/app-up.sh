@@ -2,7 +2,7 @@
 
 set -e
 
-. ./utils.sh
+. ./script/utils.sh
 
 ENVIRONMENT=""
 VERSION=""
@@ -40,10 +40,13 @@ export ENV="$ENVIRONMENT"
 export ENV_FILE="./env/$ENVIRONMENT.env"
 export APP_VERSION="$VERSION"
 export BUILD_TYPE="$BUILD_TYPE"
+source $ENV_FILE
 
 echo "========================================================="
 echo "Running ${BUILD_TYPE} type of environment ${ENVIRONMENT} in version ${APP_VERSION}."
 echo "========================================================="
+
+prepareNginxConf
 
 # triggering composing
 case "$BUILD_TYPE" in
