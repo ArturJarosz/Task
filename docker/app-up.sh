@@ -10,6 +10,9 @@ BUILD_TYPE=""
 HELP_DISPLAYED=false
 COMPOSE_FILE=""
 
+BUILD_ENV=true
+PULL_IMAGES=false
+
 # reading script flags
 while getopts "e:v:b:h" flag; do
     case "${flag}" in
@@ -61,11 +64,22 @@ case "$BUILD_TYPE" in
     "only-run") echo "only run deployment"
         COMPOSE_FILE="docker-compose-run.yml"
         ;;
+    "pull-images") echo "pull newest images"
+        COMPOSE_FILE="docker-compose-full.yml"
+        PULL_IMAGES=true
+        BUILD_ENV=false
+        ;;
 esac
 
 docker compose --env-file "$ENV_FILE" -f "docker-compose-full.yml" down --remove-orphans
-if [[ "local" != "${ENV}" ]]; then
+
+if [[ $PULL_IMAGES = "true" ]] ; then
     echo "Pulling latest images."
     docker compose --env-file "$ENV_FILE" -f "${COMPOSE_FILE}" pull
 fi
-docker compose --env-file "$ENV_FILE" -f "${COMPOSE_FILE}" up -d
+
+if [[ $BUILD_ENV = "true" ]] ; then
+    echo "Building environment."
+    docker compose --env-file "$ENV_FILE" -f "${COMPOSE_FILE}" up -d
+fi
+

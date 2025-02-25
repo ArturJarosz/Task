@@ -1,0 +1,145 @@
+name: Redeploy selected environment
+
+on:
+  workflow_call:
+    inputs:
+      chosen_environment:
+        type: string
+        required: true
+      version:
+        type: string
+        required: false
+  workflow_dispatch:
+    inputs:
+      chosen_environment:
+        type: choice
+        required: true
+        description: Environment
+        options:
+          - test-hetzner
+        default: "test-hetzner"
+      version:
+        type: string
+        required: false
+        description: Version of the application to deploy
+        default: "0.6.2-SNAPSHOT"
+
+env:
+  JAVA_VERSION: 17
+  VERSION: ""
+
+jobs:
+  redeploy_environment:
+    environment: ${{ inputs.chosen_environment }}
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK version ${{env.JAVA_VERSION}}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{env.JAVA_VERSION}}
+
+      - name: Calculating metadata
+        shell: bash
+        run: |
+          echo "Calculating metadata for deployment"
+          
+          # setting up application version to deploy
+          version="${{ inputs.version }}"
+          if [[ -z "$version" ]]; then
+            echo "Version was not setup. Taking version from the branch."
+            version=$(mvn -f pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout)
+            version=$(echo "$version" | sed -r 's/\x1b\[[0-9;]*m?//g')
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          
+          echo "========================================================="
+          echo "Deployment metadata:"
+          echo "Version was set to $version."
+          echo "Chosen environment: ${{ inputs.chosen_environment }}."
+          echo "========================================================="
+          
+          echo ${{ vars }}
+
+      - name: docker login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          # login to docker hub
+          docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+
+      - name: check docker images on the machine
+        shell: bash
+        run: |
+          cd ./docker
+          echo "Pulling docker images"
+          ./app-up.sh -e hetzner -b pull-images -v $VERSION
+
+      - name: pack docker images to tar
+        shell: bash
+        run: |
+          docker save -o task-backend.tar azjarosz/task-backend:$VERSION
+          docker save -o task-fe.tar azjarosz/task-fe:$VERSION
+          docker save -o task-sample-data.tar azjarosz/task-sample-data:$VERSION
+          docker save -o task-schema.tar azjarosz/task-schema:$VERSION
+          docker save -o postgres.tar postgres:${{ vars.POSTGRES_VERSION }}
+          sudo chmod 755 task-backend.tar task-fe.tar task-sample-data.tar task-schema.tar task-schema.tar postgres.tar
+          cd docker/env
+          sed -i 's|\$DATABASE_PASSWORD|${{ secrets.DATABASE_PASSWORD }}|g' hetzner.env
+          sed -i 's|\$AUTH0_ISSUER|${{ secrets.AUTH0_ISSUER }}|g' hetzner.env
+          sed -i 's|\$AUTH0_BE_CLIENT_ID|${{ secrets.AUTH0_BE_CLIENT_ID }}|g' hetzner.env
+          sed -i 's|\$AUTH0_CLIENT_SECRET|${{ secrets.AUTH0_CLIENT_SECRET }}|g' hetzner.env
+          sed -i 's|\$AUTH0_AUDIENCE|${{ secrets.AUTH0_AUDIENCE }}|g' hetzner.env
+          sed -i 's|\$AUTH0_DOMAIN|${{ secrets.AUTH0_DOMAIN }}|g' hetzner.env
+          sed -i 's|\$AUTH0_FE_CLIENT_ID|${{ secrets.AUTH0_FE_CLIENT_ID }}|g' hetzner.env
+
+      - name: Copying util files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ vars.SERVER_IP }}
+          username: ${{ vars.SERVER_USER }}
+          key: ${{ secrets.SSH_ENV_ACCESS_KEY }}
+          source: "docker/env/hetzner.env, docker/app-up.sh, docker/docker-compose-full.yml, docker/script/utils.sh, docker/task-fe/nginx.conf"
+          target: "/opt/task"
+          strip_components: 1
+
+      - name: Copying packed docker images to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ vars.SERVER_IP }}
+          username: ${{ vars.SERVER_USER }}
+          key: ${{ secrets.SSH_ENV_ACCESS_KEY }}
+          source: "task-backend.tar, task-fe.tar, task-sample-data.tar, task-schema.tar, postgres.tar"
+          target: "/opt/task"
+
+      - name: Loading docker images from tars
+        uses: appleboy/ssh-action@v1.2.1
+        with:
+          host: ${{ vars.SERVER_IP }}
+          username: ${{ vars.SERVER_USER }}
+          key: ${{ secrets.SSH_ENV_ACCESS_KEY }}
+          script: |
+            cd /opt/task
+            docker load -i task-backend.tar
+            docker load -i task-fe.tar
+            docker load -i task-sample-data.tar
+            docker load -i task-schema.tar
+            docker load -i postgres.tar
+            rm task-backend.tar task-fe.tar task-sample-data.tar task-schema.tar postgres.tar
+
+      - name: Running docker compose
+        uses: appleboy/ssh-action@v1.2.1
+        env:
+          VERSION: ${{ env.VERSION }}
+        with:
+          host: ${{ vars.SERVER_IP }}
+          username: ${{ vars.SERVER_USER }}
+          key: ${{ secrets.SSH_ENV_ACCESS_KEY }}
+
+          script: |
+            export VERSION=${{env.VERSION}}
+            cd /opt/task
+            ./app-up.sh -e hetzner -b full -v $VERSION
+            echo "Cleaning all not used containers and images"
+            docker system prune -af

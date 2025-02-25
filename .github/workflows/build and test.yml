@@ -1,4 +1,4 @@
-name: Workflow without publishing
+name: Build and test
 
 # This should ignore branches, that are connected with publishing artifacts and should run only on working ones.
 on:
