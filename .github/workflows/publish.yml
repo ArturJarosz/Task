@@ -110,3 +110,22 @@ jobs:
       latest: true
       chosen-module: "task-backend"
 
+  check-current-branch:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: check branch
+        shell: bash
+        run: |
+          echo "this is current branch:" + ${GITHUB_REF##*/}
+
+  redeploy-environments:
+    if: ${GITHUB_REF##*/} == "develop"
+    needs:
+      - build-and-publish-docker-task-task-backend
+      - build-and-publish-docker-task-sample-data
+      - build-and-publish-docker-task-schema
+      - check-current-branch
+    uses: arturjarosz/Task/.github/workflows/redeploy-environment.yml@develop
+    with:
+      chosen_environment: "test-hetzner"
+    secrets: inherit

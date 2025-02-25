@@ -1,7 +1,7 @@
 #! /bin/bash
 
 VERSION_PATTERN="^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)(-(SNAPSHOT|((rc|beta|alpha)(\.[0-9]+){0,1}))){0,1}$"
-BUILD_TYPES=("full" "only-update" "only-run")
+BUILD_TYPES=("full" "only-update" "only-run" "pull-images")
 MORE_INFORMATION="For more information about script parameters call: $0 -h"
 
 displayHelpForCompose() {
