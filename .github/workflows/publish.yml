@@ -10,6 +10,7 @@ on:
 
 env:
   JAVA_VERSION: 17
+  BRANCH: ""
 
 jobs:
   build:
@@ -116,10 +117,12 @@ jobs:
       - name: check branch
         shell: bash
         run: |
-          echo "this is current branch:" + ${GITHUB_REF##*/}
+          echo "Setting up branch name"
+          echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "BRANCH = $ {{ env.BRANCH }}
 
   redeploy-environments:
-    if: ${GITHUB_REF##*/} == "develop"
+    if: ${{ env.BRANCH == develop }}
     needs:
       - build-and-publish-docker-task-task-backend
       - build-and-publish-docker-task-sample-data
