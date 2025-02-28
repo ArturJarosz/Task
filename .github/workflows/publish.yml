@@ -112,8 +112,11 @@ jobs:
 
   check-current-branch:
     runs-on: ubuntu-22.04
+    outputs:
+      BRANCH: ${{ steps.check_branch.outputs.BRANCH }}
     steps:
       - name: check branch
+        id: check_branch
         shell: bash
         run: |
           echo "Setting up branch name"
