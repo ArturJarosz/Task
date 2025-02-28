@@ -118,11 +118,11 @@ jobs:
         shell: bash
         run: |
           echo "Setting up branch name"
-          echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
           echo "BRANCH = $ {{ env.BRANCH }}
 
   redeploy-environments:
-    if: ${{ env.BRANCH == develop }}
+    if: env.BRANCH == 'develop'
     needs:
       - build-and-publish-docker-task-task-backend
       - build-and-publish-docker-task-sample-data
