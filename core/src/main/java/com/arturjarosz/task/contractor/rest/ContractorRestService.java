@@ -1,6 +1,7 @@
 package com.arturjarosz.task.contractor.rest;
 
 import com.arturjarosz.task.contractor.application.ContractorApplicationService;
+import com.arturjarosz.task.dto.ContractorContractorJobsDataDto;
 import com.arturjarosz.task.dto.ContractorDto;
 import com.arturjarosz.task.rest.ContractorApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
@@ -31,22 +32,27 @@ public class ContractorRestService implements ContractorApi {
     @Override
     public ResponseEntity<ContractorDto> updateContractor(ContractorDto contractorDto, Long contractorId) {
         var updatedContractor = this.contractorApplicationService.updateContractor(contractorId, contractorDto);
-        return new ResponseEntity<>(updatedContractor, HttpStatus.OK);
+        return ResponseEntity.ok(updatedContractor);
     }
 
     @Override
     public ResponseEntity<Void> deleteContractor(Long contractorId) {
         this.contractorApplicationService.deleteContractor(contractorId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<ContractorDto> getContractor(Long contractorId) {
-        return new ResponseEntity<>(this.contractorApplicationService.getContractor(contractorId), HttpStatus.OK);
+        return ResponseEntity.ok(this.contractorApplicationService.getContractor(contractorId));
     }
 
     @Override
     public ResponseEntity<List<ContractorDto>> getContractors() {
-        return new ResponseEntity<>(this.contractorApplicationService.getContractors(), HttpStatus.OK);
+        return ResponseEntity.ok(this.contractorApplicationService.getContractors());
+    }
+
+    @Override
+    public ResponseEntity<ContractorContractorJobsDataDto> getContractorJobsData(Long contractorId) {
+        return ResponseEntity.ok(this.contractorApplicationService.getContractorJobsData(contractorId));
     }
 }

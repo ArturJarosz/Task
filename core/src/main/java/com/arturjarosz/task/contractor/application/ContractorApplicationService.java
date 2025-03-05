@@ -1,5 +1,6 @@
 package com.arturjarosz.task.contractor.application;
 
+import com.arturjarosz.task.dto.ContractorContractorJobsDataDto;
 import com.arturjarosz.task.dto.ContractorDto;
 
 import java.util.List;
@@ -33,5 +34,10 @@ public interface ContractorApplicationService {
      * Get list of ContractorDto with basic Contractor data.
      */
     List<ContractorDto> getContractors();
+
+    /**
+     * Returns Contractor Jobs data for Contractor with given contractorId.
+     */
+    ContractorContractorJobsDataDto getContractorJobsData(Long contractorId);
 
 }

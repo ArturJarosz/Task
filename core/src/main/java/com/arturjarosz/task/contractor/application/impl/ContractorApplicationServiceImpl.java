@@ -2,10 +2,12 @@ package com.arturjarosz.task.contractor.application.impl;
 
 import com.arturjarosz.task.contractor.application.ContractorApplicationService;
 import com.arturjarosz.task.contractor.application.ContractorValidator;
+import com.arturjarosz.task.contractor.application.mapper.ContractorContractorJobMapper;
 import com.arturjarosz.task.contractor.application.mapper.ContractorMapper;
 import com.arturjarosz.task.contractor.infrastructure.ContractorRepository;
 import com.arturjarosz.task.contractor.model.ContractorCategory;
 import com.arturjarosz.task.contractor.query.ContractorQueryService;
+import com.arturjarosz.task.dto.ContractorContractorJobsDataDto;
 import com.arturjarosz.task.dto.ContractorDto;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
@@ -24,6 +26,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     private final ContractorValidator contractorValidator;
     private final ContractorMapper contractorMapper;
     private final ContractorQueryService contractorQueryService;
+    private final ContractorContractorJobMapper contractorContractorJobMapper;
 
 
     @Transactional
@@ -90,5 +93,15 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
                 .map(contractor -> this.contractorMapper.mapToDto(contractor,
                         numberOfJobsByContractorId.get(contractor.getId())))
                 .toList();
+    }
+
+    @Override
+    public ContractorContractorJobsDataDto getContractorJobsData(Long contractorId) {
+        LOG.debug("Loading Contractor Jobs data for Contractor with id {}", contractorId);
+
+        this.contractorValidator.validateContractorExistence(contractorId);
+        var data = this.contractorQueryService.getContractorJobsData(contractorId);
+
+        return this.contractorContractorJobMapper.mapToContractorContractorJobsDataDto(data);
     }
 }

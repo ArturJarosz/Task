@@ -14,5 +14,4 @@ public interface ContractorJobMapper {
     }
 
     ContractorJobDto mapToDto(ContractorJob contractorJob, Long projectId);
-
 }
