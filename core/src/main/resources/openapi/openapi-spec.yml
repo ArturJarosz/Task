@@ -572,6 +572,36 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
 
+  /contractors/{contractorId}/contractor-jobs:
+    get:
+      tags:
+        - contractor
+      summary: Get all contractor jobs data for given contractor
+      operationId: getContractorJobsData
+      parameters:
+        - name: contractorId
+          in: path
+          description: "A unique identifier of the contractor"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractorContractorJobsData"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
   /projects/{projectId}/contractor-jobs:
     post:
       tags:
@@ -2839,6 +2869,19 @@ components:
       items:
         $ref: "#/components/schemas/Contractor"
 
+    ContractorContractorJobsData:
+      type:
+        object
+      properties:
+        contractorJobs:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContractorJob"
+        financialData:
+          $ref: "#/components/schemas/FinancialPartialData"
+        averageFinancialData:
+          $ref: "#/components/schemas/FinancialPartialData"
+
     ContractorCategory:
       type: string
       enum:
@@ -2870,6 +2913,9 @@ components:
           type: boolean
         paid:
           type: boolean
+        projectId:
+          type: integer
+          format: int64
         createdDateTime:
           type: string
           format: time

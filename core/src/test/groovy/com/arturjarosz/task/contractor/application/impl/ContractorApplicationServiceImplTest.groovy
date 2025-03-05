@@ -1,6 +1,9 @@
 package com.arturjarosz.task.contractor.application.impl
 
+import com.arturjarosz.task.configuration.UserProperties
 import com.arturjarosz.task.contractor.application.ContractorValidator
+import com.arturjarosz.task.contractor.application.mapper.ContractorContractorJobMapper
+import com.arturjarosz.task.contractor.application.mapper.ContractorContractorJobMapperImpl
 import com.arturjarosz.task.contractor.application.mapper.ContractorMapperImpl
 import com.arturjarosz.task.contractor.infrastructure.ContractorRepository
 import com.arturjarosz.task.contractor.model.Contractor
@@ -8,6 +11,9 @@ import com.arturjarosz.task.contractor.model.ContractorCategory
 import com.arturjarosz.task.contractor.query.ContractorQueryService
 import com.arturjarosz.task.dto.ContractorCategoryDto
 import com.arturjarosz.task.dto.ContractorDto
+import com.arturjarosz.task.dto.ContractorJobDto
+import com.arturjarosz.task.finance.domain.dto.FinancialDataDto
+import com.arturjarosz.task.finance.model.ContractorContractorJobDto
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import spock.lang.Specification
 
@@ -27,9 +33,10 @@ class ContractorApplicationServiceImplTest extends Specification {
     def contractorValidator = Mock(ContractorValidator)
     def contractorMapper = new ContractorMapperImpl()
     def contractorQueryService = Mock(ContractorQueryService)
+    def contractorContractorJobMapper = new ContractorContractorJobMapperImpl()
 
     def subject = new ContractorApplicationServiceImpl(contractorRepository, contractorValidator,
-            contractorMapper, contractorQueryService)
+            contractorMapper, contractorQueryService, contractorContractorJobMapper)
 
 
     def "createContractor should call validateCreateContractorDto from contractorValidator"() {
@@ -211,7 +218,66 @@ class ContractorApplicationServiceImplTest extends Specification {
             }
     }
 
+    def "getContractorJobsData should return contractor validate contractor existence"() {
+        given:
+            this.contractorQueryService.getContractorJobsData(CONTRACTOR_ID) >> Set.of()
+
+        when:
+            def result = subject.getContractorJobsData(CONTRACTOR_ID)
+
+        then:
+            1 * this.contractorValidator.validateContractorExistence(CONTRACTOR_ID)
+    }
+
+    def "getContractorJobsData should return contractor jobs data for given contractor"() {
+        given:
+            var contractorJob1 = new ContractorJobDto(id: 1L)
+            var financialDataDto1 = new FinancialDataDto()
+            financialDataDto1.setHasInvoice(true)
+            financialDataDto1.setPaid(true)
+            financialDataDto1.setPayable(true)
+            financialDataDto1.setValue(BigDecimal.valueOf(100.0D))
+            var contractorJobData1 = new ContractorContractorJobDto(contractorJob1, financialDataDto1)
+            var contractorJob2 = new ContractorJobDto(id: 2L)
+            var financialDataDto2 = new FinancialDataDto()
+            financialDataDto2.setHasInvoice(false)
+            financialDataDto2.setPaid(true)
+            financialDataDto2.setPayable(true)
+            financialDataDto2.setValue(BigDecimal.valueOf(200.0D))
+            var contractorJobData2 = new ContractorContractorJobDto(contractorJob2, financialDataDto2)
+            this.contractorQueryService.getContractorJobsData(CONTRACTOR_ID) >> Set.of(contractorJobData1, contractorJobData2)
+            mockUserProperties(this.contractorContractorJobMapper)
+
+        when:
+            def result = subject.getContractorJobsData(CONTRACTOR_ID)
+
+        then:
+            result.contractorJobs.size() == 2
+            result.averageFinancialData != null
+            with(result.averageFinancialData) {
+                netValue == 150.0D
+                grossValue == 161.5D
+                vatTax == 11.5D
+                incomeTax == 9.0D
+            }
+            result.financialData != null
+            with(result.financialData) {
+                count == 2
+                netValue == 300.0D
+                grossValue == 323.0D
+                vatTax == 23.0D
+                incomeTax == 18.0D
+            }
+    }
+
     private void mockContractorRepositoryLoad(Long contractorId) {
         this.contractorRepository.findById(contractorId) >> Optional.of(new Contractor(NAME, ContractorCategory.valueOf(CATEGORY.name()), UPDATED_EMAIL, TELEPHONE, NOTE))
+    }
+
+    private void mockUserProperties(ContractorContractorJobMapper mapper) {
+        var userProperties = new UserProperties()
+        userProperties.setIncomeTax(0.18D)
+        userProperties.setVatTax(0.23D)
+        TestUtils.setFieldForObject(mapper, "userProperties", userProperties)
     }
 }

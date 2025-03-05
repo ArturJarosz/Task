@@ -2,7 +2,6 @@ package com.arturjarosz.task.supplier.query.impl;
 
 import com.arturjarosz.task.finance.application.mapper.FinancialDataMapper;
 import com.arturjarosz.task.finance.application.mapper.SupplyMapper;
-import com.arturjarosz.task.finance.model.QFinancialData;
 import com.arturjarosz.task.finance.model.QProjectFinancialData;
 import com.arturjarosz.task.finance.model.QSupply;
 import com.arturjarosz.task.finance.model.SupplierSupplyDataDto;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 public class SupplierQueryServiceImpl extends AbstractQueryService<QSupplier> implements SupplierQueryService {
 
     private static final QProjectFinancialData PROJECT_FINANCIAL_DATA = QProjectFinancialData.projectFinancialData;
-    private static final QFinancialData FINANCIAL_DATA = QFinancialData.financialData;
     private static final QSupplier SUPPLIER = QSupplier.supplier;
     private static final QSupply SUPPLY = QSupply.supply;
     private final SupplyMapper supplyMapper;

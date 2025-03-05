@@ -28,6 +28,7 @@ public class ContractorJob extends AbstractHistoryAwareEntity implements Partial
     @Column(name = "NAME", nullable = false)
     String name;
 
+    @Getter
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "FINANCIAL_DATA_ID", referencedColumnName = "ID", nullable = false)
     FinancialData financialData;
