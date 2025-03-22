@@ -133,7 +133,8 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
         var installment = projectFinancialData.getInstallment(installmentId);
 
-        return this.installmentDtoMapper.mapToDto(installment, "");
+        return this.installmentDtoMapper.mapToDto(installment,
+                this.financialDataQueryService.getStageNameForInstallment(installmentId));
     }
 
     private Long getIdForCreatedInstallment(ProjectFinancialData financialData, Installment installment) {

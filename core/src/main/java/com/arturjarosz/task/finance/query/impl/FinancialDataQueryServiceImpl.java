@@ -296,4 +296,15 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .select(STAGE.id)
                 .fetch();
     }
+
+    @Override
+    public String getStageNameForInstallment(long installmentId) {
+        return this.query()
+                .from(STAGE)
+                .leftJoin(INSTALLMENT)
+                .on(STAGE.id.eq(INSTALLMENT.stageId))
+                .where(INSTALLMENT.id.eq(installmentId))
+                .select(STAGE.name)
+                .fetchOne();
+    }
 }
