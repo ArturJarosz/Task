@@ -54,4 +54,6 @@ public interface FinancialDataQueryService {
     List<ContractorJobDto> getContractorJobsForProject(Long projectId);
 
     List<Long> getStagesWithoutInstallmentIds(long projectId);
+
+    String getStageNameForInstallment(long installmentId);
 }

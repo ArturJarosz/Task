@@ -23,17 +23,18 @@ import java.time.LocalDate
 
 class InstallmentApplicationServiceImplTest extends Specification {
 
-    static final Long INSTALLMENT_ID = 1L
-    static final Long NOT_EXISTING_INSTALLMENT_ID = 2L
-    static final Long STAGE_ID = 10L
-    static final Long STAGE_WITH_INSTALLMENT_ID = 20L
-    static final Long STAGE_WITHOUT_INSTALLMENT_ID = 30L
-    static final Long NOT_EXISTING_STAGE_ID = 99L
-    static final Long PROJECT_ID = 100L
-    static final Long PROJECT_WITH_INSTALLMENT_ID = 200L
-    static final Long NOT_EXISTING_PROJECT_ID = 999L
-    static final BigDecimal VALUE = new BigDecimal("100.00")
-    static final BigDecimal NEW_VALUE = new BigDecimal("200.00")
+    static final INSTALLMENT_ID = 1L
+    static final NOT_EXISTING_INSTALLMENT_ID = 2L
+    static final STAGE_ID = 10L
+    static final STAGE_WITH_INSTALLMENT_ID = 20L
+    static final STAGE_WITHOUT_INSTALLMENT_ID = 30L
+    static final NOT_EXISTING_STAGE_ID = 99L
+    static final PROJECT_ID = 100L
+    static final PROJECT_WITH_INSTALLMENT_ID = 200L
+    static final NOT_EXISTING_PROJECT_ID = 999L
+    static final VALUE = new BigDecimal("100.00")
+    static final NEW_VALUE = new BigDecimal("200.00")
+    static final STAGE_NAME = "stage name"
 
     def projectFinancialDataRepository = Mock(ProjectFinancialDataRepository)
     def financialDataQueryService = Mock(FinancialDataQueryService)
@@ -62,6 +63,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
         this.financialDataQueryService.getInstallmentsByProjectId(PROJECT_WITH_INSTALLMENT_ID) >> ([new InstallmentDto()] as List)
         this.financialDataQueryService.getProjectPartialFinancialDataByType(PROJECT_WITH_INSTALLMENT_ID, PartialFinancialDataType.INSTALLMENT) >> prepareInstallmentData()
         this.financialDataQueryService.getStagesWithoutInstallmentIds(PROJECT_WITH_INSTALLMENT_ID) >> [STAGE_WITHOUT_INSTALLMENT_ID]
+        this.financialDataQueryService.getStageNameForInstallment(INSTALLMENT_ID) >> STAGE_NAME
     }
 
     def "createInstallment should not create installment if project existence validation fails"() {
@@ -264,6 +266,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
         then:
             noExceptionThrown()
             resultInstallment.value == VALUE
+            resultInstallment.stageName == STAGE_NAME
     }
 
     private void mockValidateInstallmentDtoThrowsException() {
