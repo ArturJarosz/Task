@@ -199,7 +199,7 @@ class StageValidatorTest extends Specification {
         def financialData = new ProjectFinancialData()
         if (stageHasInstallment) {
             def installment = new Installment()
-            installment.setStageId(STAGE_WITH_INSTALLMENT_ID)
+            TestUtils.setFieldForObject(installment, "stageId", STAGE_WITH_INSTALLMENT_ID)
             financialData.addInstallment(installment)
         } else {
             TestUtils.setFieldForObject(financialData, "installments", new HashSet<>())

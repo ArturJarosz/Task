@@ -15,6 +15,7 @@ public interface SupervisionMapper {
 
     @Mapping(target = "hasInvoice", source = "financialData.hasInvoice")
     @Mapping(target = "value", source = "financialData.value", qualifiedByName = "moneyToBigDecimal")
+    @Mapping(target = "visitCount", expression = "java(supervision.getSupervisionVisits() != null ? supervision.getSupervisionVisits().size() : 0)")
     SupervisionDto mapToDto(Supervision supervision);
 
     @Named("moneyToBigDecimal")

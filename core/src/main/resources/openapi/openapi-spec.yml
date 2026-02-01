@@ -2302,7 +2302,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
 
-  /supervisions/{supervisionId}/supervision-visits:
+  /supervisions/{supervisionId}/visits:
     post:
       tags:
         - supervision
@@ -2338,8 +2338,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - supervision
+      summary: Get all supervision visits for supervision
+      operationId: getSupervisionVisits
+      parameters:
+        - name: supervisionId
+          in: path
+          description: "A unique identifier of the supervision"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupervisionVisits"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
 
-  /supervisions/{supervisionId}/supervision-visits/{supervisionVisitId}:
+  /supervisions/{supervisionId}/visits/{supervisionVisitId}:
     put:
       tags:
         - supervision
@@ -2450,6 +2478,36 @@ paths:
           description: Successful operation
           content:
             { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /projects/{projectId}/supervisions:
+    get:
+      tags:
+        - supervision
+      summary: Get supervision for project
+      operationId: getProjectSupervision
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the supervision"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supervision"
         400:
           description: Validator error message
           content:
@@ -3166,7 +3224,8 @@ components:
         lastModifiedDateTime:
           type: string
           format: time
-
+        supervision:
+          $ref: "#/components/schemas/Supervision"
     Projects:
       type: array
       items:
@@ -3369,6 +3428,8 @@ components:
           type: number
         hoursCount:
           type: integer
+        visitCount:
+          type: integer
         value:
           type: number
         note:
@@ -3402,6 +3463,11 @@ components:
         lastModifiedDateTime:
           type: string
           format: time
+
+    SupervisionVisits:
+      type: array
+      items:
+        $ref: "#/components/schemas/SupervisionVisit"
 
     Supplier:
       type: object

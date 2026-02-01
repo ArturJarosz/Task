@@ -17,6 +17,7 @@ import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
+import com.arturjarosz.task.supervision.application.SupervisionApplicationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,8 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final ProjectMapper projectMapper;
     @NonNull
     private final CostApplicationService costApplicationService;
+    @NonNull
+    private final SupervisionApplicationService supervisionApplicationService;
 
     @Transactional
     @Override
@@ -85,9 +88,10 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         var architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
         var contractDto = this.contractService.getContractForProject(project.getContractId());
         var projectCosts = this.costApplicationService.getCosts(projectId);
+        var supervisionDto = this.supervisionApplicationService.getProjectSupervision(projectId);
 
         LOG.debug("Project with id {} loaded.", projectId);
-        return this.projectMapper.mapToDto(clientDto, architectDto, project, contractDto, projectCosts);
+        return this.projectMapper.mapToDto(clientDto, architectDto, project, contractDto, projectCosts, supervisionDto);
     }
 
     @Transactional

@@ -17,6 +17,7 @@ import com.arturjarosz.task.project.domain.impl.ProjectDomainServiceImpl
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.status.project.ProjectStatus
+import com.arturjarosz.task.supervision.application.SupervisionApplicationService
 import com.arturjarosz.task.utils.ProjectBuilder
 import spock.lang.Specification
 
@@ -49,10 +50,12 @@ class ProjectApplicationServiceImplTest extends Specification {
     def contractMapper = new ContractMapperImpl()
     def projectMapper = new ProjectMapperImpl()
     def costApplicationService = Mock(CostApplicationService)
+    def supervisionApplicationService = Mock(SupervisionApplicationService)
 
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator,
-            projectFinancialDataService, contractService, contractMapper, projectMapper, costApplicationService)
+            projectFinancialDataService, contractService, contractMapper, projectMapper, costApplicationService,
+            supervisionApplicationService)
 
     def "createProject should call validateProjectBasicDto on projectValidator"() {
         given:

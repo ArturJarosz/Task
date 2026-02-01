@@ -6,8 +6,11 @@ import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
 import com.arturjarosz.task.supervision.application.mapper.SupervisionVisitFields;
 import com.arturjarosz.task.supervision.model.QSupervision;
 import com.arturjarosz.task.supervision.model.QSupervisionVisit;
+import com.arturjarosz.task.supervision.model.Supervision;
 import com.arturjarosz.task.supervision.query.SupervisionQueryService;
 import com.querydsl.core.types.Projections;
+
+import java.util.List;
 
 @Finder
 public class SupervisionQueryServiceImpl extends AbstractQueryService<QSupervision> implements SupervisionQueryService {
@@ -26,7 +29,8 @@ public class SupervisionQueryServiceImpl extends AbstractQueryService<QSupervisi
 
     @Override
     public boolean supervisionVisitExistsInSupervision(Long supervisionId, Long supervisionVisitId) {
-        return this.query().from(SUPERVISION)
+        return this.query()
+                .from(SUPERVISION)
                 .join(SUPERVISION.supervisionVisits, SUPERVISION_VISIT)
                 .where(SUPERVISION.id.eq(supervisionId).and(SUPERVISION_VISIT.id.eq(supervisionVisitId)))
                 .select(SUPERVISION_VISIT)
@@ -35,17 +39,31 @@ public class SupervisionQueryServiceImpl extends AbstractQueryService<QSupervisi
 
     @Override
     public SupervisionVisitDto getSupervisionVisit(Long supervisionVisitId) {
-        return this.query().from(SUPERVISION_VISIT).where(SUPERVISION_VISIT.id.eq(supervisionVisitId))
-                .select(Projections.bean(SupervisionVisitDto.class,
-                        SUPERVISION_VISIT.id.as(SupervisionVisitFields.ID),
+        return this.query()
+                .from(SUPERVISION_VISIT)
+                .where(SUPERVISION_VISIT.id.eq(supervisionVisitId))
+                .select(Projections.bean(SupervisionVisitDto.class, SUPERVISION_VISIT.id.as(SupervisionVisitFields.ID),
                         SUPERVISION_VISIT.hoursCount.as(SupervisionVisitFields.HOURS_COUNT),
                         SUPERVISION_VISIT.dateOfVisit.as(SupervisionVisitFields.DATE_OF_VISIT),
-                        SUPERVISION_VISIT.payable.as(SupervisionVisitFields.PAYABLE)
-                )).fetchOne();
+                        SUPERVISION_VISIT.payable.as(SupervisionVisitFields.PAYABLE)))
+                .fetchOne();
     }
 
     @Override
-    public long getProjectIdForSupervision(Long supervisionId) {
+    public List<SupervisionVisitDto> getSupervisionVisits(Long supervisionId) {
+        return this.query()
+                .from(SUPERVISION)
+                .join(SUPERVISION.supervisionVisits, SUPERVISION_VISIT)
+                .where(SUPERVISION.id.eq(supervisionId))
+                .select(Projections.bean(SupervisionVisitDto.class, SUPERVISION_VISIT.id.as(SupervisionVisitFields.ID),
+                        SUPERVISION_VISIT.hoursCount.as(SupervisionVisitFields.HOURS_COUNT),
+                        SUPERVISION_VISIT.dateOfVisit.as(SupervisionVisitFields.DATE_OF_VISIT),
+                        SUPERVISION_VISIT.payable.as(SupervisionVisitFields.PAYABLE)))
+                .fetch();
+    }
+
+    @Override
+    public long getProjectIdForSupervision(long supervisionId) {
         return this.query()
                 .from(SUPERVISION)
                 .where(SUPERVISION.id.eq(supervisionId))
@@ -60,5 +78,14 @@ public class SupervisionQueryServiceImpl extends AbstractQueryService<QSupervisi
                 .where(SUPERVISION.projectId.eq(projectId))
                 .select(SUPERVISION)
                 .fetchOne() != null;
+    }
+
+    @Override
+    public Supervision getSupervisionByProjectId(long projectId) {
+        return this.query()
+                .from(SUPERVISION)
+                .where(SUPERVISION.projectId.eq(projectId))
+                .select(SUPERVISION)
+                .fetchOne();
     }
 }
