@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 public class SupervisionRestController implements SupervisionApi {
@@ -46,17 +48,19 @@ public class SupervisionRestController implements SupervisionApi {
     }
 
     @Override
-    public ResponseEntity<SupervisionVisitDto> createSupervisionVisit(SupervisionVisitDto supervisionVisitDto, Long supervisionId) {
+    public ResponseEntity<SupervisionVisitDto> createSupervisionVisit(SupervisionVisitDto supervisionVisitDto,
+            Long supervisionId) {
         var createdSupervisionVisitDto = this.supervisionApplicationService
                 .createSupervisionVisit(supervisionId, supervisionVisitDto);
         var httpHeaders = new HttpHeadersBuilder()
-                .withLocation("supervisions/supervisionId/supervision-visits{supervisionVisitId}", supervisionId,
+                .withLocation("supervisions/{supervisionId}/visits/{supervisionVisitId}", supervisionId,
                         createdSupervisionVisitDto.getId()).build();
         return new ResponseEntity<>(createdSupervisionVisitDto, httpHeaders, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<SupervisionVisitDto> updateSupervisionVisit(SupervisionVisitDto supervisionVisitDto, Long supervisionId, Long supervisionVisitId) {
+    public ResponseEntity<SupervisionVisitDto> updateSupervisionVisit(SupervisionVisitDto supervisionVisitDto,
+            Long supervisionId, Long supervisionVisitId) {
         return new ResponseEntity<>(
                 this.supervisionApplicationService.updateSupervisionVisit(supervisionId, supervisionVisitId,
                         supervisionVisitDto),
@@ -71,8 +75,19 @@ public class SupervisionRestController implements SupervisionApi {
     }
 
     @Override
+    public ResponseEntity<List<SupervisionVisitDto>> getSupervisionVisits(Long supervisionId) {
+        return new ResponseEntity<>(this.supervisionApplicationService.getSupervisionVisits(supervisionId),
+                HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<Void> deleteSupervisionVisit(Long supervisionId, Long supervisionVisitId) {
         this.supervisionApplicationService.deleteSupervisionVisit(supervisionId, supervisionVisitId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<SupervisionDto> getProjectSupervision(Long projectId) {
+        return ResponseEntity.ok(this.supervisionApplicationService.getProjectSupervision(projectId));
     }
 }

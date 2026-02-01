@@ -9,6 +9,7 @@ import com.arturjarosz.task.dto.CostDto;
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
 import com.arturjarosz.task.dto.ProjectStatusDto;
+import com.arturjarosz.task.dto.SupervisionDto;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
 import com.arturjarosz.task.sharedkernel.model.Money;
@@ -47,8 +48,9 @@ public interface ProjectMapper {
     @Mapping(source = "costDtos", target = "costs")
     @Mapping(source = "project.createdDateTime", target = "createdDateTime")
     @Mapping(source = "project.lastModifiedDateTime", target = "lastModifiedDateTime")
+    @Mapping(source = "supervisionDto", target = "supervision")
     ProjectDto mapToDto(ClientDto clientDto, ArchitectDto architectDto, Project project, ContractDto contractDto,
-            List<CostDto> costDtos);
+            List<CostDto> costDtos, SupervisionDto supervisionDto);
 
     @Mapping(source = "project.projectType", target = "type")
     @Mapping(source = "project.name", target = "name")

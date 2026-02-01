@@ -22,6 +22,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @Slf4j
 @RequiredArgsConstructor
 @ApplicationService
@@ -163,6 +166,14 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         return this.supervisionQueryService.getSupervisionVisit(supervisionVisitId);
     }
 
+    @Override
+    public List<SupervisionVisitDto> getSupervisionVisits(Long supervisionId) {
+        LOG.debug("Retrieving all supervision visits for supervision with id {}.", supervisionId);
+
+        this.supervisionValidator.validateSupervisionExistence(supervisionId);
+        return this.supervisionQueryService.getSupervisionVisits(supervisionId);
+    }
+
     @Transactional
     @Override
     public void deleteSupervisionVisit(Long supervisionId, Long supervisionVisitId) {
@@ -181,6 +192,17 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionRepository.save(supervision);
 
         LOG.debug("Supervision visit with id {} removed.", supervisionVisitId);
+    }
+
+    @Override
+    public SupervisionDto getProjectSupervision(Long projectId) {
+        LOG.debug("Loading supervision or project with id {}", projectId);
+
+        this.projectValidator.validateProjectExistence(projectId);
+        var maybeSupervision = Optional.ofNullable(this.supervisionQueryService.getSupervisionByProjectId(projectId));
+
+        return this.supervisionMapper.mapToDto(
+                maybeSupervision.orElse(null));
     }
 
     private void updateSupervisionHoursCount(Supervision supervision) {

@@ -83,8 +83,4 @@ public class Installment extends AbstractHistoryAwareEntity implements PartialFi
         return this.financialData.isHasInvoice();
     }
 
-    public void setStageId(Long stageId) {
-        this.stageId = stageId;
-    }
-
 }

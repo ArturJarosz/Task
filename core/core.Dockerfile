@@ -1,4 +1,4 @@
-FROM maven:3.8.7-eclipse-temurin-17-alpine AS build
+FROM maven:3.8.7-eclipse-temurin-19 AS build
 
 ARG GITHUB_MAVEN_TOKEN
 

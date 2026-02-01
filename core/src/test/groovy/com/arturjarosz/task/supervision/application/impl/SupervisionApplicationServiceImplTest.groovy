@@ -359,6 +359,56 @@ class SupervisionApplicationServiceImplTest extends Specification {
             })
     }
 
+    def "getSupervisionVisit validates supervision existence"() {
+        given:
+            def supervisionVisitDto = this.prepareProperSupervisionVisitDto()
+            this.supervisionQueryService.getSupervisionVisit(SUPERVISION_VISIT_ID) >> supervisionVisitDto
+        when:
+            this.supervisionApplicationService.getSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID)
+        then:
+            1 * this.supervisionValidator.validateSupervisionExistence(SUPERVISION_ID)
+    }
+
+    def "getSupervisionVisit validates supervision having the supervision visit"() {
+        given:
+            def supervisionVisitDto = this.prepareProperSupervisionVisitDto()
+            this.supervisionQueryService.getSupervisionVisit(SUPERVISION_VISIT_ID) >> supervisionVisitDto
+        when:
+            this.supervisionApplicationService.getSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID)
+        then:
+            1 * this.supervisionVisitValidator.validateSupervisionHavingSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID)
+    }
+
+    def "getSupervisionVisit returns supervision visit from query service"() {
+        given:
+            def supervisionVisitDto = this.prepareProperSupervisionVisitDto()
+        when:
+            def result = this.supervisionApplicationService.getSupervisionVisit(SUPERVISION_ID, SUPERVISION_VISIT_ID)
+        then:
+            1 * this.supervisionQueryService.getSupervisionVisit(SUPERVISION_VISIT_ID) >> supervisionVisitDto
+            result == supervisionVisitDto
+    }
+
+    def "getSupervisionVisits validates supervision existence"() {
+        given:
+            this.supervisionQueryService.getSupervisionVisits(SUPERVISION_ID) >> []
+        when:
+            this.supervisionApplicationService.getSupervisionVisits(SUPERVISION_ID)
+        then:
+            1 * this.supervisionValidator.validateSupervisionExistence(SUPERVISION_ID)
+    }
+
+    def "getSupervisionVisits returns supervision visits from query service"() {
+        given:
+            def supervisionVisitDto = this.prepareProperSupervisionVisitDto()
+            def supervisionVisits = [supervisionVisitDto]
+        when:
+            def result = this.supervisionApplicationService.getSupervisionVisits(SUPERVISION_ID)
+        then:
+            1 * this.supervisionQueryService.getSupervisionVisits(SUPERVISION_ID) >> supervisionVisits
+            result == supervisionVisits
+    }
+
     private void mockValidateCreateSupervisionDtoOnNull() {
         this.supervisionValidator.validateCreateSupervision(null) >> { throw new IllegalArgumentException() }
     }

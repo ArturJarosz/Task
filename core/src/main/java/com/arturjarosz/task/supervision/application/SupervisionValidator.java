@@ -77,9 +77,9 @@ public class SupervisionValidator {
     }
 
     public void projectNotHavingSupervision(Long projectId) {
-        assertIsFalse(
-                this.supervisionQueryService.supervisionOnProjectExistence(projectId),
+        assertIsFalse(this.supervisionQueryService.supervisionOnProjectExistence(projectId),
                 createMessageCode(ExceptionCodes.ALREADY_SET, ProjectExceptionCodes.PROJECT,
                         SupervisionExceptionCodes.SUPERVISION), projectId);
     }
+
 }

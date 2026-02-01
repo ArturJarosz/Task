@@ -3,6 +3,8 @@ package com.arturjarosz.task.supervision.application;
 import com.arturjarosz.task.dto.SupervisionDto;
 import com.arturjarosz.task.dto.SupervisionVisitDto;
 
+import java.util.List;
+
 public interface SupervisionApplicationService {
 
     /**
@@ -46,8 +48,17 @@ public interface SupervisionApplicationService {
     SupervisionVisitDto getSupervisionVisit(Long supervisionId, Long supervisionVisitId);
 
     /**
+     * Loads all supervision visits for supervision with supervisionId.
+     */
+    List<SupervisionVisitDto> getSupervisionVisits(Long supervisionId);
+
+    /**
      * Removes supervisionVisit of given supervisionVisitId for supervision with supervisionId.
      */
     void deleteSupervisionVisit(Long supervisionId, Long supervisionVisitId);
 
+    /**
+     * Returns Supervision for Project with given projectId.
+     */
+    SupervisionDto getProjectSupervision(Long projectId);
 }
