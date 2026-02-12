@@ -48,6 +48,9 @@ public final class ProjectExceptionCodes {
     public static final String WORK = "work";
     public static final String ALREADY_PAID = "alreadyPaid";
 
+    public static final String FINANCIAL_REPORT = "financialReport";
+    public static final String PERIOD_TYPE = "periodType";
+
     private ProjectExceptionCodes() {
         throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
     }

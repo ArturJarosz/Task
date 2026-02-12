@@ -148,7 +148,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "updateInstallment should update installment if dto is correct and both project and installment exist"() {
         given:
-            def installmentDto = new InstallmentDto(value: NEW_VALUE, hasInvoice: true)
+            def installmentDto = new InstallmentDto(value: NEW_VALUE, hasInvoice: true, paid: false)
         when:
             this.installmentApplicationService.
                     updateInstallment(PROJECT_WITH_INSTALLMENT_ID, INSTALLMENT_ID, installmentDto)

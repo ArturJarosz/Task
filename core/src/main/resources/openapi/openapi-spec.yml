@@ -1384,6 +1384,47 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
 
+  /financial-data:
+    get:
+      tags:
+        - financialData
+      summary: Get financial report for a date range
+      operationId: getFinancialReport
+      parameters:
+        - name: startDate
+          in: query
+          description: "Start date of the report period"
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: "End date of the report period"
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: periodType
+          in: query
+          description: "Period type for grouping"
+          required: true
+          schema:
+            $ref: "#/components/schemas/PeriodType"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FinancialReport"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
   /projects/{projectId}/total-financial-summary:
     get:
       tags:
@@ -3613,3 +3654,61 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ConfigurationEntry"
+
+    PeriodType:
+      type: string
+      enum: [MONTHLY, QUARTERLY, YEARLY]
+
+    FinancialReportCategoryGroup:
+      type: object
+      properties:
+        installment:
+          $ref: "#/components/schemas/FinancialPartialData"
+        supervision:
+          $ref: "#/components/schemas/FinancialPartialData"
+        cost:
+          $ref: "#/components/schemas/FinancialPartialData"
+        supply:
+          $ref: "#/components/schemas/FinancialPartialData"
+        contractorJob:
+          $ref: "#/components/schemas/FinancialPartialData"
+        total:
+          $ref: "#/components/schemas/FinancialPartialData"
+
+    FinancialReportPeriod:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        income:
+          $ref: "#/components/schemas/FinancialReportCategoryGroup"
+        expense:
+          $ref: "#/components/schemas/FinancialReportCategoryGroup"
+        balance:
+          $ref: "#/components/schemas/FinancialPartialData"
+
+    FinancialReport:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        periodType:
+          $ref: "#/components/schemas/PeriodType"
+        periods:
+          type: array
+          items:
+            $ref: "#/components/schemas/FinancialReportPeriod"
+        totalIncome:
+          $ref: "#/components/schemas/FinancialPartialData"
+        totalExpense:
+          $ref: "#/components/schemas/FinancialPartialData"
+        totalBalance:
+          $ref: "#/components/schemas/FinancialPartialData"

@@ -83,7 +83,7 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
     }
 
     public Cost updateCost(Long costId, String name, LocalDate date, BigDecimal value, CostCategory category,
-            String note) {
+            String note, Boolean hasInvoice, Boolean paid) {
         Cost cost = this.getCosts()
                 .stream()
                 .filter(costOnProject -> costOnProject.getId().equals(costId))

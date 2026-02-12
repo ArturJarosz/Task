@@ -62,7 +62,8 @@ public class CostApplicationServiceImpl implements CostApplicationService {
 
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
         var cost = projectFinancialData.updateCost(costId, costDto.getName(), costDto.getDate(), costDto.getValue(),
-                CostCategory.valueOf(costDto.getCategory().name()), costDto.getNote());
+                CostCategory.valueOf(costDto.getCategory().name()), costDto.getNote(), costDto.getHasInvoice(),
+                costDto.getPaid());
 
         this.projectFinancialDataRepository.save(projectFinancialData);
         this.projectFinanceAwareObjectService.onUpdate(projectId);
