@@ -6,11 +6,13 @@ import com.arturjarosz.task.dto.InstallmentDto;
 import com.arturjarosz.task.dto.SupplyDto;
 import com.arturjarosz.task.dto.TotalProjectFinancialSummaryDto;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
+import com.arturjarosz.task.finance.domain.dto.FinancialReportItemDto;
 import com.arturjarosz.task.finance.model.PartialFinancialDataType;
 import com.arturjarosz.task.finance.model.ProjectFinancialPartialData;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface FinancialDataQueryService {
@@ -56,4 +58,16 @@ public interface FinancialDataQueryService {
     List<Long> getStagesWithoutInstallmentIds(long projectId);
 
     String getStageNameForInstallment(long installmentId);
+
+    List<FinancialReportItemDto> getCostExpenseItems(LocalDate startDate, LocalDate endDate);
+
+    List<FinancialReportItemDto> getCostIncomeItems(LocalDate startDate, LocalDate endDate);
+
+    List<FinancialReportItemDto> getInstallmentIncomeItems(LocalDate startDate, LocalDate endDate);
+
+    List<FinancialReportItemDto> getSupervisionIncomeItems(LocalDate startDate, LocalDate endDate);
+
+    List<FinancialReportItemDto> getSupplyIncomeItems(LocalDate startDate, LocalDate endDate);
+
+    List<FinancialReportItemDto> getContractorJobExpenseItems(LocalDate startDate, LocalDate endDate);
 }

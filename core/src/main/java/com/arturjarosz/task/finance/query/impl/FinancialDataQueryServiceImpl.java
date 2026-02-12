@@ -12,6 +12,7 @@ import com.arturjarosz.task.finance.application.mapper.InstallmentMapper;
 import com.arturjarosz.task.finance.application.mapper.ProjectFinancialPartialDataMapper;
 import com.arturjarosz.task.finance.application.mapper.SupplyMapper;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
+import com.arturjarosz.task.finance.domain.dto.FinancialReportItemDto;
 import com.arturjarosz.task.finance.model.*;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
@@ -25,6 +26,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Finder
@@ -306,5 +308,97 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .where(INSTALLMENT.id.eq(installmentId))
                 .select(STAGE.name)
                 .fetchOne();
+    }
+
+    @Override
+    public List<FinancialReportItemDto> getCostExpenseItems(LocalDate startDate, LocalDate endDate) {
+        return this.query()
+                .from(COST)
+                .join(COST.financialData, FINANCIAL_DATA)
+                .where(COST.date.between(startDate, endDate))
+                .select(Projections.bean(FinancialReportItemDto.class,
+                        FINANCIAL_DATA.value.value.as(FinancialReportItemDto.VALUE_FIELD),
+                        FINANCIAL_DATA.hasInvoice.as(FinancialReportItemDto.HAS_INVOICE_FIELD),
+                        FINANCIAL_DATA.payable.as(FinancialReportItemDto.PAYABLE_FIELD),
+                        FINANCIAL_DATA.paid.as(FinancialReportItemDto.PAID_FIELD),
+                        COST.date.as(FinancialReportItemDto.EFFECTIVE_DATE_FIELD)))
+                .fetch();
+    }
+
+    @Override
+    public List<FinancialReportItemDto> getCostIncomeItems(LocalDate startDate, LocalDate endDate) {
+        return this.query()
+                .from(COST)
+                .join(COST.financialData, FINANCIAL_DATA)
+                .where(FINANCIAL_DATA.paymentDate.between(startDate, endDate)
+                        .and(FINANCIAL_DATA.payable.isTrue())
+                        .and(FINANCIAL_DATA.paid.isTrue()))
+                .select(Projections.bean(FinancialReportItemDto.class,
+                        FINANCIAL_DATA.value.value.as(FinancialReportItemDto.VALUE_FIELD),
+                        FINANCIAL_DATA.hasInvoice.as(FinancialReportItemDto.HAS_INVOICE_FIELD),
+                        FINANCIAL_DATA.payable.as(FinancialReportItemDto.PAYABLE_FIELD),
+                        FINANCIAL_DATA.paid.as(FinancialReportItemDto.PAID_FIELD),
+                        FINANCIAL_DATA.paymentDate.as(FinancialReportItemDto.EFFECTIVE_DATE_FIELD)))
+                .fetch();
+    }
+
+    @Override
+    public List<FinancialReportItemDto> getInstallmentIncomeItems(LocalDate startDate, LocalDate endDate) {
+        return this.query()
+                .from(INSTALLMENT)
+                .join(INSTALLMENT.financialData, FINANCIAL_DATA)
+                .where(FINANCIAL_DATA.paymentDate.between(startDate, endDate))
+                .select(Projections.bean(FinancialReportItemDto.class,
+                        FINANCIAL_DATA.value.value.as(FinancialReportItemDto.VALUE_FIELD),
+                        FINANCIAL_DATA.hasInvoice.as(FinancialReportItemDto.HAS_INVOICE_FIELD),
+                        FINANCIAL_DATA.payable.as(FinancialReportItemDto.PAYABLE_FIELD),
+                        FINANCIAL_DATA.paid.as(FinancialReportItemDto.PAID_FIELD),
+                        FINANCIAL_DATA.paymentDate.as(FinancialReportItemDto.EFFECTIVE_DATE_FIELD)))
+                .fetch();
+    }
+
+    @Override
+    public List<FinancialReportItemDto> getSupervisionIncomeItems(LocalDate startDate, LocalDate endDate) {
+        return this.query()
+                .from(SUPERVISION)
+                .join(SUPERVISION.financialData, FINANCIAL_DATA)
+                .where(FINANCIAL_DATA.paymentDate.between(startDate, endDate))
+                .select(Projections.bean(FinancialReportItemDto.class,
+                        FINANCIAL_DATA.value.value.as(FinancialReportItemDto.VALUE_FIELD),
+                        FINANCIAL_DATA.hasInvoice.as(FinancialReportItemDto.HAS_INVOICE_FIELD),
+                        FINANCIAL_DATA.payable.as(FinancialReportItemDto.PAYABLE_FIELD),
+                        FINANCIAL_DATA.paid.as(FinancialReportItemDto.PAID_FIELD),
+                        FINANCIAL_DATA.paymentDate.as(FinancialReportItemDto.EFFECTIVE_DATE_FIELD)))
+                .fetch();
+    }
+
+    @Override
+    public List<FinancialReportItemDto> getSupplyIncomeItems(LocalDate startDate, LocalDate endDate) {
+        return this.query()
+                .from(SUPPLY)
+                .join(SUPPLY.financialData, FINANCIAL_DATA)
+                .where(FINANCIAL_DATA.paymentDate.between(startDate, endDate))
+                .select(Projections.bean(FinancialReportItemDto.class,
+                        FINANCIAL_DATA.value.value.as(FinancialReportItemDto.VALUE_FIELD),
+                        FINANCIAL_DATA.hasInvoice.as(FinancialReportItemDto.HAS_INVOICE_FIELD),
+                        FINANCIAL_DATA.payable.as(FinancialReportItemDto.PAYABLE_FIELD),
+                        FINANCIAL_DATA.paid.as(FinancialReportItemDto.PAID_FIELD),
+                        FINANCIAL_DATA.paymentDate.as(FinancialReportItemDto.EFFECTIVE_DATE_FIELD)))
+                .fetch();
+    }
+
+    @Override
+    public List<FinancialReportItemDto> getContractorJobExpenseItems(LocalDate startDate, LocalDate endDate) {
+        return this.query()
+                .from(CONTRACTOR_JOB)
+                .join(CONTRACTOR_JOB.financialData, FINANCIAL_DATA)
+                .where(FINANCIAL_DATA.paymentDate.between(startDate, endDate))
+                .select(Projections.bean(FinancialReportItemDto.class,
+                        FINANCIAL_DATA.value.value.as(FinancialReportItemDto.VALUE_FIELD),
+                        FINANCIAL_DATA.hasInvoice.as(FinancialReportItemDto.HAS_INVOICE_FIELD),
+                        FINANCIAL_DATA.payable.as(FinancialReportItemDto.PAYABLE_FIELD),
+                        FINANCIAL_DATA.paid.as(FinancialReportItemDto.PAID_FIELD),
+                        FINANCIAL_DATA.paymentDate.as(FinancialReportItemDto.EFFECTIVE_DATE_FIELD)))
+                .fetch();
     }
 }

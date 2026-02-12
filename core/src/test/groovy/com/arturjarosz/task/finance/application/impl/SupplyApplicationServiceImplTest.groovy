@@ -252,7 +252,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     private SupplyDto prepareUpdateSupplyDto() {
         def supplyDto = new SupplyDto(hasInvoice: NEW_HAS_INVOICE, payable: NEW_PAYABLE, supplierId: SUPPLIER_ID,
-                value: NEW_VALUE, name: NEW_NAME, note: NEW_NOTE)
+                value: NEW_VALUE, name: NEW_NAME, note: NEW_NOTE, paid: true)
         return supplyDto
     }
 

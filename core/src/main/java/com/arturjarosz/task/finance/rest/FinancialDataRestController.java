@@ -1,6 +1,9 @@
 package com.arturjarosz.task.finance.rest;
 
+import com.arturjarosz.task.dto.FinancialReportDto;
+import com.arturjarosz.task.dto.PeriodTypeDto;
 import com.arturjarosz.task.dto.TotalProjectFinancialSummaryDto;
+import com.arturjarosz.task.finance.application.FinancialReportApplicationService;
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.rest.FinancialDataApi;
 import lombok.NonNull;
@@ -10,16 +13,29 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 @RequiredArgsConstructor
 @RestController
 public class FinancialDataRestController implements FinancialDataApi {
 
     @NonNull
     private final ProjectFinancialDataService projectFinancialDataService;
+    @NonNull
+    private final FinancialReportApplicationService financialReportApplicationService;
 
+    @Override
     public ResponseEntity<TotalProjectFinancialSummaryDto> getTotalProjectFinancialSummary(
             @PathVariable("projectId") Long projectId) {
         return new ResponseEntity<>(this.projectFinancialDataService.getTotalProjectFinancialData(projectId),
+                HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<FinancialReportDto> getFinancialReport(LocalDate startDate, LocalDate endDate,
+            PeriodTypeDto periodType) {
+        return new ResponseEntity<>(
+                this.financialReportApplicationService.getFinancialReport(startDate, endDate, periodType),
                 HttpStatus.OK);
     }
 }

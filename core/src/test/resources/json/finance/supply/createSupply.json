@@ -1,7 +1,8 @@
 {
-  "name": "test supply",
-  "value": 200.00,
-  "note": "test note",
-  "hasInvoice": true,
-  "payable": true
+    "name": "test supply",
+    "value": 200.00,
+    "note": "test note",
+    "hasInvoice": true,
+    "payable": true,
+    "paid": true
 }

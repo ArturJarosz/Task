@@ -70,6 +70,11 @@ public class FinancialData extends AbstractAggregateRoot {
         this.paymentDate = paymentDate;
     }
 
+    public void unpay() {
+        this.paid = false;
+        this.paymentDate = null;
+    }
+
     public Money getValue() {
         return this.value;
     }

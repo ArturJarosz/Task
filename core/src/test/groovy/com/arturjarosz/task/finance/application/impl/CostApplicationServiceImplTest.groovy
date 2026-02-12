@@ -252,7 +252,7 @@ class CostApplicationServiceImplTest extends Specification {
     }
 
     private CostDto prepareUpdateCostDto() {
-        def updateCostDto = new CostDto(note: NEW_NOTE, value: NEW_VALUE, date: NEW_DATE, name: NEW_NAME, category: CostCategoryDto.FUEL)
+        def updateCostDto = new CostDto(note: NEW_NOTE, value: NEW_VALUE, date: NEW_DATE, name: NEW_NAME, category: CostCategoryDto.FUEL, hasInvoice: true, paid: true)
         return updateCostDto
     }
 
