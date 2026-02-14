@@ -15,6 +15,7 @@ import lombok.Getter;
 
 import java.io.Serial;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "contractor_job_sequence", allocationSize = 1)
@@ -48,10 +49,11 @@ public class ContractorJob extends AbstractHistoryAwareEntity implements Partial
     protected ContractorJob() {
     }
 
-    public ContractorJob(String name, Long contractorId, BigDecimal value, boolean hasInvoice, boolean payable) {
+    public ContractorJob(String name, Long contractorId, BigDecimal value, boolean hasInvoice, boolean payable,
+            boolean paid, LocalDate paymentDate) {
         this.name = name;
         this.contractorId = contractorId;
-        this.financialData = new FinancialData(new Money(value), hasInvoice, payable);
+        this.financialData = new FinancialData(new Money(value), hasInvoice, payable, paid, paymentDate);
     }
 
     public void update(ContractorJobDto contractorJobDto) {
@@ -60,6 +62,11 @@ public class ContractorJob extends AbstractHistoryAwareEntity implements Partial
         this.financialData.setValue(new Money(contractorJobDto.getValue()));
         this.financialData.setHasInvoice(contractorJobDto.getHasInvoice());
         this.financialData.setPayable(contractorJobDto.getPayable());
+        if (contractorJobDto.getPaid()) {
+            this.financialData.pay(contractorJobDto.getPaymentDate());
+        } else {
+            this.financialData.unpay();
+        }
     }
 
     public BigDecimal getValue() {

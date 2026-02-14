@@ -3012,6 +3012,9 @@ components:
           type: boolean
         paid:
           type: boolean
+        paymentDate:
+          type: string
+          format: date
         projectId:
           type: integer
           format: int64
@@ -3121,6 +3124,9 @@ components:
           type: boolean
         paid:
           type: boolean
+        paymentDate:
+          type: string
+          format: date
         projectId:
           type: integer
           format: int64

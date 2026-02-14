@@ -187,7 +187,10 @@ class InstallmentValidatorTest extends Specification {
 
     def "validateInstallmentExistence should not throw any exception if installment is not null"() {
         given:
-            def installment = new Installment(InstallmentDto.builder().hasInvoice(false).build(), STAGE_ID)
+            def installment = new Installment(InstallmentDto.builder()
+                    .hasInvoice(false)
+                    .paid(false)
+                    .build(), STAGE_ID)
         when:
             installmentValidator.validateInstallmentExistence(installment, INSTALLMENT_ID, PROJECT_ID)
         then:
@@ -219,7 +222,7 @@ class InstallmentValidatorTest extends Specification {
 
     def "validateInstallmentNotPaid should throw an exception if installment is paid"() {
         given:
-            def installment = new Installment(new InstallmentDto().hasInvoice(true), STAGE_ID)
+            def installment = new Installment(new InstallmentDto().hasInvoice(true).paid(true), STAGE_ID)
             installment.payInstallment(PAST_PAY_DATE)
         when:
             installmentValidator.validateInstallmentNotPaid(installment)
@@ -230,7 +233,7 @@ class InstallmentValidatorTest extends Specification {
 
     def "validateInstallmentNotPaid should not throw any exception if installment is not paid"() {
         given:
-            def installment = new Installment(new InstallmentDto().hasInvoice(true), STAGE_ID)
+            def installment = new Installment(new InstallmentDto().hasInvoice(true).paid(false), STAGE_ID)
         when:
             installmentValidator.validateInstallmentNotPaid(installment)
         then:

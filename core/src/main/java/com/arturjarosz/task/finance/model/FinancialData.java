@@ -8,6 +8,8 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.time.LocalDate;
@@ -24,19 +26,24 @@ public class FinancialData extends AbstractAggregateRoot {
     @Serial
     private static final long serialVersionUID = -7882045222253776404L;
 
+    @Setter
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "VALUE", precision = 5, scale = 2))
     private Money value;
 
+    @Setter
     @Column(name = "HAS_INVOICE", nullable = false)
     private boolean hasInvoice;
 
+    @Setter
     @Column(name = "PAYABLE", nullable = false)
     private boolean payable;
 
     @Column(name = "PAID")
     private boolean paid;
 
+    @Getter
+    @Setter
     @Column(name = "PAYMENT_DATE")
     private LocalDate paymentDate;
 
@@ -79,32 +86,12 @@ public class FinancialData extends AbstractAggregateRoot {
         return this.value;
     }
 
-    public void setValue(Money value) {
-        this.value = value;
-    }
-
     public boolean isHasInvoice() {
         return this.hasInvoice;
     }
 
-    public void setHasInvoice(boolean hasInvoice) {
-        this.hasInvoice = hasInvoice;
-    }
-
     public boolean isPayable() {
         return this.payable;
-    }
-
-    public void setPayable(boolean payable) {
-        this.payable = payable;
-    }
-
-    public LocalDate getPaymentDate() {
-        return this.paymentDate;
-    }
-
-    public void setPaymentDate(LocalDate paymentDate) {
-        this.paymentDate = paymentDate;
     }
 
     public boolean isPaid() {

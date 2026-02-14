@@ -1,5 +1,6 @@
 package com.arturjarosz.task.finance.model;
 
+import com.arturjarosz.task.dto.CostDto;
 import com.arturjarosz.task.sharedkernel.model.AbstractHistoryAwareEntity;
 import com.arturjarosz.task.sharedkernel.model.Money;
 import jakarta.persistence.*;
@@ -66,12 +67,18 @@ public class Cost extends AbstractHistoryAwareEntity implements PartialFinancial
         this.financialData.setValue(new Money(value));
     }
 
-    public void updateCost(String name, BigDecimal value, LocalDate date, String note, CostCategory category) {
-        this.name = name;
-        this.financialData.setValue(new Money(value));
-        this.date = date;
-        this.note = note;
-        this.category = category;
+    public void updateCost(CostDto costDto) {
+        this.name = costDto.getName();
+        this.date = costDto.getDate();
+        this.note = costDto.getNote();
+        this.category = CostCategory.valueOf(costDto.getCategory().name());
+        this.financialData.setValue(new Money(costDto.getValue()));
+        this.financialData.setHasInvoice(costDto.getHasInvoice());
+        if (costDto.getPaid()) {
+            this.financialData.pay(costDto.getPaymentDate());
+        } else {
+            this.financialData.unpay();
+        }
     }
 
     public Long getProjectFinancialDataId() {

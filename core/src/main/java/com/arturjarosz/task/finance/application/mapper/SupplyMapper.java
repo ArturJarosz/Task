@@ -10,7 +10,7 @@ public interface SupplyMapper {
 
     default Supply mapFromDto(SupplyDto supplyDto) {
         return new Supply(supplyDto.getName(), supplyDto.getSupplierId(), supplyDto.getValue(),
-                supplyDto.getHasInvoice(), supplyDto.getPayable());
+                supplyDto.getHasInvoice(), supplyDto.getPayable(), supplyDto.getPaid(), supplyDto.getPaymentDate());
     }
 
     @Mapping(source = "projectId", target = "projectId")

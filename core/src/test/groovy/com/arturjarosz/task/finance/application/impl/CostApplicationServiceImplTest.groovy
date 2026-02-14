@@ -48,10 +48,8 @@ class CostApplicationServiceImplTest extends Specification {
 
     def setup() {
         projectValidator.validateProjectExistence(NOT_EXISTING_PROJECT_ID) >> { throw new IllegalArgumentException() }
-        projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITHOUT_COST_ID) >>
-                prepareProjectFinancialDataWithoutCost(PROJECT_WITHOUT_COST_ID)
-        projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITH_COST_ID) >>
-                prepareProjectFinancialDataWithCost(PROJECT_WITH_COST_ID)
+        projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITHOUT_COST_ID) >> prepareProjectFinancialDataWithoutCost(PROJECT_WITHOUT_COST_ID)
+        projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_WITH_COST_ID) >> prepareProjectFinancialDataWithCost(PROJECT_WITH_COST_ID)
         costValidator.validateCostExistence(NOT_EXISTING_COST_ID) >> { throw new IllegalArgumentException() }
         financialDataQueryService.getCostById(COST_ID) >> this.prepareCostDto()
         financialDataQueryService.getCostsByProjectId(PROJECT_WITH_COST_ID) >> { this.prepareCostDto() as List }
@@ -95,9 +93,7 @@ class CostApplicationServiceImplTest extends Specification {
         when:
             this.projectCostApplicationService.createCost(PROJECT_WITHOUT_COST_ID, costDto)
         then:
-            1 * this.projectFinancialDataRepository.save({
-                ProjectFinancialData financialData ->
-                    financialData.costs.size() == 1
+            1 * this.projectFinancialDataRepository.save({ ProjectFinancialData financialData -> financialData.costs.size() == 1
             }) >> this.prepareProjectFinancialDataWithCost(null)
     }
 
@@ -168,9 +164,7 @@ class CostApplicationServiceImplTest extends Specification {
         when:
             this.projectCostApplicationService.deleteCost(PROJECT_WITH_COST_ID, COST_ID)
         then:
-            1 * this.projectFinancialDataRepository.save({
-                ProjectFinancialData projectFinancialData ->
-                    projectFinancialData.costs.size() == 0
+            1 * this.projectFinancialDataRepository.save({ ProjectFinancialData projectFinancialData -> projectFinancialData.costs.size() == 0
             })
     }
 
@@ -207,6 +201,7 @@ class CostApplicationServiceImplTest extends Specification {
     def "update should not update cost if costDto validation fails"() {
         given:
             def costDto = this.prepareUpdateCostDto()
+            costDto.setId(COST_ID)
             mockValidatingUpdateCostThrowsException()
         when:
             this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto)
@@ -217,22 +212,28 @@ class CostApplicationServiceImplTest extends Specification {
     def "update cost should update cost data"() {
         given:
             def costDto = this.prepareUpdateCostDto()
+            costDto.setId(COST_ID)
+
         when:
             this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto)
         then:
-            1 * this.projectFinancialDataRepository.save({
-                ProjectFinancialData financialData ->
-                    Cost cost = financialData.costs.iterator().next()
-                    cost.value == NEW_VALUE
-                    cost.name == NEW_NAME
-                    cost.note == NEW_NOTE
-                    cost.date == NEW_DATE
+            1 * this.projectFinancialDataRepository.save({ ProjectFinancialData financialData ->
+                Cost cost = financialData.costs.iterator().next()
+                cost.value == NEW_VALUE
+                cost.name == NEW_NAME
+                cost.note == NEW_NOTE
+                cost.date == NEW_DATE
             })
+
     }
 
     def "update cost should return updated cost"() {
         given:
+            def paymentDate = LocalDate.of(2020, 1, 1)
             def costDto = this.prepareUpdateCostDto()
+            costDto.setId(COST_ID)
+            costDto.setPaid(givenIsPaid)
+            costDto.setPaymentDate(paymentDate)
         when:
             def updatedCostDt = this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto)
         then:
@@ -240,11 +241,18 @@ class CostApplicationServiceImplTest extends Specification {
             updatedCostDt.name == NEW_NAME
             updatedCostDt.note == NEW_NOTE
             updatedCostDt.date == NEW_DATE
+            updatedCostDt.paid == expectedIsPaid
+            updatedCostDt.paymentDate == expectedPaymentDate
+        where:
+            givenIsPaid || expectedIsPaid | expectedPaymentDate
+            true         | true           | LocalDate.of(2020, 1, 1)
+            false        | false          | null
     }
 
     def "update cost should call onUpdate on projectFinanceAwareObjectService"() {
         given:
             CostDto costDto = this.prepareUpdateCostDto()
+            costDto.setId(COST_ID)
         when:
             this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto)
         then:
@@ -252,7 +260,7 @@ class CostApplicationServiceImplTest extends Specification {
     }
 
     private CostDto prepareUpdateCostDto() {
-        def updateCostDto = new CostDto(note: NEW_NOTE, value: NEW_VALUE, date: NEW_DATE, name: NEW_NAME, category: CostCategoryDto.FUEL, hasInvoice: true, paid: true)
+        def updateCostDto = new CostDto(note: NEW_NOTE, value: NEW_VALUE, date: NEW_DATE, name: NEW_NAME, category: CostCategoryDto.FUEL, hasInvoice: true, paid: false)
         return updateCostDto
     }
 
