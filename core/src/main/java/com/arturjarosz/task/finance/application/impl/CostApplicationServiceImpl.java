@@ -9,7 +9,6 @@ import com.arturjarosz.task.finance.application.mapper.CostProjectDataMapper;
 import com.arturjarosz.task.finance.application.validator.CostValidator;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.model.Cost;
-import com.arturjarosz.task.finance.model.CostCategory;
 import com.arturjarosz.task.finance.model.PartialFinancialDataType;
 import com.arturjarosz.task.finance.model.ProjectFinancialData;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
@@ -61,9 +60,7 @@ public class CostApplicationServiceImpl implements CostApplicationService {
         this.costValidator.validateUpdateCostDto(costDto);
 
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
-        var cost = projectFinancialData.updateCost(costId, costDto.getName(), costDto.getDate(), costDto.getValue(),
-                CostCategory.valueOf(costDto.getCategory().name()), costDto.getNote(), costDto.getHasInvoice(),
-                costDto.getPaid());
+        var cost = projectFinancialData.updateCost(costDto);
 
         this.projectFinancialDataRepository.save(projectFinancialData);
         this.projectFinanceAwareObjectService.onUpdate(projectId);

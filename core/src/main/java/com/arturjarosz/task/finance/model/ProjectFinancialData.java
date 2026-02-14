@@ -2,6 +2,7 @@ package com.arturjarosz.task.finance.model;
 
 
 import com.arturjarosz.task.dto.ContractorJobDto;
+import com.arturjarosz.task.dto.CostDto;
 import com.arturjarosz.task.dto.InstallmentDto;
 import com.arturjarosz.task.dto.SupplyDto;
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto;
@@ -13,7 +14,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serial;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -82,14 +82,13 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
         this.costs.removeIf(cost -> cost.getId().equals(costId));
     }
 
-    public Cost updateCost(Long costId, String name, LocalDate date, BigDecimal value, CostCategory category,
-            String note, Boolean hasInvoice, Boolean paid) {
+    public Cost updateCost(CostDto costDto) {
         Cost cost = this.getCosts()
                 .stream()
-                .filter(costOnProject -> costOnProject.getId().equals(costId))
+                .filter(costOnProject -> costOnProject.getId().equals(costDto.getId()))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
-        cost.updateCost(name, value, date, note, category);
+        cost.updateCost(costDto);
         return cost;
     }
 

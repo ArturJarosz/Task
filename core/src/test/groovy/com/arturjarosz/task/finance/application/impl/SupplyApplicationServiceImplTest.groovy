@@ -246,7 +246,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     private SupplyDto prepareCreateSupplyDto(Long supplierId) {
         def supplyDto = new SupplyDto(hasInvoice: HAS_INVOICE, payable: PAYABLE, supplierId: supplierId,
-                value: VALUE)
+                value: VALUE, paid: false)
         return supplyDto
     }
 
@@ -275,7 +275,7 @@ class SupplyApplicationServiceImplTest extends Specification {
 
     private ProjectFinancialData prepareProjectFinancialDataWithSupply() {
         def projectFinancialData = new ProjectFinancialData(PROJECT_WITH_SUPPLY_ID)
-        def supply = new Supply(NAME, SUPPLIER_ID, VALUE, HAS_INVOICE, PAYABLE)
+        def supply = new Supply(NAME, SUPPLIER_ID, VALUE, HAS_INVOICE, PAYABLE, false, null)
         TestUtils.setFieldForObject(supply, "id", SUPPLY_ID)
         projectFinancialData.addSupply(supply)
         return projectFinancialData

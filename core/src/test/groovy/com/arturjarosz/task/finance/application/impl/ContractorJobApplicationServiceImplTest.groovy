@@ -17,6 +17,8 @@ import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
 import spock.lang.Specification
 
+import java.time.LocalDate
+
 class ContractorJobApplicationServiceImplTest extends Specification {
     static final EXISTING_CONTRACTOR_JOB_ID = 1L
     static final NOT_EXISTING_CONTRACTOR_JOB_ID = 2L
@@ -195,7 +197,10 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     def "updateContractorJob should update contractorJob"() {
         given:
+            def paymentDate = LocalDate.of(2020, 1, 1)
             def contractorJobDto = this.prepareContractorJobDtoForUpdate()
+            contractorJobDto.setPaid(givenIsPaid)
+            contractorJobDto.setPaymentDate(paymentDate)
         when:
             def updatedContractorJob =
                     this.subject.updateContractorJob(PROJECT_WITH_CONTRACTOR_JOB_ID,
@@ -204,6 +209,12 @@ class ContractorJobApplicationServiceImplTest extends Specification {
             updatedContractorJob.name == NEW_NAME
             updatedContractorJob.value == NEW_VALUE
             updatedContractorJob.note == NEW_NOTE
+            updatedContractorJob.getPaid() == expectedIsPaid
+            updatedContractorJob.getPaymentDate() == expectedPaymentDate
+        where:
+            givenIsPaid || expectedIsPaid | expectedPaymentDate
+            true        || true           | LocalDate.of(2020, 1, 1)
+            false       || false          | null
     }
 
     def "updateContractorJob should save updated contractorJob"() {
@@ -277,13 +288,13 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     private ContractorJobDto prepareContractorJobDto(Long contractorId) {
         def contractorJobDto = new ContractorJobDto(name: NAME, note: NOTE, value: VALUE,
-                contractorId: contractorId, id: EXISTING_CONTRACTOR_JOB_ID, hasInvoice: true, payable: true)
+                contractorId: contractorId, id: EXISTING_CONTRACTOR_JOB_ID, hasInvoice: true, payable: true, paid: false)
         return contractorJobDto
     }
 
     private ContractorJobDto prepareContractorJobDtoForUpdate() {
         def contractorJobDto = new ContractorJobDto(name: NEW_NAME, note: NEW_NOTE, value: NEW_VALUE,
-                contractorId: CONTRACTOR_ID, id: EXISTING_CONTRACTOR_JOB_ID, hasInvoice: true, payable: true)
+                contractorId: CONTRACTOR_ID, id: EXISTING_CONTRACTOR_JOB_ID, hasInvoice: true, payable: true, paid: false)
         return contractorJobDto
     }
 
@@ -305,7 +316,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
 
     private ProjectFinancialData prepareProjectFinancialDataWithContactorJob() {
         def projectFinancialData = new ProjectFinancialData(PROJECT_WITH_CONTRACTOR_JOB_ID)
-        def contractorJob = new ContractorJob(NAME, CONTRACTOR_ID, VALUE, true, true)
+        def contractorJob = new ContractorJob(NAME, CONTRACTOR_ID, VALUE, true, true, false, null)
         TestUtils.setFieldForObject(contractorJob, "id", EXISTING_CONTRACTOR_JOB_ID)
         projectFinancialData.addContractorJob(contractorJob)
         return projectFinancialData
@@ -320,7 +331,7 @@ class ContractorJobApplicationServiceImplTest extends Specification {
     }
 
     private void mockGetProjectContractorJobs() {
-        var contractorJob = new ContractorJob(NAME, CONTRACTOR_ID, VALUE, true, true)
+        var contractorJob = new ContractorJob(NAME, CONTRACTOR_ID, VALUE, true, true, false, null)
         TestUtils.setFieldForObject(contractorJob, "id", EXISTING_CONTRACTOR_JOB_ID)
         this.financialDataQueryService.getContractorJobsForProject(PROJECT_WITH_CONTRACTOR_JOB_ID) >> [contractorJob]
         var financialValueDto = new FinancialValueDto()

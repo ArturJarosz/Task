@@ -1,7 +1,8 @@
 {
-  "name": "new test contractorJob",
-  "value": 1400.0,
-  "payable": true,
-  "hasInvoice": "true",
-  "note": "new note"
+    "name": "new test contractorJob",
+    "value": 1400.0,
+    "payable": true,
+    "hasInvoice": "true",
+    "note": "new note",
+    "paid": false
 }

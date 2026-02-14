@@ -46,7 +46,7 @@ public class Installment extends AbstractHistoryAwareEntity implements PartialFi
 
     public Installment(InstallmentDto installmentDto, Long stageId) {
         this.financialData = new FinancialData(new Money(installmentDto.getValue()), installmentDto.getHasInvoice(),
-                true);
+                true, installmentDto.getPaid(), installmentDto.getPaymentDate());
         this.stageId = stageId;
     }
 
@@ -58,8 +58,11 @@ public class Installment extends AbstractHistoryAwareEntity implements PartialFi
         this.financialData = new FinancialData(new Money(installmentDto.getValue()), installmentDto.getHasInvoice(),
                 true, this.financialData.isPaid());
         this.note = installmentDto.getNote();
+        this.financialData.setHasInvoice(installmentDto.getHasInvoice());
         if (this.financialData.isPaid()) {
             this.financialData.setPaymentDate(installmentDto.getPaymentDate());
+        } else {
+            this.financialData.unpay();
         }
     }
 

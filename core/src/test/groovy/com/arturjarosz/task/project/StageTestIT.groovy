@@ -107,7 +107,7 @@ class StageTestIT extends BaseTestIT {
         given:
             def createdProject = this.createProject()
             def stageWithInstallment = properStageDto
-            stageWithInstallment.setInstallment(new InstallmentDto(hasInvoice: true, value: BigDecimal.valueOf(500.00D)))
+            stageWithInstallment.setInstallment(new InstallmentDto(hasInvoice: true, paid: false, value: BigDecimal.valueOf(500.00D)))
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
         when:
             def stageResponse = this.mockMvc.perform(

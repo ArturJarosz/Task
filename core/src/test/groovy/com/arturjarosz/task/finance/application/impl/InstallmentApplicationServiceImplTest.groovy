@@ -111,7 +111,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def "createInstallment should add installment to projectFinancialData and return created installment"() {
         given:
-            def installmentDto = new InstallmentDto(value: VALUE, hasInvoice: true)
+            def installmentDto = new InstallmentDto(value: VALUE, hasInvoice: true, paid: false)
         when:
             def createdInstallment =
                     this.installmentApplicationService.createInstallment(PROJECT_ID, STAGE_WITHOUT_INSTALLMENT_ID,
