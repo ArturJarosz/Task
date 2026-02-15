@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: "create-user-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-user-table.yml"
+      relativeToChangelogFile: true

@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-user-table"
+      changes:
+        - createTable:
+            tableName: "LOCAL_USER"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "USERNAME"
+                  type: "VARCHAR2(100 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "EMAIL"
+                  type: "VARCHAR2(255 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "AUTH_ID"
+                  type: "VARCHAR2(255 ${char.unit})"
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "TIMESTAMP"
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "TIMESTAMP"
+        - addPrimaryKey:
+            tableName: "LOCAL_USER"
+            columnNames: "ID"
+            constraintName: "PK_LOCAL_USER"
