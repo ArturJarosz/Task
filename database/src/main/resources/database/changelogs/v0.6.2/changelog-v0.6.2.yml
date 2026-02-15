@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: "user/user-tables.yml"
+      relativeToChangelogFile: true
+  - changeSet:
+      author: "liquibase"
+      id: "tag-version_0.6.2"
+      changes:
+        - tagDatabase:
+            tag: "v0.6.2"
