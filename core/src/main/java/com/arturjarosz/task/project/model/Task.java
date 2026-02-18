@@ -50,14 +50,18 @@ public class Task extends AbstractHistoryAwareEntity implements WorkflowAware<Ta
     @Column(name = "WORKFLOW_NAME", nullable = false)
     private String workflowName;
 
+    @Column(name = "ARCHITECT_ID", nullable = false)
+    private Long architectId;
+
     public Task() {
         // needed by JPA
     }
 
-    public Task(String name, TaskType taskType, TaskWorkflow taskWorkflow) {
+    public Task(String name, TaskType taskType, TaskWorkflow taskWorkflow, Long architectId) {
         this.name = name;
         this.type = taskType;
         this.workflowName = taskWorkflow.getName();
+        this.architectId = architectId;
     }
 
     public String getName() {
@@ -78,6 +82,7 @@ public class Task extends AbstractHistoryAwareEntity implements WorkflowAware<Ta
         this.startDate = taskInnerDto.getStartDate();
         this.endDate = taskInnerDto.getEndDate();
         this.note = taskInnerDto.getNote();
+        this.architectId = taskInnerDto.getArchitectId();
     }
 
     @Override
@@ -101,5 +106,9 @@ public class Task extends AbstractHistoryAwareEntity implements WorkflowAware<Ta
 
     public String getNote() {
         return this.note;
+    }
+
+    public Long getArchitectId() {
+        return this.architectId;
     }
 }

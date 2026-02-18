@@ -73,7 +73,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in status OFFER allows creating project work objects"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         when:
             def stageResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
@@ -86,9 +88,11 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in status OFFER does not allow for working on the project"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def createdStageDto = this.createStage(projectDto.id)
-            def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id)
+            def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id, architectDto.id)
         when:
             def updateTaskResponse =
                     this.updateTaskStatus(projectDto.id, createdStageDto.id, createdTaskDto.id, TaskStatusDto.IN_PROGRESS)
@@ -101,15 +105,16 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Accepting offer changes contract status to OFFER"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def updateStatusDto = new ContractDto(status: ContractStatusDto.ACCEPTED)
             def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateStatusDto)
         when:
             def updateContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
                     .post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
-                    .content(requestBody)
-            ).andReturn().response
+                    .content(requestBody)).andReturn().response
         then:
             updateContractResponse.status == HttpStatus.OK.value()
             def contractDto = MAPPER.readValue(updateContractResponse.contentAsString, ContractDto)
@@ -122,7 +127,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in ACCEPTED status allows creating project work objects"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         when:
@@ -136,10 +143,12 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in ACCEPTED status allows working on project"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def createdStageDto = this.createStage(projectDto.id)
-            def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id)
+            def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id, architectDto.id)
         when:
             def updateTaskResponse =
                     this.updateTaskStatus(projectDto.id, createdStageDto.id, createdTaskDto.id, TaskStatusDto.IN_PROGRESS)
@@ -152,15 +161,16 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Rejecting offer changes status of contract to REJECTED"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def contractDto = new ContractDto(status: ContractStatusDto.REJECTED)
             def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(contractDto)
         when:
             def updateContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
                     .post(this.createContractUri(projectDto.contract.id) + "/status")
                     .header("Content-Type", "application/json")
-                    .content(requestBody)
-            ).andReturn().response
+                    .content(requestBody)).andReturn().response
         then:
             updateContractResponse.status == HttpStatus.OK.value()
             def updatedContractDto = MAPPER.readValue(updateContractResponse.contentAsString, ContractDto)
@@ -173,7 +183,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in REJECTED status does not allow for creating new work objects"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.rejectContract(projectDto.contract.id)
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         when:
@@ -189,9 +201,11 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in REJECTED status does not allow for working on the project"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def createdStageDto = this.createStage(projectDto.id)
-            def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id)
+            def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id, architectDto.id)
             this.rejectContract(projectDto.contract.id)
         when:
             def updateTaskResponse =
@@ -205,7 +219,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in REJECTED status cannot be signed"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.rejectContract(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
         when:
@@ -221,7 +237,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Making new offer on contract in REJECTED status changes this contract status to OFFER and updates offer value"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.rejectContract(projectDto.contract.id)
             this.offerContractDto.setOfferValue(NEW_OFFER)
             def offerRequestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.offerContractDto)
@@ -241,7 +259,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Making new offer from contract in status OFFER is not possible and returns error message"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def offerRequestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.offerContractDto)
         when:
             def newOfferContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
@@ -257,7 +277,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Making new offer from contract in status ACCEPTED is not possible and returns error message"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def offerRequestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.offerContractDto)
         when:
@@ -274,7 +296,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Making new offer from contract in status SIGNED is not possible and returns error message"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def offerRequestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.offerContractDto)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
@@ -293,7 +317,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Signing contract in status OFFER is not possible and returns error message"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
         when:
             def signContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/status")
@@ -308,7 +334,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Signing contract in status ACCEPTED changes contract status to SIGNED"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
         when:
@@ -327,7 +355,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in SIGNED status allows for creating work objects"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
@@ -343,12 +373,14 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in SIGNED status allows for working on project"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
             def createdStageDto = this.createStage(projectDto.id)
-            def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id)
+            def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id, architectDto.id)
         when:
             def updateTaskResponse =
                     this.updateTaskStatus(projectDto.id, createdStageDto.id, createdTaskDto.id, TaskStatusDto.IN_PROGRESS)
@@ -361,7 +393,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Terminating singed contract changes this contract status to TERMINATED"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
@@ -383,7 +417,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in status TERMINATED does not allow for creating working objects"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
@@ -404,14 +440,16 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in status TERMINATED does not allow for working on project"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
             def terminateContractDto = new ContractDto(endDate: END_DATE, status: ContractStatusDto.TERMINATED)
             def terminateRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(terminateContractDto)
             def createdStageDto = this.createStage(projectDto.id)
-            def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id)
+            def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id, architectDto.id)
             this.terminateContract(projectDto.contract.id, terminateRequest)
         when:
             def updateTaskResponse =
@@ -425,7 +463,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Resuming terminated contract changes its status to SIGNED"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
@@ -448,7 +488,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Completing signed contract changes its status to COMPLETED"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
@@ -470,7 +512,9 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in status COMPLETED does not allow for creating work objects on project"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
@@ -491,14 +535,16 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Transactional
     def "Contract in status COMPLETED does not allow for working on project"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
             def completeContractDto = new ContractDto(endDate: END_DATE)
             def completeRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(completeContractDto)
             def createdStageDto = this.createStage(projectDto.id)
-            def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id)
+            def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id, architectDto.id)
             this.completeContract(projectDto.contract.id, completeRequest)
         when:
             def updateTaskResponse =
@@ -511,10 +557,8 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
 
     // helper methods
 
-    private ProjectDto createProject() {
-        def architectDto =
-                TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
-        properProjectDto.architectId = architectDto.id
+    private ProjectDto createProject(long architectId) {
+        properProjectDto.architectId = architectId
         def clientDto = TestsHelper.createClient(this.privateClientDto, this.createBasicClientUri(), this.mockMvc)
         properProjectDto.clientId = clientDto.id
         return TestsHelper.createProject(this.properProjectDto, this.createBasicProjectUri(), this.mockMvc)
@@ -528,7 +572,8 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
         return MAPPER.readValue(stageResponse.contentAsString, StageDto)
     }
 
-    private TaskDto createTask(long projectId, long stageId) {
+    private TaskDto createTask(long projectId, long stageId, long architectId) {
+        taskDto.architectId = architectId
         def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(taskDto)
         def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createStageUri(projectId, stageId) + "/tasks"))
                 .header("Content-Type", "application/json")
@@ -551,16 +596,14 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
         def acceptContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
                 .post(this.createContractUri(contractId) + "/status")
                 .header("Content-Type", "application/json")
-                .content(requestBody)
-        ).andReturn().response
+                .content(requestBody)).andReturn().response
         return MAPPER.readValue(acceptContractResponse.contentAsString, ContractDto)
     }
 
     private ContractDto signContract(long contractId, String signContractDataText) {
         def signResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(contractId) + "/status")
                 .header("Content-Type", "application/json")
-                .content(signContractDataText)
-        ).andReturn().response
+                .content(signContractDataText)).andReturn().response
         return MAPPER.readValue(signResponse.contentAsString, ContractDto)
     }
 
@@ -570,16 +613,14 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
         def rejectedContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
                 .post(this.createContractUri(contractId) + "/status")
                 .header("Content-Type", "application/json")
-                .content(requestBody)
-        ).andReturn().response
+                .content(requestBody)).andReturn().response
         return MAPPER.readValue(rejectedContractResponse.contentAsString, ContractDto)
     }
 
     private ContractDto terminateContract(long contractId, String requestText) {
         def terminateContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(contractId) + "/status")
                 .header("Content-Type", "application/json")
-                .content(requestText)
-        ).andReturn().response
+                .content(requestText)).andReturn().response
         return MAPPER.readValue(terminateContractResponse.contentAsString, ContractDto)
     }
 
@@ -589,8 +630,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
         def completeContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(contractId) + "/status")
                 .header("Content-Type", "application/json")
                 .content(requestText)
-                .content(requestBody)
-        ).andReturn().response
+                .content(requestBody)).andReturn().response
         return MAPPER.readValue(completeContractResponse.contentAsString, ContractDto)
     }
 

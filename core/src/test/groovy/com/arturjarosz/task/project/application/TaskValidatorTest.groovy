@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application
 
+import com.arturjarosz.task.architect.application.ArchitectValidator
 import com.arturjarosz.task.dto.TaskDto
 import com.arturjarosz.task.dto.TaskTypeDto
 import com.arturjarosz.task.project.model.Stage
@@ -17,8 +18,9 @@ class TaskValidatorTest extends Specification {
     static final TaskTypeDto TASK_TYPE = TaskTypeDto.RENDER
 
     def projectQueryService = Mock(ProjectQueryServiceImpl)
+    def architectValidator = Mock(ArchitectValidator)
 
-    def taskValidator = new TaskValidator(projectQueryService)
+    def taskValidator = new TaskValidator(projectQueryService, architectValidator)
 
 
     def "when taskDto in null, validateCreateTaskDto should throw an exception with specific error message"() {
@@ -59,6 +61,16 @@ class TaskValidatorTest extends Specification {
         then:
             Exception exception = thrown()
             exception.message == "isNull.task.type"
+    }
+
+    def "when taskDto architectId is null, validateCreateTaskDto should throw an exception with specific error message"() {
+        given:
+            def taskDto = new TaskDto(name: NAME, type: TASK_TYPE, architectId: null)
+        when:
+            this.taskValidator.validateCreateTaskDto(taskDto)
+        then:
+            Exception exception = thrown()
+            exception.message == "isNull.task.architect"
     }
 
     def "validateExistenceOfTaskInStage should throw an exception when task not present on stage"() {

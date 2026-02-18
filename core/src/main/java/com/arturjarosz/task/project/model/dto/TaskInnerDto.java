@@ -19,5 +19,6 @@ public class TaskInnerDto implements Serializable {
     LocalDate startDate;
     LocalDate endDate;
     String note;
+    Long architectId;
 
 }
