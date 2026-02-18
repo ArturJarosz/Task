@@ -3458,6 +3458,9 @@ components:
           type: string
         type:
           $ref: "#/components/schemas/TaskType"
+        architectId:
+          type: integer
+          format: int64
         startDate:
           type: string
           format: date

@@ -16,7 +16,7 @@ import java.util.List;
 public interface TaskMapper {
 
     default Task createDtoToTask(TaskDto taskDto, TaskWorkflow taskWorkflow) {
-        return new Task(taskDto.getName(), TaskType.valueOf(taskDto.getType().name()), taskWorkflow);
+        return new Task(taskDto.getName(), TaskType.valueOf(taskDto.getType().name()), taskWorkflow, taskDto.getArchitectId());
     }
 
     @Mapping(source = "name", target = "name")
@@ -24,11 +24,13 @@ public interface TaskMapper {
     @Mapping(source = "startDate", target = "startDate")
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "note", target = "note")
+    @Mapping(source = "architectId", target = "architectId")
     TaskInnerDto updateDtoToInnerDto(TaskDto taskDto);
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "type", target = "type")
     @Mapping(source = "status", target = "status")
+    @Mapping(source = "architectId", target = "architectId")
     @Mapping(source = "startDate", target = "startDate")
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "task", target = "nextStatuses", qualifiedByName = "getNextStatuses")

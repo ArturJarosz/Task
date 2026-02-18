@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-architect-id-to-task-audit"
+      changes:
+        - addColumn:
+            tableName: "TASK_AUD"
+            columns:
+              - column:
+                  name: "ARCHITECT_ID"
+                  type: "${long.type}"

@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-architect-id-to-task"
+      changes:
+        - addColumn:
+            tableName: "TASK"
+            columns:
+              - column:
+                  name: "ARCHITECT_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false

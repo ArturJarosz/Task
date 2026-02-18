@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application;
 
+import com.arturjarosz.task.architect.application.ArchitectValidator;
 import com.arturjarosz.task.dto.TaskDto;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
@@ -15,10 +16,12 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
 public class TaskValidator {
 
     private final ProjectQueryService projectQueryService;
+    private final ArchitectValidator architectValidator;
 
     @Autowired
-    public TaskValidator(ProjectQueryService projectQueryService) {
+    public TaskValidator(ProjectQueryService projectQueryService, ArchitectValidator architectValidator) {
         this.projectQueryService = projectQueryService;
+        this.architectValidator = architectValidator;
     }
 
     /**
@@ -29,6 +32,9 @@ public class TaskValidator {
         this.validateName(taskDto.getName());
         assertNotNull(taskDto.getType(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK, ProjectExceptionCodes.TYPE));
+        assertNotNull(taskDto.getArchitectId(),
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK, ProjectExceptionCodes.ARCHITECT));
+        this.architectValidator.validateArchitectExistence(taskDto.getArchitectId());
     }
 
     public void validateExistenceOfTaskInStage(Long stageId, Long taskId) {

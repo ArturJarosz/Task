@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: "add-architect-to-task.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "add-architect-to-task-audit.yml"
+      relativeToChangelogFile: true

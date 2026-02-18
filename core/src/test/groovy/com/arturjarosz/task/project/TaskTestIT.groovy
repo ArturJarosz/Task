@@ -52,12 +52,10 @@ class TaskTestIT extends BaseTestIT {
         given:
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
         when:
-            def taskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders
-                            .post(URI.create(this.taskUrlBuilder(NOT_EXISTING_PROJECT_ID, NOT_EXISTING_STAGE_ID)))
-                            .header("Content-Type", "application/json")
-                            .content(taskRequestBody)
-            ).andReturn().response
+            def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders
+                    .post(URI.create(this.taskUrlBuilder(NOT_EXISTING_PROJECT_ID, NOT_EXISTING_STAGE_ID)))
+                    .header("Content-Type", "application/json")
+                    .content(taskRequestBody)).andReturn().response
         then: "Returns code 400"
             taskResponse.status == HttpStatus.NOT_FOUND.value()
         and:
@@ -68,14 +66,14 @@ class TaskTestIT extends BaseTestIT {
     @Transactional
     def "Creating task for not existing stage should return code 404 and error message"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
         when:
-            def taskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, NOT_EXISTING_STAGE_ID)))
-                            .header("Content-Type", "application/json")
-                            .content(taskRequestBody)
-            ).andReturn().response
+            def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, NOT_EXISTING_STAGE_ID)))
+                    .header("Content-Type", "application/json")
+                    .content(taskRequestBody)).andReturn().response
         then: "Returns code 400"
             taskResponse.status == HttpStatus.NOT_FOUND.value()
         and:
@@ -86,15 +84,15 @@ class TaskTestIT extends BaseTestIT {
     @Transactional
     def "Creating task with not proper dto should return code 400 and error message"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def stageDto = this.createStage(projectDto.id)
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(notProperTaskDto)
         when:
-            def taskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
-                            .header("Content-Type", "application/json")
-                            .content(taskRequestBody)
-            ).andReturn().response
+            def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
+                    .header("Content-Type", "application/json")
+                    .content(taskRequestBody)).andReturn().response
         then:
             taskResponse.status == HttpStatus.BAD_REQUEST.value()
         and:
@@ -105,15 +103,16 @@ class TaskTestIT extends BaseTestIT {
     @Transactional
     def "Creating task for existing stage and project with proper date should return code 201, created task and location header"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def stageDto = this.createStage(projectDto.id)
+            properTaskDto.architectId = architectDto.id
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
         when:
-            def taskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
-                            .header("Content-Type", "application/json")
-                            .content(taskRequestBody)
-            ).andReturn().response
+            def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
+                    .header("Content-Type", "application/json")
+                    .content(taskRequestBody)).andReturn().response
         then:
             def createdTaskDto = MAPPER.readValue(taskResponse.contentAsString, TaskDto)
             createdTaskDto.id != null
@@ -127,13 +126,12 @@ class TaskTestIT extends BaseTestIT {
     @Transactional
     def "Deleting not existing task should return code 404 and error message"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def stageDto = this.createStage(projectDto.id)
         when:
-            def taskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.delete(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" +
-                            NOT_EXISTING_TASK_ID))
-            ).andReturn().response
+            def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.delete(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + NOT_EXISTING_TASK_ID))).andReturn().response
         then:
             taskResponse.status == HttpStatus.NOT_FOUND.value()
         and:
@@ -144,44 +142,41 @@ class TaskTestIT extends BaseTestIT {
     @Transactional
     def "Deleting existing task should return code 200 and remove it"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def stageDto = this.createStage(projectDto.id)
+            properTaskDto.architectId = architectDto.id
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
-            def taskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
-                            .header("Content-Type", "application/json")
-                            .content(taskRequestBody)
-            ).andReturn().response
+            def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
+                    .header("Content-Type", "application/json")
+                    .content(taskRequestBody)).andReturn().response
             def createdTaskDto = MAPPER.readValue(taskResponse.contentAsString, TaskDto)
         when:
             def removeTaskResponse = this.mockMvc.perform(MockMvcRequestBuilders.delete(URI
-                    .create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + createdTaskDto.id))
-            ).andReturn().response
+                    .create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + createdTaskDto.id))).andReturn().response
         then:
             removeTaskResponse.status == HttpStatus.OK.value()
         and: "try to remove the same task again"
             def getTaskResponse = this.mockMvc.perform(MockMvcRequestBuilders.get(URI
-                    .create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + createdTaskDto.id))
-            ).andReturn().response
+                    .create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + createdTaskDto.id))).andReturn().response
             getTaskResponse.status == HttpStatus.NOT_FOUND.value()
             def message = MAPPER.readValue(getTaskResponse.contentAsString, ErrorMessage)
-            message.getMessage() == "Task with id " +
-                    createdTaskDto.id + " does not exist on stage with id " + stageDto.id + "."
+            message.getMessage() == "Task with id " + createdTaskDto.id + " does not exist on stage with id " + stageDto.id + "."
     }
 
     @Transactional
     def "Updating not existing task should return code 404 and error message"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def stageDto = this.createStage(projectDto.id)
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskUpdateDto)
         when:
-            def taskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.put(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" +
-                            NOT_EXISTING_TASK_ID))
-                            .header("Content-Type", "application/json")
-                            .content(taskRequestBody)
-            ).andReturn().response
+            def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.put(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + NOT_EXISTING_TASK_ID))
+                    .header("Content-Type", "application/json")
+                    .content(taskRequestBody)).andReturn().response
         then:
             taskResponse.status == HttpStatus.NOT_FOUND.value()
         and:
@@ -192,24 +187,22 @@ class TaskTestIT extends BaseTestIT {
     @Transactional
     def "Updating task with not proper dto should return code 400 and error message"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def stageDto = this.createStage(projectDto.id)
+            properTaskDto.architectId = architectDto.id
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
-            def taskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
-                            .header("Content-Type", "application/json")
-                            .content(taskRequestBody)
-            ).andReturn().response
+            def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
+                    .header("Content-Type", "application/json")
+                    .content(taskRequestBody)).andReturn().response
             def createdTaskDto = MAPPER.readValue(taskResponse.contentAsString, TaskDto)
             def taskUpdateRequestBody =
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(notProperTaskUpdateDto)
         when:
-            def taskUpdateResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.put(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" +
-                            createdTaskDto.id))
-                            .header("Content-Type", "application/json")
-                            .content(taskUpdateRequestBody)
-            ).andReturn().response
+            def taskUpdateResponse = this.mockMvc.perform(MockMvcRequestBuilders.put(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + createdTaskDto.id))
+                    .header("Content-Type", "application/json")
+                    .content(taskUpdateRequestBody)).andReturn().response
         then:
             taskUpdateResponse.status == HttpStatus.BAD_REQUEST.value()
         and:
@@ -220,24 +213,23 @@ class TaskTestIT extends BaseTestIT {
     @Transactional
     def "Updating existing task with proper dto should return code 200 and dto of updated task"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def stageDto = this.createStage(projectDto.id)
+            properTaskDto.architectId = architectDto.id
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
-            def taskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
-                            .header("Content-Type", "application/json")
-                            .content(taskRequestBody)
-            ).andReturn().response
+            def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
+                    .header("Content-Type", "application/json")
+                    .content(taskRequestBody)).andReturn().response
             def createdTaskDto = MAPPER.readValue(taskResponse.contentAsString, TaskDto)
+            properTaskUpdateDto.architectId = architectDto.id
             def taskUpdateRequestBody =
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskUpdateDto)
         when:
-            def taskUpdateResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.put(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" +
-                            createdTaskDto.id))
-                            .header("Content-Type", "application/json")
-                            .content(taskUpdateRequestBody)
-            ).andReturn().response
+            def taskUpdateResponse = this.mockMvc.perform(MockMvcRequestBuilders.put(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + createdTaskDto.id))
+                    .header("Content-Type", "application/json")
+                    .content(taskUpdateRequestBody)).andReturn().response
         then:
             taskUpdateResponse.status == HttpStatus.OK.value()
         and:
@@ -252,13 +244,12 @@ class TaskTestIT extends BaseTestIT {
     @Transactional
     def "Getting not existing task should return code 404 and error message"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def stageDto = this.createStage(projectDto.id)
         when:
-            def taskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.get(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" +
-                            NOT_EXISTING_TASK_ID))
-            ).andReturn().response
+            def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.get(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + NOT_EXISTING_TASK_ID))).andReturn().response
         then:
             taskResponse.status == HttpStatus.NOT_FOUND.value()
         and:
@@ -269,19 +260,19 @@ class TaskTestIT extends BaseTestIT {
     @Transactional
     def "Getting existing task should return code 200 and dto of task"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def stageDto = this.createStage(projectDto.id)
+            properTaskDto.architectId = architectDto.id
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
-            def taskResponse = this.mockMvc.perform(
-                    MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
-                            .header("Content-Type", "application/json")
-                            .content(taskRequestBody)
-            ).andReturn().response
+            def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
+                    .header("Content-Type", "application/json")
+                    .content(taskRequestBody)).andReturn().response
             TaskDto createdTaskDto = MAPPER.readValue(taskResponse.contentAsString, TaskDto)
         when:
             def getTaskResponse = this.mockMvc.perform(MockMvcRequestBuilders.get(URI
-                    .create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + createdTaskDto.id))
-            ).andReturn().response
+                    .create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + createdTaskDto.id))).andReturn().response
         then:
             getTaskResponse.status == HttpStatus.OK.value()
         and:
@@ -294,21 +285,21 @@ class TaskTestIT extends BaseTestIT {
     @Transactional
     def "Getting tasks should return code 200 and lis of all tasks"() {
         given:
-            def projectDto = this.createProject()
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
             def stageDto = this.createStage(projectDto.id)
+            properTaskDto.architectId = architectDto.id
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
             this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
                     .header("Content-Type", "application/json")
-                    .content(taskRequestBody)
-            ).andReturn().response
+                    .content(taskRequestBody)).andReturn().response
             this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
                     .header("Content-Type", "application/json")
-                    .content(taskRequestBody)
-            ).andReturn().response
+                    .content(taskRequestBody)).andReturn().response
         when:
             def getTasksResponse = this.mockMvc.perform(MockMvcRequestBuilders.get(URI
-                    .create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
-            ).andReturn().response
+                    .create(this.taskUrlBuilder(projectDto.id, stageDto.id)))).andReturn().response
         then:
             getTasksResponse.status == HttpStatus.OK.value()
         and:
@@ -316,9 +307,8 @@ class TaskTestIT extends BaseTestIT {
             tasks.size() == 2
     }
 
-    private ProjectDto createProject() {
-        def architectDto = TestsHelper.createArchitect(architect, this.createArchitectUri(), this.mockMvc)
-        this.projectDto.architectId = architectDto.id
+    private ProjectDto createProject(long architectId) {
+        this.projectDto.architectId = architectId
         def clientDto = TestsHelper.createClient(this.privateClientDto, this.createClientUri(), this.mockMvc)
         this.projectDto.clientId = clientDto.id
         return TestsHelper.createProject(this.projectDto, this.createBasicProjectUri(), this.mockMvc)
@@ -326,12 +316,10 @@ class TaskTestIT extends BaseTestIT {
 
     private StageDto createStage(long projectId) {
         def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
-        def stageResponse = this.mockMvc.perform(
-                MockMvcRequestBuilders
-                        .post(URI.create(HOST + ":" + port + PROJECTS_URI + "/" + projectId + STAGES_URI))
-                        .header("Content-Type", "application/json")
-                        .content(stageRequestBody)
-        ).andReturn().response
+        def stageResponse = this.mockMvc.perform(MockMvcRequestBuilders
+                .post(URI.create(HOST + ":" + port + PROJECTS_URI + "/" + projectId + STAGES_URI))
+                .header("Content-Type", "application/json")
+                .content(stageRequestBody)).andReturn().response
         return MAPPER.readValue(stageResponse.contentAsString, StageDto)
     }
 
