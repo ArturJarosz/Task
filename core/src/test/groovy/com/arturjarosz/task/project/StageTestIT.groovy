@@ -18,6 +18,7 @@ class StageTestIT extends BaseTestIT {
     static final String STAGES_URI = "/stages"
     static final long NOT_EXISTING_PROJECT_ID = 10000l
     static final long NOT_EXISTING_STAGE_ID = 10000l
+    static final long NOT_EXISTING_ARCHITECT_ID = 10000l
     static final ObjectMapper MAPPER = new ObjectMapper()
 
     final def architect = MAPPER.readValue(new File(getClass().classLoader.getResource('json/architect/architect.json').file),
@@ -64,7 +65,8 @@ class StageTestIT extends BaseTestIT {
     @Transactional
     def "Creating stage with not proper data should return code 400 and error message about problem with data"() {
         given:
-            def createdProject = this.createProject()
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
+            def createdProject = this.createProject(architectDto.id)
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(notProperStageDto)
         when:
             def stageResponse = this.mockMvc.perform(
@@ -80,9 +82,52 @@ class StageTestIT extends BaseTestIT {
     }
 
     @Transactional
+    def "Creating stage without architectId should return code 400 and error message about null architect"() {
+        given:
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
+            def createdProject = this.createProject(architectDto.id)
+            def stageDtoWithoutArchitect = new StageDto(name: "Etap 01", type: StageTypeDto.VISUALISATIONS)
+            def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDtoWithoutArchitect)
+        when:
+            def stageResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
+                            .header("Content-Type", "application/json")
+                            .content(stageRequestBody)
+            ).andReturn().response
+        then: "Returns code 400"
+            stageResponse.status == HttpStatus.BAD_REQUEST.value()
+        and:
+            def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage)
+            message.getMessage() == "Stage architect cannot be null."
+    }
+
+    @Transactional
+    def "Creating stage with not existing architectId should return code 404 and error message about architect not existing"() {
+        given:
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
+            def createdProject = this.createProject(architectDto.id)
+            def stageDtoWithWrongArchitect = new StageDto(name: "Etap 01", type: StageTypeDto.VISUALISATIONS,
+                    architectId: NOT_EXISTING_ARCHITECT_ID)
+            def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDtoWithWrongArchitect)
+        when:
+            def stageResponse = this.mockMvc.perform(
+                    MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
+                            .header("Content-Type", "application/json")
+                            .content(stageRequestBody)
+            ).andReturn().response
+        then: "Returns code 404"
+            stageResponse.status == HttpStatus.NOT_FOUND.value()
+        and:
+            def message = MAPPER.readValue(stageResponse.contentAsString, ErrorMessage)
+            message.getMessage() == "Architect with id 10,000 does not exist."
+    }
+
+    @Transactional
     def "Creating stage for existing project, with proper data should return code 201, created stage dto and location header"() {
         given:
-            def createdProject = this.createProject()
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
+            def createdProject = this.createProject(architectDto.id)
+            properStageDto.architectId = architectDto.id
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
         when:
             def stageResponse = this.mockMvc.perform(
@@ -98,6 +143,7 @@ class StageTestIT extends BaseTestIT {
             stageDto.id != null
             stageDto.status == StageStatusDto.TO_DO
             stageDto.createdDateTime != null
+            stageDto.architectId == architectDto.id
         and:
             !stageDto.nextStatuses.empty
     }
@@ -105,7 +151,9 @@ class StageTestIT extends BaseTestIT {
     @Transactional
     def "Creating stage for existing project with installment data should return code 201, created stage dto with installment and location header"() {
         given:
-            def createdProject = this.createProject()
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
+            def createdProject = this.createProject(architectDto.id)
+            properStageDto.architectId = architectDto.id
             def stageWithInstallment = properStageDto
             stageWithInstallment.setInstallment(new InstallmentDto(hasInvoice: true, paid: false, value: BigDecimal.valueOf(500.00D)))
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
@@ -129,7 +177,8 @@ class StageTestIT extends BaseTestIT {
     @Transactional
     def "Removing not existing stage should return code 404 and error message"() {
         given:
-            def createdProject = this.createProject()
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
+            def createdProject = this.createProject(architectDto.id)
         when:
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
@@ -147,7 +196,9 @@ class StageTestIT extends BaseTestIT {
     @Transactional
     def "Removing existing stage should return code 200 and remove stage"() {
         given:
-            def createdProject = this.createProject()
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
+            def createdProject = this.createProject(architectDto.id)
+            properStageDto.architectId = architectDto.id
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
             def createdStageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
@@ -177,7 +228,8 @@ class StageTestIT extends BaseTestIT {
     @Transactional
     def "Updating not existing stage should return code 404 and error message"() {
         given:
-            def createdProject = this.createProject()
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
+            def createdProject = this.createProject(architectDto.id)
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageUpdateDto)
         when:
             def stageResponse = this.mockMvc.perform(
@@ -197,7 +249,9 @@ class StageTestIT extends BaseTestIT {
     @Transactional
     def "Updating existing stage with not proper date should return 400 and error message"() {
         given:
-            def createdProject = this.createProject()
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
+            def createdProject = this.createProject(architectDto.id)
+            properStageDto.architectId = architectDto.id
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
             def createdStageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
@@ -224,7 +278,9 @@ class StageTestIT extends BaseTestIT {
     @Transactional
     def "Updating existing stage should return code 200 and dto of updated stage"() {
         given:
-            def createdProject = this.createProject()
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
+            def createdProject = this.createProject(architectDto.id)
+            properStageDto.architectId = architectDto.id
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
             def createdStageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
@@ -232,6 +288,7 @@ class StageTestIT extends BaseTestIT {
                             .content(stageRequestBody)
             ).andReturn().response
             def stageDto = MAPPER.readValue(createdStageResponse.contentAsString, StageDto)
+            properStageUpdateDto.architectId = architectDto.id
             def stageUpdateRequestBody =
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageUpdateDto)
         when:
@@ -257,7 +314,8 @@ class StageTestIT extends BaseTestIT {
     @Transactional
     def "Getting not existing stage should code 404 and error message"() {
         given:
-            def createdProject = this.createProject()
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
+            def createdProject = this.createProject(architectDto.id)
         when:
             def stageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders
@@ -274,7 +332,9 @@ class StageTestIT extends BaseTestIT {
     @Transactional
     def "Getting stages should return list of all stages"() {
         given:
-            def createdProject = this.createProject()
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
+            def createdProject = this.createProject(architectDto.id)
+            properStageDto.architectId = architectDto.id
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properStageDto)
             def createdStageResponse = this.mockMvc.perform(
                     MockMvcRequestBuilders.post(URI.create(this.stageUrlBuilder(createdProject.id)))
@@ -295,9 +355,8 @@ class StageTestIT extends BaseTestIT {
 
     }
 
-    private ProjectDto createProject() {
-        def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
-        this.projectDto.architectId = architectDto.id
+    private ProjectDto createProject(long architectId) {
+        this.projectDto.architectId = architectId
         def clientDto = TestsHelper.createClient(this.privateClientDto, this.createClientUri(), this.mockMvc)
         this.projectDto.clientId = clientDto.id
         return TestsHelper.createProject(this.projectDto, this.createBasicProjectUri(), this.mockMvc)

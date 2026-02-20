@@ -3401,6 +3401,9 @@ components:
         deadline:
           type: string
           format: date
+        architectId:
+          type: integer
+          format: int64
         type:
           $ref: "#/components/schemas/StageType"
         note:

@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-architect-id-to-stage-audit"
+      changes:
+        - addColumn:
+            tableName: "STAGE_AUD"
+            columns:
+              - column:
+                  name: "ARCHITECT_ID"
+                  type: "${long.type}"

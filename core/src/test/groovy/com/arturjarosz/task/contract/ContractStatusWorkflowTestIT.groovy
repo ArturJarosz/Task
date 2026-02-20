@@ -76,6 +76,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
+            stageDto.architectId = architectDto.id
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         when:
             def stageResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
@@ -91,7 +92,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
-            def createdStageDto = this.createStage(projectDto.id)
+            def createdStageDto = this.createStage(projectDto.id, architectDto.id)
             def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id, architectDto.id)
         when:
             def updateTaskResponse =
@@ -131,6 +132,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
                     TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
+            stageDto.architectId = architectDto.id
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         when:
             def stageResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
@@ -147,7 +149,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
                     TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
             this.acceptContractOffer(projectDto.contract.id)
-            def createdStageDto = this.createStage(projectDto.id)
+            def createdStageDto = this.createStage(projectDto.id, architectDto.id)
             def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id, architectDto.id)
         when:
             def updateTaskResponse =
@@ -187,6 +189,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
                     TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
             this.rejectContract(projectDto.contract.id)
+            stageDto.architectId = architectDto.id
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         when:
             def stageResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
@@ -204,7 +207,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
-            def createdStageDto = this.createStage(projectDto.id)
+            def createdStageDto = this.createStage(projectDto.id, architectDto.id)
             def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id, architectDto.id)
             this.rejectContract(projectDto.contract.id)
         when:
@@ -361,6 +364,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
+            stageDto.architectId = architectDto.id
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         when:
             def stageResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
@@ -379,7 +383,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             this.acceptContractOffer(projectDto.contract.id)
             def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
             this.signContract(projectDto.contract.id, signContractText)
-            def createdStageDto = this.createStage(projectDto.id)
+            def createdStageDto = this.createStage(projectDto.id, architectDto.id)
             def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id, architectDto.id)
         when:
             def updateTaskResponse =
@@ -426,6 +430,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def terminateContractDto = new ContractDto(endDate: END_DATE, status: ContractStatusDto.TERMINATED)
             def terminateRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(terminateContractDto)
             this.terminateContract(projectDto.contract.id, terminateRequest)
+            stageDto.architectId = architectDto.id
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         when:
             def stageResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
@@ -448,7 +453,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             this.signContract(projectDto.contract.id, signContractText)
             def terminateContractDto = new ContractDto(endDate: END_DATE, status: ContractStatusDto.TERMINATED)
             def terminateRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(terminateContractDto)
-            def createdStageDto = this.createStage(projectDto.id)
+            def createdStageDto = this.createStage(projectDto.id, architectDto.id)
             def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id, architectDto.id)
             this.terminateContract(projectDto.contract.id, terminateRequest)
         when:
@@ -521,6 +526,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             def completeContractDto = new ContractDto(endDate: END_DATE)
             def completeRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(completeContractDto)
             this.completeContract(projectDto.contract.id, completeRequest)
+            stageDto.architectId = architectDto.id
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         when:
             def stageResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectDto.id) + "/stages"))
@@ -543,7 +549,7 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             this.signContract(projectDto.contract.id, signContractText)
             def completeContractDto = new ContractDto(endDate: END_DATE)
             def completeRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(completeContractDto)
-            def createdStageDto = this.createStage(projectDto.id)
+            def createdStageDto = this.createStage(projectDto.id, architectDto.id)
             def createdTaskDto = this.createTask(projectDto.id, createdStageDto.id, architectDto.id)
             this.completeContract(projectDto.contract.id, completeRequest)
         when:
@@ -564,7 +570,8 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
         return TestsHelper.createProject(this.properProjectDto, this.createBasicProjectUri(), this.mockMvc)
     }
 
-    private StageDto createStage(long projectId) {
+    private StageDto createStage(long projectId, long architectId) {
+        stageDto.architectId = architectId
         def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         def stageResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.createProjectUri(projectId) + "/stages"))
                 .header("Content-Type", "application/json")

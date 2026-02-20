@@ -108,11 +108,17 @@ Example: `ProjectWorkflow` defines TO_DO → IN_PROGRESS → DONE flow with vali
 - **Mappers** use MapStruct with Spring component model (configured in `pom.xml`)
 - **Application services** are annotated with `@ApplicationService` (custom stereotype)
 - **Domain services** contain pure business logic, no framework dependencies
+- **Repositories** use Spring Data JPA
+- Exception messages codes are created with method
+  `com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode` and translated with i18n. Translation
+  for them is located in `core/src/main/resources/i18n` and split into separate files for each module.
 
 ## Testing
 
 - Unit tests use **Spock Framework** (Groovy), located in `src/test/groovy`
-- Integration tests (`*IT.groovy`) extend `BaseTestIT` which uses **Testcontainers** for PostgreSQL
+- Integration tests (`*IT.groovy`) extend `BaseTestIT` which uses **Testcontainers** for PostgreSQL. They are devided
+  into
+  separate modules by domains. Each new API method should be covered by integration test.
 - Test naming: `*Test.groovy` for unit tests, `*IT.groovy` for integration tests
 
 ## Tech Stack

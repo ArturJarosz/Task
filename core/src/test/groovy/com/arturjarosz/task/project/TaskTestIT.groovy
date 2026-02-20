@@ -87,7 +87,7 @@ class TaskTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
-            def stageDto = this.createStage(projectDto.id)
+            def stageDto = this.createStage(projectDto.id, architectDto.id)
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(notProperTaskDto)
         when:
             def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
@@ -106,7 +106,7 @@ class TaskTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
-            def stageDto = this.createStage(projectDto.id)
+            def stageDto = this.createStage(projectDto.id, architectDto.id)
             properTaskDto.architectId = architectDto.id
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
         when:
@@ -129,7 +129,7 @@ class TaskTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
-            def stageDto = this.createStage(projectDto.id)
+            def stageDto = this.createStage(projectDto.id, architectDto.id)
         when:
             def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.delete(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + NOT_EXISTING_TASK_ID))).andReturn().response
         then:
@@ -145,7 +145,7 @@ class TaskTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
-            def stageDto = this.createStage(projectDto.id)
+            def stageDto = this.createStage(projectDto.id, architectDto.id)
             properTaskDto.architectId = architectDto.id
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
             def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
@@ -171,7 +171,7 @@ class TaskTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
-            def stageDto = this.createStage(projectDto.id)
+            def stageDto = this.createStage(projectDto.id, architectDto.id)
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskUpdateDto)
         when:
             def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.put(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + NOT_EXISTING_TASK_ID))
@@ -190,7 +190,7 @@ class TaskTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
-            def stageDto = this.createStage(projectDto.id)
+            def stageDto = this.createStage(projectDto.id, architectDto.id)
             properTaskDto.architectId = architectDto.id
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
             def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
@@ -216,7 +216,7 @@ class TaskTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
-            def stageDto = this.createStage(projectDto.id)
+            def stageDto = this.createStage(projectDto.id, architectDto.id)
             properTaskDto.architectId = architectDto.id
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
             def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
@@ -247,7 +247,7 @@ class TaskTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
-            def stageDto = this.createStage(projectDto.id)
+            def stageDto = this.createStage(projectDto.id, architectDto.id)
         when:
             def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.get(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id) + "/" + NOT_EXISTING_TASK_ID))).andReturn().response
         then:
@@ -263,7 +263,7 @@ class TaskTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
-            def stageDto = this.createStage(projectDto.id)
+            def stageDto = this.createStage(projectDto.id, architectDto.id)
             properTaskDto.architectId = architectDto.id
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
             def taskResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
@@ -288,7 +288,7 @@ class TaskTestIT extends BaseTestIT {
             def architectDto =
                     TestsHelper.createArchitect(this.architect, this.createArchitectUri(), this.mockMvc)
             def projectDto = this.createProject(architectDto.id)
-            def stageDto = this.createStage(projectDto.id)
+            def stageDto = this.createStage(projectDto.id, architectDto.id)
             properTaskDto.architectId = architectDto.id
             def taskRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properTaskDto)
             this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(this.taskUrlBuilder(projectDto.id, stageDto.id)))
@@ -314,7 +314,8 @@ class TaskTestIT extends BaseTestIT {
         return TestsHelper.createProject(this.projectDto, this.createBasicProjectUri(), this.mockMvc)
     }
 
-    private StageDto createStage(long projectId) {
+    private StageDto createStage(long projectId, long architectId) {
+        stageDto.architectId = architectId
         def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         def stageResponse = this.mockMvc.perform(MockMvcRequestBuilders
                 .post(URI.create(HOST + ":" + port + PROJECTS_URI + "/" + projectId + STAGES_URI))

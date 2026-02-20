@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: "add-architect-to-stage.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "add-architect-to-stage-audit.yml"
+      relativeToChangelogFile: true
