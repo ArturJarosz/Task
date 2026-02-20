@@ -30,6 +30,7 @@ class StageApplicationServiceImplTest extends Specification {
     static final Long STAGE_WITH_TASKS_IN_TODO_ID = 10L
     static final Long STAGE_WITH_TASKS_IN_DIFFERENT_STATUSES = 20L
     static final Long INSTALLMENT_ID = 100L
+    static final Long ARCHITECT_ID = 200L
     static final String NEW_STAGE_NAME = "newStageName"
     static final String NEW_STAGE_NOTE = "newStageNote"
     static final StageTypeDto NEW_STAGE_TYPE = StageTypeDto.FUNCTIONAL_LAYOUT
@@ -440,7 +441,7 @@ class StageApplicationServiceImplTest extends Specification {
 
     private StageDto prepareStageDtoForUpdate() {
         StageDto stageDto = new StageDto(name: NEW_STAGE_NAME, note: NEW_STAGE_NOTE, type: NEW_STAGE_TYPE,
-                deadline: NEW_DEADLINE_DATE)
+                deadline: NEW_DEADLINE_DATE, architectId: ARCHITECT_ID)
         return stageDto
     }
 

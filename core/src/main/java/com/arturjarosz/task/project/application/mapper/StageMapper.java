@@ -17,6 +17,7 @@ public interface StageMapper {
     @Mapping(source = "stageWorkflow", target = "stageWorkflow")
     @Mapping(source = "stageDto.name", target = "name")
     @Mapping(source = "stageDto.type", target = "stageType")
+    @Mapping(source = "stageDto.architectId", target = "architectId")
     @Mapping(target = "tasks", ignore = true)
     Stage mapFromDto(StageDto stageDto, StageWorkflow stageWorkflow);
 

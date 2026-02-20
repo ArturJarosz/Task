@@ -38,22 +38,23 @@ public class StageDomainServiceImpl implements StageDomainService {
         this.statusToUpdater = new EnumMap<>(StageStatus.class);
         this.statusToUpdater.put(StageStatus.TO_DO,
                 (stage, stageDto) -> stage.update(stageDto.getName(), stageDto.getNote(),
-                        StageType.valueOf(stageDto.getType().getValue()), stageDto.getDeadline()));
+                        StageType.valueOf(stageDto.getType().getValue()), stageDto.getDeadline(),
+                        stageDto.getArchitectId()));
         this.statusToUpdater.put(StageStatus.IN_PROGRESS, (stage, stageDto) -> {
             stage.update(stageDto.getName(), stageDto.getNote(), StageType.valueOf(stageDto.getType().getValue()),
-                    stageDto.getDeadline());
+                    stageDto.getDeadline(), stageDto.getArchitectId());
             stage.setStartDate(stageDto.getStartDate());
             stage.setEndDate(null);
         });
         this.statusToUpdater.put(StageStatus.DONE, (stage, stageDto) -> {
             stage.update(stageDto.getName(), stageDto.getNote(), StageType.valueOf(stageDto.getType().getValue()),
-                    stageDto.getDeadline());
+                    stageDto.getDeadline(), stageDto.getArchitectId());
             stage.setStartDate(stageDto.getStartDate());
             stage.setEndDate(stageDto.getEndDate());
         });
         this.statusToUpdater.put(StageStatus.REJECTED, (stage, stageDto) -> {
             stage.update(stageDto.getName(), stageDto.getNote(), StageType.valueOf(stageDto.getType().getValue()),
-                    stageDto.getDeadline());
+                    stageDto.getDeadline(), stageDto.getArchitectId());
             stage.setStartDate(stageDto.getStartDate());
         });
     }

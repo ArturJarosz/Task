@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application
 
+import com.arturjarosz.task.architect.application.ArchitectValidator
 import com.arturjarosz.task.dto.StageDto
 import com.arturjarosz.task.dto.StageTypeDto
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
@@ -23,13 +24,16 @@ class StageValidatorTest extends Specification {
     private static final Long NOT_EXISTING_STAGE_ID = 11l
     private static final Long STAGE_WITH_INSTALLMENT_ID = 20L
     private static final Long STAGE_WITHOUT_INSTALLMENT_ID = 21L
+    private static final Long ARCHITECT_ID = 100L
+    private static final Long NOT_EXISTING_ARCHITECT_ID = 101L
 
     private static final String STAGE_NAME = "stageName"
 
     def projectRepository = Mock(ProjectRepository)
     def projectFinancialDataRepository = Mock(ProjectFinancialDataRepository)
+    def architectValidator = Mock(ArchitectValidator)
 
-    def stageValidator = new StageValidator(projectRepository, projectFinancialDataRepository)
+    def stageValidator = new StageValidator(projectRepository, projectFinancialDataRepository, architectValidator)
 
     def setup() {
         this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(PROJECT_STAGE_WITHOUT_INSTALLMENT_ID) >>
@@ -78,9 +82,32 @@ class StageValidatorTest extends Specification {
             exception.message == "isNull.stage.type"
     }
 
-    def "validateCreateStageDto should not throw any exception on proper stageDto"() {
+    def "validateCreateStageDto should throw an exception, on null architectId in passed stageDto"() {
         given:
             def stageDto = new StageDto(name: STAGE_NAME, type: StageTypeDto.VISUALISATIONS)
+        when:
+            this.stageValidator.validateCreateStageDto(stageDto)
+        then:
+            IllegalArgumentException exception = thrown()
+            exception.message == "isNull.stage.architect"
+    }
+
+    def "validateCreateStageDto should throw an exception, when architect does not exist"() {
+        given:
+            def stageDto = new StageDto(name: STAGE_NAME, type: StageTypeDto.VISUALISATIONS,
+                    architectId: NOT_EXISTING_ARCHITECT_ID)
+            this.architectValidator.validateArchitectExistence(NOT_EXISTING_ARCHITECT_ID) >> {
+                throw new ResourceNotFoundException()
+            }
+        when:
+            this.stageValidator.validateCreateStageDto(stageDto)
+        then:
+            thrown(ResourceNotFoundException)
+    }
+
+    def "validateCreateStageDto should not throw any exception on proper stageDto"() {
+        given:
+            def stageDto = new StageDto(name: STAGE_NAME, type: StageTypeDto.VISUALISATIONS, architectId: ARCHITECT_ID)
         when:
             this.stageValidator.validateCreateStageDto(stageDto)
         then:
@@ -127,9 +154,32 @@ class StageValidatorTest extends Specification {
             exception.message == "isNull.stage.type"
     }
 
-    def "validateUpdateStageDto should not throw any exception on proper stageDto"() {
+    def "validateUpdateStageDto should throw an exception, on null architectId in passed stageDto"() {
         given:
             def stageDto = new StageDto(name: STAGE_NAME, type: StageTypeDto.VISUALISATIONS)
+        when:
+            this.stageValidator.validateUpdateStageDto(stageDto)
+        then:
+            IllegalArgumentException exception = thrown()
+            exception.message == "isNull.stage.architect"
+    }
+
+    def "validateUpdateStageDto should throw an exception, when architect does not exist"() {
+        given:
+            def stageDto = new StageDto(name: STAGE_NAME, type: StageTypeDto.VISUALISATIONS,
+                    architectId: NOT_EXISTING_ARCHITECT_ID)
+            this.architectValidator.validateArchitectExistence(NOT_EXISTING_ARCHITECT_ID) >> {
+                throw new ResourceNotFoundException()
+            }
+        when:
+            this.stageValidator.validateUpdateStageDto(stageDto)
+        then:
+            thrown(ResourceNotFoundException)
+    }
+
+    def "validateUpdateStageDto should not throw any exception on proper stageDto"() {
+        given:
+            def stageDto = new StageDto(name: STAGE_NAME, type: StageTypeDto.VISUALISATIONS, architectId: ARCHITECT_ID)
         when:
             this.stageValidator.validateUpdateStageDto(stageDto)
         then:

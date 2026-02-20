@@ -1,5 +1,6 @@
 package com.arturjarosz.task.project.application;
 
+import com.arturjarosz.task.architect.application.ArchitectValidator;
 import com.arturjarosz.task.dto.StageDto;
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository;
 import com.arturjarosz.task.finance.model.Installment;
@@ -23,12 +24,15 @@ public class StageValidator {
 
     private final ProjectRepository projectRepository;
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
+    private final ArchitectValidator architectValidator;
 
     @Autowired
     public StageValidator(ProjectRepository projectRepository,
-            ProjectFinancialDataRepository projectFinancialDataRepository) {
+            ProjectFinancialDataRepository projectFinancialDataRepository,
+            ArchitectValidator architectValidator) {
         this.projectRepository = projectRepository;
         this.projectFinancialDataRepository = projectFinancialDataRepository;
+        this.architectValidator = architectValidator;
     }
 
     /**
@@ -71,6 +75,9 @@ public class StageValidator {
                 createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.NAME));
         assertNotNull(stageDto.getType(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TYPE));
+        assertNotNull(stageDto.getArchitectId(),
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.ARCHITECT));
+        this.architectValidator.validateArchitectExistence(stageDto.getArchitectId());
     }
 
     /**

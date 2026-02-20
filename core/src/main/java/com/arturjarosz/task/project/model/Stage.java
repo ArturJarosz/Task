@@ -50,6 +50,11 @@ public class Stage extends AbstractHistoryAwareEntity implements WorkflowAware<S
     private String note;
 
     @Getter
+    @Setter
+    @Column(name = "ARCHITECT_ID", nullable = false)
+    private Long architectId;
+
+    @Getter
     @Enumerated(EnumType.STRING)
     @Column(name = "STAGE_TYPE", nullable = false)
     private StageType stageType;
@@ -72,11 +77,12 @@ public class Stage extends AbstractHistoryAwareEntity implements WorkflowAware<S
         this.workflowName = stageWorkflow.getName();
     }
 
-    public void update(String name, String note, StageType stageType, LocalDate deadline) {
+    public void update(String name, String note, StageType stageType, LocalDate deadline, Long architectId) {
         this.name = name;
         this.note = note;
         this.stageType = stageType;
         this.deadline = deadline;
+        this.architectId = architectId;
     }
 
     public void addTask(Task task) {
