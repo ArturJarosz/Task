@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-calendar-sync-state-table"
+      changes:
+        - createTable:
+            tableName: "CALENDAR_SYNC_STATE"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "GOOGLE_CALENDAR_ID"
+                  type: "VARCHAR2(255 ${char.unit})"
+              - column:
+                  name: "SYNC_TOKEN"
+                  type: "VARCHAR2(255 ${char.unit})"
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "TIMESTAMP"
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "TIMESTAMP"
+        - addPrimaryKey:
+            tableName: "CALENDAR_SYNC_STATE"
+            columnNames: "ID"
+            constraintName: "PK_CALENDAR_SYNC_STATE"

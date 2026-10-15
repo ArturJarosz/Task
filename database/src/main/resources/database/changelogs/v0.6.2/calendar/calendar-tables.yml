@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: "create-calendar-event-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-calendar-event-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-calendar-sync-state-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-calendar-sync-state-table.yml"
+      relativeToChangelogFile: true

@@ -8,6 +8,9 @@ databaseChangeLog:
   - include:
       file: "stage/stage-tables.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "calendar/calendar-tables.yml"
+      relativeToChangelogFile: true
   - changeSet:
       author: "liquibase"
       id: "tag-version_0.6.2"
