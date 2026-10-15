@@ -26,6 +26,9 @@
         <!--DEPENDENCIES-->
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-lang3.version>3.13.0</commons-lang3.version>
+        <google-api-client.version>2.2.0</google-api-client.version>
+        <google-api-services-calendar.version>v3-rev20220715-2.0.0</google-api-services-calendar.version>
+        <google-auth-library.version>1.19.0</google-auth-library.version>
         <h2.version>1.4.200</h2.version>
         <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
         <jakarta.persistence-api.version>3.1.0</jakarta.persistence-api.version>
@@ -86,6 +89,23 @@
                 <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-envers</artifactId>
                 <version>${hibernate.version}</version>
+            </dependency>
+
+            <!-- GOOGLE CALENDAR -->
+            <dependency>
+                <groupId>com.google.api-client</groupId>
+                <artifactId>google-api-client</artifactId>
+                <version>${google-api-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.apis</groupId>
+                <artifactId>google-api-services-calendar</artifactId>
+                <version>${google-api-services-calendar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.auth</groupId>
+                <artifactId>google-auth-library-oauth2-http</artifactId>
+                <version>${google-auth-library.version}</version>
             </dependency>
 
             <dependency>

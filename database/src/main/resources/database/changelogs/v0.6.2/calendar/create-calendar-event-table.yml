@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-calendar-event-table"
+      changes:
+        - createTable:
+            tableName: "CALENDAR_EVENT"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NAME"
+                  type: "VARCHAR2(255 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "DESCRIPTION"
+                  type: "VARCHAR2(1000 ${char.unit})"
+              - column:
+                  name: "START_DATETIME"
+                  type: "TIMESTAMP"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "END_DATETIME"
+                  type: "TIMESTAMP"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "ALL_DAY"
+                  type: "${boolean.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "GOOGLE_EVENT_ID"
+                  type: "VARCHAR2(255 ${char.unit})"
+                  constraints:
+                    unique: true
+              - column:
+                  name: "GOOGLE_ETAG"
+                  type: "VARCHAR2(255 ${char.unit})"
+              - column:
+                  name: "SYNC_STATUS"
+                  type: "VARCHAR2(30 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "TIMESTAMP"
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "TIMESTAMP"
+        - addPrimaryKey:
+            tableName: "CALENDAR_EVENT"
+            columnNames: "ID"
+            constraintName: "PK_CALENDAR_EVENT"
