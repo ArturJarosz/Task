@@ -44,4 +44,9 @@ task:
     allowed-origins:
       - ${ALLOWED_ORIGIN_HTTP}
       - ${ALLOWED_ORIGIN_HTTPS}
+  google-calendar:
+    enabled: ${GOOGLE_CALENDAR_ENABLED:true}
+    credentials-path: ${GOOGLE_SA_KEY_PATH:}
+    application-name: Task-test
+    calendar-name: ${GOOGLE_CALENDAR_NAME:Task}
 

@@ -31,3 +31,10 @@ hs_err_pid*
 /docker/taskDb/
 /docker/env/local.env
 **/.m2/
+
+# local AI directories
+openspec/
+
+# Google Calendar service account keys
+/google-key.json
+/humming-bird-*.json

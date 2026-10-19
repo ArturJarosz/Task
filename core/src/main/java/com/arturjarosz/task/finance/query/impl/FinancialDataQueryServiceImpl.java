@@ -388,7 +388,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     }
 
     @Override
-    public List<FinancialReportItemDto> getContractorJobExpenseItems(LocalDate startDate, LocalDate endDate) {
+    public List<FinancialReportItemDto> getContractorJobIncomeItems(LocalDate startDate, LocalDate endDate) {
         return this.query()
                 .from(CONTRACTOR_JOB)
                 .join(CONTRACTOR_JOB.financialData, FINANCIAL_DATA)
