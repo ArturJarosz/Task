@@ -69,5 +69,5 @@ public interface FinancialDataQueryService {
 
     List<FinancialReportItemDto> getSupplyIncomeItems(LocalDate startDate, LocalDate endDate);
 
-    List<FinancialReportItemDto> getContractorJobExpenseItems(LocalDate startDate, LocalDate endDate);
+    List<FinancialReportItemDto> getContractorJobIncomeItems(LocalDate startDate, LocalDate endDate);
 }

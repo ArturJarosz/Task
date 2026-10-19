@@ -41,11 +41,11 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
         this.financialReportValidator.validateFinancialReportParameters(startDate, endDate, periodType);
 
         var costExpenseItems = this.financialDataQueryService.getCostExpenseItems(startDate, endDate);
-        var costIncomeItems = this.financialDataQueryService.getCostIncomeItems(startDate, endDate);
+        var reimbursedCostIncomeItems = this.financialDataQueryService.getCostIncomeItems(startDate, endDate);
         var installmentIncomeItems = this.financialDataQueryService.getInstallmentIncomeItems(startDate, endDate);
         var supervisionIncomeItems = this.financialDataQueryService.getSupervisionIncomeItems(startDate, endDate);
         var supplyIncomeItems = this.financialDataQueryService.getSupplyIncomeItems(startDate, endDate);
-        var contractorJobExpenseItems = this.financialDataQueryService.getContractorJobExpenseItems(startDate, endDate);
+        var contractorJobIncomeItems = this.financialDataQueryService.getContractorJobIncomeItems(startDate, endDate);
 
         var periods = PeriodCalculator.calculatePeriods(startDate, endDate, periodType);
 
@@ -62,11 +62,11 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
 
             this.accumulateItems(filterByPeriod(installmentIncomeItems, period), periodIncome.installment);
             this.accumulateItems(filterByPeriod(supervisionIncomeItems, period), periodIncome.supervision);
-            this.accumulateItems(filterByPeriod(costIncomeItems, period), periodIncome.cost);
+            this.accumulateItems(filterByPeriod(reimbursedCostIncomeItems, period), periodIncome.cost);
 
             this.accumulateItems(filterByPeriod(costExpenseItems, period), periodExpense.cost);
             this.accumulateItems(filterByPeriod(supplyIncomeItems, period), periodIncome.supply);
-            this.accumulateItems(filterByPeriod(contractorJobExpenseItems, period), periodExpense.contractorJob);
+            this.accumulateItems(filterByPeriod(contractorJobIncomeItems, period), periodIncome.contractorJob);
 
             var incomeTotal = sumAccumulators(periodIncome);
             var expenseTotal = sumAccumulators(periodExpense);
