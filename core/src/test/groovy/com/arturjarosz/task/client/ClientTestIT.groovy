@@ -1,8 +1,11 @@
 package com.arturjarosz.task.client
 
 import com.arturjarosz.task.configuration.BaseTestIT
+import com.arturjarosz.task.dto.ArchitectDto
 import com.arturjarosz.task.dto.ClientDto
+import com.arturjarosz.task.dto.ProjectCreateDto
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
+import com.arturjarosz.task.utils.TestsHelper
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -13,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional
 class ClientTestIT extends BaseTestIT {
 
     static final String CLIENTS_URI = "/clients"
+    static final String ARCHITECTS_URI = "/architects"
+    static final String PROJECTS_URI = "/projects"
     static final long NOT_EXISTING_CLIENT_ID = 2000
     static final ObjectMapper MAPPER = new ObjectMapper()
 
@@ -239,5 +244,39 @@ class ClientTestIT extends BaseTestIT {
             clientsResponse.status == HttpStatus.OK.value()
             List<ClientDto> createdClients = MAPPER.readValue(clientsResponse.contentAsString, List<ClientDto>)
             createdClients.size() == 2
+    }
+
+    @Transactional
+    def "Getting client and clients should return number of all and active projects and their value"() {
+        given: "Client with two projects, one of them rejected"
+            def clientDto = TestsHelper.createClient(privateClient, HOST + ":" + port + CLIENTS_URI, this.mockMvc)
+            def architectDto = TestsHelper.createArchitect(
+                    MAPPER.readValue(new File(getClass().classLoader.getResource('json/architect/architect.json').file),
+                            ArchitectDto), HOST + ":" + port + ARCHITECTS_URI, this.mockMvc)
+            def projectCreateDto = MAPPER.readValue(
+                    new File(getClass().classLoader.getResource('json/project/properProject.json').file), ProjectCreateDto)
+            projectCreateDto.architectId = architectDto.id
+            projectCreateDto.clientId = clientDto.id
+            TestsHelper.createProject(projectCreateDto, HOST + ":" + port + PROJECTS_URI, this.mockMvc)
+            def rejectedProject = TestsHelper.createProject(projectCreateDto, HOST + ":" + port + PROJECTS_URI, this.mockMvc)
+            this.mockMvc.perform(MockMvcRequestBuilders.post(
+                    URI.create(HOST + ":" + port + PROJECTS_URI + "/" + rejectedProject.id + "/reject")))
+        when:
+            def clientResponse = this.mockMvc.perform(MockMvcRequestBuilders
+                    .get(URI.create(HOST + ":" + port + CLIENTS_URI + "/" + clientDto.id))).andReturn().response
+            def clientsResponse = this.mockMvc.perform(MockMvcRequestBuilders
+                    .get(URI.create(HOST + ":" + port + CLIENTS_URI))).andReturn().response
+        then:
+            def client = MAPPER.readValue(clientResponse.contentAsString, ClientDto)
+            client.numberOfProjects == 2
+            client.numberOfActiveProjects == 1
+            client.projectsValue == 2 * projectCreateDto.offerValue
+        and:
+            List<ClientDto> clients = MAPPER.readValue(clientsResponse.contentAsString,
+                    MAPPER.typeFactory.constructCollectionType(List, ClientDto))
+            def listedClient = clients.find { it.id == clientDto.id }
+            listedClient.numberOfProjects == 2
+            listedClient.numberOfActiveProjects == 1
+            listedClient.projectsValue == 2 * projectCreateDto.offerValue
     }
 }

@@ -19,3 +19,7 @@ task:
   security:
     allowed-origins:
       - "localhost"
+  project:
+    active-statuses:
+      - TO_DO
+      - IN_PROGRESS

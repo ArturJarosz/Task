@@ -3014,6 +3014,16 @@ components:
         lastModifiedDateTime:
           type: string
           format: time
+        numberOfProjects:
+          type: integer
+          readOnly: true
+        numberOfActiveProjects:
+          type: integer
+          readOnly: true
+        projectsValue:
+          type: number
+          format: double
+          readOnly: true
 
     Architects:
       type: array
@@ -3102,6 +3112,16 @@ components:
         lastModifiedDateTime:
           type: string
           format: time
+        numberOfProjects:
+          type: integer
+          readOnly: true
+        numberOfActiveProjects:
+          type: integer
+          readOnly: true
+        projectsValue:
+          type: number
+          format: double
+          readOnly: true
 
     Clients:
       type: array
@@ -3895,6 +3915,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ConfigurationEntry"
+        activeProjectStatuses:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectStatus"
         costCategories:
           type: array
           items:

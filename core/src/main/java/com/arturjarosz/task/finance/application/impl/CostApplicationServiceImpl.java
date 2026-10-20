@@ -95,7 +95,7 @@ public class CostApplicationServiceImpl implements CostApplicationService {
 
     @Override
     public CostProjectDataDto getProjectCostData(Long projectId) {
-        LOG.debug("Loading cost project data for project with it: {}", projectId);
+        LOG.info("Loading cost project data for project with it: {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
 
         var projectCostFinancialData = this.financialDataQueryService.getProjectPartialFinancialDataByType(projectId,

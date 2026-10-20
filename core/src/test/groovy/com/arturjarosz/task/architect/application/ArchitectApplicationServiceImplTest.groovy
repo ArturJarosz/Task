@@ -9,8 +9,11 @@ import com.arturjarosz.task.dto.ArchitectDto
 import com.arturjarosz.task.project.application.mapper.ProjectsToEntityProjectsSummaryDtoMapperImpl
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
+import com.arturjarosz.task.project.query.ProjectCounts
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
+import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
+import com.arturjarosz.task.properties.ProjectProperties
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
@@ -48,14 +51,23 @@ class ArchitectApplicationServiceImplTest extends Specification {
         }
     }
 
-    def projectQueryService = Mock(ProjectQueryServiceImpl)
+    static final ACTIVE_STATUSES = [ProjectStatus.TO_DO, ProjectStatus.IN_PROGRESS] as Set
+
+    def projectQueryService = Mock(ProjectQueryServiceImpl) {
+        getProjectCountsByArchitectIds(_, _) >> [:]
+    }
     def architectValidator = new ArchitectValidator(architectRepository, projectQueryService)
     def architectMapper = new ArchitectMapperImpl()
-    def contractQueryService = Mock(ContractQueryService)
+    def contractQueryService = Mock(ContractQueryService) {
+        getProjectsValueByArchitectIds(_) >> [:]
+    }
     def projectsToEntityProjectsSummaryDtoMapper = new ProjectsToEntityProjectsSummaryDtoMapperImpl()
 
+    def projectProperties = new ProjectProperties(ACTIVE_STATUSES)
+
     def subject = new ArchitectApplicationServiceImpl(architectRepository, architectValidator,
-            architectMapper, projectQueryService, contractQueryService, projectsToEntityProjectsSummaryDtoMapper)
+            architectMapper, projectQueryService, contractQueryService, projectsToEntityProjectsSummaryDtoMapper,
+            projectProperties)
 
     def "when passing null an exception should be thrown and architect should not be saved"() {
         given:
@@ -130,6 +142,30 @@ class ArchitectApplicationServiceImplTest extends Specification {
             List<ArchitectDto> architectDtos = subject.getArchitects()
         then:
             architectDtos.size() == 2
+    }
+
+    def "getArchitect should return number of all and active projects counted for configured active statuses"() {
+        given:
+            def architectId = ARCHITECT_ONE.id
+        when:
+            def architectDto = subject.getArchitect(EXISTING_ID)
+        then:
+            1 * projectQueryService.getProjectCountsByArchitectIds([architectId], ACTIVE_STATUSES) >>
+                    [(architectId): new ProjectCounts(3, 2)]
+            1 * contractQueryService.getProjectsValueByArchitectIds([architectId]) >>
+                    [(architectId): new BigDecimal("1250.50")]
+            architectDto.numberOfProjects == 3
+            architectDto.numberOfActiveProjects == 2
+            architectDto.projectsValue == 1250.50d
+    }
+
+    def "getArchitects should return zero projects for architects without projects"() {
+        given:
+        when:
+            List<ArchitectDto> architectDtos = subject.getArchitects()
+        then:
+            1 * projectQueryService.getProjectCountsByArchitectIds(_, ACTIVE_STATUSES) >> [:]
+            architectDtos.every { it.numberOfProjects == 0 && it.numberOfActiveProjects == 0 && it.projectsValue == 0d }
     }
 
     def "when updating non existing architect an exception should be thrown"() {

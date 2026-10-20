@@ -32,20 +32,20 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
     @Transactional
     @Override
     public ContractorDto createContractor(ContractorDto contractorDto) {
-        LOG.debug("Creating Contractor.");
+        LOG.info("Creating Contractor.");
 
         this.contractorValidator.validateCreateContractorDto(contractorDto);
         var contractor = this.contractorMapper.mapFromDto(contractorDto);
         this.contractorRepository.save(contractor);
 
-        LOG.debug("Contractor created.");
+        LOG.info("Contractor created.");
         return this.contractorMapper.mapToDto(contractor);
     }
 
     @Transactional
     @Override
     public ContractorDto updateContractor(Long contractorId, ContractorDto contractorDto) {
-        LOG.debug("Updating Contractor with id {}", contractorId);
+        LOG.info("Updating Contractor with id {}", contractorId);
 
         var maybeContractor = this.contractorRepository.findById(contractorId);
         this.contractorValidator.validateContractorExistence(maybeContractor, contractorId);
@@ -55,38 +55,38 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
                 contractorDto.getEmail(), contractorDto.getTelephone(), contractorDto.getNote());
         this.contractorRepository.save(contractor);
 
-        LOG.debug("Contractor with id {} updated", contractorId);
+        LOG.info("Contractor with id {} updated", contractorId);
         return this.contractorMapper.mapToDto(contractor);
     }
 
     @Transactional
     @Override
     public void deleteContractor(Long contractorId) {
-        LOG.debug("Deleting Contractor with id {}", contractorId);
+        LOG.info("Deleting Contractor with id {}", contractorId);
 
         this.contractorValidator.validateContractorExistence(contractorId);
         this.contractorValidator.validateContractorHasNoJobs(contractorId);
         this.contractorRepository.deleteById(contractorId);
 
-        LOG.debug("Contractor with id {} deleted.", contractorId);
+        LOG.info("Contractor with id {} deleted.", contractorId);
     }
 
     @Override
     public ContractorDto getContractor(Long contractorId) {
-        LOG.debug("Loading Contractor with id {}.", contractorId);
+        LOG.info("Loading Contractor with id {}.", contractorId);
 
         var maybeContractor = this.contractorRepository.findById(contractorId);
         this.contractorValidator.validateContractorExistence(maybeContractor, contractorId);
         var contractorDto = this.contractorMapper.mapToDto(
                 maybeContractor.orElseThrow(ResourceNotFoundException::new));
 
-        LOG.debug("Contractor with id {} loaded", contractorId);
+        LOG.info("Contractor with id {} loaded", contractorId);
         return contractorDto;
     }
 
     @Override
     public List<ContractorDto> getContractors() {
-        LOG.debug("Loading Contractors list");
+        LOG.info("Loading Contractors list");
         var numberOfJobsByContractorId = this.contractorQueryService.getNumberOfJobsPerContractor();
         return this.contractorRepository.findAll()
                 .stream()
@@ -97,7 +97,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
 
     @Override
     public ContractorContractorJobsDataDto getContractorJobsData(Long contractorId) {
-        LOG.debug("Loading Contractor Jobs data for Contractor with id {}", contractorId);
+        LOG.info("Loading Contractor Jobs data for Contractor with id {}", contractorId);
 
         this.contractorValidator.validateContractorExistence(contractorId);
         var data = this.contractorQueryService.getContractorJobsData(contractorId);

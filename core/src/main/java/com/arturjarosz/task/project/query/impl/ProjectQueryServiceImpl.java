@@ -12,13 +12,23 @@ import com.arturjarosz.task.project.model.QProject;
 import com.arturjarosz.task.project.model.QStage;
 import com.arturjarosz.task.project.model.QTask;
 import com.arturjarosz.task.project.model.Stage;
+import com.arturjarosz.task.project.query.ProjectCounts;
 import com.arturjarosz.task.project.query.ProjectQueryService;
+import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.NumberPath;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @Finder
 public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> implements ProjectQueryService {
@@ -51,6 +61,42 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     @Override
     public List<Project> getProjectsForArchitect(long architectId) {
         return this.query().from(PROJECT).select(PROJECT).where(PROJECT.architectId.eq(architectId)).fetch();
+    }
+
+    @Override
+    public Map<Long, ProjectCounts> getProjectCountsByArchitectIds(Collection<Long> architectIds,
+            Set<ProjectStatus> activeStatuses) {
+        return this.getProjectCountsBy(PROJECT.architectId, architectIds, activeStatuses);
+    }
+
+    @Override
+    public Map<Long, ProjectCounts> getProjectCountsByClientIds(Collection<Long> clientIds,
+            Set<ProjectStatus> activeStatuses) {
+        return this.getProjectCountsBy(PROJECT.clientId, clientIds, activeStatuses);
+    }
+
+    private Map<Long, ProjectCounts> getProjectCountsBy(NumberPath<Long> ownerId, Collection<Long> ownerIds,
+            Set<ProjectStatus> activeStatuses) {
+        Map<Long, ProjectCounts> countsByOwnerId = new HashMap<>();
+        ownerIds.stream().filter(Objects::nonNull).forEach(id -> countsByOwnerId.put(id, ProjectCounts.NONE));
+        if (countsByOwnerId.isEmpty()) {
+            return countsByOwnerId;
+        }
+
+        // An empty IN list is not valid JPQL, so with no active statuses no project counts as active
+        NumberExpression<Long> activeCount = activeStatuses.isEmpty()
+                ? Expressions.asNumber(0L)
+                : new CaseBuilder().when(PROJECT.status.in(activeStatuses)).then(1L).otherwise(0L).sum();
+        this.query()
+                .from(PROJECT)
+                .select(ownerId, PROJECT.count(), activeCount)
+                .where(ownerId.in(countsByOwnerId.keySet()))
+                .groupBy(ownerId)
+                .fetch()
+                .forEach(row -> countsByOwnerId.put(row.get(ownerId),
+                        new ProjectCounts(Objects.requireNonNullElse(row.get(1, Long.class), 0L),
+                                Objects.requireNonNullElse(row.get(2, Long.class), 0L))));
+        return countsByOwnerId;
     }
 
     @Override
