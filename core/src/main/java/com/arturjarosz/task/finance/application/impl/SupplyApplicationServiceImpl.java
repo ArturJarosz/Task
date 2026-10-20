@@ -32,7 +32,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
     @Transactional
     @Override
     public SupplyDto createSupply(Long projectId, SupplyDto supplyDto) {
-        LOG.debug("Creating Supply for Project with id {}", projectId);
+        LOG.info("Creating Supply for Project with id {}", projectId);
 
         this.projectValidator.validateProjectExistence(projectId);
         this.supplyValidator.validateCreateSupplyDto(supplyDto);
@@ -45,14 +45,14 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
 
         this.projectFinanceAwareObjectService.onCreate(projectId);
         this.projectFinancialDataRepository.save(financialData);
-        LOG.debug("Supply for Project with id {} created", projectId);
+        LOG.info("Supply for Project with id {} created", projectId);
         return this.supplyMapper.mapToDto(supply, projectId);
     }
 
     @Transactional
     @Override
     public SupplyDto updateSupply(Long projectId, Long supplyId, SupplyDto supplyDto) {
-        LOG.debug("Updating Supply with id {}", supplyId);
+        LOG.info("Updating Supply with id {}", supplyId);
 
         this.projectValidator.validateProjectExistence(projectId);
         this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
@@ -64,13 +64,13 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         this.projectFinanceAwareObjectService.onUpdate(projectId);
         this.projectFinancialDataRepository.save(financialData);
 
-        LOG.debug("Supply with id {} updated", supplyId);
+        LOG.info("Supply with id {} updated", supplyId);
         return this.supplyMapper.mapToDto(supply, projectId);
     }
 
     @Override
     public SupplyDto getSupply(Long projectId, Long supplyId) {
-        LOG.debug("Loading Supply with id {} for Project with id {}.", supplyId, projectId);
+        LOG.info("Loading Supply with id {} for Project with id {}.", supplyId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
         return this.financialDataQueryService.getSupplyById(supplyId, projectId);
@@ -79,7 +79,7 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
     @Transactional
     @Override
     public void deleteSupply(Long projectId, Long supplyId) {
-        LOG.debug("Removing Supply with id {} for Project wit id {}.", supplyId, projectId);
+        LOG.info("Removing Supply with id {} for Project wit id {}.", supplyId, projectId);
 
         this.projectValidator.validateProjectExistence(projectId);
         this.supplyValidator.validateSupplyOnProjectExistence(projectId, supplyId);
@@ -88,12 +88,12 @@ public class SupplyApplicationServiceImpl implements SupplyApplicationService {
         financialData.removeSupply(supplyId);
         this.projectFinancialDataRepository.save(financialData);
         this.projectFinanceAwareObjectService.onRemove(projectId);
-        LOG.debug("Supply with id {} for Project with id {} removed.", supplyId, projectId);
+        LOG.info("Supply with id {} for Project with id {} removed.", supplyId, projectId);
     }
 
     @Override
     public SupplyProjectDataDto getProjectSuppliesData(Long projectId) {
-        LOG.debug("Loading supplies data for Project with id {}", projectId);
+        LOG.info("Loading supplies data for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
 
         var projectFinancialData = this.financialDataQueryService.getProjectPartialFinancialDataByType(projectId,

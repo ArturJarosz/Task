@@ -37,7 +37,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     @Transactional
     @Override
     public InstallmentDto createInstallment(Long projectId, Long stageId, InstallmentDto installmentDto) {
-        LOG.debug("Creating Installment for stage with stageId {} on project with projectId {}.", stageId, projectId);
+        LOG.info("Creating Installment for stage with stageId {} on project with projectId {}.", stageId, projectId);
 
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
@@ -50,7 +50,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         projectFinancialData.addInstallment(installment);
         projectFinancialData = this.projectFinancialDataRepository.save(projectFinancialData);
 
-        LOG.debug("Installment created.");
+        LOG.info("Installment created.");
         var createdInstallment = this.installmentDtoMapper.mapToDto(installment, "");
         createdInstallment.setId(this.getIdForCreatedInstallment(projectFinancialData, installment));
         this.projectFinanceAwareObjectService.onCreate(projectId);
@@ -60,7 +60,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     @Transactional
     @Override
     public InstallmentDto updateInstallment(Long projectId, Long installmentId, InstallmentDto installmentDto) {
-        LOG.debug("Updating Installment with installmentId {}", installmentId);
+        LOG.info("Updating Installment with installmentId {}", installmentId);
 
         this.projectValidator.validateProjectExistence(projectId);
         this.installmentValidator.validateInstallmentExistence(installmentId);
@@ -73,14 +73,14 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.projectFinancialDataRepository.save(projectFinancialData);
         this.projectFinanceAwareObjectService.onUpdate(projectId);
 
-        LOG.debug("Installment updated");
+        LOG.info("Installment updated");
         return this.installmentDtoMapper.mapToDto(installment, "");
     }
 
     @Transactional
     @Override
     public void removeInstallment(Long projectId, Long installmentId) {
-        LOG.debug("Removing Installment with installmentId {}", installmentId);
+        LOG.info("Removing Installment with installmentId {}", installmentId);
         this.projectValidator.validateProjectExistence(projectId);
 
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
@@ -91,13 +91,13 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.projectFinancialDataRepository.save(projectFinancialData);
         this.projectFinanceAwareObjectService.onRemove(projectId);
 
-        LOG.debug("Installment removed");
+        LOG.info("Installment removed");
     }
 
     @Transactional
     @Override
     public InstallmentDto payInstallment(Long projectId, Long installmentId, InstallmentDto installmentDto) {
-        LOG.debug("Paying for Installment with installmentId {}", installmentId);
+        LOG.info("Paying for Installment with installmentId {}", installmentId);
         this.projectValidator.validateProjectExistence(projectId);
 
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
@@ -107,13 +107,13 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         installment = projectFinancialData.payInstallment(installmentId, installmentDto.getPaymentDate());
         this.projectFinancialDataRepository.save(projectFinancialData);
 
-        LOG.debug("Payment for Installment with id {} made", installmentId);
+        LOG.info("Payment for Installment with id {} made", installmentId);
         return this.installmentDtoMapper.mapToDto(installment, "");
     }
 
     @Override
     public InstallmentProjectDataDto getProjectInstallmentsData(Long projectId) {
-        LOG.debug("Getting list of Installment for project with id {}", projectId);
+        LOG.info("Getting list of Installment for project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
 
         var installmentProjectSummary = this.financialDataQueryService.getProjectPartialFinancialDataByType(projectId,
@@ -127,7 +127,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
 
     @Override
     public InstallmentDto getInstallment(Long projectId, Long installmentId) {
-        LOG.debug("Getting Installment with id {}", installmentId);
+        LOG.info("Getting Installment with id {}", installmentId);
 
         this.projectValidator.validateProjectExistence(projectId);
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);

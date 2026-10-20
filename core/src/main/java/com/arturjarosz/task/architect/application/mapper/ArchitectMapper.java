@@ -11,10 +11,13 @@ public interface ArchitectMapper {
 
     @Mapping(source = "personName.firstName", target = "firstName")
     @Mapping(source = "personName.lastName", target = "lastName")
+    // The stored PROJECTS_VALUE column is never updated; the application service sums the contract values instead
+    @Mapping(target = "projectsValue", ignore = true)
     ArchitectDto mapToDto(Architect architect);
 
     @Mapping(source = "firstName", target = "personName.firstName")
     @Mapping(source = "lastName", target = "personName.lastName")
+    @Mapping(target = "projectsValue", ignore = true)
     Architect mapFromDto(ArchitectDto architectDto);
 
 }

@@ -23,6 +23,8 @@ public interface ClientMapper {
     @Mapping(source = "address", target = "contact.address")
     @Mapping(source = "note", target = "note")
     @Mapping(source = "telephone", target = "contact.telephone")
+    // The stored PROJECTS_VALUE column is never updated; the application service sums the contract values instead
+    @Mapping(target = "projectsValue", ignore = true)
     ClientDto mapToDto(Client client);
 
     default Client clientDtoToClient(ClientDto clientDto) {

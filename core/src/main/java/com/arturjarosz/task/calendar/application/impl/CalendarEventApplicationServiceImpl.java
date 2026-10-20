@@ -32,7 +32,7 @@ public class CalendarEventApplicationServiceImpl implements CalendarEventApplica
     @Transactional
     @Override
     public CalendarEventDto createCalendarEvent(CalendarEventDto calendarEventDto) {
-        LOG.debug("creating calendar event");
+        LOG.info("creating calendar event");
 
         validateCalendarEventDto(calendarEventDto);
         var calendarEvent = new CalendarEvent(calendarEventDto.getName(), calendarEventDto.getDescription(),
@@ -41,14 +41,14 @@ public class CalendarEventApplicationServiceImpl implements CalendarEventApplica
         calendarEvent = this.calendarEventRepository.save(calendarEvent);
         calendarEvent = this.calendarSyncService.pushEvent(calendarEvent);
 
-        LOG.debug("calendar event created");
+        LOG.info("calendar event created");
         return this.calendarEventMapper.mapToDto(calendarEvent);
     }
 
     @Transactional
     @Override
     public CalendarEventDto updateCalendarEvent(Long eventId, CalendarEventDto calendarEventDto) {
-        LOG.debug("updating calendar event with id {}", eventId);
+        LOG.info("updating calendar event with id {}", eventId);
 
         var maybeCalendarEvent = this.calendarEventRepository.findById(eventId);
         validateCalendarEventExistence(maybeCalendarEvent, eventId);
@@ -60,14 +60,14 @@ public class CalendarEventApplicationServiceImpl implements CalendarEventApplica
         calendarEvent = this.calendarEventRepository.save(calendarEvent);
         calendarEvent = this.calendarSyncService.pushEvent(calendarEvent);
 
-        LOG.debug("calendar event with id {} updated", eventId);
+        LOG.info("calendar event with id {} updated", eventId);
         return this.calendarEventMapper.mapToDto(calendarEvent);
     }
 
     @Transactional
     @Override
     public void deleteCalendarEvent(Long eventId) {
-        LOG.debug("removing calendar event with id {}", eventId);
+        LOG.info("removing calendar event with id {}", eventId);
 
         var maybeCalendarEvent = this.calendarEventRepository.findById(eventId);
         validateCalendarEventExistence(maybeCalendarEvent, eventId);
@@ -80,7 +80,7 @@ public class CalendarEventApplicationServiceImpl implements CalendarEventApplica
             this.calendarSyncService.pushDelete(calendarEvent);
         }
 
-        LOG.debug("calendar event with id {} removed", eventId);
+        LOG.info("calendar event with id {} removed", eventId);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class CalendarEventApplicationServiceImpl implements CalendarEventApplica
         var maybeCalendarEvent = this.calendarEventRepository.findById(eventId);
         validateCalendarEventExistence(maybeCalendarEvent, eventId);
 
-        LOG.debug("calendar event with id {} loaded", eventId);
+        LOG.info("calendar event with id {} loaded", eventId);
         return this.calendarEventMapper.mapToDto(maybeCalendarEvent.orElseThrow(ResourceNotFoundException::new));
     }
 

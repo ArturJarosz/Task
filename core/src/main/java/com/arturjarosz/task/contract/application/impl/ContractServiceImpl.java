@@ -62,20 +62,20 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     @Override
     public ContractDto createContract(ContractDto contractDto) {
-        LOG.debug("Creating contract.");
+        LOG.info("Creating contract.");
 
         this.contractValidator.validateOffer(contractDto);
         var contract = this.contractDomainService.createContract(contractDto);
         contract = this.contractRepository.save(contract);
 
-        LOG.debug("Contract with id {} created", contract.getId());
+        LOG.info("Contract with id {} created", contract.getId());
         return this.contractMapper.mapToDto(contract);
     }
 
     @Transactional
     @Override
     public ContractDto changeStatus(Long contractId, ContractDto contractDto) {
-        LOG.debug("Changing contract status");
+        LOG.info("Changing contract status");
 
         var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateBaseContractDto(contractDto);
@@ -86,14 +86,14 @@ public class ContractServiceImpl implements ContractService {
         contract = this.contractDomainService.updateContractStatus(contract, contractDto);
 
         this.contractRepository.save(contract);
-        LOG.debug("Contract status for contract with id {} was updated.", contractId);
+        LOG.info("Contract status for contract with id {} was updated.", contractId);
 
         return this.contractMapper.mapToDto(contract);
     }
 
     @Override
     public ContractDto getContractForProject(Long contractId) {
-        LOG.debug("Getting contract with id {}", contractId);
+        LOG.info("Getting contract with id {}", contractId);
 
         var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
@@ -105,7 +105,7 @@ public class ContractServiceImpl implements ContractService {
     @Transactional
     @Override
     public ContractDto updateContract(Long contractId, ContractDto contractDto) {
-        LOG.debug("Updating contract with id {} with data: {}", contractId, contractDto);
+        LOG.info("Updating contract with id {} with data: {}", contractId, contractDto);
 
         var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
@@ -116,7 +116,7 @@ public class ContractServiceImpl implements ContractService {
         contract = this.contractDomainService.updateContract(contract, contractDto);
         this.contractRepository.save(contract);
 
-        LOG.debug("Contract data for contract with id {} was updated.", contractId);
+        LOG.info("Contract data for contract with id {} was updated.", contractId);
 
         return this.contractMapper.mapToDto(contract);
     }

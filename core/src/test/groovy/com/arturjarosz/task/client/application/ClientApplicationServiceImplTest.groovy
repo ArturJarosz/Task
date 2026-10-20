@@ -13,8 +13,11 @@ import com.arturjarosz.task.dto.ContactDto
 import com.arturjarosz.task.project.application.mapper.ProjectsToEntityProjectsSummaryDtoMapperImpl
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.ProjectType
+import com.arturjarosz.task.project.query.ProjectCounts
 import com.arturjarosz.task.project.query.ProjectQueryService
+import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
+import com.arturjarosz.task.properties.ProjectProperties
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import com.arturjarosz.task.sharedkernel.model.PersonName
@@ -52,12 +55,20 @@ class ClientApplicationServiceImplTest extends Specification {
     }
 
     def clientMapper = new ClientMapperImpl()
-    def projectQueryService = Mock(ProjectQueryService)
-    def contractQueryService = Mock(ContractQueryService)
+    static final ACTIVE_STATUSES = [ProjectStatus.TO_DO, ProjectStatus.IN_PROGRESS] as Set
+
+    def projectQueryService = Mock(ProjectQueryService) {
+        getProjectCountsByClientIds(_, _) >> [:]
+    }
+    def contractQueryService = Mock(ContractQueryService) {
+        getProjectsValueByClientIds(_) >> [:]
+    }
     def projectsToClientProjectsSummaryDtoMapper = new ProjectsToEntityProjectsSummaryDtoMapperImpl()
 
+    def projectProperties = new ProjectProperties(ACTIVE_STATUSES)
+
     def clientApplicationServiceImpl = new ClientApplicationServiceImpl(clientRepository, clientValidator, clientMapper,
-            projectQueryService, contractQueryService, projectsToClientProjectsSummaryDtoMapper)
+            projectQueryService, contractQueryService, projectsToClientProjectsSummaryDtoMapper, projectProperties)
 
     def "createClient should validate clientBasicDto"() {
         given:
@@ -188,6 +199,31 @@ class ClientApplicationServiceImplTest extends Specification {
             List<ClientDto> clientDtoList = this.clientApplicationServiceImpl.getClients()
         then:
             clientDtoList.size() == 1
+    }
+
+    def "getClients should return number of all and active projects counted for configured active statuses"() {
+        given:
+            def clientId = privateClient.id
+        when:
+            List<ClientDto> clientDtoList = this.clientApplicationServiceImpl.getClients()
+        then:
+            1 * this.projectQueryService.getProjectCountsByClientIds([clientId], ACTIVE_STATUSES) >>
+                    [(clientId): new ProjectCounts(4, 1)]
+            1 * this.contractQueryService.getProjectsValueByClientIds([clientId]) >> [(clientId): new BigDecimal("900.00")]
+            clientDtoList[0].numberOfProjects == 4
+            clientDtoList[0].numberOfActiveProjects == 1
+            clientDtoList[0].projectsValue == 900d
+    }
+
+    def "getClient should return zero projects for client without projects"() {
+        given:
+        when:
+            def clientDto = this.clientApplicationServiceImpl.getClient(EXISTING_PRIVATE_ID)
+        then:
+            1 * this.projectQueryService.getProjectCountsByClientIds(_, ACTIVE_STATUSES) >> [:]
+            clientDto.numberOfProjects == 0
+            clientDto.numberOfActiveProjects == 0
+            clientDto.projectsValue == 0d
     }
 
     def "getClientProjectsSummary should not return object if client existence fails"() {

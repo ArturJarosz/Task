@@ -60,7 +60,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Transactional
     @Override
     public ProjectDto createProject(ProjectCreateDto projectCreateDto) {
-        LOG.debug("Creating Project.");
+        LOG.info("Creating Project.");
 
         this.projectValidator.validateProjectBasicDto(projectCreateDto);
         this.architectValidator.validateArchitectExistence(projectCreateDto.getArchitectId());
@@ -73,13 +73,13 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
         this.projectFinancialDataService.createProjectFinancialData(project.getId());
 
-        LOG.debug("Project created.");
+        LOG.info("Project created.");
         return this.projectMapper.mapToDto(project, contract);
     }
 
     @Override
     public ProjectDto getProject(Long projectId) {
-        LOG.debug("Loading Project with id {}.", projectId);
+        LOG.info("Loading Project with id {}.", projectId);
 
         var maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
@@ -90,14 +90,14 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         var projectCosts = this.costApplicationService.getCosts(projectId);
         var supervisionDto = this.supervisionApplicationService.getProjectSupervision(projectId);
 
-        LOG.debug("Project with id {} loaded.", projectId);
+        LOG.info("Project with id {} loaded.", projectId);
         return this.projectMapper.mapToDto(clientDto, architectDto, project, contractDto, projectCosts, supervisionDto);
     }
 
     @Transactional
     @Override
     public ProjectDto updateProject(Long projectId, ProjectDto projectDto) {
-        LOG.debug("Updating Project with id {}.", projectId);
+        LOG.info("Updating Project with id {}.", projectId);
 
         var maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
@@ -106,26 +106,26 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectDomainService.updateProject(project, projectDto);
         project = this.projectRepository.save(project);
 
-        LOG.debug("Project with id {} updated", projectId);
+        LOG.info("Project with id {} updated", projectId);
         return this.projectMapper.mapToDto(project);
     }
 
     @Transactional
     @Override
     public void removeProject(Long projectId) {
-        LOG.debug("Removing Project with id {}.", projectId);
+        LOG.info("Removing Project with id {}.", projectId);
 
         this.projectValidator.validateProjectExistence(projectId);
         this.projectFinancialDataService.removeFinancialDataForProject(projectId);
         this.projectRepository.deleteById(projectId);
 
-        LOG.debug("Project with id {} removed.", projectId);
+        LOG.info("Project with id {} removed.", projectId);
     }
 
     @Transactional
     @Override
     public ProjectDto finishProject(Long projectId, ProjectDto projectContractDto) {
-        LOG.debug("Finishing Project with id {}.", projectId);
+        LOG.info("Finishing Project with id {}.", projectId);
 
         var maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
@@ -133,13 +133,13 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectDomainService.finishProject(project, projectContractDto.getEndDate());
         this.projectRepository.save(project);
 
-        LOG.debug("Project with id {} is finished.", projectId);
+        LOG.info("Project with id {} is finished.", projectId);
         return this.projectMapper.mapToDto(project);
     }
 
     @Override
     public List<ProjectDto> getProjects() {
-        LOG.debug("Loading list of projects.");
+        LOG.info("Loading list of projects.");
 
         return this.projectRepository.findAll().stream().map(project -> {
             var clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
@@ -151,7 +151,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Transactional
     @Override
     public ProjectDto rejectProject(Long projectId) {
-        LOG.debug("Rejecting Project with id {}.", projectId);
+        LOG.info("Rejecting Project with id {}.", projectId);
 
         var maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
@@ -165,7 +165,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @Transactional
     @Override
     public ProjectDto reopenProject(Long projectId) {
-        LOG.debug("Reopening Project with id {}.", projectId);
+        LOG.info("Reopening Project with id {}.", projectId);
 
         var maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);

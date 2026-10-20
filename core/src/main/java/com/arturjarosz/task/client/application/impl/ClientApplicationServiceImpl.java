@@ -9,13 +9,16 @@ import com.arturjarosz.task.dto.ClientDto;
 import com.arturjarosz.task.dto.ClientTypeDto;
 import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
 import com.arturjarosz.task.project.application.mapper.ProjectsToEntityProjectsSummaryDtoMapper;
+import com.arturjarosz.task.project.query.ProjectCounts;
 import com.arturjarosz.task.project.query.ProjectQueryService;
+import com.arturjarosz.task.properties.ProjectProperties;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -29,11 +32,12 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     private final ProjectQueryService projectQueryService;
     private final ContractQueryService contractQueryService;
     private final ProjectsToEntityProjectsSummaryDtoMapper projectsToEntityProjectsSummaryDtoMapper;
+    private final ProjectProperties projectProperties;
 
     @Transactional
     @Override
     public ClientDto createClient(ClientDto clientDto) {
-        LOG.debug("Creating client.");
+        LOG.info("Creating client.");
 
         this.clientValidator.validateClientBasicDto(clientDto);
         var clientType = clientDto.getClientType();
@@ -47,37 +51,38 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         var client = this.clientMapper.clientDtoToClient(clientDto);
         client = this.clientRepository.save(client);
 
-        LOG.debug("Client created");
+        LOG.info("Client created");
         return this.clientMapper.mapToDto(client);
     }
 
     @Transactional
     @Override
     public void removeClient(Long clientId) {
-        LOG.debug("Removing Client with id {}.", clientId);
+        LOG.info("Removing Client with id {}.", clientId);
 
         this.clientValidator.validateClientExistence(clientId);
         this.clientValidator.validateClientHasNoProjects(clientId);
         this.clientRepository.deleteById(clientId);
 
-        LOG.debug("Client with id {} removed.", clientId);
+        LOG.info("Client with id {} removed.", clientId);
     }
 
     @Override
     public ClientDto getClient(Long clientId) {
-        LOG.debug("Loading Client with id {}", clientId);
+        LOG.info("Loading Client with id {}", clientId);
 
         var maybeClient = this.clientRepository.findById(clientId);
         this.clientValidator.validateClientExistence(maybeClient, clientId);
 
-        LOG.debug("Client with id {} loaded.", clientId);
-        return this.clientMapper.mapToDto(maybeClient.orElseThrow(ResourceNotFoundException::new));
+        LOG.info("Client with id {} loaded.", clientId);
+        return this.withProjectsData(
+                List.of(this.clientMapper.mapToDto(maybeClient.orElseThrow(ResourceNotFoundException::new)))).get(0);
     }
 
     @Transactional
     @Override
     public ClientDto updateClient(Long clientId, ClientDto clientDto) {
-        LOG.debug("Updating Client with id {}.", clientId);
+        LOG.info("Updating Client with id {}.", clientId);
 
         var maybeClient = this.clientRepository.findById(clientId);
         this.clientValidator.validateClientExistence(maybeClient, clientId);
@@ -94,17 +99,20 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
         this.clientRepository.save(client);
 
-        LOG.debug("Client with id {} updated.", clientId);
+        LOG.info("Client with id {} updated.", clientId);
         return this.clientMapper.mapToDto(client);
     }
 
     @Override
     public List<ClientDto> getClients() {
-        return this.clientRepository.findAll().stream().map(this.clientMapper::mapToDto).toList();
+        LOG.info("Getting all clients.");
+        return this.withProjectsData(
+                this.clientRepository.findAll().stream().map(this.clientMapper::mapToDto).toList());
     }
 
     @Override
     public EntityProjectsSummaryDto getClientProjectsSummary(Long clientId) {
+        LOG.info("Getting projects summary for client with id {}.", clientId);
         this.clientValidator.validateClientExistence(clientId);
 
         var projects = this.projectQueryService.getProjectsForClientId(clientId);
@@ -114,9 +122,23 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
     @Override
     public ClientDto getClientBasicData(Long clientId) {
+        LOG.info("Getting basic data for client with id {}.", clientId);
         var maybeClient = this.clientRepository.findById(clientId);
         this.clientValidator.validateClientExistence(maybeClient, clientId);
         return this.clientMapper.mapToDto(maybeClient.orElseThrow(ResourceNotFoundException::new));
     }
 
+    private List<ClientDto> withProjectsData(List<ClientDto> clientDtos) {
+        var clientIds = clientDtos.stream().map(ClientDto::getId).toList();
+        var countsByClientId = this.projectQueryService.getProjectCountsByClientIds(clientIds,
+                this.projectProperties.activeStatuses());
+        var valueByClientId = this.contractQueryService.getProjectsValueByClientIds(clientIds);
+        clientDtos.forEach(clientDto -> {
+            var counts = countsByClientId.getOrDefault(clientDto.getId(), ProjectCounts.NONE);
+            clientDto.setNumberOfProjects((int) counts.all());
+            clientDto.setNumberOfActiveProjects((int) counts.active());
+            clientDto.setProjectsValue(valueByClientId.getOrDefault(clientDto.getId(), BigDecimal.ZERO).doubleValue());
+        });
+        return clientDtos;
+    }
 }

@@ -31,19 +31,19 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
     @Transactional
     @Override
     public SupplierDto createSupplier(SupplierDto supplierDto) {
-        LOG.debug("Creating Supplier.");
+        LOG.info("Creating Supplier.");
 
         this.supplierValidator.validateCreateSupplierDto(supplierDto);
         var supplier = this.supplierMapper.mapFromDto(supplierDto);
         this.supplierRepository.save(supplier);
-        LOG.debug("Supplier created.");
+        LOG.info("Supplier created.");
         return this.supplierMapper.mapToDto(supplier);
     }
 
     @Transactional
     @Override
     public SupplierDto updateSupplier(Long supplierId, SupplierDto supplierDto) {
-        LOG.debug("Updating Supplier with id {}.", supplierId);
+        LOG.info("Updating Supplier with id {}.", supplierId);
 
         var maybeSupplier = this.supplierRepository.findById(supplierId);
         this.supplierValidator.validateSupplierExistence(maybeSupplier, supplierId);
@@ -53,37 +53,37 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
                 supplierDto.getEmail(), supplierDto.getTelephone(), supplierDto.getNote());
         supplier = this.supplierRepository.save(supplier);
 
-        LOG.debug("Supplier with id {} updated.", supplierId);
+        LOG.info("Supplier with id {} updated.", supplierId);
         return this.supplierMapper.mapToDto(supplier);
     }
 
     @Transactional
     @Override
     public void deleteSupplier(Long supplierId) {
-        LOG.debug("Deleting Supplier with id {}", supplierId);
+        LOG.info("Deleting Supplier with id {}", supplierId);
 
         this.supplierValidator.validateSupplierExistence(supplierId);
         this.supplierValidator.validateSupplierHasNoSupply(supplierId);
         this.supplierRepository.deleteById(supplierId);
 
-        LOG.debug("Supplier with id {} deleted.", supplierId);
+        LOG.info("Supplier with id {} deleted.", supplierId);
     }
 
     @Override
     public SupplierDto getSupplier(Long supplierId) {
-        LOG.debug("Loading Supplier with id {}", supplierId);
+        LOG.info("Loading Supplier with id {}", supplierId);
 
         var maybeSupplier = this.supplierRepository.findById(supplierId);
         this.supplierValidator.validateSupplierExistence(supplierId);
         var supplier = maybeSupplier.orElseThrow(ResourceNotFoundException::new);
         var supplierDto = this.supplierMapper.mapToDto(supplier);
-        LOG.debug("Supplier with id {} loaded.", supplierId);
+        LOG.info("Supplier with id {} loaded.", supplierId);
         return supplierDto;
     }
 
     @Override
     public List<SupplierDto> getSuppliers() {
-        LOG.debug("Loading Suppliers list");
+        LOG.info("Loading Suppliers list");
         var numberOfSupplierBySupplierId = this.supplierQueryService.getNumberOfSupplierPerSupplier();
         return this.supplierRepository.findAll()
                 .stream()
@@ -94,7 +94,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
 
     @Override
     public SupplierSuppliesDataDto getSuppliesData(Long supplierId) {
-        LOG.debug("Loading Supply data for Supplier with id {}", supplierId);
+        LOG.info("Loading Supply data for Supplier with id {}", supplierId);
 
         this.supplierValidator.validateSupplierExistence(supplierId);
         var data = this.supplierQueryService.getSupplierSuppliesData(supplierId);

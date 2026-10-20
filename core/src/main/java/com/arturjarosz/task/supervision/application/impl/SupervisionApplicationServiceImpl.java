@@ -52,7 +52,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     @Transactional
     @Override
     public SupervisionDto createSupervision(SupervisionDto supervisionDto) {
-        LOG.debug("Creating supervision.");
+        LOG.info("Creating supervision.");
 
         this.supervisionValidator.validateCreateSupervision(supervisionDto);
         this.projectValidator.validateProjectExistence(supervisionDto.getProjectId());
@@ -61,14 +61,14 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionRepository.save(supervision);
         this.projectFinanceAwareObjectService.onCreate(supervisionDto.getProjectId());
 
-        LOG.debug("Supervision created.");
+        LOG.info("Supervision created.");
         return this.supervisionMapper.mapToDto(supervision);
     }
 
     @Transactional
     @Override
     public SupervisionDto updateSupervision(Long supervisionId, SupervisionDto supervisionDto) {
-        LOG.debug("Updating supervision with id {}.", supervisionId);
+        LOG.info("Updating supervision with id {}.", supervisionId);
 
         var maybeSupervision = this.supervisionRepository.findById(supervisionId);
         this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
@@ -80,26 +80,26 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.projectFinanceAwareObjectService.onUpdate(supervisionDto.getProjectId());
         this.supervisionRepository.save(supervision);
 
-        LOG.debug("Supervision with id {} updated.", supervisionId);
+        LOG.info("Supervision with id {} updated.", supervisionId);
         return this.supervisionMapper.mapToDto(supervision);
     }
 
     @Transactional
     @Override
     public void deleteSupervision(Long supervisionId) {
-        LOG.debug("Removing supervision with id {}.", supervisionId);
+        LOG.info("Removing supervision with id {}.", supervisionId);
 
         this.supervisionValidator.validateSupervisionExistence(supervisionId);
         this.projectFinanceAwareObjectService.onRemove(
                 this.supervisionQueryService.getProjectIdForSupervision(supervisionId));
         this.supervisionRepository.deleteById(supervisionId);
 
-        LOG.debug("Supervision with id {} removed.", supervisionId);
+        LOG.info("Supervision with id {} removed.", supervisionId);
     }
 
     @Override
     public SupervisionDto getSupervision(Long supervisionId) {
-        LOG.debug("Retrieving supervision with id {}.", supervisionId);
+        LOG.info("Retrieving supervision with id {}.", supervisionId);
         var maybeSupervision = this.supervisionRepository.findById(supervisionId);
         this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
         return this.supervisionMapper.mapToDto(
@@ -109,7 +109,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     @Transactional
     @Override
     public SupervisionVisitDto createSupervisionVisit(Long supervisionId, SupervisionVisitDto supervisionVisitDto) {
-        LOG.debug("Creating visit for supervision with id {}.", supervisionId);
+        LOG.info("Creating visit for supervision with id {}.", supervisionId);
 
         var maybeSupervision = this.supervisionRepository.findById(supervisionId);
         this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
@@ -128,7 +128,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
         this.supervisionRepository.save(supervision);
         createdSupervisionVisitDto.setId(this.getIdForCreatedSupervisionVisit(supervision, supervisionVisit));
         createdSupervisionVisitDto.setSupervisionId(supervisionId);
-        LOG.debug("Visit with id {} for supervision with id {} created.", createdSupervisionVisitDto.getId(),
+        LOG.info("Visit with id {} for supervision with id {} created.", createdSupervisionVisitDto.getId(),
                 supervisionId);
         return createdSupervisionVisitDto;
     }
@@ -137,7 +137,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     @Override
     public SupervisionVisitDto updateSupervisionVisit(Long supervisionId, Long supervisionVisitId,
             SupervisionVisitDto supervisionVisitDto) {
-        LOG.debug("Updating supervision visit with id {}.", supervisionVisitId);
+        LOG.info("Updating supervision visit with id {}.", supervisionVisitId);
 
         var maybeSupervision = this.supervisionRepository.findById(supervisionId);
         this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
@@ -152,14 +152,14 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
                 this.supervisionQueryService.getProjectIdForSupervision(supervisionId));
         this.supervisionRepository.save(supervision);
 
-        LOG.debug("Supervision visit with id {} updated.", supervisionVisitId);
+        LOG.info("Supervision visit with id {} updated.", supervisionVisitId);
         return this.supervisionVisitMapper.mapToDto(
                 supervision.updateSupervisionVisit(supervisionVisitId, supervisionVisitDto));
     }
 
     @Override
     public SupervisionVisitDto getSupervisionVisit(Long supervisionId, Long supervisionVisitId) {
-        LOG.debug("Retrieving supervision visit with id {}.", supervisionVisitId);
+        LOG.info("Retrieving supervision visit with id {}.", supervisionVisitId);
 
         this.supervisionValidator.validateSupervisionExistence(supervisionId);
         this.supervisionVisitValidator.validateSupervisionHavingSupervisionVisit(supervisionId, supervisionVisitId);
@@ -168,7 +168,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
 
     @Override
     public List<SupervisionVisitDto> getSupervisionVisits(Long supervisionId) {
-        LOG.debug("Retrieving all supervision visits for supervision with id {}.", supervisionId);
+        LOG.info("Retrieving all supervision visits for supervision with id {}.", supervisionId);
 
         this.supervisionValidator.validateSupervisionExistence(supervisionId);
         return this.supervisionQueryService.getSupervisionVisits(supervisionId);
@@ -177,7 +177,7 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
     @Transactional
     @Override
     public void deleteSupervisionVisit(Long supervisionId, Long supervisionVisitId) {
-        LOG.debug("Removing supervision visit with id {}.", supervisionVisitId);
+        LOG.info("Removing supervision visit with id {}.", supervisionVisitId);
 
         var maybeSupervision = this.supervisionRepository.findById(supervisionId);
         this.supervisionValidator.validateSupervisionExistence(maybeSupervision, supervisionId);
@@ -191,12 +191,12 @@ public class SupervisionApplicationServiceImpl implements SupervisionApplication
                 this.supervisionQueryService.getProjectIdForSupervision(supervisionId));
         this.supervisionRepository.save(supervision);
 
-        LOG.debug("Supervision visit with id {} removed.", supervisionVisitId);
+        LOG.info("Supervision visit with id {} removed.", supervisionVisitId);
     }
 
     @Override
     public SupervisionDto getProjectSupervision(Long projectId) {
-        LOG.debug("Loading supervision or project with id {}", projectId);
+        LOG.info("Loading supervision or project with id {}", projectId);
 
         this.projectValidator.validateProjectExistence(projectId);
         var maybeSupervision = Optional.ofNullable(this.supervisionQueryService.getSupervisionByProjectId(projectId));

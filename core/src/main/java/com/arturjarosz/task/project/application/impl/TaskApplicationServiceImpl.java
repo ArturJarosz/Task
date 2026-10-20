@@ -41,7 +41,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     @Transactional
     @Override
     public TaskDto createTask(Long projectId, Long stageId, TaskDto taskDto) {
-        LOG.debug("Creating Task for Project with id {} and Stage with id {}", projectId, stageId);
+        LOG.info("Creating Task for Project with id {} and Stage with id {}", projectId, stageId);
 
         var maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
@@ -51,7 +51,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         var task = this.taskDomainService.createTask(project, stageId, taskDto);
         project = this.projectRepository.save(project);
-        LOG.debug("Task created.");
+        LOG.info("Task created.");
 
         return this.taskMapper.taskToTaskDto(this.getNewTaskWithId(project, stageId, task));
     }
@@ -59,7 +59,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     @Transactional
     @Override
     public void deleteTask(Long projectId, Long stageId, Long taskId) {
-        LOG.debug("Removing Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);
+        LOG.info("Removing Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);
 
         var maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
@@ -69,13 +69,13 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         project.removeTaskFromStage(stageId, taskId);
         this.projectRepository.save(project);
 
-        LOG.debug("Task removed.");
+        LOG.info("Task removed.");
     }
 
     @Transactional
     @Override
     public TaskDto updateTask(Long projectId, Long stageId, Long taskId, TaskDto taskDto) {
-        LOG.debug("Updating Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);
+        LOG.info("Updating Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);
 
         var maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
@@ -86,7 +86,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         var taskInnerDto = this.taskMapper.updateDtoToInnerDto(taskDto);
         var task = this.taskDomainService.updateTask(project, stageId, taskId, taskInnerDto);
         this.projectRepository.save(project);
-        LOG.debug("Task updated.");
+        LOG.info("Task updated.");
         return this.taskMapper.taskToTaskDto(task);
     }
 
@@ -94,7 +94,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     @Override
     public TaskDto updateTaskStatus(Long projectId, Long stageId, Long taskId,
             UpdateStatusRequestDto statusRequestDto) {
-        LOG.debug("Updating status on Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId,
+        LOG.info("Updating status on Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId,
                 projectId);
         var maybeProject = this.projectRepository.findById(projectId);
 
@@ -106,14 +106,14 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
                 TaskStatus.valueOf(statusRequestDto.getStatus().name()));
         this.projectRepository.save(project);
 
-        LOG.debug("Task status updated.");
+        LOG.info("Task status updated.");
         return this.taskMapper.taskToTaskDto(this.getTaskById(project, stageId, taskId));
     }
 
     @Transactional
     @Override
     public TaskDto getTask(Long projectId, Long stageId, Long taskId) {
-        LOG.debug("Loading Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);
+        LOG.info("Loading Task with id {}, from Stage with id {} on Project with id {}", taskId, stageId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
@@ -122,7 +122,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
 
     @Override
     public List<TaskDto> getTaskList(Long projectId, Long stageId) {
-        LOG.debug("Loading list of Tasks for Stage with id {} on Project with id {}", stageId, projectId);
+        LOG.info("Loading list of Tasks for Stage with id {} on Project with id {}", stageId, projectId);
 
         var maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);

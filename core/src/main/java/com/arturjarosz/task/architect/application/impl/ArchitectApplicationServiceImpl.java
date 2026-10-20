@@ -9,13 +9,16 @@ import com.arturjarosz.task.dto.ArchitectDto;
 import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
 import com.arturjarosz.task.project.application.mapper.ProjectsToEntityProjectsSummaryDtoMapper;
 import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.query.ProjectCounts;
 import com.arturjarosz.task.project.query.ProjectQueryService;
+import com.arturjarosz.task.properties.ProjectProperties;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectDto;
@@ -32,28 +35,29 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     private final ProjectQueryService projectQueryService;
     private final ContractQueryService contractQueryService;
     private final ProjectsToEntityProjectsSummaryDtoMapper projectsToEntityProjectsSummaryDtoMapper;
+    private final ProjectProperties projectProperties;
 
     @Transactional
     @Override
     public ArchitectDto createArchitect(ArchitectDto architectDto) {
-        LOG.debug("creating architect");
+        LOG.info("creating architect");
         validateArchitectDto(architectDto);
         var architect = this.architectMapper.mapFromDto(architectDto);
         architect = this.architectRepository.save(architect);
-        LOG.debug("architect created");
+        LOG.info("architect created");
         return this.architectMapper.mapToDto(architect);
     }
 
     @Transactional
     @Override
     public void removeArchitect(Long architectId) {
-        LOG.debug("removing architect");
+        LOG.info("removing architect");
 
         this.architectValidator.validateArchitectExistence(architectId);
         this.architectValidator.validateArchitectHasNoProjects(architectId);
         this.architectRepository.deleteById(architectId);
 
-        LOG.debug("architect with id {} removed", architectId);
+        LOG.info("architect with id {} removed", architectId);
     }
 
     @Override
@@ -61,15 +65,15 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
         var maybeArchitect = this.architectRepository.findById(architectId);
         validateArchitectExistence(maybeArchitect, architectId);
 
-        LOG.debug("architect with id {} loaded", architectId);
-        return this.architectMapper.mapToDto(
-                maybeArchitect.orElseThrow(ResourceNotFoundException::new));
+        LOG.info("architect with id {} loaded", architectId);
+        return this.withProjectsData(List.of(this.architectMapper.mapToDto(
+                maybeArchitect.orElseThrow(ResourceNotFoundException::new)))).get(0);
     }
 
     @Transactional
     @Override
     public ArchitectDto updateArchitect(Long architectId, ArchitectDto architectDto) {
-        LOG.debug("updating architect with id {}", architectId);
+        LOG.info("updating architect with id {}", architectId);
 
         var maybeArchitect = this.architectRepository.findById(architectId);
         validateArchitectExistence(maybeArchitect, architectId);
@@ -78,26 +82,43 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
         architect.updateArchitectName(architectDto.getFirstName(), architectDto.getLastName());
         architect = this.architectRepository.save(architect);
 
-        LOG.debug("architect with id {} updated", architectId);
+        LOG.info("architect with id {} updated", architectId);
 
         return this.architectMapper.mapToDto(architect);
     }
 
     @Override
     public List<ArchitectDto> getArchitects() {
-        return this.architectRepository.findAll()
+        LOG.info("Getting all architects.");
+        return this.withProjectsData(this.architectRepository.findAll()
                 .stream()
                 .map(this.architectMapper::mapToDto)
-                .toList();
+                .toList());
     }
 
     @Override
     public EntityProjectsSummaryDto getProjectsSummary(Long architectId) {
+        LOG.info("Getting projects summary for architect with id {}.", architectId);
         this.architectValidator.validateArchitectExistence(architectId);
 
         var projects = this.projectQueryService.getProjectsForArchitect(architectId);
         var contractValueByProjectId = this.contractQueryService.getContractValuesForProjects(projects.stream().map(
                 Project::getId).toList());
         return this.projectsToEntityProjectsSummaryDtoMapper.mapToProjectSummaryDto(projects, contractValueByProjectId);
+    }
+
+    private List<ArchitectDto> withProjectsData(List<ArchitectDto> architectDtos) {
+        var architectIds = architectDtos.stream().map(ArchitectDto::getId).toList();
+        var countsByArchitectId = this.projectQueryService.getProjectCountsByArchitectIds(architectIds,
+                this.projectProperties.activeStatuses());
+        var valueByArchitectId = this.contractQueryService.getProjectsValueByArchitectIds(architectIds);
+        architectDtos.forEach(architectDto -> {
+            var counts = countsByArchitectId.getOrDefault(architectDto.getId(), ProjectCounts.NONE);
+            architectDto.setNumberOfProjects((int) counts.all());
+            architectDto.setNumberOfActiveProjects((int) counts.active());
+            architectDto.setProjectsValue(
+                    valueByArchitectId.getOrDefault(architectDto.getId(), BigDecimal.ZERO).doubleValue());
+        });
+        return architectDtos;
     }
 }

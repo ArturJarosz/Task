@@ -3,7 +3,10 @@ package com.arturjarosz.task.architect
 
 import com.arturjarosz.task.configuration.BaseTestIT
 import com.arturjarosz.task.dto.ArchitectDto
+import com.arturjarosz.task.dto.ClientDto
+import com.arturjarosz.task.dto.ProjectCreateDto
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
+import com.arturjarosz.task.utils.TestsHelper
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -21,6 +24,8 @@ class ArchitectTestIT extends BaseTestIT {
     static final String NEW_FIRST_NAME = "New Name"
     static final String NEW_LAST_NAME = "New Last Name"
     static final String ARCHITECTS_URI = "/architects"
+    static final String CLIENTS_URI = "/clients"
+    static final String PROJECTS_URI = "/projects"
     static final ObjectMapper MAPPER = new ObjectMapper()
 
     @Autowired
@@ -212,6 +217,42 @@ class ArchitectTestIT extends BaseTestIT {
             architects.isEmpty()
     }
 
+    @Transactional
+    def "Getting architect and architects should return number of all and active projects and their value"() {
+        given: "Architect with two projects, one of them rejected"
+            def architectDto = TestsHelper.createArchitect(this.prepareArchitectDto(FIRST_NAME, LAST_NAME),
+                    HOST + ":" + port + ARCHITECTS_URI, this.mockMvc)
+            def clientDto = TestsHelper.createClient(this.readJson('json/client/privateClient.json', ClientDto),
+                    HOST + ":" + port + CLIENTS_URI, this.mockMvc)
+            def projectCreateDto = this.readJson('json/project/properProject.json', ProjectCreateDto)
+            projectCreateDto.architectId = architectDto.id
+            projectCreateDto.clientId = clientDto.id
+            TestsHelper.createProject(projectCreateDto, HOST + ":" + port + PROJECTS_URI, this.mockMvc)
+            def rejectedProject = TestsHelper.createProject(projectCreateDto, HOST + ":" + port + PROJECTS_URI, this.mockMvc)
+            this.mockMvc.perform(MockMvcRequestBuilders.post(
+                    URI.create(HOST + ":" + port + PROJECTS_URI + "/" + rejectedProject.id + "/reject")))
+        when:
+            def architectResponse = this.mockMvc.perform(MockMvcRequestBuilders
+                    .get(URI.create(HOST + ":" + port + ARCHITECTS_URI + "/" + architectDto.id))).andReturn().response
+            def architectsResponse = this.mockMvc.perform(MockMvcRequestBuilders
+                    .get(URI.create(HOST + ":" + port + ARCHITECTS_URI))).andReturn().response
+        then:
+            def architect = MAPPER.readValue(architectResponse.contentAsString, ArchitectDto)
+            architect.numberOfProjects == 2
+            architect.numberOfActiveProjects == 1
+            architect.projectsValue == 2 * projectCreateDto.offerValue
+        and:
+            List<ArchitectDto> architects = MAPPER.readValue(architectsResponse.contentAsString,
+                    MAPPER.typeFactory.constructCollectionType(List, ArchitectDto))
+            def listedArchitect = architects.find { it.id == architectDto.id }
+            listedArchitect.numberOfProjects == 2
+            listedArchitect.numberOfActiveProjects == 1
+            listedArchitect.projectsValue == 2 * projectCreateDto.offerValue
+    }
+
+    private <T> T readJson(String path, Class<T> type) {
+        return MAPPER.readValue(new File(getClass().classLoader.getResource(path).file), type)
+    }
 
     private ArchitectDto prepareArchitectDto(String firstName, String lastName) {
         return new ArchitectDto(firstName: firstName, lastName: lastName)

@@ -23,7 +23,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
     @Override
     public UserDto getCurrentUser() {
-        LOG.debug("Getting current user.");
+        LOG.info("Getting current user.");
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
@@ -31,20 +31,20 @@ public class UserApplicationServiceImpl implements UserApplicationService {
             if (authId != null) {
                 var maybeUser = this.userRepository.findByAuthId(authId);
                 if (maybeUser.isPresent()) {
-                    LOG.debug("User found for authId {}.", authId);
+                    LOG.info("User found for authId {}.", authId);
                     return this.userMapper.mapToDto(maybeUser.get());
                 }
             }
         }
 
-        LOG.debug("No user found for current authentication.");
+        LOG.info("No user found for current authentication.");
         return new UserDto();
     }
 
     @Transactional
     @Override
     public UserDto createUser(UserDto userDto) {
-        LOG.debug("Creating user.");
+        LOG.info("Creating user.");
 
         var user = this.userMapper.mapFromDto(userDto);
 
@@ -54,13 +54,13 @@ public class UserApplicationServiceImpl implements UserApplicationService {
             String authId = jwtAuth.getToken().getClaimAsString(SUB_CLAIM);
             if (authId != null) {
                 user.setAuthId(authId);
-                LOG.debug("Setting authId {} for new user.", authId);
+                LOG.info("Setting authId {} for new user.", authId);
             }
         }
 
         user = this.userRepository.save(user);
 
-        LOG.debug("User created.");
+        LOG.info("User created.");
         return this.userMapper.mapToDto(user);
     }
 }

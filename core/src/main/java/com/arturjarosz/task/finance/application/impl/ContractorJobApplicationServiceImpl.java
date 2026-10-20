@@ -31,7 +31,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
     @Transactional
     @Override
     public ContractorJobDto createContractorJob(Long projectId, ContractorJobDto contractorJobDto) {
-        LOG.debug("Creating ContractorJob for Project with id {}", projectId);
+        LOG.info("Creating ContractorJob for Project with id {}", projectId);
 
         this.projectValidator.validateProjectExistence(projectId);
         this.contractorJobValidator.validateCreateContractorJobDto(contractorJobDto);
@@ -44,7 +44,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
 
         this.projectFinanceAwareObjectService.onCreate(projectId);
         this.projectFinancialDataRepository.save(financialData);
-        LOG.debug("ContractorJob for Project with id {} created", projectId);
+        LOG.info("ContractorJob for Project with id {} created", projectId);
 
         return this.contractorJobMapper.mapToDto(contractorJob, projectId);
     }
@@ -53,7 +53,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
     @Override
     public ContractorJobDto updateContractorJob(Long projectId, Long contractorJobId,
             ContractorJobDto contractorJobDto) {
-        LOG.debug("Updating ContractorJob with id {} from Project with id {}", contractorJobId, projectId);
+        LOG.info("Updating ContractorJob with id {} from Project with id {}", contractorJobId, projectId);
 
         this.projectValidator.validateProjectExistence(projectId);
         this.contractorJobValidator.validateContractorJobOnProjectExistence(projectId, contractorJobId);
@@ -64,13 +64,13 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         this.projectFinancialDataRepository.save(financialData);
         this.projectFinanceAwareObjectService.onUpdate(projectId);
 
-        LOG.debug("ContractorJob with id {} updated on Project with id {}", contractorJobId, projectId);
+        LOG.info("ContractorJob with id {} updated on Project with id {}", contractorJobId, projectId);
         return this.contractorJobMapper.mapToDto(contractorJob, projectId);
     }
 
     @Override
     public ContractorJobDto getContractorJob(Long projectId, Long contractorJobId) {
-        LOG.debug("Loading ContractorJob with id {} for Project with id {}", contractorJobId, projectId);
+        LOG.info("Loading ContractorJob with id {} for Project with id {}", contractorJobId, projectId);
         this.projectValidator.validateProjectExistence(projectId);
         var contractorJobDto = this.financialDataQueryService.getContractorJobById(contractorJobId, projectId);
         this.contractorJobValidator.validateContractorJobExistence(contractorJobDto, projectId, contractorJobId);
@@ -79,7 +79,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
 
     @Override
     public ContractorJobProjectDataDto getProjectContractorJobsData(Long projectId) {
-        LOG.debug("Loading contractor jobs data for Project with id {}", projectId);
+        LOG.info("Loading contractor jobs data for Project with id {}", projectId);
         this.projectValidator.validateProjectExistence(projectId);
 
         var projectFinancialData = this.financialDataQueryService.getProjectPartialFinancialDataByType(projectId,
@@ -91,7 +91,7 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
     @Transactional
     @Override
     public void deleteContractorJob(Long projectId, Long contractorJobId) {
-        LOG.debug("Removing ContractorJob with id {} from Project with id {}", contractorJobId, projectId);
+        LOG.info("Removing ContractorJob with id {} from Project with id {}", contractorJobId, projectId);
 
         this.projectValidator.validateProjectExistence(projectId);
         this.contractorJobValidator.validateContractorJobOnProjectExistence(projectId, contractorJobId);
@@ -100,6 +100,6 @@ public class ContractorJobApplicationServiceImpl implements ContractorJobApplica
         financialData.removeContractorJob(contractorJobId);
         this.projectFinancialDataRepository.save(financialData);
         this.projectFinanceAwareObjectService.onRemove(projectId);
-        LOG.debug("ContractorJob with id {} removed from Project with id {}", contractorJobId, projectId);
+        LOG.info("ContractorJob with id {} removed from Project with id {}", contractorJobId, projectId);
     }
 }
