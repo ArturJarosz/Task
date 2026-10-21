@@ -286,6 +286,8 @@ class ProjectTestIT extends BaseTestIT {
             List<ProjectDto> projects =
                     MAPPER.readValue(projectsListResponse.contentAsString, List<ProjectDto>)
             projects.size() == 2
+            projects.every { it.contract.offerValue == properProjectDto.offerValue }
+            projects.every { it.architect.id == architectDto.id && it.client.lastName == privateClientDto.lastName }
     }
 
     private String createArchitectUri() {

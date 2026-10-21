@@ -7,6 +7,7 @@ import com.arturjarosz.task.client.application.impl.ClientApplicationServiceImpl
 import com.arturjarosz.task.contract.application.impl.ContractServiceImpl
 import com.arturjarosz.task.contract.application.mapper.ContractMapperImpl
 import com.arturjarosz.task.contract.model.Contract
+import com.arturjarosz.task.contract.query.ContractQueryService
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow
 import com.arturjarosz.task.dto.*
 import com.arturjarosz.task.finance.application.CostApplicationService
@@ -37,9 +38,13 @@ class ProjectApplicationServiceImplTest extends Specification {
     static final LocalDate PROJECT_START_DATE = LocalDate.parse("2022-01-01")
     static final Double PROJECT_VALUE = 5000.0
 
-    def clientApplicationService = Mock(ClientApplicationServiceImpl)
+    def clientApplicationService = Mock(ClientApplicationServiceImpl) {
+        getClientsBasicData(_) >> [:]
+    }
     def clientValidator = Mock(ClientValidator)
-    def architectApplicationService = Mock(ArchitectApplicationServiceImpl)
+    def architectApplicationService = Mock(ArchitectApplicationServiceImpl) {
+        getArchitectsBasicData(_) >> [:]
+    }
     def architectValidator = Mock(ArchitectValidator)
     def projectRepository = Mock(ProjectRepository)
     def projectDomainService = Mock(ProjectDomainServiceImpl)
@@ -51,11 +56,14 @@ class ProjectApplicationServiceImplTest extends Specification {
     def projectMapper = new ProjectMapperImpl()
     def costApplicationService = Mock(CostApplicationService)
     def supervisionApplicationService = Mock(SupervisionApplicationService)
+    def contractQueryService = Mock(ContractQueryService) {
+        getContractValuesForProjects(_) >> [:]
+    }
 
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator,
             projectFinancialDataService, contractService, contractMapper, projectMapper, costApplicationService,
-            supervisionApplicationService)
+            supervisionApplicationService, contractQueryService)
 
     def "createProject should call validateProjectBasicDto on projectValidator"() {
         given:
@@ -303,6 +311,43 @@ class ProjectApplicationServiceImplTest extends Specification {
             List<ProjectDto> projects = this.projectApplicationService.getProjects()
         then:
             projects.size() == 1
+    }
+
+    def "getProjects should return contract offer value of each project"() {
+        given:
+            this.mockProjectRepositoryLoadAll()
+        when:
+            List<ProjectDto> projects = this.projectApplicationService.getProjects()
+        then:
+            1 * this.contractQueryService.getContractValuesForProjects([EXISTING_PROJECT_ID]) >>
+                    [(EXISTING_PROJECT_ID): BigDecimal.valueOf(PROJECT_VALUE)]
+            projects[0].contract.offerValue == PROJECT_VALUE
+    }
+
+    def "getProjects should load clients and architects in one batch each"() {
+        given:
+            this.mockProjectRepositoryLoadAll()
+        when:
+            List<ProjectDto> projects = this.projectApplicationService.getProjects()
+        then:
+            1 * this.clientApplicationService.getClientsBasicData([CLIENT_ID] as Set) >>
+                    [(CLIENT_ID): new ClientDto(id: CLIENT_ID, firstName: "clientFirstName")]
+            1 * this.architectApplicationService.getArchitectsBasicData([ARCHITECT_ID] as Set) >>
+                    [(ARCHITECT_ID): new ArchitectDto(id: ARCHITECT_ID, lastName: "architectLastName")]
+            0 * this.clientApplicationService.getClientBasicData(_)
+            0 * this.architectApplicationService.getArchitect(_)
+            projects[0].client.firstName == "clientFirstName"
+            projects[0].architect.lastName == "architectLastName"
+    }
+
+    def "getProjects should not load contract values when there are no projects"() {
+        given:
+            1 * this.projectRepository.findAll() >> []
+        when:
+            List<ProjectDto> projects = this.projectApplicationService.getProjects()
+        then:
+            projects.isEmpty()
+            0 * this.contractQueryService.getContractValuesForProjects(_)
     }
 
     def "rejectProject should call validateProjectExistence on projectValidate"() {

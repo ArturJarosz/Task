@@ -19,7 +19,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectDto;
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectExistence;
@@ -68,6 +73,18 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
         LOG.info("architect with id {} loaded", architectId);
         return this.withProjectsData(List.of(this.architectMapper.mapToDto(
                 maybeArchitect.orElseThrow(ResourceNotFoundException::new)))).get(0);
+    }
+
+    @Override
+    public Map<Long, ArchitectDto> getArchitectsBasicData(Collection<Long> architectIds) {
+        LOG.info("Getting basic data for {} architects.", architectIds.size());
+        var existingIds = architectIds.stream().filter(Objects::nonNull).toList();
+        if (existingIds.isEmpty()) {
+            return Map.of();
+        }
+        return this.architectRepository.findAllById(existingIds).stream()
+                .map(this.architectMapper::mapToDto)
+                .collect(Collectors.toMap(ArchitectDto::getId, Function.identity()));
     }
 
     @Transactional

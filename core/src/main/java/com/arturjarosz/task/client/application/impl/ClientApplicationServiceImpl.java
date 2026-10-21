@@ -19,7 +19,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -126,6 +131,18 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         var maybeClient = this.clientRepository.findById(clientId);
         this.clientValidator.validateClientExistence(maybeClient, clientId);
         return this.clientMapper.mapToDto(maybeClient.orElseThrow(ResourceNotFoundException::new));
+    }
+
+    @Override
+    public Map<Long, ClientDto> getClientsBasicData(Collection<Long> clientIds) {
+        LOG.info("Getting basic data for {} clients.", clientIds.size());
+        var existingIds = clientIds.stream().filter(Objects::nonNull).toList();
+        if (existingIds.isEmpty()) {
+            return Map.of();
+        }
+        return this.clientRepository.findAllById(existingIds).stream()
+                .map(this.clientMapper::mapToDto)
+                .collect(Collectors.toMap(ClientDto::getId, Function.identity()));
     }
 
     private List<ClientDto> withProjectsData(List<ClientDto> clientDtos) {

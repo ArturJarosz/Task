@@ -3,7 +3,9 @@ package com.arturjarosz.task.client.application;
 import com.arturjarosz.task.dto.ClientDto;
 import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface ClientApplicationService {
 
@@ -20,6 +22,12 @@ public interface ClientApplicationService {
      * is thrown.
      */
     ClientDto getClientBasicData(Long clientId);
+
+    /**
+     * Loads basic data of {@link com.arturjarosz.task.client.model.Client}s with given clientIds in one query, by
+     * client id. Ids of not existing clients are skipped.
+     */
+    Map<Long, ClientDto> getClientsBasicData(Collection<Long> clientIds);
 
     /**
      * Removes {@link com.arturjarosz.task.client.model.Client} by given clientId.
