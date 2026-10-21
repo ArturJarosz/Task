@@ -6,6 +6,8 @@ import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.ClientValidator;
 import com.arturjarosz.task.contract.application.ContractService;
 import com.arturjarosz.task.contract.application.mapper.ContractMapper;
+import com.arturjarosz.task.contract.query.ContractQueryService;
+import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
 import com.arturjarosz.task.finance.application.CostApplicationService;
@@ -15,6 +17,7 @@ import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.mapper.ProjectMapper;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
+import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.supervision.application.SupervisionApplicationService;
@@ -24,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -56,6 +60,8 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final CostApplicationService costApplicationService;
     @NonNull
     private final SupervisionApplicationService supervisionApplicationService;
+    @NonNull
+    private final ContractQueryService contractQueryService;
 
     @Transactional
     @Override
@@ -141,10 +147,25 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     public List<ProjectDto> getProjects() {
         LOG.info("Loading list of projects.");
 
-        return this.projectRepository.findAll().stream().map(project -> {
-            var clientDto = this.clientApplicationService.getClientBasicData(project.getClientId());
-            var architectDto = this.architectApplicationService.getArchitect(project.getArchitectId());
-            return this.projectMapper.mapToDto(clientDto, architectDto, project);
+        var projects = this.projectRepository.findAll();
+        if (projects.isEmpty()) {
+            return List.of();
+        }
+        var clientsById = this.clientApplicationService.getClientsBasicData(
+                projects.stream().map(Project::getClientId).collect(Collectors.toSet()));
+        var architectsById = this.architectApplicationService.getArchitectsBasicData(
+                projects.stream().map(Project::getArchitectId).collect(Collectors.toSet()));
+        var contractValueByProjectId = this.contractQueryService.getContractValuesForProjects(
+                projects.stream().map(Project::getId).toList());
+
+        return projects.stream().map(project -> {
+            var projectDto = this.projectMapper.mapToDto(clientsById.get(project.getClientId()),
+                    architectsById.get(project.getArchitectId()), project);
+            var contractValue = contractValueByProjectId.get(project.getId());
+            if (contractValue != null) {
+                projectDto.setContract(new ContractDto().offerValue(contractValue.doubleValue()));
+            }
+            return projectDto;
         }).toList();
     }
 

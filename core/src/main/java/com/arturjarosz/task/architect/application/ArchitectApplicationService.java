@@ -4,7 +4,9 @@ import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.dto.ArchitectDto;
 import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface ArchitectApplicationService {
 
@@ -31,6 +33,12 @@ public interface ArchitectApplicationService {
      * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
      */
     ArchitectDto getArchitect(Long architectId);
+
+    /**
+     * Loads basic data (without projects counts and value) of {@link Architect}s with given architectIds in one
+     * query, by architect id. Ids of not existing architects are skipped.
+     */
+    Map<Long, ArchitectDto> getArchitectsBasicData(Collection<Long> architectIds);
 
     /**
      * Updates Architect of given architectId with data provided in architectDto.

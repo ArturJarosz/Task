@@ -168,6 +168,28 @@ class ArchitectApplicationServiceImplTest extends Specification {
             architectDtos.every { it.numberOfProjects == 0 && it.numberOfActiveProjects == 0 && it.projectsValue == 0d }
     }
 
+    def "getArchitectsBasicData should load architects in one query and return them by id without projects data"() {
+        given:
+            def architect = new Architect(FIRST_NAME, LAST_NAME)
+            TestUtils.setFieldForObject(architect, "id", EXISTING_ID)
+        when:
+            def architectsById = subject.getArchitectsBasicData([EXISTING_ID, null])
+        then:
+            1 * architectRepository.findAllById([EXISTING_ID]) >> [architect]
+            0 * projectQueryService._
+            0 * contractQueryService._
+            architectsById.keySet() == [EXISTING_ID] as Set
+            architectsById[EXISTING_ID].firstName == FIRST_NAME
+    }
+
+    def "getArchitectsBasicData should not query repository for empty ids"() {
+        when:
+            def architectsById = subject.getArchitectsBasicData([])
+        then:
+            0 * architectRepository.findAllById(_)
+            architectsById.isEmpty()
+    }
+
     def "when updating non existing architect an exception should be thrown"() {
         given:
             def architectDto = new ArchitectDto(firstName: NEW_FIRST_NAME, lastName: NEW_LAST_NAME)

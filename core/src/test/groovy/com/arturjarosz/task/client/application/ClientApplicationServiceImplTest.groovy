@@ -226,6 +226,28 @@ class ClientApplicationServiceImplTest extends Specification {
             clientDto.projectsValue == 0d
     }
 
+    def "getClientsBasicData should load clients in one query and return them by id without projects data"() {
+        given:
+            def client = new Client(new PersonName(FIRST_NAME, LAST_NAME), COMPANY_NAME, ClientType.PRIVATE)
+            TestUtils.setFieldForObject(client, "id", EXISTING_PRIVATE_ID)
+        when:
+            def clientsById = this.clientApplicationServiceImpl.getClientsBasicData([EXISTING_PRIVATE_ID, null])
+        then:
+            1 * this.clientRepository.findAllById([EXISTING_PRIVATE_ID]) >> [client]
+            0 * this.projectQueryService._
+            0 * this.contractQueryService._
+            clientsById.keySet() == [EXISTING_PRIVATE_ID] as Set
+            clientsById[EXISTING_PRIVATE_ID].firstName == FIRST_NAME
+    }
+
+    def "getClientsBasicData should not query repository for empty ids"() {
+        when:
+            def clientsById = this.clientApplicationServiceImpl.getClientsBasicData([])
+        then:
+            0 * this.clientRepository.findAllById(_)
+            clientsById.isEmpty()
+    }
+
     def "getClientProjectsSummary should not return object if client existence fails"() {
         given:
         when:
