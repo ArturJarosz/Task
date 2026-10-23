@@ -1,10 +1,11 @@
 package com.arturjarosz.task.supplier.application.mapper
 
-import com.arturjarosz.task.configuration.UserProperties
 import com.arturjarosz.task.dto.SupplyDto
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto
 import com.arturjarosz.task.finance.model.SupplierSupplyDataDto
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
+import com.arturjarosz.task.systemparameter.application.TaxRatesProvider
+import com.arturjarosz.task.systemparameter.application.dto.TaxRates
 import spock.lang.Specification
 
 class SupplierSuppliesMapperTest extends Specification {
@@ -12,8 +13,7 @@ class SupplierSuppliesMapperTest extends Specification {
     def subject = new SupplierSuppliesMapperImpl()
 
     def setup() {
-        def userProperties = new UserProperties(incomeTax: 0.1D, vatTax: 0.23D)
-        TestUtils.setFieldForObject(subject, "userProperties", userProperties)
+        TestUtils.setFieldForObject(subject, "taxRatesProvider", { -> new TaxRates(new BigDecimal("0.23"), new BigDecimal("0.1")) } as TaxRatesProvider)
     }
 
     def "should return correctly mapped dto"() {

@@ -1,9 +1,15 @@
 package com.arturjarosz.task.user.application.impl
 
+import com.arturjarosz.task.dto.UserConfigurationDto
+import com.arturjarosz.task.dto.UserConfigurationNameDto
 import com.arturjarosz.task.dto.UserDto
+import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import com.arturjarosz.task.user.application.mapper.UserMapper
 import com.arturjarosz.task.user.infrastructure.repository.UserRepository
 import com.arturjarosz.task.user.model.User
+import com.arturjarosz.task.user.model.UserConfiguration
+import com.arturjarosz.task.user.model.UserConfigurationName
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
@@ -210,6 +216,102 @@ class UserApplicationServiceImplTest extends Specification {
             result.id == USER_ID
             result.username == USERNAME
             result.email == EMAIL
+    }
+
+    def "getCurrentUserConfigurations should return configurations of current user"() {
+        given:
+            def user = new User(USERNAME, EMAIL, AUTH_ID)
+            user.setConfiguration(UserConfigurationName.THEME_MODE, "DARK")
+            this.securityContext.getAuthentication() >> new JwtAuthenticationToken(createJwt(AUTH_ID))
+            this.userRepository.findByAuthId(AUTH_ID) >> Optional.of(user)
+            this.userMapper.mapToDto(_ as UserConfiguration) >> { UserConfiguration configuration ->
+                new UserConfigurationDto(name: UserConfigurationNameDto.valueOf(configuration.name.name()),
+                        value: configuration.value)
+            }
+
+        when:
+            def result = this.subject.getCurrentUserConfigurations()
+
+        then:
+            result == [new UserConfigurationDto(name: UserConfigurationNameDto.THEME_MODE, value: "DARK")]
+    }
+
+    def "getCurrentUserConfigurations should return empty list when current user does not exist"() {
+        given:
+            this.securityContext.getAuthentication() >> new JwtAuthenticationToken(createJwt(AUTH_ID))
+            this.userRepository.findByAuthId(AUTH_ID) >> Optional.empty()
+
+        when:
+            def result = this.subject.getCurrentUserConfigurations()
+
+        then:
+            result.isEmpty()
+    }
+
+    def "updateCurrentUserConfiguration should create configuration the user has not defined yet"() {
+        given:
+            def user = new User(USERNAME, EMAIL, AUTH_ID)
+            mockCurrentUser(user)
+
+        when:
+            this.subject.updateCurrentUserConfiguration(UserConfigurationNameDto.THEME_MODE,
+                    new UserConfigurationDto(value: "DARK"))
+
+        then:
+            user.configurations.size() == 1
+            user.getConfiguration(UserConfigurationName.THEME_MODE).get().value == "DARK"
+    }
+
+    def "updateCurrentUserConfiguration should update existing configuration instead of adding another one"() {
+        given:
+            def user = new User(USERNAME, EMAIL, AUTH_ID)
+            user.setConfiguration(UserConfigurationName.THEME_MODE, "DARK")
+            mockCurrentUser(user)
+
+        when:
+            this.subject.updateCurrentUserConfiguration(UserConfigurationNameDto.THEME_MODE,
+                    new UserConfigurationDto(value: "LIGHT"))
+
+        then:
+            user.configurations.size() == 1
+            user.getConfiguration(UserConfigurationName.THEME_MODE).get().value == "LIGHT"
+    }
+
+    def "updateCurrentUserConfiguration should throw exception when value is not valid for configuration"() {
+        given:
+            def user = new User(USERNAME, EMAIL, AUTH_ID)
+            mockCurrentUser(user)
+
+        when:
+            this.subject.updateCurrentUserConfiguration(UserConfigurationNameDto.THEME_MODE,
+                    new UserConfigurationDto(value: value))
+
+        then:
+            thrown(IllegalArgumentException)
+            user.configurations.isEmpty()
+
+        where:
+            value << [null, "", "dark", "BLUE"]
+    }
+
+    def "updateCurrentUserConfiguration should throw exception when current user does not exist"() {
+        given:
+            this.securityContext.getAuthentication() >> new JwtAuthenticationToken(createJwt(AUTH_ID))
+            this.userRepository.findByAuthId(AUTH_ID) >> Optional.empty()
+            this.userMapper.mapConfigurationName(UserConfigurationNameDto.THEME_MODE) >> UserConfigurationName.THEME_MODE
+
+        when:
+            this.subject.updateCurrentUserConfiguration(UserConfigurationNameDto.THEME_MODE,
+                    new UserConfigurationDto(value: "LIGHT"))
+
+        then:
+            thrown(ResourceNotFoundException)
+    }
+
+    private void mockCurrentUser(User user) {
+        this.securityContext.getAuthentication() >> new JwtAuthenticationToken(createJwt(AUTH_ID))
+        this.userRepository.findByAuthId(AUTH_ID) >> Optional.of(user)
+        this.userMapper.mapConfigurationName(UserConfigurationNameDto.THEME_MODE) >> UserConfigurationName.THEME_MODE
     }
 
     private static Jwt createJwt(String subClaim) {

@@ -1,11 +1,11 @@
 package com.arturjarosz.task.supplier.application.mapper;
 
-import com.arturjarosz.task.configuration.UserProperties;
 import com.arturjarosz.task.dto.FinancialPartialDataDto;
 import com.arturjarosz.task.dto.SupplierSuppliesDataDto;
 import com.arturjarosz.task.finance.application.TaxCalculator;
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto;
 import com.arturjarosz.task.finance.model.SupplierSupplyDataDto;
+import com.arturjarosz.task.systemparameter.application.TaxRatesProvider;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -15,11 +15,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Set;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {UserProperties.class}, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public abstract class SupplierSuppliesMapper {
 
     @Autowired
-    private UserProperties userProperties;
+    private TaxRatesProvider taxRatesProvider;
 
     private static FinancialPartialDataDto calculateAverage(FinancialValueDto financialSummary, int count) {
         var averageSummary = new FinancialPartialDataDto();
@@ -51,10 +51,11 @@ public abstract class SupplierSuppliesMapper {
         supplySupplierData.setSupplies(supplierSupplyDataDtos.stream().map(SupplierSupplyDataDto::supply).toList());
 
         var financialSummary = new FinancialValueDto();
+        var taxRates = this.taxRatesProvider.getTaxRates();
         for (SupplierSupplyDataDto supplierSupplyDataDto : supplierSupplyDataDtos) {
             var supplyFinancialDetails = supplierSupplyDataDto.financialData();
             var recalculatedSupplyFinancialDetails = TaxCalculator.recalculateObjectTaxes(supplyFinancialDetails,
-                    this.userProperties);
+                    taxRates);
             financialSummary.addValues(recalculatedSupplyFinancialDetails);
         }
         var financialSummaryDto = new FinancialPartialDataDto(supplierSupplyDataDtos.size(),

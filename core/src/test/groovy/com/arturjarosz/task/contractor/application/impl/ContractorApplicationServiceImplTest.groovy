@@ -1,6 +1,5 @@
 package com.arturjarosz.task.contractor.application.impl
 
-import com.arturjarosz.task.configuration.UserProperties
 import com.arturjarosz.task.contractor.application.ContractorValidator
 import com.arturjarosz.task.contractor.application.mapper.ContractorContractorJobMapper
 import com.arturjarosz.task.contractor.application.mapper.ContractorContractorJobMapperImpl
@@ -15,6 +14,8 @@ import com.arturjarosz.task.dto.ContractorJobDto
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto
 import com.arturjarosz.task.finance.model.ContractorContractorJobDto
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
+import com.arturjarosz.task.systemparameter.application.TaxRatesProvider
+import com.arturjarosz.task.systemparameter.application.dto.TaxRates
 import spock.lang.Specification
 
 class ContractorApplicationServiceImplTest extends Specification {
@@ -221,6 +222,7 @@ class ContractorApplicationServiceImplTest extends Specification {
     def "getContractorJobsData should return contractor validate contractor existence"() {
         given:
             this.contractorQueryService.getContractorJobsData(CONTRACTOR_ID) >> Set.of()
+            mockTaxRates(this.contractorContractorJobMapper)
 
         when:
             def result = subject.getContractorJobsData(CONTRACTOR_ID)
@@ -246,7 +248,7 @@ class ContractorApplicationServiceImplTest extends Specification {
             financialDataDto2.setValue(BigDecimal.valueOf(200.0D))
             var contractorJobData2 = new ContractorContractorJobDto(contractorJob2, financialDataDto2)
             this.contractorQueryService.getContractorJobsData(CONTRACTOR_ID) >> Set.of(contractorJobData1, contractorJobData2)
-            mockUserProperties(this.contractorContractorJobMapper)
+            mockTaxRates(this.contractorContractorJobMapper)
 
         when:
             def result = subject.getContractorJobsData(CONTRACTOR_ID)
@@ -274,10 +276,8 @@ class ContractorApplicationServiceImplTest extends Specification {
         this.contractorRepository.findById(contractorId) >> Optional.of(new Contractor(NAME, ContractorCategory.valueOf(CATEGORY.name()), UPDATED_EMAIL, TELEPHONE, NOTE))
     }
 
-    private void mockUserProperties(ContractorContractorJobMapper mapper) {
-        var userProperties = new UserProperties()
-        userProperties.setIncomeTax(0.18D)
-        userProperties.setVatTax(0.23D)
-        TestUtils.setFieldForObject(mapper, "userProperties", userProperties)
+    private void mockTaxRates(ContractorContractorJobMapper mapper) {
+        TestUtils.setFieldForObject(mapper, "taxRatesProvider",
+                { -> new TaxRates(new BigDecimal("0.23"), new BigDecimal("0.18")) } as TaxRatesProvider)
     }
 }

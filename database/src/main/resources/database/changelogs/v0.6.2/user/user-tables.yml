@@ -5,3 +5,9 @@ databaseChangeLog:
   - include:
       file: "create-user-table.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "create-user-configuration-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-user-configuration-table.yml"
+      relativeToChangelogFile: true

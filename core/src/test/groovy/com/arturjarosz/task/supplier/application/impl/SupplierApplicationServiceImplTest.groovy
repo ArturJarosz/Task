@@ -1,6 +1,5 @@
 package com.arturjarosz.task.supplier.application.impl
 
-import com.arturjarosz.task.configuration.UserProperties
 import com.arturjarosz.task.dto.SupplierCategoryDto
 import com.arturjarosz.task.dto.SupplierDto
 import com.arturjarosz.task.dto.SupplyDto
@@ -15,6 +14,8 @@ import com.arturjarosz.task.supplier.infrastructure.SupplierRepository
 import com.arturjarosz.task.supplier.model.Supplier
 import com.arturjarosz.task.supplier.model.SupplierCategory
 import com.arturjarosz.task.supplier.query.SupplierQueryService
+import com.arturjarosz.task.systemparameter.application.TaxRatesProvider
+import com.arturjarosz.task.systemparameter.application.dto.TaxRates
 import spock.lang.Specification
 
 class SupplierApplicationServiceImplTest extends Specification {
@@ -210,8 +211,8 @@ class SupplierApplicationServiceImplTest extends Specification {
 
     def "getSupplies should return SupplierSuppliesDataDto for existing supplier"() {
         given:
-            def userProperties = new UserProperties(incomeTax: 0.1D, vatTax: 0.23D)
-            TestUtils.setFieldForObject(supplierSuppliesMapper, "userProperties", userProperties)
+            TestUtils.setFieldForObject(supplierSuppliesMapper, "taxRatesProvider",
+                    { -> new TaxRates(new BigDecimal("0.23"), new BigDecimal("0.1")) } as TaxRatesProvider)
             var supplierSupplyDataDto = new SupplierSupplyDataDto(new SupplyDto(value: 1.0D), new FinancialDataDto(hasInvoice: true, value: 1.0D))
             this.supplierQueryService.getSupplierSuppliesData(SUPPLIER_ID) >> ([supplierSupplyDataDto] as Set)
 

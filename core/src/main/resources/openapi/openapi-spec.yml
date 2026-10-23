@@ -2995,6 +2995,61 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
 
+  /users/current/configurations:
+    get:
+      tags:
+        - user
+      summary: Get configurations of the current user based on JWT token
+      description: Settings the user has defined; settings never changed are left out. Empty when the user does not exist.
+      operationId: getCurrentUserConfigurations
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserConfigurations"
+
+  /users/current/configurations/{name}:
+    put:
+      tags:
+        - user
+      summary: Create or update one configuration of the current user based on JWT token
+      operationId: updateCurrentUserConfiguration
+      parameters:
+        - name: name
+          in: path
+          description: Name of the configuration
+          required: true
+          schema:
+            $ref: "#/components/schemas/UserConfigurationName"
+      requestBody:
+        description: New value of the configuration
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserConfiguration"
+      responses:
+        200:
+          description: Configuration successfully saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserConfiguration"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Current user does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
 components:
   schemas:
 
@@ -3994,3 +4049,30 @@ components:
           type: string
         authId:
           type: string
+
+    UserConfiguration:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/UserConfigurationName"
+        value:
+          type: string
+          description: Value of the configuration; allowed values depend on its name
+
+    UserConfigurations:
+      type: array
+      items:
+        $ref: "#/components/schemas/UserConfiguration"
+
+    UserConfigurationName:
+      type: string
+      description: Settings a user can define; THEME_MODE takes a ThemeMode value
+      enum:
+        - THEME_MODE
+
+    ThemeMode:
+      type: string
+      description: Light or dark theme of the user interface, value of the THEME_MODE user configuration
+      enum:
+        - LIGHT
+        - DARK

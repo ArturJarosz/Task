@@ -1,10 +1,11 @@
 package com.arturjarosz.task.finance.domain.impl
 
-import com.arturjarosz.task.configuration.UserProperties
 import com.arturjarosz.task.finance.domain.SummationStrategy
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto
 import com.arturjarosz.task.finance.model.PartialFinancialDataType
 import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl
+import com.arturjarosz.task.systemparameter.application.TaxRatesProvider
+import com.arturjarosz.task.systemparameter.application.dto.TaxRates
 import spock.lang.Specification
 
 class CostFinancialDataServiceImplTest extends Specification {
@@ -16,8 +17,8 @@ class CostFinancialDataServiceImplTest extends Specification {
     private static final BigDecimal COST_VALUE_3 = new BigDecimal("30.0")
 
     def financialDataQueryService = Mock(FinancialDataQueryServiceImpl)
-    def userProperties = Mock(UserProperties)
-    def costFinancialDataService = new CostFinancialDataServiceImpl(financialDataQueryService, userProperties)
+    def taxRatesProvider = Mock(TaxRatesProvider)
+    def costFinancialDataService = new CostFinancialDataServiceImpl(financialDataQueryService, taxRatesProvider)
 
     def "providePartialFinancialData should return summed up all cost related financial data for given project"() {
         given:
@@ -58,7 +59,7 @@ class CostFinancialDataServiceImplTest extends Specification {
     }
 
     private void mockUserService() {
-        this.userProperties.incomeTax >> INCOME_TAX
-        this.userProperties.vatTax >> VAT_TAX
+        this.taxRatesProvider.getTaxRates() >> new TaxRates(BigDecimal.valueOf(VAT_TAX),
+                BigDecimal.valueOf(INCOME_TAX))
     }
 }
