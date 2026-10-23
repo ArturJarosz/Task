@@ -4,18 +4,16 @@ import com.arturjarosz.task.calendar.application.CalendarSyncService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * Scheduled jobs keeping local calendar events and the Google Calendar in sync. Active only when the Google Calendar
- * integration is enabled.
+ * Scheduled jobs keeping local calendar events and the Google Calendar in sync. They do nothing while the Google
+ * Calendar integration is disabled in the application settings.
  */
 @Slf4j
 @RequiredArgsConstructor
 @Component
-@ConditionalOnProperty(prefix = "task.google-calendar", name = "enabled", havingValue = "true")
 public class CalendarSyncJobs {
 
     @NonNull

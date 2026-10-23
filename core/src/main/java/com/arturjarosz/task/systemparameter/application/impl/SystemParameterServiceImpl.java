@@ -4,10 +4,12 @@ import com.arturjarosz.task.dto.SystemParameterDto;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.systemparameter.application.SystemParameterApplicationValidator;
+import com.arturjarosz.task.systemparameter.application.SystemParameterChangeListener;
 import com.arturjarosz.task.systemparameter.application.SystemParameterDtoMapper;
 import com.arturjarosz.task.systemparameter.application.SystemParameterService;
 import com.arturjarosz.task.systemparameter.domain.SystemParameterValidatorService;
 import com.arturjarosz.task.systemparameter.infrastructure.repository.SystemParameterRepository;
+import com.arturjarosz.task.systemparameter.model.SystemParameterType;
 import com.arturjarosz.task.systemparameter.query.SystemParameterQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,16 +23,19 @@ public class SystemParameterServiceImpl implements SystemParameterService {
     private final SystemParameterApplicationValidator systemParameterApplicationValidator;
     private final SystemParameterValidatorService systemParameterValidatorService;
     private final SystemParameterQueryService systemParameterQueryService;
+    private final List<SystemParameterChangeListener> systemParameterChangeListeners;
 
     @Autowired
     public SystemParameterServiceImpl(SystemParameterRepository systemParameterRepository,
             SystemParameterApplicationValidator systemParameterApplicationValidator,
             SystemParameterValidatorService systemParameterValidatorService,
-            SystemParameterQueryService systemParameterQueryService) {
+            SystemParameterQueryService systemParameterQueryService,
+            List<SystemParameterChangeListener> systemParameterChangeListeners) {
         this.systemParameterRepository = systemParameterRepository;
         this.systemParameterApplicationValidator = systemParameterApplicationValidator;
         this.systemParameterValidatorService = systemParameterValidatorService;
         this.systemParameterQueryService = systemParameterQueryService;
+        this.systemParameterChangeListeners = systemParameterChangeListeners;
     }
 
     @Transactional
@@ -39,10 +44,22 @@ public class SystemParameterServiceImpl implements SystemParameterService {
         var maybeSystemParameter = this.systemParameterRepository.findById(systemParameterId);
         this.systemParameterApplicationValidator.validateParameterExistence(maybeSystemParameter,
                 systemParameterDto.getName());
-        this.systemParameterValidatorService.validateOnUpdate(systemParameterDto);
         var systemParameter = maybeSystemParameter.orElseThrow(ResourceNotFoundException::new);
+        // the stored name decides which validator runs, so a request cannot skip validation by sending another name
+        systemParameterDto.setName(systemParameter.getName());
+        var previousValue = systemParameter.getValue();
+        // secret values are never sent to the client, so a missing value means "keep the stored one" and a blank one
+        // removes it
+        if (systemParameter.getType() == SystemParameterType.SECRET) {
+            systemParameterDto.setValue(systemParameterDto.getValue() == null ? previousValue
+                    : systemParameterDto.getValue().strip());
+        }
+        this.systemParameterValidatorService.validateOnUpdate(systemParameterDto);
         systemParameter.update(systemParameterDto);
-        return SystemParameterDtoMapper.MAPPER.systemParameterToSystemParameterDto(systemParameter);
+        this.systemParameterChangeListeners.forEach(listener -> listener.onSystemParameterChanged(
+                systemParameter.getName(), previousValue, systemParameter.getValue()));
+        return SystemParameterDtoMapper.hideSecretValue(
+                SystemParameterDtoMapper.MAPPER.systemParameterToSystemParameterDto(systemParameter));
     }
 
     @Override

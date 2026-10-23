@@ -2,6 +2,8 @@ package com.arturjarosz.task.calendar.application;
 
 import com.arturjarosz.task.calendar.model.CalendarEvent;
 
+import java.util.Optional;
+
 public interface CalendarSyncService {
 
     /**
@@ -28,4 +30,16 @@ public interface CalendarSyncService {
      * sync token is expired, a full synchronization is performed instead.
      */
     void runIncrementalSync();
+
+    /**
+     * Forgets the connected Google Calendar and its events when it belongs to another service account than given
+     * one, so all local events are pushed to a new calendar. When the calendar's account is unknown, the account of
+     * the previous key is used; when that is unknown as well, the synchronization is reset.
+     */
+    void resetSynchronizationIfAccountChanged(String previousServiceAccount, String serviceAccount);
+
+    /**
+     * Returns id of the Google Calendar used for synchronization, empty until it is created.
+     */
+    Optional<String> getGoogleCalendarId();
 }

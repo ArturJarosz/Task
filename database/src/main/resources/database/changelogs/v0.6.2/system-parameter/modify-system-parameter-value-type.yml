@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "modify-system-parameter-value-type"
+      comment: "Values such as the Google Calendar service account key are longer than 150 characters"
+      changes:
+        - modifyDataType:
+            tableName: "SYSTEM_PARAMETER"
+            columnName: "VALUE"
+            newDataType: "TEXT"

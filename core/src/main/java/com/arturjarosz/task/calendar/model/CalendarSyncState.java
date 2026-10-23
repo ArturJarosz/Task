@@ -32,6 +32,18 @@ public class CalendarSyncState extends AbstractAggregateRoot {
     @Column(name = "SYNC_TOKEN")
     private String syncToken;
 
+    // service account the calendar was created with, empty for calendars created before it was stored
+    @Getter
+    @Setter
+    @Column(name = "GOOGLE_ACCOUNT")
+    private String googleAccount;
+
+    // name the calendar has in Google, compared with the configured one to rename it
+    @Getter
+    @Setter
+    @Column(name = "CALENDAR_NAME")
+    private String calendarName;
+
     public CalendarSyncState() {
         // needed by JPA
     }

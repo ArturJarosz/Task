@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: "modify-system-parameter-value-type.yml"
+      relativeToChangelogFile: true
