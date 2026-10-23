@@ -53,9 +53,4 @@ task:
     credentials-path: ${GOOGLE_SA_KEY_PATH:}
     application-name: Task-test
     calendar-name: ${GOOGLE_CALENDAR_NAME:Task}
-  configuration:
-    default-values:
-      vat-tax: 0.23
-      income-tax: 0.18
-      theme-color: "#465fff"
 

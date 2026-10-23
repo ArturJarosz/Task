@@ -1,0 +1,447 @@
+[
+    {
+        "name": "Mieszkanie na Mokotowie",
+        "type": "INTERIOR_APARTMENT",
+        "clientEmail": "czerwinski@gmail.com",
+        "architect": "Oskar Ciuryła",
+        "offerValue": 42000.0,
+        "deadlineInDays": 150,
+        "contractStatus": "SIGNED",
+        "signedDaysAgo": 60,
+        "stages": [
+            {
+                "name": "Układ funkcjonalny",
+                "type": "FUNCTIONAL_LAYOUT",
+                "note": "Dwa warianty układu, klient wybrał wariant B.",
+                "deadlineInDays": 10,
+                "installment": {
+                    "value": 12000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 30
+                },
+                "tasks": [
+                    {
+                        "name": "Inwentaryzacja mieszkania",
+                        "type": "CONCEPT",
+                        "status": "DONE"
+                    },
+                    {
+                        "name": "Układ funkcjonalny - wariant A",
+                        "type": "CONCEPT",
+                        "status": "DONE"
+                    },
+                    {
+                        "name": "Układ funkcjonalny - wariant B",
+                        "type": "CONCEPT",
+                        "status": "DONE"
+                    },
+                    {
+                        "name": "Układ funkcjonalny - wariant C",
+                        "type": "CONCEPT",
+                        "note": "Klient zrezygnował z trzeciego wariantu.",
+                        "status": "REJECTED"
+                    }
+                ]
+            },
+            {
+                "name": "Wizualizacje",
+                "type": "VISUALISATIONS",
+                "deadlineInDays": 40,
+                "installment": {
+                    "value": 15000,
+                    "hasInvoice": false,
+                    "paid": false
+                },
+                "tasks": [
+                    {
+                        "name": "Wizualizacja salonu",
+                        "type": "RENDER",
+                        "status": "DONE"
+                    },
+                    {
+                        "name": "Wizualizacja kuchni",
+                        "type": "RENDER",
+                        "status": "IN_PROGRESS"
+                    },
+                    {
+                        "name": "Wizualizacja łazienki",
+                        "type": "RENDER",
+                        "status": "IN_PROGRESS"
+                    },
+                    {
+                        "name": "Wizualizacja sypialni",
+                        "type": "RENDER",
+                        "status": "TO_DO"
+                    }
+                ]
+            },
+            {
+                "name": "Projekt wykonawczy",
+                "type": "EXECUTIVE_PROJECT",
+                "deadlineInDays": 120,
+                "installment": {
+                    "value": 15000,
+                    "hasInvoice": false,
+                    "paid": false
+                },
+                "tasks": [
+                    {
+                        "name": "Rysunki zabudów meblowych",
+                        "type": "CONCEPT"
+                    },
+                    {
+                        "name": "Zestawienie materiałów",
+                        "type": "SHOPPING"
+                    }
+                ]
+            }
+        ],
+        "costs": [
+            {
+                "name": "Dojazdy na inwentaryzację",
+                "category": "FUEL",
+                "value": 180,
+                "dateDaysAgo": 55,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 55
+            },
+            {
+                "name": "Poprawki po błędnym pomiarze",
+                "category": "MISTAKE",
+                "value": 350,
+                "dateDaysAgo": 20,
+                "hasInvoice": false,
+                "payable": true,
+                "paid": false
+            }
+        ],
+        "contractorJobs": [
+            {
+                "name": "Wyburzenie ścianki działowej",
+                "contractor": "IISKELO",
+                "value": 3500,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 14
+            },
+            {
+                "name": "Przeróbka instalacji wodnej w łazience",
+                "contractor": "NORSON",
+                "value": 6200,
+                "note": "Zaliczka do ustalenia.",
+                "hasInvoice": false,
+                "payable": true,
+                "paid": false
+            }
+        ],
+        "supplies": [
+            {
+                "name": "Płytki łazienkowe",
+                "supplier": "ARGO",
+                "value": 4800,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 10
+            },
+            {
+                "name": "Armatura łazienkowa",
+                "supplier": "ARGO",
+                "value": 2900,
+                "hasInvoice": false,
+                "payable": true,
+                "paid": false
+            },
+            {
+                "name": "Sofa do salonu",
+                "supplier": "PUFFO",
+                "value": 7600,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": false
+            }
+        ]
+    },
+    {
+        "name": "Biuro Ciuba & Partnerzy",
+        "type": "INTERIOR_OFFICE",
+        "clientEmail": "ciuba@mail.com",
+        "architect": "Alicja Ciuryła",
+        "offerValue": 68000.0,
+        "deadlineInDays": 200,
+        "contractStatus": "ACCEPTED",
+        "stages": [
+            {
+                "name": "Układ biura open space",
+                "type": "FUNCTIONAL_LAYOUT",
+                "deadlineInDays": 30,
+                "installment": {
+                    "value": 20000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 5
+                },
+                "tasks": [
+                    {
+                        "name": "Analiza potrzeb pracowników",
+                        "type": "CONCEPT",
+                        "status": "DONE"
+                    },
+                    {
+                        "name": "Rozmieszczenie stanowisk",
+                        "type": "CONCEPT",
+                        "status": "IN_PROGRESS"
+                    },
+                    {
+                        "name": "Strefa socjalna",
+                        "type": "CONCEPT",
+                        "status": "TO_DO"
+                    }
+                ]
+            },
+            {
+                "name": "Adaptacja dla najemcy",
+                "type": "TENANT_ALTERATIONS",
+                "note": "Najemca zrezygnował z adaptacji.",
+                "rejected": true,
+                "tasks": [
+                    {
+                        "name": "Uzgodnienia z zarządcą budynku",
+                        "type": "CONCEPT"
+                    }
+                ]
+            }
+        ],
+        "costs": [
+            {
+                "name": "Dojazd na spotkanie z klientem",
+                "category": "FUEL",
+                "value": 95,
+                "dateDaysAgo": 7,
+                "hasInvoice": false,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 7
+            }
+        ],
+        "contractorJobs": [
+            {
+                "name": "Ścianki działowe z płyt GK",
+                "contractor": "Obelisk Usługi Remontowo Budowlane",
+                "value": 14500,
+                "hasInvoice": false,
+                "payable": true,
+                "paid": false
+            }
+        ],
+        "supplies": [
+            {
+                "name": "Wykładzina dywanowa",
+                "supplier": "WOKA",
+                "value": 9300,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": false
+            }
+        ]
+    },
+    {
+        "name": "Dom w Zielonej Górze",
+        "type": "INTERIOR_HOUSE",
+        "clientEmail": "mdobrzanski@wp.pl",
+        "architect": "Karolina Flis",
+        "offerValue": 55000.0,
+        "deadlineInDays": 20,
+        "contractStatus": "SIGNED",
+        "signedDaysAgo": 180,
+        "stages": [
+            {
+                "name": "Układ funkcjonalny parteru i piętra",
+                "type": "FUNCTIONAL_LAYOUT",
+                "installment": {
+                    "value": 15000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 150
+                },
+                "tasks": [
+                    {
+                        "name": "Układ parteru",
+                        "type": "CONCEPT",
+                        "status": "DONE"
+                    },
+                    {
+                        "name": "Układ piętra",
+                        "type": "CONCEPT",
+                        "status": "DONE"
+                    }
+                ]
+            },
+            {
+                "name": "Wizualizacje wnętrz",
+                "type": "VISUALISATIONS",
+                "installment": {
+                    "value": 20000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 90
+                },
+                "tasks": [
+                    {
+                        "name": "Wizualizacja salonu z kuchnią",
+                        "type": "RENDER",
+                        "status": "DONE"
+                    },
+                    {
+                        "name": "Wizualizacja gabinetu",
+                        "type": "RENDER",
+                        "note": "Gabinet zamieniony na pokój gościnny.",
+                        "status": "REJECTED"
+                    },
+                    {
+                        "name": "Wizualizacja łazienek",
+                        "type": "RENDER",
+                        "status": "DONE"
+                    }
+                ]
+            },
+            {
+                "name": "Nadzór autorski",
+                "type": "AUTHORS_SUPERVISION",
+                "installment": {
+                    "value": 20000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 15
+                },
+                "tasks": [
+                    {
+                        "name": "Zakupy wyposażenia",
+                        "type": "SHOPPING",
+                        "status": "DONE"
+                    },
+                    {
+                        "name": "Odbiór prac wykończeniowych",
+                        "type": "CONCEPT",
+                        "status": "DONE"
+                    }
+                ]
+            }
+        ],
+        "costs": [
+            {
+                "name": "Dojazdy na nadzór",
+                "category": "FUEL",
+                "value": 620,
+                "dateDaysAgo": 30,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 30
+            }
+        ],
+        "contractorJobs": [
+            {
+                "name": "Prace wykończeniowe",
+                "contractor": "Kow-Bud. Zakład remontowo - budowlany",
+                "value": 48000,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 25
+            },
+            {
+                "name": "Biały montaż",
+                "contractor": "NORSON",
+                "value": 3800,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 20
+            }
+        ],
+        "supplies": [
+            {
+                "name": "Meble kuchenne",
+                "supplier": "WOKA",
+                "value": 32000,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 60
+            },
+            {
+                "name": "Ceramika łazienkowa",
+                "supplier": "ARGO",
+                "value": 11500,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 45
+            }
+        ]
+    },
+    {
+        "name": "Koncepcja domu letniskowego",
+        "type": "CONCEPT",
+        "clientEmail": "amilewski@gmail.com",
+        "architect": "Oskar Ciuryła",
+        "offerValue": 9000.0,
+        "deadlineInDays": 60,
+        "contractStatus": "OFFER",
+        "stages": [
+            {
+                "name": "Koncepcja bryły",
+                "type": "FUNCTIONAL_LAYOUT",
+                "deadlineInDays": 30,
+                "tasks": [
+                    {
+                        "name": "Szkice bryły",
+                        "type": "CONCEPT"
+                    },
+                    {
+                        "name": "Moodboard",
+                        "type": "CONCEPT"
+                    }
+                ]
+            }
+        ],
+        "costs": [
+            {
+                "name": "Dojazd na działkę",
+                "category": "FUEL",
+                "value": 240,
+                "dateDaysAgo": 3,
+                "hasInvoice": false,
+                "payable": true,
+                "paid": false
+            }
+        ]
+    },
+    {
+        "name": "Dom pod Lublinem",
+        "type": "ARCHITECTURE_HOUSE",
+        "clientEmail": "m.krajewska@onet.pl",
+        "architect": "Karolina Flis",
+        "offerValue": 85000.0,
+        "deadlineInDays": 365,
+        "contractStatus": "REJECTED",
+        "rejected": true,
+        "stages": [
+            {
+                "name": "Koncepcja architektoniczna",
+                "type": "FUNCTIONAL_LAYOUT",
+                "tasks": [
+                    {
+                        "name": "Analiza warunków zabudowy",
+                        "type": "CONCEPT"
+                    }
+                ]
+            }
+        ]
+    }
+]
