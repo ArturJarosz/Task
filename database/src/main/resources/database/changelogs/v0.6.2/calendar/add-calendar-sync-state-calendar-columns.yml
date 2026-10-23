@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-calendar-sync-state-calendar-columns"
+      comment: "Service account owning the Google Calendar and the name the calendar has in Google"
+      changes:
+        - addColumn:
+            tableName: "CALENDAR_SYNC_STATE"
+            columns:
+              - column:
+                  name: "GOOGLE_ACCOUNT"
+                  type: "VARCHAR2(255 ${char.unit})"
+              - column:
+                  name: "CALENDAR_NAME"
+                  type: "VARCHAR2(255 ${char.unit})"

@@ -1,7 +1,9 @@
 package com.arturjarosz.task.calendar.rest;
 
 import com.arturjarosz.task.calendar.application.CalendarEventApplicationService;
+import com.arturjarosz.task.calendar.application.GoogleCalendarConnectionApplicationService;
 import com.arturjarosz.task.dto.CalendarEventDto;
+import com.arturjarosz.task.dto.GoogleCalendarConnectionDto;
 import com.arturjarosz.task.rest.CalendarApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
 import lombok.NonNull;
@@ -20,6 +22,8 @@ public class CalendarRestController implements CalendarApi {
 
     @NonNull
     private final CalendarEventApplicationService calendarEventApplicationService;
+    @NonNull
+    private final GoogleCalendarConnectionApplicationService googleCalendarConnectionApplicationService;
 
     @Override
     public ResponseEntity<CalendarEventDto> createCalendarEvent(CalendarEventDto calendarEventDto) {
@@ -50,6 +54,12 @@ public class CalendarRestController implements CalendarApi {
     @Override
     public ResponseEntity<List<CalendarEventDto>> getCalendarEvents(LocalDate startDate, LocalDate endDate) {
         return new ResponseEntity<>(this.calendarEventApplicationService.getCalendarEvents(startDate, endDate),
+                HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<GoogleCalendarConnectionDto> getGoogleCalendarConnectionStatus() {
+        return new ResponseEntity<>(this.googleCalendarConnectionApplicationService.getConnectionStatus(),
                 HttpStatus.OK);
     }
 }

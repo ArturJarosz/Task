@@ -3,10 +3,15 @@ package com.arturjarosz.task.calendar.domain;
 import com.arturjarosz.task.calendar.model.CalendarEvent;
 import com.arturjarosz.task.calendar.model.dto.GoogleEventDataDto;
 import com.arturjarosz.task.calendar.model.dto.GoogleEventsSyncDto;
+import com.arturjarosz.task.dto.GoogleCalendarConnectionStatusDto;
+import com.arturjarosz.task.systemparameter.application.dto.GoogleCalendarSettings;
+
+import java.util.Optional;
 
 /**
- * Port for communication with the Google Calendar API. Implementation is only available when the Google Calendar
- * integration is enabled, all callers have to handle its absence.
+ * Port for communication with the Google Calendar API. Calls connect with the stored configuration and throw
+ * {@link GoogleCalendarException} when the integration is disabled or has no credentials, so callers check
+ * the active settings first.
  */
 public interface GoogleCalendarService {
 
@@ -14,6 +19,11 @@ public interface GoogleCalendarService {
      * Creates a dedicated calendar with given name and returns its Google calendar id.
      */
     String createCalendar(String name);
+
+    /**
+     * Changes the name of the calendar with given id.
+     */
+    void renameCalendar(String googleCalendarId, String name);
 
     /**
      * Inserts given {@link CalendarEvent} into the calendar with given id and returns identifying data of the created
@@ -38,4 +48,19 @@ public interface GoogleCalendarService {
      * {@link SyncTokenExpiredException} when the provided syncToken is no longer valid.
      */
     GoogleEventsSyncDto listEvents(String googleCalendarId, String syncToken);
+
+    /**
+     * Checks whether the Google Calendar can be reached with given settings. When googleCalendarId is provided, the
+     * calendar used for synchronization has to be reachable as well.
+     */
+    ConnectionCheckResult checkConnection(GoogleCalendarSettings settings, String googleCalendarId);
+
+    /**
+     * Reads the service account email from given JSON key. Returns empty when the text is not a valid service
+     * account key.
+     */
+    Optional<String> readServiceAccountEmail(String credentials);
+
+    record ConnectionCheckResult(GoogleCalendarConnectionStatusDto status, String message) {
+    }
 }

@@ -48,6 +48,7 @@ task:
     active-statuses:
       - TO_DO
       - IN_PROGRESS
+  # Initial values only: copied into system parameters on the first start, then edited in Settings > Google Calendar
   google-calendar:
     enabled: ${GOOGLE_CALENDAR_ENABLED:true}
     credentials-path: ${GOOGLE_SA_KEY_PATH:}

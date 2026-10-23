@@ -11,6 +11,9 @@ databaseChangeLog:
   - include:
       file: "calendar/calendar-tables.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "system-parameter/system-parameter-tables.yml"
+      relativeToChangelogFile: true
   - changeSet:
       author: "liquibase"
       id: "tag-version_0.6.2"

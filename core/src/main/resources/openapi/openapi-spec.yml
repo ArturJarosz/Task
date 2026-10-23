@@ -2954,6 +2954,26 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
 
+  /calendars/connection-status:
+    get:
+      tags:
+        - calendar
+      summary: Check whether the Google Calendar can be reached with the stored configuration
+      operationId: getGoogleCalendarConnectionStatus
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GoogleCalendarConnection"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
   /users:
     post:
       tags:
@@ -3122,6 +3142,25 @@ components:
     CalendarEventSyncStatus:
       type: string
       enum: [PENDING, SYNCED, DELETE_PENDING]
+
+    GoogleCalendarConnection:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/GoogleCalendarConnectionStatus"
+        message:
+          type: string
+        serviceAccountEmail:
+          type: string
+          description: "Service account of the stored key, empty when no valid key is stored"
+        checkedDateTime:
+          type: string
+          format: time
+
+    GoogleCalendarConnectionStatus:
+      type: string
+      enum: [DISABLED, NOT_CONFIGURED, CONNECTED, INVALID_CREDENTIALS, PERMISSION_DENIED, CALENDAR_NOT_FOUND,
+             CONNECTION_FAILED]
 
     Address:
       type: object
@@ -3901,6 +3940,10 @@ components:
           type: string
         singleValue:
           type: boolean
+        valueSet:
+          type: boolean
+          readOnly: true
+          description: "Whether the parameter has a value. Values of SECRET parameters are never returned."
         createdDateTime:
           type: string
           format: time

@@ -101,6 +101,15 @@ public class CalendarEvent extends AbstractAggregateRoot {
         this.syncStatus = CalendarEventSyncStatus.SYNCED;
     }
 
+    /**
+     * Drops the connection with the Google event, so the event is pushed again as a new one.
+     */
+    public void detachFromGoogle() {
+        this.googleEventId = null;
+        this.googleEtag = null;
+        this.syncStatus = CalendarEventSyncStatus.PENDING;
+    }
+
     public void markDeletePending() {
         this.syncStatus = CalendarEventSyncStatus.DELETE_PENDING;
     }

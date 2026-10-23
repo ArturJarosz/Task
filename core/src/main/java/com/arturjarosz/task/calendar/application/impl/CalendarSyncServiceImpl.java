@@ -1,6 +1,7 @@
 package com.arturjarosz.task.calendar.application.impl;
 
 import com.arturjarosz.task.calendar.application.CalendarSyncService;
+import com.arturjarosz.task.calendar.domain.GoogleCalendarException;
 import com.arturjarosz.task.calendar.domain.GoogleCalendarService;
 import com.arturjarosz.task.calendar.domain.SyncTokenExpiredException;
 import com.arturjarosz.task.calendar.infrastructure.repository.CalendarEventRepository;
@@ -10,15 +11,16 @@ import com.arturjarosz.task.calendar.model.CalendarEventSyncStatus;
 import com.arturjarosz.task.calendar.model.CalendarSyncState;
 import com.arturjarosz.task.calendar.model.dto.GoogleEventChangeDto;
 import com.arturjarosz.task.calendar.model.dto.GoogleEventsSyncDto;
-import com.arturjarosz.task.properties.GoogleCalendarProperties;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.systemparameter.application.GoogleCalendarSettingsProvider;
+import com.arturjarosz.task.systemparameter.application.dto.GoogleCalendarSettings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,20 +31,20 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
 
     private final CalendarEventRepository calendarEventRepository;
     private final CalendarSyncStateRepository calendarSyncStateRepository;
-    private final ObjectProvider<GoogleCalendarService> googleCalendarService;
-    private final GoogleCalendarProperties googleCalendarProperties;
+    private final GoogleCalendarService googleCalendarService;
+    private final GoogleCalendarSettingsProvider googleCalendarSettingsProvider;
 
     @Override
     public CalendarEvent pushEvent(CalendarEvent calendarEvent) {
-        var google = this.googleCalendarService.getIfAvailable();
-        if (google == null) {
+        var maybeSettings = this.googleCalendarSettingsProvider.getActiveSettings();
+        if (maybeSettings.isEmpty()) {
             return calendarEvent;
         }
         try {
-            var syncState = this.getSyncStateWithCalendar(google);
+            var syncState = this.getSyncStateWithCalendar(maybeSettings.get());
             var eventData = calendarEvent.getGoogleEventId() == null
-                    ? google.insertEvent(syncState.getGoogleCalendarId(), calendarEvent)
-                    : google.updateEvent(syncState.getGoogleCalendarId(), calendarEvent);
+                    ? this.googleCalendarService.insertEvent(syncState.getGoogleCalendarId(), calendarEvent)
+                    : this.googleCalendarService.updateEvent(syncState.getGoogleCalendarId(), calendarEvent);
             calendarEvent.markSynced(eventData.googleEventId(), eventData.googleEtag());
             calendarEvent = this.calendarEventRepository.save(calendarEvent);
         } catch (Exception e) {
@@ -54,13 +56,13 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
 
     @Override
     public void pushDelete(CalendarEvent calendarEvent) {
-        var google = this.googleCalendarService.getIfAvailable();
-        if (google == null) {
+        var maybeSettings = this.googleCalendarSettingsProvider.getActiveSettings();
+        if (maybeSettings.isEmpty()) {
             return;
         }
         try {
-            var syncState = this.getSyncStateWithCalendar(google);
-            google.deleteEvent(syncState.getGoogleCalendarId(), calendarEvent.getGoogleEventId());
+            var syncState = this.getSyncStateWithCalendar(maybeSettings.get());
+            this.googleCalendarService.deleteEvent(syncState.getGoogleCalendarId(), calendarEvent.getGoogleEventId());
             this.calendarEventRepository.delete(calendarEvent);
         } catch (Exception e) {
             LOG.warn("Removing calendar event with id {} from Google Calendar failed, event stays in {} status.",
@@ -71,7 +73,7 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
     @Transactional
     @Override
     public void pushPendingEvents() {
-        if (this.googleCalendarService.getIfAvailable() == null) {
+        if (this.googleCalendarSettingsProvider.getActiveSettings().isEmpty()) {
             return;
         }
         this.calendarEventRepository.findBySyncStatus(CalendarEventSyncStatus.PENDING).forEach(this::pushEvent);
@@ -81,19 +83,19 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
     @Transactional
     @Override
     public void runIncrementalSync() {
-        var google = this.googleCalendarService.getIfAvailable();
-        if (google == null) {
+        var maybeSettings = this.googleCalendarSettingsProvider.getActiveSettings();
+        if (maybeSettings.isEmpty()) {
             return;
         }
-        var syncState = this.getSyncStateWithCalendar(google);
+        var syncState = this.getSyncStateWithCalendar(maybeSettings.get());
         var fullSync = syncState.getSyncToken() == null;
         GoogleEventsSyncDto sync;
         try {
-            sync = google.listEvents(syncState.getGoogleCalendarId(), syncState.getSyncToken());
+            sync = this.googleCalendarService.listEvents(syncState.getGoogleCalendarId(), syncState.getSyncToken());
         } catch (SyncTokenExpiredException e) {
             LOG.info("Sync token expired, running full synchronization with Google Calendar.");
             fullSync = true;
-            sync = google.listEvents(syncState.getGoogleCalendarId(), null);
+            sync = this.googleCalendarService.listEvents(syncState.getGoogleCalendarId(), null);
         }
         this.applyChanges(sync.events());
         if (fullSync) {
@@ -142,15 +144,74 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
                 .forEach(this.calendarEventRepository::delete);
     }
 
-    private CalendarSyncState getSyncStateWithCalendar(GoogleCalendarService google) {
+    @Transactional
+    @Override
+    public void resetSynchronizationIfAccountChanged(String previousServiceAccount, String serviceAccount) {
+        var maybeSyncState = this.calendarSyncStateRepository.findFirstByOrderByIdAsc()
+                .filter(syncState -> syncState.getGoogleCalendarId() != null);
+        if (maybeSyncState.isEmpty()) {
+            return;
+        }
+        // calendars created before the account was stored belong to the account of the previous key
+        var calendarAccount = Optional.ofNullable(maybeSyncState.get().getGoogleAccount())
+                .orElse(previousServiceAccount);
+        if (!Objects.equals(calendarAccount, serviceAccount)) {
+            LOG.info("Google Calendar credentials belong to another service account than the synchronized calendar.");
+            this.resetSynchronization(maybeSyncState.get());
+        }
+    }
+
+    @Override
+    public Optional<String> getGoogleCalendarId() {
+        return this.calendarSyncStateRepository.findFirstByOrderByIdAsc().map(CalendarSyncState::getGoogleCalendarId);
+    }
+
+    private void resetSynchronization(CalendarSyncState syncState) {
+        syncState.setGoogleCalendarId(null);
+        syncState.setSyncToken(null);
+        syncState.setGoogleAccount(null);
+        syncState.setCalendarName(null);
+        this.calendarSyncStateRepository.save(syncState);
+        // events waiting for removal cannot be removed from a calendar of another account anymore
+        this.calendarEventRepository.findBySyncStatus(CalendarEventSyncStatus.DELETE_PENDING)
+                .forEach(this.calendarEventRepository::delete);
+        this.calendarEventRepository.findBySyncStatusNot(CalendarEventSyncStatus.DELETE_PENDING).forEach(event -> {
+            event.detachFromGoogle();
+            this.calendarEventRepository.save(event);
+        });
+        LOG.info("Synchronization with Google Calendar reset, all events will be pushed to a new calendar.");
+    }
+
+    private CalendarSyncState getSyncStateWithCalendar(GoogleCalendarSettings settings) {
         var syncState = this.calendarSyncStateRepository.findFirstByOrderByIdAsc()
                 .orElseGet(() -> this.calendarSyncStateRepository.save(new CalendarSyncState()));
         if (syncState.getGoogleCalendarId() == null) {
-            var googleCalendarId = google.createCalendar(this.googleCalendarProperties.calendarName());
+            var googleCalendarId = this.googleCalendarService.createCalendar(settings.calendarName());
             syncState.setGoogleCalendarId(googleCalendarId);
+            syncState.setCalendarName(settings.calendarName());
+            syncState.setGoogleAccount(
+                    this.googleCalendarService.readServiceAccountEmail(settings.credentials()).orElse(null));
             syncState = this.calendarSyncStateRepository.save(syncState);
             LOG.info("Created dedicated Google Calendar with id {}.", googleCalendarId);
+        } else if (!Objects.equals(syncState.getCalendarName(), settings.calendarName())) {
+            syncState = this.renameCalendar(syncState, settings.calendarName());
         }
         return syncState;
+    }
+
+    /**
+     * Applies the configured calendar name in Google. A failed rename does not stop the synchronization, it is
+     * retried with the next call.
+     */
+    private CalendarSyncState renameCalendar(CalendarSyncState syncState, String calendarName) {
+        try {
+            this.googleCalendarService.renameCalendar(syncState.getGoogleCalendarId(), calendarName);
+        } catch (GoogleCalendarException e) {
+            LOG.warn("Renaming Google Calendar to {} failed.", calendarName, e);
+            return syncState;
+        }
+        syncState.setCalendarName(calendarName);
+        LOG.info("Renamed Google Calendar to {}.", calendarName);
+        return this.calendarSyncStateRepository.save(syncState);
     }
 }
