@@ -8,8 +8,9 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "task.configuration.default-values")
 @Configuration
 public class UserProperties {
-    Double vatTax;
-    Double incomeTax;
-    String themeColor;
+    // defaults are kept here, so every application using core (e.g. sample-data) gets them without own config
+    Double vatTax = 0.23;
+    Double incomeTax = 0.18;
+    String themeColor = "#465fff";
 
 }
