@@ -1,6 +1,5 @@
 package com.arturjarosz.task.finance.application.impl;
 
-import com.arturjarosz.task.configuration.UserProperties;
 import com.arturjarosz.task.dto.FinancialPartialDataDto;
 import com.arturjarosz.task.dto.FinancialReportCategoryGroupDto;
 import com.arturjarosz.task.dto.FinancialReportDto;
@@ -16,6 +15,8 @@ import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
 import com.arturjarosz.task.finance.domain.dto.FinancialReportItemDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.systemparameter.application.TaxRatesProvider;
+import com.arturjarosz.task.systemparameter.application.dto.TaxRates;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
     @NonNull
     private final FinancialDataQueryService financialDataQueryService;
     @NonNull
-    private final UserProperties userProperties;
+    private final TaxRatesProvider taxRatesProvider;
     @NonNull
     private final FinancialReportValidator financialReportValidator;
 
@@ -48,6 +49,7 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
         var contractorJobIncomeItems = this.financialDataQueryService.getContractorJobIncomeItems(startDate, endDate);
 
         var periods = PeriodCalculator.calculatePeriods(startDate, endDate, periodType);
+        var taxRates = this.taxRatesProvider.getTaxRates();
 
         var totalIncome = new FinancialValueDto();
         var totalExpense = new FinancialValueDto();
@@ -60,13 +62,14 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
             var periodIncome = new CategoryAccumulator();
             var periodExpense = new CategoryAccumulator();
 
-            this.accumulateItems(filterByPeriod(installmentIncomeItems, period), periodIncome.installment);
-            this.accumulateItems(filterByPeriod(supervisionIncomeItems, period), periodIncome.supervision);
-            this.accumulateItems(filterByPeriod(reimbursedCostIncomeItems, period), periodIncome.cost);
+            this.accumulateItems(filterByPeriod(installmentIncomeItems, period), periodIncome.installment, taxRates);
+            this.accumulateItems(filterByPeriod(supervisionIncomeItems, period), periodIncome.supervision, taxRates);
+            this.accumulateItems(filterByPeriod(reimbursedCostIncomeItems, period), periodIncome.cost, taxRates);
 
-            this.accumulateItems(filterByPeriod(costExpenseItems, period), periodExpense.cost);
-            this.accumulateItems(filterByPeriod(supplyIncomeItems, period), periodIncome.supply);
-            this.accumulateItems(filterByPeriod(contractorJobIncomeItems, period), periodIncome.contractorJob);
+            this.accumulateItems(filterByPeriod(costExpenseItems, period), periodExpense.cost, taxRates);
+            this.accumulateItems(filterByPeriod(supplyIncomeItems, period), periodIncome.supply, taxRates);
+            this.accumulateItems(filterByPeriod(contractorJobIncomeItems, period), periodIncome.contractorJob,
+                    taxRates);
 
             var incomeTotal = sumAccumulators(periodIncome);
             var expenseTotal = sumAccumulators(periodExpense);
@@ -114,7 +117,8 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
                 .toList();
     }
 
-    private void accumulateItems(List<FinancialReportItemDto> items, CategoryValue categoryValue) {
+    private void accumulateItems(List<FinancialReportItemDto> items, CategoryValue categoryValue,
+            TaxRates taxRates) {
         for (FinancialReportItemDto item : items) {
             var financialDataDto = new FinancialDataDto();
             financialDataDto.setValue(item.getValue());
@@ -122,7 +126,7 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
             financialDataDto.setPayable(item.isPayable());
             financialDataDto.setPaid(item.isPaid());
 
-            var taxed = TaxCalculator.recalculateObjectTaxes(financialDataDto, this.userProperties);
+            var taxed = TaxCalculator.recalculateObjectTaxes(financialDataDto, taxRates);
             categoryValue.financialValue.addValues(taxed);
             categoryValue.count++;
         }

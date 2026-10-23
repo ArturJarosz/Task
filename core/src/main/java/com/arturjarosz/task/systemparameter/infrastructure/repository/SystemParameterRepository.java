@@ -4,4 +4,6 @@ import com.arturjarosz.task.systemparameter.model.SystemParameter;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SystemParameterRepository extends JpaRepository<SystemParameter, Long> {
+
+    boolean existsByName(String name);
 }

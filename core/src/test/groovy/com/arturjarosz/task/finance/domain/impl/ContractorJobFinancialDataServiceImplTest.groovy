@@ -1,13 +1,13 @@
 package com.arturjarosz.task.finance.domain.impl
 
-import com.arturjarosz.task.configuration.UserProperties
 import com.arturjarosz.task.finance.domain.SummationStrategy
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto
 import com.arturjarosz.task.finance.model.PartialFinancialDataType
 import com.arturjarosz.task.finance.query.impl.FinancialDataQueryServiceImpl
-import spock.lang.Specification
-
+import com.arturjarosz.task.systemparameter.application.TaxRatesProvider
+import com.arturjarosz.task.systemparameter.application.dto.TaxRates
 import java.math.RoundingMode
+import spock.lang.Specification
 
 class ContractorJobFinancialDataServiceImplTest extends Specification {
     private static final long PROJECT_ID = 1L
@@ -18,9 +18,9 @@ class ContractorJobFinancialDataServiceImplTest extends Specification {
     private static final BigDecimal CONTRACTOR_JOB_VALUE_3 = new BigDecimal("40.0")
 
     def financialDataQueryService = Mock(FinancialDataQueryServiceImpl)
-    def userProperties = Mock(UserProperties)
+    def taxRatesProvider = Mock(TaxRatesProvider)
     def contractorJobFinancialDataService = new ContractorJobFinancialDataServiceImpl(financialDataQueryService,
-            userProperties)
+            taxRatesProvider)
 
     def "providePartialFinancialData should return summed up all contractorJobs related financial data for given project"() {
         given:
@@ -64,7 +64,7 @@ class ContractorJobFinancialDataServiceImplTest extends Specification {
     }
 
     private void mockUserService() {
-        this.userProperties.incomeTax >> INCOME_TAX
-        this.userProperties.vatTax >> VAT_TAX
+        this.taxRatesProvider.getTaxRates() >> new TaxRates(BigDecimal.valueOf(VAT_TAX),
+                BigDecimal.valueOf(INCOME_TAX))
     }
 }

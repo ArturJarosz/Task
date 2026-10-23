@@ -1,11 +1,11 @@
 package com.arturjarosz.task.contractor.application.mapper;
 
-import com.arturjarosz.task.configuration.UserProperties;
 import com.arturjarosz.task.dto.ContractorContractorJobsDataDto;
 import com.arturjarosz.task.dto.FinancialPartialDataDto;
 import com.arturjarosz.task.finance.application.TaxCalculator;
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto;
 import com.arturjarosz.task.finance.model.ContractorContractorJobDto;
+import com.arturjarosz.task.systemparameter.application.TaxRatesProvider;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Set;
 
-@Mapper(uses = {UserProperties.class}, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+@Mapper(injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public abstract class ContractorContractorJobMapper {
 
     @Autowired
-    private UserProperties userProperties;
+    private TaxRatesProvider taxRatesProvider;
 
     private static FinancialPartialDataDto calculateAverage(FinancialValueDto financialSummary, int count) {
         var averageSummary = new FinancialPartialDataDto();
@@ -52,10 +52,11 @@ public abstract class ContractorContractorJobMapper {
                 contractorContractorJobDtos.stream().map(ContractorContractorJobDto::contractorJob).toList());
 
         var financialSummary = new FinancialValueDto();
+        var taxRates = this.taxRatesProvider.getTaxRates();
         for (ContractorContractorJobDto contractorJobsDataDto : contractorContractorJobDtos) {
             var contractorJobFinancialDetails = contractorJobsDataDto.financialData();
             var recalculatedSupplyFinancialDetails = TaxCalculator.recalculateObjectTaxes(contractorJobFinancialDetails,
-                    this.userProperties);
+                    taxRates);
             financialSummary.addValues(recalculatedSupplyFinancialDetails);
         }
         var financialSummaryDto = new FinancialPartialDataDto(contractorContractorJobDtos.size(),

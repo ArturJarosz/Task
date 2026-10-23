@@ -1,0 +1,56 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-user-configuration-table"
+      changes:
+        - createTable:
+            tableName: "USER_CONFIGURATION"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "USER_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NAME"
+                  type: "VARCHAR2(60 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "VALUE"
+                  type: "VARCHAR2(255 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "TIMESTAMP"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "TIMESTAMP"
+        - addPrimaryKey:
+            tableName: "USER_CONFIGURATION"
+            columnNames: "ID"
+            constraintName: "PK_USER_CONFIGURATION"
+        - addForeignKeyConstraint:
+            baseTableName: "USER_CONFIGURATION"
+            baseColumnNames: "USER_ID"
+            referencedTableName: "LOCAL_USER"
+            referencedColumnNames: "ID"
+            constraintName: "USER_CONFIGURATION_USER_FK"
+            onDelete: "CASCADE"
+        - addUniqueConstraint:
+            tableName: "USER_CONFIGURATION"
+            columnNames: "USER_ID, NAME"
+            constraintName: "UNIQ_USER_CONFIGURATION_USER_NAME"

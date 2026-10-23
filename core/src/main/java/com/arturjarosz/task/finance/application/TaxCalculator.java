@@ -1,9 +1,9 @@
 package com.arturjarosz.task.finance.application;
 
-import com.arturjarosz.task.configuration.UserProperties;
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto;
 import com.arturjarosz.task.finance.domain.dto.FinancialDataDto;
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalStateException;
+import com.arturjarosz.task.systemparameter.application.dto.TaxRates;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -17,15 +17,15 @@ public final class TaxCalculator {
     }
 
     public static FinancialValueDto recalculateObjectTaxes(
-            FinancialDataDto financialDataDto, UserProperties userProperties) {
+            FinancialDataDto financialDataDto, TaxRates taxRates) {
         var financialValueDto = new FinancialValueDto();
         financialValueDto.setNetValue(financialDataDto.getValue());
         BigDecimal netValue = financialDataDto.getValue();
         if (financialDataDto.isHasInvoice()) {
-            BigDecimal vatTaxValue = netValue.multiply(BigDecimal.valueOf(userProperties.getVatTax()))
+            BigDecimal vatTaxValue = netValue.multiply(taxRates.vatTax())
                     .setScale(2, RoundingMode.HALF_UP);
             BigDecimal grossValue = financialDataDto.getValue().add(vatTaxValue);
-            BigDecimal incomeTaxValue = netValue.multiply(BigDecimal.valueOf(userProperties.getIncomeTax()))
+            BigDecimal incomeTaxValue = netValue.multiply(taxRates.incomeTax())
                     .setScale(2, RoundingMode.HALF_UP);
             financialValueDto.addGross(grossValue);
             financialValueDto.addIncomeTax(incomeTaxValue);
