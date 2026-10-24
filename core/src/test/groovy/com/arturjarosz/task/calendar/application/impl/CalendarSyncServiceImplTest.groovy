@@ -117,6 +117,7 @@ class CalendarSyncServiceImplTest extends Specification {
             this.subject.pushEvent(calendarEvent)
 
         then:
+            1 * this.googleCalendarService.findCalendarByName("Task") >> Optional.empty()
             1 * this.googleCalendarService.createCalendar("Task") >> GOOGLE_CALENDAR_ID
             1 * this.googleCalendarService.readServiceAccountEmail("{}") >> Optional.of(NEW_ACCOUNT)
             1 * this.googleCalendarService.insertEvent(GOOGLE_CALENDAR_ID, calendarEvent) >>
@@ -125,6 +126,54 @@ class CalendarSyncServiceImplTest extends Specification {
         and:
             syncState.googleAccount == NEW_ACCOUNT
             syncState.calendarName == "Task"
+    }
+
+    def "pushEvent should reuse existing Google Calendar with configured name instead of creating a new one"() {
+        given:
+            this.googleCalendarSettingsProvider.getActiveSettings() >> Optional.of(this.googleCalendarSettings)
+            def syncState = new CalendarSyncState()
+            this.calendarSyncStateRepository.findFirstByOrderByIdAsc() >> Optional.of(syncState)
+            this.calendarSyncStateRepository.save(syncState) >> syncState
+            this.googleCalendarService.findCalendarByName("Task") >> Optional.of(GOOGLE_CALENDAR_ID)
+            this.googleCalendarService.readServiceAccountEmail("{}") >> Optional.of(NEW_ACCOUNT)
+            def calendarEvent = prepareCalendarEvent()
+
+        when:
+            this.subject.pushEvent(calendarEvent)
+
+        then:
+            0 * this.googleCalendarService.createCalendar(_)
+            1 * this.googleCalendarService.insertEvent(GOOGLE_CALENDAR_ID, calendarEvent) >>
+                    new GoogleEventDataDto(GOOGLE_EVENT_ID, "etag")
+        and:
+            syncState.googleCalendarId == GOOGLE_CALENDAR_ID
+    }
+
+    def "runIncrementalSync should import all events of existing Google Calendar after local data was lost"() {
+        given:
+            this.googleCalendarSettingsProvider.getActiveSettings() >> Optional.of(this.googleCalendarSettings)
+            def syncState = new CalendarSyncState()
+            this.calendarSyncStateRepository.findFirstByOrderByIdAsc() >> Optional.of(syncState)
+            this.calendarSyncStateRepository.save(syncState) >> syncState
+            this.googleCalendarService.findCalendarByName("Task") >> Optional.of(GOOGLE_CALENDAR_ID)
+            this.googleCalendarService.readServiceAccountEmail("{}") >> Optional.of(NEW_ACCOUNT)
+            def change = new GoogleEventChangeDto(GOOGLE_EVENT_ID, "etag", NAME, null, START_DATETIME, END_DATETIME,
+                    false, false)
+            this.calendarEventRepository.findByGoogleEventId(GOOGLE_EVENT_ID) >> Optional.empty()
+            this.calendarEventRepository.findBySyncStatus(CalendarEventSyncStatus.SYNCED) >> []
+
+        when:
+            this.subject.runIncrementalSync()
+
+        then:
+            1 * this.googleCalendarService.listEvents(GOOGLE_CALENDAR_ID, null) >>
+                    new GoogleEventsSyncDto([change], NEXT_SYNC_TOKEN)
+            1 * this.calendarEventRepository.save({ CalendarEvent event ->
+                event.googleEventId == GOOGLE_EVENT_ID && event.name == NAME
+            })
+            0 * this.googleCalendarService.createCalendar(_)
+        and:
+            syncState.syncToken == NEXT_SYNC_TOKEN
     }
 
     def "pushDelete should remove event from Google Calendar and locally"() {

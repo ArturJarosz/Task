@@ -21,6 +21,12 @@ public interface GoogleCalendarService {
     String createCalendar(String name);
 
     /**
+     * Finds a calendar with given name owned by the connected account and returns its Google calendar id. When more
+     * calendars have that name, the first one that contains events is returned.
+     */
+    Optional<String> findCalendarByName(String name);
+
+    /**
      * Changes the name of the calendar with given id.
      */
     void renameCalendar(String googleCalendarId, String name);

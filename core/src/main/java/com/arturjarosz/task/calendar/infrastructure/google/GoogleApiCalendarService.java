@@ -46,6 +46,7 @@ import java.util.Set;
 @Component
 public class GoogleApiCalendarService implements GoogleCalendarService, SystemParameterChangeListener {
     private static final String CANCELLED_STATUS = "cancelled";
+    private static final String OWNER_ACCESS_ROLE = "owner";
     private static final Set<String> CLIENT_PARAMETERS = Set.of(SystemParameters.GOOGLE_CALENDAR_SYNC,
             SystemParameters.GOOGLE_CALENDAR_CREDENTIALS, SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME);
 
@@ -125,6 +126,37 @@ public class GoogleApiCalendarService implements GoogleCalendarService, SystemPa
             return this.client().calendars().insert(calendar).execute().getId();
         } catch (IOException e) {
             throw new GoogleCalendarException("Creating Google Calendar failed.", e);
+        }
+    }
+
+    @Override
+    public Optional<String> findCalendarByName(String name) {
+        try {
+            var calendarIds = new ArrayList<String>();
+            String pageToken = null;
+            do {
+                var response = this.client().calendarList().list().setMinAccessRole(OWNER_ACCESS_ROLE)
+                        .setPageToken(pageToken).execute();
+                if (response.getItems() != null) {
+                    response.getItems().stream()
+                            .filter(entry -> name.equals(entry.getSummary()))
+                            .forEach(entry -> calendarIds.add(entry.getId()));
+                }
+                pageToken = response.getNextPageToken();
+            } while (pageToken != null);
+            if (calendarIds.size() <= 1) {
+                return calendarIds.stream().findFirst();
+            }
+            // an empty duplicate is left behind when a calendar was created while the previous one was forgotten
+            for (var calendarId : calendarIds) {
+                var events = this.client().events().list(calendarId).setMaxResults(1).execute().getItems();
+                if (events != null && !events.isEmpty()) {
+                    return Optional.of(calendarId);
+                }
+            }
+            return Optional.of(calendarIds.get(0));
+        } catch (IOException e) {
+            throw new GoogleCalendarException("Searching for Google Calendar failed.", e);
         }
     }
 
