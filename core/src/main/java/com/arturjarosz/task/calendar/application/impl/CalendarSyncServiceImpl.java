@@ -186,13 +186,21 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
         var syncState = this.calendarSyncStateRepository.findFirstByOrderByIdAsc()
                 .orElseGet(() -> this.calendarSyncStateRepository.save(new CalendarSyncState()));
         if (syncState.getGoogleCalendarId() == null) {
-            var googleCalendarId = this.googleCalendarService.createCalendar(settings.calendarName());
+            // the calendar outlives the local database, so reuse it and let the full sync import its events again
+            var existingCalendarId = this.googleCalendarService.findCalendarByName(settings.calendarName());
+            var googleCalendarId = existingCalendarId
+                    .orElseGet(() -> this.googleCalendarService.createCalendar(settings.calendarName()));
             syncState.setGoogleCalendarId(googleCalendarId);
+            syncState.setSyncToken(null);
             syncState.setCalendarName(settings.calendarName());
             syncState.setGoogleAccount(
                     this.googleCalendarService.readServiceAccountEmail(settings.credentials()).orElse(null));
             syncState = this.calendarSyncStateRepository.save(syncState);
-            LOG.info("Created dedicated Google Calendar with id {}.", googleCalendarId);
+            if (existingCalendarId.isPresent()) {
+                LOG.info("Reusing existing Google Calendar with id {}.", googleCalendarId);
+            } else {
+                LOG.info("Created dedicated Google Calendar with id {}.", googleCalendarId);
+            }
         } else if (!Objects.equals(syncState.getCalendarName(), settings.calendarName())) {
             syncState = this.renameCalendar(syncState, settings.calendarName());
         }
