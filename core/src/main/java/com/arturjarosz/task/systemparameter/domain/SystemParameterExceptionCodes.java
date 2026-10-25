@@ -14,6 +14,8 @@ public final class SystemParameterExceptionCodes {
     public static final String GOOGLE_CALENDAR_APPLICATION_NAME = "googleCalendarApplicationName";
     public static final String GOOGLE_CALENDAR_CREDENTIALS = "googleCalendarCredentials";
     public static final String GOOGLE_CALENDAR_NAME = "googleCalendarName";
+    public static final String GOOGLE_CALENDAR_POLL_INTERVAL = "googleCalendarPollInterval";
+    public static final String GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL = "googleCalendarPushRetryInterval";
     public static final String GOOGLE_CALENDAR_SYNC = "googleCalendarSync";
     public static final String INCOME_TAX = "incomeTax";
     public static final String THEME_COLOR = "themeColor";

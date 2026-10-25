@@ -2974,6 +2974,91 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
 
+  /calendars/shares:
+    get:
+      tags:
+        - calendar
+      summary: Get list of people the Google Calendar is shared with
+      operationId: getGoogleCalendarShares
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CalendarShares"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        502:
+          description: Google Calendar refused the request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    post:
+      tags:
+        - calendar
+      summary: Share the Google Calendar with given email
+      operationId: addGoogleCalendarShare
+      requestBody:
+        description: Email and role of the person the calendar is shared with
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CalendarShare"
+        required: true
+      responses:
+        201:
+          description: Calendar successfully shared
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CalendarShare"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        502:
+          description: Google Calendar refused the request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - calendar
+      summary: Revoke access to the Google Calendar for given email
+      operationId: removeGoogleCalendarShare
+      parameters:
+        - name: email
+          in: query
+          description: "Email of the person whose access is revoked"
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful operation
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        502:
+          description: Google Calendar refused the request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
   /users:
     post:
       tags:
@@ -3161,6 +3246,24 @@ components:
       type: string
       enum: [DISABLED, NOT_CONFIGURED, CONNECTED, INVALID_CREDENTIALS, PERMISSION_DENIED, CALENDAR_NOT_FOUND,
              CONNECTION_FAILED]
+
+    CalendarShare:
+      type: object
+      properties:
+        email:
+          type: string
+        role:
+          $ref: "#/components/schemas/CalendarShareRole"
+
+    CalendarShares:
+      type: array
+      items:
+        $ref: "#/components/schemas/CalendarShare"
+
+    CalendarShareRole:
+      type: string
+      description: "Access to the Google Calendar, only READER and WRITER can be given from the application"
+      enum: [READER, WRITER, FREE_BUSY_READER, OWNER]
 
     Address:
       type: object

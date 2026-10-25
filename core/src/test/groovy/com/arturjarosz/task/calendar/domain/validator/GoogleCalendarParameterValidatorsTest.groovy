@@ -17,6 +17,8 @@ class GoogleCalendarParameterValidatorsTest extends Specification {
     def credentialsValidator = new GoogleCalendarCredentialsValidator(systemParameterQueryService,
             googleCalendarService)
     def calendarNameValidator = new GoogleCalendarNameValidator(systemParameterQueryService)
+    def pollIntervalValidator = new GoogleCalendarPollIntervalValidator(systemParameterQueryService)
+    def pushRetryIntervalValidator = new GoogleCalendarPushRetryIntervalValidator(systemParameterQueryService)
 
     def "sync can be turned on when a key is stored"() {
         given:
@@ -103,5 +105,35 @@ class GoogleCalendarParameterValidatorsTest extends Specification {
             thrown(IllegalArgumentException)
         where:
             value << ["x" * 256, " ", "", null]
+    }
+
+    def "intervals accept whole numbers of minutes from 1 to 1440"() {
+        when:
+            this.pollIntervalValidator.validateOnUpdate(new SystemParameterDto(value: value))
+            this.pushRetryIntervalValidator.validateOnUpdate(new SystemParameterDto(value: value))
+        then:
+            noExceptionThrown()
+        where:
+            value << ["1", "15", "1440"]
+    }
+
+    def "intervals reject #value"() {
+        when:
+            this.pollIntervalValidator.validateOnUpdate(new SystemParameterDto(value: value))
+        then:
+            def exception = thrown(IllegalArgumentException)
+            exception.message == "notValid.systemParameter.googleCalendarPollInterval.value"
+        where:
+            value << ["0", "1441", "-5", "1.5", "abc", "", " 15", "99999", null]
+    }
+
+    def "stored intervals are validated on application start"() {
+        given:
+            this.systemParameterQueryService.getValueByName(SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL) >> "0"
+        when:
+            this.pushRetryIntervalValidator.validate(SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL)
+        then:
+            def exception = thrown(IllegalArgumentException)
+            exception.message == "notValid.systemParameter.googleCalendarPushRetryInterval.value"
     }
 }

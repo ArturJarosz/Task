@@ -7,6 +7,8 @@ import com.arturjarosz.task.calendar.model.CalendarEvent;
 import com.arturjarosz.task.calendar.model.dto.GoogleEventChangeDto;
 import com.arturjarosz.task.calendar.model.dto.GoogleEventDataDto;
 import com.arturjarosz.task.calendar.model.dto.GoogleEventsSyncDto;
+import com.arturjarosz.task.dto.CalendarShareDto;
+import com.arturjarosz.task.dto.CalendarShareRoleDto;
 import com.arturjarosz.task.dto.GoogleCalendarConnectionStatusDto;
 import com.arturjarosz.task.systemparameter.application.GoogleCalendarSettingsProvider;
 import com.arturjarosz.task.systemparameter.application.SystemParameterChangeListener;
@@ -19,6 +21,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.model.AclRule;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.auth.http.HttpCredentialsAdapter;
@@ -39,6 +42,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -47,6 +52,14 @@ import java.util.Set;
 public class GoogleApiCalendarService implements GoogleCalendarService, SystemParameterChangeListener {
     private static final String CANCELLED_STATUS = "cancelled";
     private static final String OWNER_ACCESS_ROLE = "owner";
+    private static final String USER_SCOPE_TYPE = "user";
+    // Google keeps a rule with role "none" when access was removed, it gives no access
+    private static final String NO_ACCESS_ROLE = "none";
+    private static final Map<CalendarShareRoleDto, String> GOOGLE_ROLES = Map.of(
+            CalendarShareRoleDto.OWNER, OWNER_ACCESS_ROLE,
+            CalendarShareRoleDto.WRITER, "writer",
+            CalendarShareRoleDto.READER, "reader",
+            CalendarShareRoleDto.FREE_BUSY_READER, "freeBusyReader");
     private static final Set<String> CLIENT_PARAMETERS = Set.of(SystemParameters.GOOGLE_CALENDAR_SYNC,
             SystemParameters.GOOGLE_CALENDAR_CREDENTIALS, SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME);
 
@@ -244,6 +257,84 @@ public class GoogleApiCalendarService implements GoogleCalendarService, SystemPa
         } catch (IOException e) {
             throw new GoogleCalendarException("Listing events from Google Calendar failed.", e);
         }
+    }
+
+    @Override
+    public List<CalendarShareDto> listShares(String googleCalendarId) {
+        try {
+            var shares = new ArrayList<CalendarShareDto>();
+            String pageToken = null;
+            do {
+                var response = this.client().acl().list(googleCalendarId).setPageToken(pageToken).execute();
+                if (response.getItems() != null) {
+                    response.getItems().stream()
+                            .filter(rule -> rule.getScope() != null
+                                    && USER_SCOPE_TYPE.equals(rule.getScope().getType())
+                                    && rule.getRole() != null && !NO_ACCESS_ROLE.equals(rule.getRole()))
+                            .map(GoogleApiCalendarService::toCalendarShare)
+                            .forEach(shares::add);
+                }
+                pageToken = response.getNextPageToken();
+            } while (pageToken != null);
+            return shares;
+        } catch (IOException e) {
+            throw new GoogleCalendarException("Listing people with access to Google Calendar failed. %s".formatted(
+                    googleMessage(e)), e);
+        }
+    }
+
+    @Override
+    public CalendarShareDto shareCalendar(String googleCalendarId, String email, CalendarShareRoleDto role) {
+        try {
+            LOG.info("Sharing calendar with role {}.", role);
+            var rule = new AclRule()
+                    .setScope(new AclRule.Scope().setType(USER_SCOPE_TYPE).setValue(email))
+                    .setRole(GOOGLE_ROLES.get(role));
+            return toCalendarShare(this.client().acl().insert(googleCalendarId, rule).setSendNotifications(true)
+                    .execute());
+        } catch (IOException e) {
+            throw new GoogleCalendarException("Sharing Google Calendar failed. %s".formatted(googleMessage(e)), e);
+        }
+    }
+
+    @Override
+    public void revokeShare(String googleCalendarId, String email) {
+        LOG.info("Revoking access to calendar.");
+        try {
+            this.client().acl().delete(googleCalendarId, USER_SCOPE_TYPE + ":" + email).execute();
+        } catch (GoogleJsonResponseException e) {
+            if (e.getStatusCode() != HttpStatus.NOT_FOUND.value() && e.getStatusCode() != HttpStatus.GONE.value()) {
+                throw new GoogleCalendarException("Revoking access to Google Calendar failed. %s".formatted(
+                        googleMessage(e)), e);
+            }
+            LOG.debug("Access to Google Calendar was already revoked.");
+        } catch (IOException e) {
+            throw new GoogleCalendarException("Revoking access to Google Calendar failed. %s".formatted(
+                    googleMessage(e)), e);
+        }
+    }
+
+    private static CalendarShareDto toCalendarShare(AclRule rule) {
+        var share = new CalendarShareDto();
+        share.setEmail(rule.getScope().getValue());
+        share.setRole(toShareRole(rule.getRole()));
+        return share;
+    }
+
+    // Roles unknown to the application give at least read access
+    private static CalendarShareRoleDto toShareRole(String googleRole) {
+        return GOOGLE_ROLES.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(googleRole))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(CalendarShareRoleDto.READER);
+    }
+
+    // Google explains a rejected request in the JSON error details, which are more helpful than the HTTP status
+    private static String googleMessage(IOException exception) {
+        return exception instanceof GoogleJsonResponseException jsonException && jsonException.getDetails() != null
+                ? jsonException.getDetails().getMessage()
+                : exception.getMessage();
     }
 
     @Override

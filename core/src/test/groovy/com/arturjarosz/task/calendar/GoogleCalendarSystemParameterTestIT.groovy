@@ -38,6 +38,29 @@ class GoogleCalendarSystemParameterTestIT extends BaseTestIT {
             byName[SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME].value == "Task"
             byName[SystemParameters.GOOGLE_CALENDAR_CREDENTIALS].type == "SECRET"
             !byName[SystemParameters.GOOGLE_CALENDAR_CREDENTIALS].valueSet
+            byName[SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL].value == "15"
+            byName[SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL].type == "NUMBER"
+            byName[SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL].value == "1"
+    }
+
+    def "Sync interval outside of 1 to 1440 minutes should return 400"() {
+        when:
+            def response = this.updateParameter(SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL, value)
+        then:
+            response.status == HttpStatus.BAD_REQUEST.value()
+            this.getParameter(SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL).value == "15"
+        where:
+            value << ["0", "1441", "abc"]
+    }
+
+    def "Changed sync interval should be stored"() {
+        when:
+            def response = this.updateParameter(SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL, "5")
+        then:
+            response.status == HttpStatus.OK.value()
+            this.getParameter(SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL).value == "5"
+        cleanup:
+            this.updateParameter(SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL, "1")
     }
 
     def "Connection status should be NOT_CONFIGURED when there is no key"() {

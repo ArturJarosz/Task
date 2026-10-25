@@ -10,6 +10,9 @@ public final class SystemParameters {
     public static final String GOOGLE_CALENDAR_NAME = "Google calendar name";
     public static final String GOOGLE_CALENDAR_APPLICATION_NAME = "Google calendar application name";
     public static final String GOOGLE_CALENDAR_CREDENTIALS = "Google calendar credentials";
+    // in minutes
+    public static final String GOOGLE_CALENDAR_POLL_INTERVAL = "Google calendar poll interval";
+    public static final String GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL = "Google calendar push retry interval";
 
     private SystemParameters() {
         throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
