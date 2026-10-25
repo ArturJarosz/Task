@@ -157,43 +157,6 @@ class ProjectValidatorTest extends Specification {
             ex.message == "notValid.project.startDate"
     }
 
-    def "passing null as endDate to validateEndDate should not throw any exception"() {
-        given:
-            def endDate = null
-        when:
-            this.projectValidator.validateEndDate(endDate)
-        then:
-            noExceptionThrown()
-    }
-
-    def "passing past date as endDate to validateEndDate should not throw any exception"() {
-        given:
-            def endDate = LocalDate.now().minusDays(1)
-        when:
-            this.projectValidator.validateEndDate(endDate)
-        then:
-            noExceptionThrown()
-    }
-
-    def "passing current date as endDate to validateEndDate should not throw any exception"() {
-        given:
-            def endDate = LocalDate.now()
-        when:
-            this.projectValidator.validateEndDate(endDate)
-        then:
-            noExceptionThrown()
-    }
-
-    def "passing future date as endDate to validateEndDate should throw an exception"() {
-        given:
-            def endDate = LocalDate.now().plusDays(1)
-        when:
-            this.projectValidator.validateEndDate(endDate)
-        then:
-            Exception ex = thrown()
-            ex.message == "notValid.project.endDate"
-    }
-
     def "passing null as startDate and endDate to validateStartAndEndDate should not throw an exception"() {
         given:
             def startDate = null
@@ -268,7 +231,18 @@ class ProjectValidatorTest extends Specification {
             noExceptionThrown()
     }
 
-    def "validateUpdateProjectDto should not require start date for not finished project"() {
+    def "validateUpdateProjectDto should throw an exception when start date is removed from started project"() {
+        given:
+            def project = new ProjectBuilder().withStartDate(LocalDate.now().minusDays(5)).build()
+            def projectDto = new ProjectDto(name: PROJECT_NAME)
+        when:
+            this.projectValidator.validateUpdateProjectDto(projectDto, project)
+        then:
+            Exception ex = thrown()
+            ex.message == "isNull.project.startDate"
+    }
+
+    def "validateUpdateProjectDto should not require start date for not started project"() {
         given:
             def project = new ProjectBuilder().build()
             def projectDto = new ProjectDto(name: PROJECT_NAME)

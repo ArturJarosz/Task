@@ -93,6 +93,7 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
             endDate = LocalDate.now();
         }
         this.projectDataValidator.startDatePresent(project.getStartDate());
+        this.projectDataValidator.endDateNotInFuture(endDate);
         //end date can't be before start date
         this.projectDataValidator.endDateNotBeforeStartDate(project.getStartDate(), endDate);
         project.finishProject(endDate);

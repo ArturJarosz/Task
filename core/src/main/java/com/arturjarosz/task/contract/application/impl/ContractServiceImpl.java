@@ -13,11 +13,11 @@ import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.TriConsumer;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 @Slf4j
 @ApplicationService
@@ -32,7 +32,7 @@ public class ContractServiceImpl implements ContractService {
     @NonNull
     private final ContractDomainService contractDomainService;
 
-    private Map<ContractStatus, TriConsumer<Optional<Contract>, ContractDto, Long>> statusToValidator;
+    private Map<ContractStatus, BiConsumer<Contract, ContractDto>> statusToValidator;
 
     public ContractServiceImpl(@NonNull ContractValidator contractValidator,
             @NonNull ContractRepository contractRepository,
@@ -47,16 +47,13 @@ public class ContractServiceImpl implements ContractService {
     private void prepareContractValidators() {
         this.statusToValidator = new EnumMap<>(ContractStatus.class);
         this.statusToValidator.put(ContractStatus.COMPLETED,
-                (maybeContract, contractDto, contractId) -> this.contractValidator.validateCompleteContractDto(
-                        contractDto, maybeContract.orElseThrow(ResourceNotFoundException::new)));
+                (contract, contractDto) -> this.contractValidator.validateCompleteContractDto(contractDto, contract));
         this.statusToValidator.put(ContractStatus.SIGNED,
-                (maybeContract, contractDto, contractId) -> this.contractValidator.validateSignContractDto(
-                        contractDto));
+                (contract, contractDto) -> this.contractValidator.validateSignContractDto(contractDto));
         this.statusToValidator.put(ContractStatus.OFFER,
-                (maybeContract, contractDto, contractId) -> this.contractValidator.validateOffer(contractDto));
+                (contract, contractDto) -> this.contractValidator.validateOffer(contractDto));
         this.statusToValidator.put(ContractStatus.TERMINATED,
-                (maybeContract, contractDto, contractId) -> this.contractValidator.validateTerminateContractDto(
-                        contractDto, maybeContract.orElseThrow(ResourceNotFoundException::new)));
+                (contract, contractDto) -> this.contractValidator.validateTerminateContractDto(contractDto, contract));
     }
 
     @Transactional
@@ -80,15 +77,15 @@ public class ContractServiceImpl implements ContractService {
         var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateBaseContractDto(contractDto);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
-        Optional.ofNullable(this.statusToValidator.get(ContractStatus.valueOf(contractDto.getStatus().name())))
-                .ifPresent(statusValidator -> statusValidator.accept(maybeContract, contractDto, contractId));
         var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
-        contract = this.contractDomainService.updateContractStatus(contract, contractDto);
+        Optional.ofNullable(this.statusToValidator.get(ContractStatus.valueOf(contractDto.getStatus().name())))
+                .ifPresent(statusValidator -> statusValidator.accept(contract, contractDto));
+        var updatedContract = this.contractDomainService.updateContractStatus(contract, contractDto);
 
-        this.contractRepository.save(contract);
+        this.contractRepository.save(updatedContract);
         LOG.info("Contract status for contract with id {} was updated.", contractId);
 
-        return this.contractMapper.mapToDto(contract);
+        return this.contractMapper.mapToDto(updatedContract);
     }
 
     @Override
@@ -111,13 +108,13 @@ public class ContractServiceImpl implements ContractService {
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
         Optional.ofNullable(this.statusToValidator.get(contract.getStatus()))
-                .ifPresent(statusValidator -> statusValidator.accept(maybeContract, contractDto, contractId));
+                .ifPresent(statusValidator -> statusValidator.accept(contract, contractDto));
 
-        contract = this.contractDomainService.updateContract(contract, contractDto);
-        this.contractRepository.save(contract);
+        var updatedContract = this.contractDomainService.updateContract(contract, contractDto);
+        this.contractRepository.save(updatedContract);
 
         LOG.info("Contract data for contract with id {} was updated.", contractId);
 
-        return this.contractMapper.mapToDto(contract);
+        return this.contractMapper.mapToDto(updatedContract);
     }
 }

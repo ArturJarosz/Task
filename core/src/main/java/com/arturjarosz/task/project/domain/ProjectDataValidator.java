@@ -23,6 +23,11 @@ public class ProjectDataValidator {
                 createMessageCode(ExceptionCodes.NULL, VALIDATED_OBJECT, ProjectExceptionCodes.START_DATE));
     }
 
+    public void endDateNotInFuture(LocalDate endDate) {
+        assertIsTrue(!endDate.isAfter(LocalDate.now()),
+                createMessageCode(ExceptionCodes.NOT_VALID, VALIDATED_OBJECT, ProjectExceptionCodes.END_DATE));
+    }
+
     public void endDateNotBeforeStartDate(LocalDate startDate, LocalDate endDate) {
         assertIsTrue(!endDate.isBefore(startDate),
                 createMessageCode(ExceptionCodes.NOT_VALID, VALIDATED_OBJECT, ProjectExceptionCodes.START_DATE,

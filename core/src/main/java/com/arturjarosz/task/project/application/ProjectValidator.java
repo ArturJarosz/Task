@@ -69,12 +69,13 @@ public class ProjectValidator {
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.UPDATE));
         this.validateProjectName(projectDto.getName());
         this.validateStartDate(projectDto.getStartDate());
-        // end date is not updatable, it is set only on finishing project, so start date is checked against stored one
-        if (project.getEndDate() != null) {
+        // once project has start date (started or finished project), it cannot be removed, as finishing requires it
+        if (project.getStartDate() != null || project.getEndDate() != null) {
             assertNotNull(projectDto.getStartDate(),
                     createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
                             ProjectExceptionCodes.START_DATE));
         }
+        // end date is not updatable, it is set only on finishing project, so start date is checked against stored one
         this.validateStartAndEndDate(projectDto.getStartDate(), project.getEndDate());
     }
 
@@ -83,14 +84,6 @@ public class ProjectValidator {
             assertIsTrue(!startDate.isAfter(LocalDate.now()),
                     createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.PROJECT,
                             ProjectExceptionCodes.START_DATE));
-        }
-    }
-
-    public void validateEndDate(LocalDate endDate) {
-        if (endDate != null) {
-            assertIsTrue(!endDate.isAfter(LocalDate.now()),
-                    createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.PROJECT,
-                            ProjectExceptionCodes.END_DATE));
         }
     }
 

@@ -135,7 +135,6 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
         var maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
-        this.projectValidator.validateEndDate(projectContractDto.getEndDate());
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         project = this.projectDomainService.finishProject(project, projectContractDto.getEndDate());
         this.projectRepository.save(project);
