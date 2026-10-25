@@ -5,6 +5,7 @@ import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectStatusTransition;
 import com.arturjarosz.task.project.status.project.ProjectWorkflowService;
+import com.arturjarosz.task.project.status.project.listener.ProjectStatusTransitionListener;
 import com.arturjarosz.task.project.status.project.validator.ProjectStatusTransitionValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
@@ -22,13 +23,19 @@ import java.util.stream.Collectors;
 public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
     private Map<String, List<ProjectStatusTransitionValidator>> mapNameToStatusTransitionValidators;
+    private Map<String, List<ProjectStatusTransitionListener>> mapNameToStatusTransitionListeners;
 
     @Autowired
-    public ProjectWorkflowServiceImpl(List<ProjectStatusTransitionValidator> transitionValidatorList) {
+    public ProjectWorkflowServiceImpl(List<ProjectStatusTransitionValidator> transitionValidatorList,
+            List<ProjectStatusTransitionListener> transitionListenerList) {
         this.mapNameToStatusTransitionValidators = new HashMap<>();
         this.mapNameToStatusTransitionValidators = transitionValidatorList.stream()
                 .collect(Collectors.groupingBy(
                         projectStatusTransitionValidator -> projectStatusTransitionValidator.getStatusTransition()
+                                .getName()));
+        this.mapNameToStatusTransitionListeners = transitionListenerList.stream()
+                .collect(Collectors.groupingBy(
+                        projectStatusTransitionListener -> projectStatusTransitionListener.getStatusTransition()
                                 .getName()));
     }
 
@@ -57,7 +64,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
     @Override
     public void afterStatusChange(Project project, ProjectStatusTransition statusTransition) {
-        //TODO: run Project listeners
+        List<ProjectStatusTransitionListener> listeners = this.getStatusTransitionListeners(statusTransition);
+        listeners.forEach(listener -> listener.onProjectStatusChange(project));
     }
 
     private ProjectStatusTransition getTransitionForStatuses(ProjectStatus oldStatus, ProjectStatus newStatus) {
@@ -65,6 +73,16 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
                 .filter(transition -> transition.getCurrentStatus() == oldStatus &&
                         transition.getNextStatus() == newStatus)
                 .findFirst().orElse(null);
+    }
+
+    private List<ProjectStatusTransitionListener> getStatusTransitionListeners(
+            ProjectStatusTransition statusTransition) {
+        List<ProjectStatusTransitionListener> listeners = this.mapNameToStatusTransitionListeners
+                .get(statusTransition.getName());
+        if (listeners == null) {
+            return Collections.emptyList();
+        }
+        return listeners;
     }
 
     private List<ProjectStatusTransitionValidator> getStatusTransitionValidators(

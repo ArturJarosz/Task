@@ -21,10 +21,10 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     static final String PROJECTS_URI = "/projects"
     static final ObjectMapper MAPPER = new ObjectMapper()
     static final Double NEW_OFFER = 55000.00d
-    static final LocalDate END_DATE = LocalDate.of(2030, 10, 10)
     static final LocalDate SIGNING_DATE = LocalDate.of(2022, 10, 10)
     static final LocalDate DEADLINE = LocalDate.of(2035, 10, 10)
     static final LocalDate START_DATE = SIGNING_DATE.plusDays(10)
+    static final LocalDate END_DATE = START_DATE.plusDays(30)
 
     final architect = MAPPER.readValue(new File(getClass().classLoader.getResource('json/architect/architect.json').file),
             ArchitectDto)
@@ -415,7 +415,51 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
             contractDto.status == ContractStatusDto.TERMINATED
             contractDto.id != null
         and:
-            !contractDto.nextStatuses.empty
+            contractDto.nextStatuses == [ContractStatusDto.SIGNED]
+    }
+
+    @Transactional
+    def "Terminating signed contract with end date before contract start date returns bad request"() {
+        given:
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
+            this.acceptContractOffer(projectDto.contract.id)
+            def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+            this.signContract(projectDto.contract.id, signContractText)
+            def terminateContractDto = new ContractDto(endDate: this.signContractDto.startDate.minusDays(1),
+                    status: ContractStatusDto.TERMINATED)
+            def terminateRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(terminateContractDto)
+        when:
+            def terminateContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/status")
+                    .header("Content-Type", "application/json")
+                    .content(terminateRequest)).andReturn().response
+        then:
+            terminateContractResponse.status == HttpStatus.BAD_REQUEST.value()
+            def message = MAPPER.readValue(terminateContractResponse.contentAsString, ErrorMessage)
+            message.message == "Contract end date cannot be before contract start date."
+    }
+
+    @Transactional
+    def "Completing signed contract with future end date returns bad request"() {
+        given:
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
+            this.acceptContractOffer(projectDto.contract.id)
+            def signContractText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this.signContractDto)
+            this.signContract(projectDto.contract.id, signContractText)
+            def completeContractDto = new ContractDto(endDate: LocalDate.now().plusDays(1),
+                    status: ContractStatusDto.COMPLETED)
+            def completeRequest = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(completeContractDto)
+        when:
+            def completeContractResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(this.createContractUri(projectDto.contract.id) + "/status")
+                    .header("Content-Type", "application/json")
+                    .content(completeRequest)).andReturn().response
+        then:
+            completeContractResponse.status == HttpStatus.BAD_REQUEST.value()
+            def message = MAPPER.readValue(completeContractResponse.contentAsString, ErrorMessage)
+            message.message == "Contract end date cannot be future date."
     }
 
     @Transactional

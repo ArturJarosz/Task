@@ -64,13 +64,18 @@ public class ProjectValidator {
                 projectId);
     }
 
-    public void validateUpdateProjectDto(ProjectDto projectDto) {
+    public void validateUpdateProjectDto(ProjectDto projectDto, Project project) {
         assertNotNull(projectDto,
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.UPDATE));
         this.validateProjectName(projectDto.getName());
         this.validateStartDate(projectDto.getStartDate());
-        this.validateEndDate(projectDto.getEndDate());
-        this.validateStartAndEndDate(projectDto.getStartDate(), projectDto.getEndDate());
+        // end date is not updatable, it is set only on finishing project, so start date is checked against stored one
+        if (project.getEndDate() != null) {
+            assertNotNull(projectDto.getStartDate(),
+                    createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
+                            ProjectExceptionCodes.START_DATE));
+        }
+        this.validateStartAndEndDate(projectDto.getStartDate(), project.getEndDate());
     }
 
     public void validateStartDate(LocalDate startDate) {

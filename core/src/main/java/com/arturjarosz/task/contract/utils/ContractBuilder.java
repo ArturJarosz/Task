@@ -12,6 +12,7 @@ public class ContractBuilder extends AbstractBuilder<Contract, ContractBuilder> 
     private static final String DEADLINE = "deadline";
     private static final String ID = "id";
     private static final String OFFER_VALUE = "offerValue";
+    private static final String START_DATE = "startDate";
     private static final String STATUS = "status";
 
     public ContractBuilder() {
@@ -30,6 +31,11 @@ public class ContractBuilder extends AbstractBuilder<Contract, ContractBuilder> 
 
     public ContractBuilder withDeadline(LocalDate deadline) {
         TestUtils.setFieldForObject(this.object, DEADLINE, deadline);
+        return this;
+    }
+
+    public ContractBuilder withStartDate(LocalDate startDate) {
+        TestUtils.setFieldForObject(this.object, START_DATE, startDate);
         return this;
     }
 
