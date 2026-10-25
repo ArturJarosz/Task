@@ -15,7 +15,7 @@ class SystemParameterInitializerTest extends Specification {
     def systemParameterRepository = Mock(SystemParameterRepository)
     def systemParameterValidatorService = Mock(SystemParameterValidatorService)
     def userProperties = new UserProperties(vatTax: 0.23D, incomeTax: 0.18D, themeColor: "#465fff")
-    def googleCalendarProperties = new GoogleCalendarProperties(true, null, "Task app", "Office")
+    def googleCalendarProperties = new GoogleCalendarProperties(true, null, "Task app", "Office", null, null)
 
     def systemParameterInitializer = new SystemParameterInitializer(systemParameterRepository,
             systemParameterValidatorService, userProperties, googleCalendarProperties)
@@ -27,7 +27,7 @@ class SystemParameterInitializerTest extends Specification {
         when:
             this.systemParameterInitializer.run(null)
         then:
-            7 * this.systemParameterRepository.save(_ as SystemParameter) >> { SystemParameter parameter ->
+            9 * this.systemParameterRepository.save(_ as SystemParameter) >> { SystemParameter parameter ->
                 saved << parameter
                 parameter
             }
@@ -39,6 +39,8 @@ class SystemParameterInitializerTest extends Specification {
                      (SystemParameters.GOOGLE_CALENDAR_CREDENTIALS)     : "",
                      (SystemParameters.GOOGLE_CALENDAR_NAME)            : "Office",
                      (SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME): "Task app",
+                     (SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL)   : "15",
+                     (SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL): "1",
                      (SystemParameters.GOOGLE_CALENDAR_SYNC)            : "false"]
             saved.collectEntries { [(it.name): it.type] } ==
                     [(SystemParameters.VAT_TAX)                         : SystemParameterType.DECIMAL_NUMBER,
@@ -47,6 +49,8 @@ class SystemParameterInitializerTest extends Specification {
                      (SystemParameters.GOOGLE_CALENDAR_CREDENTIALS)     : SystemParameterType.SECRET,
                      (SystemParameters.GOOGLE_CALENDAR_NAME)            : SystemParameterType.TEXT,
                      (SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME): SystemParameterType.TEXT,
+                     (SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL)   : SystemParameterType.NUMBER,
+                     (SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL): SystemParameterType.NUMBER,
                      (SystemParameters.GOOGLE_CALENDAR_SYNC)            : SystemParameterType.BOOLEAN]
             saved.every { it.singleValue }
             saved.find { it.name == SystemParameters.GOOGLE_CALENDAR_CREDENTIALS }.defaultValue == ""
@@ -86,7 +90,7 @@ class SystemParameterInitializerTest extends Specification {
             keyFile.text = '{"type": "service_account"}'
             def subject = new SystemParameterInitializer(this.systemParameterRepository,
                     this.systemParameterValidatorService, this.userProperties,
-                    new GoogleCalendarProperties(true, keyFile.absolutePath, "Task", "Task"))
+                    new GoogleCalendarProperties(true, keyFile.absolutePath, "Task", "Task", null, null))
             this.systemParameterRepository.existsByName(_ as String) >> false
             List<SystemParameter> saved = []
             this.systemParameterRepository.save(_ as SystemParameter) >> { SystemParameter parameter ->
@@ -110,7 +114,7 @@ class SystemParameterInitializerTest extends Specification {
             keyFile.text = "not a key"
             def subject = new SystemParameterInitializer(this.systemParameterRepository,
                     this.systemParameterValidatorService, this.userProperties,
-                    new GoogleCalendarProperties(true, keyFile.absolutePath, "Task", "Task"))
+                    new GoogleCalendarProperties(true, keyFile.absolutePath, "Task", "Task", null, null))
             this.systemParameterRepository.existsByName(_ as String) >> false
             this.systemParameterValidatorService.validateOnUpdate({ it.value == "not a key" }) >> {
                 throw new IllegalArgumentException("")

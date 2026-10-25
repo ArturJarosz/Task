@@ -3,9 +3,12 @@ package com.arturjarosz.task.calendar.domain;
 import com.arturjarosz.task.calendar.model.CalendarEvent;
 import com.arturjarosz.task.calendar.model.dto.GoogleEventDataDto;
 import com.arturjarosz.task.calendar.model.dto.GoogleEventsSyncDto;
+import com.arturjarosz.task.dto.CalendarShareDto;
+import com.arturjarosz.task.dto.CalendarShareRoleDto;
 import com.arturjarosz.task.dto.GoogleCalendarConnectionStatusDto;
 import com.arturjarosz.task.systemparameter.application.dto.GoogleCalendarSettings;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -54,6 +57,24 @@ public interface GoogleCalendarService {
      * {@link SyncTokenExpiredException} when the provided syncToken is no longer valid.
      */
     GoogleEventsSyncDto listEvents(String googleCalendarId, String syncToken);
+
+    /**
+     * Lists people the calendar with given id is shared with, together with their access. Only rules given to single
+     * users are returned, so the connected account and the calendar's own address are listed as owners.
+     */
+    List<CalendarShareDto> listShares(String googleCalendarId);
+
+    /**
+     * Shares the calendar with given id with given email. Google notifies the person by email with a link that adds
+     * the calendar to their own Google Calendar.
+     */
+    CalendarShareDto shareCalendar(String googleCalendarId, String email, CalendarShareRoleDto role);
+
+    /**
+     * Revokes the access to the calendar with given id for given email. Access already revoked on the Google side is
+     * treated as revoked successfully.
+     */
+    void revokeShare(String googleCalendarId, String email);
 
     /**
      * Checks whether the Google Calendar can be reached with given settings. When googleCalendarId is provided, the

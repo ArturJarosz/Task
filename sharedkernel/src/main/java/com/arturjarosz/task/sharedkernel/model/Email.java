@@ -16,8 +16,9 @@ public class Email extends AbstractValueObject<Email> implements ValueObject<Ema
     @Serial
     private static final long serialVersionUID = -8861608245148282355L;
 
+    // the domain can have subdomains and hyphens, like mail.my-company.co.uk
     private static final Pattern EMAIL_PATTERN = Pattern
-            .compile("^[\\w+_.?^-]+@+\\w+\\.+(\\w{2,})");
+            .compile("^[\\w+_.?^-]+@[\\w-]+(\\.[\\w-]+)*\\.\\w{2,}$");
 
     @Column(name = "EMAIL")
     private String value;

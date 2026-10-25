@@ -65,6 +65,10 @@ public class SystemParameterInitializer implements ApplicationRunner {
                 this.googleCalendarProperties.calendarName(), SystemParameterType.TEXT));
         this.createIfMissing(new DefaultParameter(SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME,
                 this.googleCalendarProperties.applicationName(), SystemParameterType.TEXT));
+        this.createIfMissing(new DefaultParameter(SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL,
+                String.valueOf(this.googleCalendarProperties.pollInterval()), SystemParameterType.NUMBER));
+        this.createIfMissing(new DefaultParameter(SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL,
+                String.valueOf(this.googleCalendarProperties.pushRetryInterval()), SystemParameterType.NUMBER));
         if (this.systemParameterRepository.existsByName(SystemParameters.GOOGLE_CALENDAR_SYNC)) {
             return;
         }
