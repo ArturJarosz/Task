@@ -118,6 +118,15 @@ class ProjectDomainServiceImplTest extends Specification {
             1 * this.projectDataValidator.endDateNotBeforeStartDate(_ as LocalDate, _ as LocalDate)
     }
 
+    def "finishProject should call endDateNotInFuture on projectDataValidator"() {
+        given:
+            def project = this.prepareProjectInProgressWithStatus()
+        when:
+            this.projectDomainService.finishProject(project, null)
+        then:
+            1 * this.projectDataValidator.endDateNotInFuture(LocalDate.now())
+    }
+
     def "finishProject should call finishProject on project"() {
         given:
             def project = Mock(Project)

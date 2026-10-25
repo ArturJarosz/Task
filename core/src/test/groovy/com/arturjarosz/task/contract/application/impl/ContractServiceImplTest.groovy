@@ -7,7 +7,7 @@ import com.arturjarosz.task.contract.intrastructure.ContractRepository
 import com.arturjarosz.task.contract.model.Contract
 import com.arturjarosz.task.contract.status.ContractStatus
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow
-import com.arturjarosz.task.contract.utils.ContractBuilder
+import com.arturjarosz.task.utils.ContractBuilder
 import com.arturjarosz.task.dto.ContractDto
 import com.arturjarosz.task.dto.ContractStatusDto
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException

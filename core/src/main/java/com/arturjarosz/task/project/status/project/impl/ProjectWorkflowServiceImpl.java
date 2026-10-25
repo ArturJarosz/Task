@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,7 +27,6 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
     @Autowired
     public ProjectWorkflowServiceImpl(List<ProjectStatusTransitionValidator> transitionValidatorList,
             List<ProjectStatusTransitionListener> transitionListenerList) {
-        this.mapNameToStatusTransitionValidators = new HashMap<>();
         this.mapNameToStatusTransitionValidators = transitionValidatorList.stream()
                 .collect(Collectors.groupingBy(
                         projectStatusTransitionValidator -> projectStatusTransitionValidator.getStatusTransition()
@@ -77,21 +75,13 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
     private List<ProjectStatusTransitionListener> getStatusTransitionListeners(
             ProjectStatusTransition statusTransition) {
-        List<ProjectStatusTransitionListener> listeners = this.mapNameToStatusTransitionListeners
-                .get(statusTransition.getName());
-        if (listeners == null) {
-            return Collections.emptyList();
-        }
-        return listeners;
+        return this.mapNameToStatusTransitionListeners.getOrDefault(statusTransition.getName(),
+                Collections.emptyList());
     }
 
     private List<ProjectStatusTransitionValidator> getStatusTransitionValidators(
             ProjectStatusTransition statusTransition) {
-        List<ProjectStatusTransitionValidator> validators = this.mapNameToStatusTransitionValidators
-                .get(statusTransition.getName());
-        if (validators == null) {
-            return Collections.emptyList();
-        }
-        return validators;
+        return this.mapNameToStatusTransitionValidators.getOrDefault(statusTransition.getName(),
+                Collections.emptyList());
     }
 }

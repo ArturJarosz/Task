@@ -1,7 +1,7 @@
 package com.arturjarosz.task.contract.application
 
 import com.arturjarosz.task.contract.model.Contract
-import com.arturjarosz.task.contract.utils.ContractBuilder
+import com.arturjarosz.task.utils.ContractBuilder
 import com.arturjarosz.task.dto.ContractDto
 import spock.lang.Specification
 
