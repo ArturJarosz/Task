@@ -104,7 +104,7 @@ Example: `ProjectWorkflow` defines TO_DO → IN_PROGRESS → DONE flow with vali
 
 ### Key Patterns
 
-- **Validators** extend `BaseValidator` and use static assertion methods (`assertNotNull`, `assertIsTrue`, etc.)
+- **Validators** extend `BaseValidator` and use static assertion methods (`assertNotNull`, `assertIsTrue`, etc.).
 - **Mappers** use MapStruct with Spring component model (configured in `pom.xml`)
 - **Application services** are annotated with `@ApplicationService` (custom stereotype)
 - **Domain services** contain pure business logic, no framework dependencies

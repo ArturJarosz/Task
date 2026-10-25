@@ -205,7 +205,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
-            1 * this.projectValidator.validateUpdateProjectDto(projectDto)
+            1 * this.projectValidator.validateUpdateProjectDto(projectDto, _ as Project)
     }
 
     def "updateProject should call update on projectDomainService"() {
@@ -279,6 +279,17 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto)
         then:
             1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, EXISTING_PROJECT_ID)
+    }
+
+    def "finishProject should call validateEndDate on projectValidator"() {
+        given:
+            this.mockProjectRepositoryLoad()
+            this.mockProjectDomainServiceFinish()
+            def projectContractDto = this.prepareProjectDtoForFinish()
+        when:
+            this.projectApplicationService.finishProject(EXISTING_PROJECT_ID, projectContractDto)
+        then:
+            1 * this.projectValidator.validateEndDate(PROJECT_END_DATE)
     }
 
     def "finishProject should call finishProject on projectDomainService"() {

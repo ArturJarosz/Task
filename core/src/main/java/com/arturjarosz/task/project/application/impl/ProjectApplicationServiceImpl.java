@@ -107,8 +107,8 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
         var maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
-        this.projectValidator.validateUpdateProjectDto(projectDto);
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
+        this.projectValidator.validateUpdateProjectDto(projectDto, project);
         project = this.projectDomainService.updateProject(project, projectDto);
         project = this.projectRepository.save(project);
 
@@ -135,6 +135,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
         var maybeProject = this.projectRepository.findById(projectId);
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
+        this.projectValidator.validateEndDate(projectContractDto.getEndDate());
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         project = this.projectDomainService.finishProject(project, projectContractDto.getEndDate());
         this.projectRepository.save(project);

@@ -34,7 +34,7 @@ public enum ContractStatus implements Status<ContractStatus> {
     TERMINATED {
         @Override
         public Collection<ContractStatus> getPossibleStatusTransitions() {
-            return Collections.singletonList(TERMINATED);
+            return Collections.singletonList(SIGNED);
         }
     },
     COMPLETED {

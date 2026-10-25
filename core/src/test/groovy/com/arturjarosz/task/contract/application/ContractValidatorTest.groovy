@@ -1,6 +1,7 @@
 package com.arturjarosz.task.contract.application
 
 import com.arturjarosz.task.contract.model.Contract
+import com.arturjarosz.task.contract.utils.ContractBuilder
 import com.arturjarosz.task.dto.ContractDto
 import spock.lang.Specification
 
@@ -93,49 +94,64 @@ class ContractValidatorTest extends Specification {
 
     def "validateTerminateContractDto should throw and exception with proper exception message when contractDto is not correct"() {
         given:
-            ContractDto contractDto = givenContractDto
+            def contract = new ContractBuilder().withStartDate(PAST_DATE).build()
         when:
-            this.contractValidator.validateTerminateContractDto(contractDto)
+            this.contractValidator.validateTerminateContractDto(givenContractDto, contract)
         then:
             Exception exception = thrown()
             exception.message == exceptionMessage
         where:
-            givenContractDto  | endDate | exceptionMessage
-            null              | null    | "isNull.project.contract"
-            new ContractDto() | null    | "isNull.contract.endDate"
+            givenContractDto                     || exceptionMessage
+            null                                 || "isNull.project.contract"
+            new ContractDto()                    || "isNull.contract.endDate"
+            new ContractDto(endDate: FUTURE_DATE) || "notValid.contract.endDate"
+            new ContractDto(endDate: PAST_DATE_2) || "notValid.contract.endDate.startDate"
     }
 
     def "validateTerminateContractDto should not throw any exception on proper contractDto"() {
         given:
-            def contractDto = new ContractDto(endDate: FUTURE_DATE)
+            def contract = new ContractBuilder().withStartDate(PAST_DATE).build()
         when:
-            this.contractValidator.validateTerminateContractDto(contractDto)
+            this.contractValidator.validateTerminateContractDto(new ContractDto(endDate: givenEndDate), contract)
         then:
             noExceptionThrown()
+        where:
+            givenEndDate << [PAST_DATE, LocalDate.now()]
     }
 
     def "validateCompleteContractDto should throw and exception with proper exception message when contractDto is not correct"() {
         given:
-            def contractDto = givenContractDto
+            def contract = new ContractBuilder().withStartDate(PAST_DATE).build()
         when:
-            this.contractValidator.validateCompleteContractDto(contractDto)
+            this.contractValidator.validateCompleteContractDto(givenContractDto, contract)
         then:
             Exception exception = thrown()
             exception.message == exceptionMessage
         where:
-            givenContractDto  | endDate | exceptionMessage
-            null              | null    | "isNull.project.contract"
-            new ContractDto() | null    | "isNull.contract.endDate"
+            givenContractDto                     || exceptionMessage
+            null                                 || "isNull.project.contract"
+            new ContractDto()                    || "isNull.contract.endDate"
+            new ContractDto(endDate: FUTURE_DATE) || "notValid.contract.endDate"
+            new ContractDto(endDate: PAST_DATE_2) || "notValid.contract.endDate.startDate"
     }
 
     def "validateCompleteContractDto should not throw any exception on proper contractDto"() {
         given:
-            def contractDto = new ContractDto(endDate: FUTURE_DATE)
+            def contract = new ContractBuilder().withStartDate(PAST_DATE).build()
         when:
-            this.contractValidator.validateCompleteContractDto(contractDto)
+            this.contractValidator.validateCompleteContractDto(new ContractDto(endDate: givenEndDate), contract)
+        then:
+            noExceptionThrown()
+        where:
+            givenEndDate << [PAST_DATE, LocalDate.now()]
+    }
+
+    def "validateCompleteContractDto should not compare end date with start date when contract is not signed"() {
+        given:
+            def contract = new ContractBuilder().build()
+        when:
+            this.contractValidator.validateCompleteContractDto(new ContractDto(endDate: PAST_DATE), contract)
         then:
             noExceptionThrown()
     }
-
-
 }

@@ -48,7 +48,7 @@ public class ContractServiceImpl implements ContractService {
         this.statusToValidator = new EnumMap<>(ContractStatus.class);
         this.statusToValidator.put(ContractStatus.COMPLETED,
                 (maybeContract, contractDto, contractId) -> this.contractValidator.validateCompleteContractDto(
-                        contractDto));
+                        contractDto, maybeContract.orElseThrow(ResourceNotFoundException::new)));
         this.statusToValidator.put(ContractStatus.SIGNED,
                 (maybeContract, contractDto, contractId) -> this.contractValidator.validateSignContractDto(
                         contractDto));
@@ -56,7 +56,7 @@ public class ContractServiceImpl implements ContractService {
                 (maybeContract, contractDto, contractId) -> this.contractValidator.validateOffer(contractDto));
         this.statusToValidator.put(ContractStatus.TERMINATED,
                 (maybeContract, contractDto, contractId) -> this.contractValidator.validateTerminateContractDto(
-                        contractDto));
+                        contractDto, maybeContract.orElseThrow(ResourceNotFoundException::new)));
     }
 
     @Transactional

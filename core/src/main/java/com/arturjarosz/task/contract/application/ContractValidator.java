@@ -73,14 +73,21 @@ public class ContractValidator {
                         ContractExceptionCodes.START_DATE));
     }
 
-    public void validateTerminateContractDto(ContractDto contractDto) {
-        this.validateCompleteContractDto(contractDto);
+    public void validateTerminateContractDto(ContractDto contractDto, Contract contract) {
+        this.validateCompleteContractDto(contractDto, contract);
     }
 
-    public void validateCompleteContractDto(ContractDto contractDto) {
+    public void validateCompleteContractDto(ContractDto contractDto, Contract contract) {
         assertNotNull(contractDto, createMessageCode(ExceptionCodes.NULL, ContractExceptionCodes.PROJECT,
                 ContractExceptionCodes.CONTRACT));
         assertNotNull(contractDto.getEndDate(), createMessageCode(ExceptionCodes.NULL, ContractExceptionCodes.CONTRACT,
                 ContractExceptionCodes.END_DATE));
+        assertIsTrue(!contractDto.getEndDate().isAfter(LocalDate.now()),
+                createMessageCode(ExceptionCodes.NOT_VALID, ContractExceptionCodes.CONTRACT,
+                        ContractExceptionCodes.END_DATE));
+        // start date is missing only for not signed contract, for which status transition validation will fail
+        assertIsTrue(contract.getStartDate() == null || !contractDto.getEndDate().isBefore(contract.getStartDate()),
+                createMessageCode(ExceptionCodes.NOT_VALID, ContractExceptionCodes.CONTRACT,
+                        ContractExceptionCodes.END_DATE, ContractExceptionCodes.START_DATE));
     }
 }

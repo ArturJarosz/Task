@@ -1,6 +1,7 @@
 package com.arturjarosz.task.project.application
 
 import com.arturjarosz.task.dto.ProjectCreateDto
+import com.arturjarosz.task.dto.ProjectDto
 import com.arturjarosz.task.dto.ProjectTypeDto
 import com.arturjarosz.task.project.query.ProjectQueryService
 import com.arturjarosz.task.utils.ProjectBuilder
@@ -230,6 +231,49 @@ class ProjectValidatorTest extends Specification {
             def endDate = LocalDate.now()
         when:
             this.projectValidator.validateStartAndEndDate(startDate, endDate)
+        then:
+            noExceptionThrown()
+    }
+
+    def "validateUpdateProjectDto should throw an exception when start date is after stored end date"() {
+        given:
+            def project = new ProjectBuilder().withEndDate(LocalDate.now().minusDays(5)).build()
+            def projectDto = new ProjectDto(name: PROJECT_NAME, startDate: LocalDate.now().minusDays(1))
+        when:
+            this.projectValidator.validateUpdateProjectDto(projectDto, project)
+        then:
+            Exception ex = thrown()
+            ex.message == "notValid.project.startDate.endDate"
+    }
+
+    def "validateUpdateProjectDto should throw an exception when start date is removed from finished project"() {
+        given:
+            def project = new ProjectBuilder().withEndDate(LocalDate.now().minusDays(5)).build()
+            def projectDto = new ProjectDto(name: PROJECT_NAME)
+        when:
+            this.projectValidator.validateUpdateProjectDto(projectDto, project)
+        then:
+            Exception ex = thrown()
+            ex.message == "isNull.project.startDate"
+    }
+
+    def "validateUpdateProjectDto should ignore end date passed in dto"() {
+        given:
+            def project = new ProjectBuilder().withEndDate(LocalDate.now().minusDays(5)).build()
+            def projectDto = new ProjectDto(name: PROJECT_NAME, startDate: LocalDate.now().minusDays(10),
+                    endDate: LocalDate.now().minusDays(20))
+        when:
+            this.projectValidator.validateUpdateProjectDto(projectDto, project)
+        then:
+            noExceptionThrown()
+    }
+
+    def "validateUpdateProjectDto should not require start date for not finished project"() {
+        given:
+            def project = new ProjectBuilder().build()
+            def projectDto = new ProjectDto(name: PROJECT_NAME)
+        when:
+            this.projectValidator.validateUpdateProjectDto(projectDto, project)
         then:
             noExceptionThrown()
     }

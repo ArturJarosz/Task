@@ -12,6 +12,8 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
 
+import java.time.LocalDate
+
 class ProjectStatusWorkflowTestIT extends BaseTestIT {
     static final String ARCHITECTS_URI = "/architects"
     static final String CLIENTS_URI = "/clients"
@@ -131,6 +133,22 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             changeTaskStatusResponse.status == HttpStatus.OK.value()
         and:
             this.getTaskStatus(changeTaskStatusResponse) == TaskStatusDto.IN_PROGRESS
+    }
+
+    @Transactional
+    def "Starting progress on project without start date should set project start date to today"() {
+        given:
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
+            def stageDto = this.createStage(projectDto.id, architectDto.id)
+            def taskDto = this.createTask(projectDto.id, stageDto.id, architectDto.id)
+            this.acceptContractOffer(projectDto.contract.id)
+        when:
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto.id, TaskStatusDto.IN_PROGRESS)
+        then:
+            def loadedProjectDto = MAPPER.readValue(this.getProjectResponse(projectDto.id).contentAsString, ProjectDto)
+            loadedProjectDto.status == ProjectStatusDto.IN_PROGRESS
+            loadedProjectDto.startDate == LocalDate.now()
     }
 
 /*    @Transactional
