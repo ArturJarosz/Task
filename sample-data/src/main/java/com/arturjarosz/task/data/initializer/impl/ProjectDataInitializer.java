@@ -7,6 +7,7 @@ import com.arturjarosz.task.contractor.infrastructure.ContractorRepository;
 import com.arturjarosz.task.contractor.model.Contractor;
 import com.arturjarosz.task.data.initializer.DataInitializer;
 import com.arturjarosz.task.data.initializer.SampleDataFileReader;
+import com.arturjarosz.task.data.initializer.SampleDateUpdater;
 import com.arturjarosz.task.data.model.ContractorJobSample;
 import com.arturjarosz.task.data.model.CostSample;
 import com.arturjarosz.task.data.model.FinanceItemSample;
@@ -44,6 +45,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +56,8 @@ import java.util.stream.Collectors;
 /**
  * Loads sample Projects with Stages, Tasks and financial data. Objects are created through application services, and
  * statuses are reached by regular status transitions, so all validators and status listeners are applied. Has to be
- * run after architects, clients, contractors and suppliers are loaded.
+ * run after architects, clients, contractors and suppliers are loaded. Dates that can't be set through application
+ * services (passed deadlines, start and end dates of work, creation time) are changed by {@link SampleDateUpdater}.
  */
 @Slf4j
 @Component
@@ -82,6 +85,7 @@ public class ProjectDataInitializer implements DataInitializer {
     private final CostApplicationService costApplicationService;
     private final ContractorJobApplicationService contractorJobApplicationService;
     private final SupplyApplicationService supplyApplicationService;
+    private final SampleDateUpdater sampleDateUpdater;
 
     @Override
     public void initializeData() {
@@ -120,7 +124,7 @@ public class ProjectDataInitializer implements DataInitializer {
                 .architectId(architectId)
                 .clientId(getId(referencedIds.clientIdsByEmail(), projectSample.getClientEmail(), "client"))
                 .offerValue(projectSample.getOfferValue())
-                .deadline(daysFromNow(projectSample.getDeadlineInDays()));
+                .deadline(validContractDeadline(projectSample));
         var projectDto = this.projectApplicationService.createProject(projectCreateDto);
         var projectId = projectDto.getId();
 
@@ -142,6 +146,43 @@ public class ProjectDataInitializer implements DataInitializer {
         if (projectSample.isRejected()) {
             this.projectApplicationService.rejectProject(projectId);
         }
+        this.changeDates(projectId, contractId, projectSample, taskIds);
+    }
+
+    private void changeDates(Long projectId, Long contractId, ProjectSample projectSample,
+            Map<TaskSample, Long> taskIds) {
+        var startDateByTaskId = new HashMap<Long, LocalDate>();
+        var endDateByTaskId = new HashMap<Long, LocalDate>();
+        taskIds.forEach((taskSample, taskId) -> {
+            var startDate = daysAgo(taskSample.getStartedDaysAgo());
+            var endDate = daysAgo(taskSample.getFinishedDaysAgo());
+            if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
+                throw new SampleDataInitializingException(
+                        String.format("Task '%1$s' cannot be finished before it is started in %2$s",
+                                taskSample.getName(), FILE_NAME), null);
+            }
+            if (startDate != null) {
+                startDateByTaskId.put(taskId, startDate);
+            }
+            if (endDate != null) {
+                endDateByTaskId.put(taskId, endDate);
+            }
+        });
+        this.sampleDateUpdater.setWorkDates(projectId, startDateByTaskId, endDateByTaskId);
+
+        var deadline = daysFromNow(projectSample.getDeadlineInDays());
+        if (deadline != null && !deadline.equals(validContractDeadline(projectSample))) {
+            this.sampleDateUpdater.setContractDeadline(contractId, deadline);
+        }
+        this.sampleDateUpdater.moveCreationTime(projectId, contractId, projectSample.getCreatedDaysAgo());
+    }
+
+    /**
+     * Contract deadline has to be in the future, passed deadline is set later directly in the database.
+     */
+    private static LocalDate validContractDeadline(ProjectSample projectSample) {
+        var deadline = daysFromNow(projectSample.getDeadlineInDays());
+        return deadline == null || deadline.isAfter(LocalDate.now()) ? deadline : LocalDate.now().plusDays(1);
     }
 
     private Long createStage(Long projectId, Long architectId, StageSample stageSample,
@@ -236,7 +277,7 @@ public class ProjectDataInitializer implements DataInitializer {
                     .offerValue(projectSample.getOfferValue())
                     .signingDate(signingDate)
                     .startDate(signingDate)
-                    .deadline(daysFromNow(projectSample.getDeadlineInDays())));
+                    .deadline(validContractDeadline(projectSample)));
         }
     }
 
@@ -246,7 +287,10 @@ public class ProjectDataInitializer implements DataInitializer {
             this.contractService.changeStatus(contractId, new ContractDto().status(ContractStatusDto.REJECTED));
         } else if (targetStatus == ContractStatusDto.TERMINATED || targetStatus == ContractStatusDto.COMPLETED) {
             this.contractService.changeStatus(contractId,
-                    new ContractDto().status(targetStatus).endDate(LocalDate.now()));
+                    new ContractDto().status(targetStatus)
+                            .endDate(projectSample.getContractEndedDaysAgo() == null
+                                    ? LocalDate.now()
+                                    : daysAgo(projectSample.getContractEndedDaysAgo())));
         }
     }
 

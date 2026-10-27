@@ -144,6 +144,8 @@ class StageTestIT extends BaseTestIT {
             stageDto.status == StageStatusDto.TO_DO
             stageDto.createdDateTime != null
             stageDto.architectId == architectDto.id
+            stageDto.note == properStageDto.note
+            stageDto.deadline == properStageDto.deadline
         and:
             !stageDto.nextStatuses.empty
     }

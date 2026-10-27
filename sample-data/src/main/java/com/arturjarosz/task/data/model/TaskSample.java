@@ -12,4 +12,7 @@ public class TaskSample {
     private TaskTypeDto type;
     private String note;
     private TaskStatusDto status = TaskStatusDto.TO_DO;
+    // used only when the status sets start or end date, today when not provided; stage and project dates follow them
+    private Integer startedDaysAgo;
+    private Integer finishedDaysAgo;
 }

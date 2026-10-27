@@ -42,10 +42,12 @@ public class Stage extends AbstractHistoryAwareEntity implements WorkflowAware<S
     private LocalDate endDate;
 
     @Getter
+    @Setter
     @Column(name = "DEADLINE")
     private LocalDate deadline;
 
     @Getter
+    @Setter
     @Column(name = "NOTE")
     private String note;
 
@@ -122,6 +124,18 @@ public class Stage extends AbstractHistoryAwareEntity implements WorkflowAware<S
 
     @Override
     public void changeStatus(StageStatus status) {
+        StageStatus oldStatus = this.status;
         this.status = status;
+        // dates provided earlier by user should not be overridden
+        if (status == StageStatus.IN_PROGRESS && this.startDate == null) {
+            this.startDate = LocalDate.now();
+        }
+        if (status == StageStatus.DONE && this.endDate == null) {
+            this.endDate = LocalDate.now();
+        }
+        // stage reopened from DONE is not finished anymore
+        if (oldStatus == StageStatus.DONE && status != StageStatus.DONE) {
+            this.endDate = null;
+        }
     }
 }
