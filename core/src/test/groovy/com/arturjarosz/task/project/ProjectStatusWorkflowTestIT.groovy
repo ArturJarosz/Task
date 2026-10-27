@@ -151,6 +151,34 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
             loadedProjectDto.startDate == LocalDate.now()
     }
 
+    @Transactional
+    def "Finishing work on only task should set start and end dates on task, stage and project"() {
+        given:
+            def architectDto = TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
+            def stageDto = this.createStage(projectDto.id, architectDto.id)
+            def taskDto = this.createTask(projectDto.id, stageDto.id, architectDto.id)
+            this.acceptContractOffer(projectDto.contract.id)
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto.id, TaskStatusDto.IN_PROGRESS)
+        when:
+            this.updateTaskStatus(projectDto.id, stageDto.id, taskDto.id, TaskStatusDto.DONE)
+        then:
+            def loadedTaskDto = MAPPER.readValue(
+                    this.getTaskResponse(projectDto.id, stageDto.id, taskDto.id).contentAsString, TaskDto)
+            loadedTaskDto.startDate == LocalDate.now()
+            loadedTaskDto.endDate == LocalDate.now()
+        and:
+            def loadedStageDto = MAPPER.readValue(this.getStageResponse(projectDto.id, stageDto.id).contentAsString,
+                    StageDto)
+            loadedStageDto.startDate == LocalDate.now()
+            loadedStageDto.endDate == LocalDate.now()
+        and:
+            def loadedProjectDto = MAPPER.readValue(this.getProjectResponse(projectDto.id).contentAsString, ProjectDto)
+            loadedProjectDto.status == ProjectStatusDto.DONE
+            loadedProjectDto.startDate == LocalDate.now()
+            loadedProjectDto.endDate == LocalDate.now()
+    }
+
 /*    @Transactional
     def "8 For project with accepted offer, it should not be possible to make new offer"() {
         given:

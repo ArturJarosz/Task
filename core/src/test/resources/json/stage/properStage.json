@@ -1,4 +1,6 @@
 {
   "name": "Etap 01",
-  "type": "VISUALISATIONS"
+  "type": "VISUALISATIONS",
+  "note": "Notatka etapu",
+  "deadline": "2030-01-15"
 }

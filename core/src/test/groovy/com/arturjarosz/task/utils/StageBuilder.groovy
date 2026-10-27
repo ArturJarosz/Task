@@ -6,6 +6,8 @@ import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.status.stage.StageStatus
 import com.arturjarosz.task.sharedkernel.testhelpers.AbstractBuilder
 
+import java.time.LocalDate
+
 import static com.arturjarosz.task.sharedkernel.testhelpers.TestUtils.setFieldForObject
 
 class StageBuilder extends AbstractBuilder<Stage, StageBuilder> {
@@ -54,6 +56,16 @@ class StageBuilder extends AbstractBuilder<Stage, StageBuilder> {
 
     StageBuilder withStatus(StageStatus status) {
         this.setStatusField(STATUS, status)
+        return this
+    }
+
+    StageBuilder withStartDate(LocalDate startDate) {
+        setFieldForObject(this.object, START_DATE, startDate)
+        return this
+    }
+
+    StageBuilder withEndDate(LocalDate endDate) {
+        setFieldForObject(this.object, END_DATE, endDate)
         return this
     }
 }

@@ -5,7 +5,8 @@
         "clientEmail": "czerwinski@gmail.com",
         "architect": "Oskar Ciuryła",
         "offerValue": 42000.0,
-        "deadlineInDays": 150,
+        "createdDaysAgo": 75,
+        "deadlineInDays": 90,
         "contractStatus": "SIGNED",
         "signedDaysAgo": 60,
         "stages": [
@@ -13,28 +14,34 @@
                 "name": "Układ funkcjonalny",
                 "type": "FUNCTIONAL_LAYOUT",
                 "note": "Dwa warianty układu, klient wybrał wariant B.",
-                "deadlineInDays": 10,
+                "deadlineInDays": -40,
                 "installment": {
                     "value": 12000,
                     "hasInvoice": true,
                     "paid": true,
-                    "paymentDaysAgo": 30
+                    "paymentDaysAgo": 45
                 },
                 "tasks": [
                     {
                         "name": "Inwentaryzacja mieszkania",
                         "type": "CONCEPT",
-                        "status": "DONE"
+                        "status": "DONE",
+                        "startedDaysAgo": 58,
+                        "finishedDaysAgo": 52
                     },
                     {
                         "name": "Układ funkcjonalny - wariant A",
                         "type": "CONCEPT",
-                        "status": "DONE"
+                        "status": "DONE",
+                        "startedDaysAgo": 50,
+                        "finishedDaysAgo": 38
                     },
                     {
                         "name": "Układ funkcjonalny - wariant B",
                         "type": "CONCEPT",
-                        "status": "DONE"
+                        "status": "DONE",
+                        "startedDaysAgo": 50,
+                        "finishedDaysAgo": 40
                     },
                     {
                         "name": "Układ funkcjonalny - wariant C",
@@ -47,7 +54,7 @@
             {
                 "name": "Wizualizacje",
                 "type": "VISUALISATIONS",
-                "deadlineInDays": 40,
+                "deadlineInDays": -10,
                 "installment": {
                     "value": 15000,
                     "hasInvoice": false,
@@ -57,33 +64,60 @@
                     {
                         "name": "Wizualizacja salonu",
                         "type": "RENDER",
-                        "status": "DONE"
+                        "status": "DONE",
+                        "startedDaysAgo": 30,
+                        "finishedDaysAgo": 14
                     },
                     {
                         "name": "Wizualizacja kuchni",
                         "type": "RENDER",
-                        "status": "IN_PROGRESS"
+                        "status": "IN_PROGRESS",
+                        "startedDaysAgo": 20
                     },
                     {
                         "name": "Wizualizacja łazienki",
                         "type": "RENDER",
-                        "status": "IN_PROGRESS"
+                        "status": "IN_PROGRESS",
+                        "startedDaysAgo": 12
                     },
                     {
                         "name": "Wizualizacja sypialni",
                         "type": "RENDER",
                         "status": "TO_DO"
                     }
+                ],
+                "note": "Termin etapu minął, rata nieopłacona."
+            },
+            {
+                "name": "Koncepcja kolorystyki",
+                "type": "VISUALISATIONS",
+                "deadlineInDays": -30,
+                "installment": {
+                    "value": 4000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 32
+                },
+                "tasks": [
+                    {
+                        "name": "Moodboard kolorystyczny",
+                        "type": "RENDER",
+                        "status": "DONE",
+                        "startedDaysAgo": 45,
+                        "finishedDaysAgo": 35
+                    }
                 ]
             },
             {
                 "name": "Projekt wykonawczy",
                 "type": "EXECUTIVE_PROJECT",
-                "deadlineInDays": 120,
+                "deadlineInDays": 60,
                 "installment": {
                     "value": 15000,
-                    "hasInvoice": false,
-                    "paid": false
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 5,
+                    "note": "Zaliczka na poczet projektu wykonawczego."
                 },
                 "tasks": [
                     {
@@ -93,6 +127,17 @@
                     {
                         "name": "Zestawienie materiałów",
                         "type": "SHOPPING"
+                    }
+                ]
+            },
+            {
+                "name": "Nadzór autorski",
+                "type": "AUTHORS_SUPERVISION",
+                "deadlineInDays": 90,
+                "tasks": [
+                    {
+                        "name": "Odbiór prac wykończeniowych",
+                        "type": "CONCEPT"
                     }
                 ]
             }
@@ -172,6 +217,7 @@
         "clientEmail": "ciuba@mail.com",
         "architect": "Alicja Ciuryła",
         "offerValue": 68000.0,
+        "createdDaysAgo": 25,
         "deadlineInDays": 200,
         "contractStatus": "ACCEPTED",
         "stages": [
@@ -189,12 +235,15 @@
                     {
                         "name": "Analiza potrzeb pracowników",
                         "type": "CONCEPT",
-                        "status": "DONE"
+                        "status": "DONE",
+                        "startedDaysAgo": 20,
+                        "finishedDaysAgo": 10
                     },
                     {
                         "name": "Rozmieszczenie stanowisk",
                         "type": "CONCEPT",
-                        "status": "IN_PROGRESS"
+                        "status": "IN_PROGRESS",
+                        "startedDaysAgo": 8
                     },
                     {
                         "name": "Strefa socjalna",
@@ -212,6 +261,30 @@
                     {
                         "name": "Uzgodnienia z zarządcą budynku",
                         "type": "CONCEPT"
+                    }
+                ]
+            },
+            {
+                "name": "Wizualizacje biura",
+                "type": "VISUALISATIONS",
+                "deadlineInDays": 60,
+                "installment": {
+                    "value": 15000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 2,
+                    "note": "Zaliczka na wizualizacje."
+                },
+                "tasks": [
+                    {
+                        "name": "Wizualizacja recepcji",
+                        "type": "RENDER",
+                        "status": "IN_PROGRESS",
+                        "startedDaysAgo": 6
+                    },
+                    {
+                        "name": "Wizualizacja sali konferencyjnej",
+                        "type": "RENDER"
                     }
                 ]
             }
@@ -255,7 +328,8 @@
         "clientEmail": "mdobrzanski@wp.pl",
         "architect": "Karolina Flis",
         "offerValue": 55000.0,
-        "deadlineInDays": 20,
+        "createdDaysAgo": 200,
+        "deadlineInDays": -25,
         "contractStatus": "SIGNED",
         "signedDaysAgo": 180,
         "stages": [
@@ -272,14 +346,19 @@
                     {
                         "name": "Układ parteru",
                         "type": "CONCEPT",
-                        "status": "DONE"
+                        "status": "DONE",
+                        "startedDaysAgo": 175,
+                        "finishedDaysAgo": 160
                     },
                     {
                         "name": "Układ piętra",
                         "type": "CONCEPT",
-                        "status": "DONE"
+                        "status": "DONE",
+                        "startedDaysAgo": 172,
+                        "finishedDaysAgo": 155
                     }
-                ]
+                ],
+                "deadlineInDays": -150
             },
             {
                 "name": "Wizualizacje wnętrz",
@@ -294,7 +373,9 @@
                     {
                         "name": "Wizualizacja salonu z kuchnią",
                         "type": "RENDER",
-                        "status": "DONE"
+                        "status": "DONE",
+                        "startedDaysAgo": 140,
+                        "finishedDaysAgo": 110
                     },
                     {
                         "name": "Wizualizacja gabinetu",
@@ -305,7 +386,30 @@
                     {
                         "name": "Wizualizacja łazienek",
                         "type": "RENDER",
-                        "status": "DONE"
+                        "status": "DONE",
+                        "startedDaysAgo": 130,
+                        "finishedDaysAgo": 100
+                    }
+                ],
+                "deadlineInDays": -90
+            },
+            {
+                "name": "Projekt wykonawczy",
+                "type": "EXECUTIVE_PROJECT",
+                "deadlineInDays": -55,
+                "installment": {
+                    "value": 12000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 50
+                },
+                "tasks": [
+                    {
+                        "name": "Rysunki wykonawcze",
+                        "type": "CONCEPT",
+                        "status": "DONE",
+                        "startedDaysAgo": 100,
+                        "finishedDaysAgo": 60
                     }
                 ]
             },
@@ -315,21 +419,25 @@
                 "installment": {
                     "value": 20000,
                     "hasInvoice": true,
-                    "paid": true,
-                    "paymentDaysAgo": 15
+                    "paid": false,
+                    "note": "Faktura wystawiona, klient zwleka z płatnością."
                 },
                 "tasks": [
                     {
                         "name": "Zakupy wyposażenia",
                         "type": "SHOPPING",
-                        "status": "DONE"
+                        "status": "DONE",
+                        "startedDaysAgo": 80,
+                        "finishedDaysAgo": 40
                     },
                     {
                         "name": "Odbiór prac wykończeniowych",
                         "type": "CONCEPT",
-                        "status": "DONE"
+                        "status": "IN_PROGRESS",
+                        "startedDaysAgo": 35
                     }
-                ]
+                ],
+                "deadlineInDays": -30
             }
         ],
         "costs": [
@@ -391,6 +499,7 @@
         "clientEmail": "amilewski@gmail.com",
         "architect": "Oskar Ciuryła",
         "offerValue": 9000.0,
+        "createdDaysAgo": 3,
         "deadlineInDays": 60,
         "contractStatus": "OFFER",
         "stages": [
@@ -428,7 +537,8 @@
         "clientEmail": "m.krajewska@onet.pl",
         "architect": "Karolina Flis",
         "offerValue": 85000.0,
-        "deadlineInDays": 365,
+        "createdDaysAgo": 400,
+        "deadlineInDays": -35,
         "contractStatus": "REJECTED",
         "rejected": true,
         "stages": [
@@ -439,6 +549,453 @@
                     {
                         "name": "Analiza warunków zabudowy",
                         "type": "CONCEPT"
+                    }
+                ]
+            },
+            {
+                "name": "Projekt budowlany",
+                "type": "EXECUTIVE_PROJECT",
+                "tasks": []
+            }
+        ]
+    },
+    {
+        "name": "Apartament w Gdańsku",
+        "type": "INTERIOR_APARTMENT",
+        "clientEmail": "b.kolodziejczyk@gmail.com",
+        "architect": "Alicja Ciuryła",
+        "offerValue": 38000.0,
+        "createdDaysAgo": 420,
+        "deadlineInDays": -100,
+        "contractStatus": "COMPLETED",
+        "signedDaysAgo": 400,
+        "contractEndedDaysAgo": 120,
+        "stages": [
+            {
+                "name": "Układ funkcjonalny",
+                "type": "FUNCTIONAL_LAYOUT",
+                "deadlineInDays": -360,
+                "installment": {
+                    "value": 10000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 355
+                },
+                "tasks": [
+                    {
+                        "name": "Inwentaryzacja",
+                        "type": "CONCEPT",
+                        "status": "DONE",
+                        "startedDaysAgo": 398,
+                        "finishedDaysAgo": 392
+                    },
+                    {
+                        "name": "Układ funkcjonalny",
+                        "type": "CONCEPT",
+                        "status": "DONE",
+                        "startedDaysAgo": 390,
+                        "finishedDaysAgo": 365
+                    }
+                ]
+            },
+            {
+                "name": "Wizualizacje",
+                "type": "VISUALISATIONS",
+                "deadlineInDays": -280,
+                "installment": {
+                    "value": 14000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 275
+                },
+                "tasks": [
+                    {
+                        "name": "Wizualizacja salonu z aneksem",
+                        "type": "RENDER",
+                        "status": "DONE",
+                        "startedDaysAgo": 350,
+                        "finishedDaysAgo": 310
+                    },
+                    {
+                        "name": "Wizualizacja sypialni",
+                        "type": "RENDER",
+                        "status": "DONE",
+                        "startedDaysAgo": 330,
+                        "finishedDaysAgo": 290
+                    }
+                ]
+            },
+            {
+                "name": "Projekt wykonawczy",
+                "type": "EXECUTIVE_PROJECT",
+                "deadlineInDays": -180,
+                "installment": {
+                    "value": 14000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 118
+                },
+                "tasks": [
+                    {
+                        "name": "Rysunki wykonawcze",
+                        "type": "CONCEPT",
+                        "status": "DONE",
+                        "startedDaysAgo": 280,
+                        "finishedDaysAgo": 200
+                    },
+                    {
+                        "name": "Zestawienie wyposażenia",
+                        "type": "SHOPPING",
+                        "status": "DONE",
+                        "startedDaysAgo": 220,
+                        "finishedDaysAgo": 125
+                    }
+                ]
+            },
+            {
+                "name": "Projekt oświetlenia",
+                "type": "EXECUTIVE_PROJECT",
+                "deadlineInDays": -210,
+                "installment": {
+                    "value": 5000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 205
+                },
+                "tasks": [
+                    {
+                        "name": "Projekt oświetlenia",
+                        "type": "CONCEPT",
+                        "status": "DONE",
+                        "startedDaysAgo": 260,
+                        "finishedDaysAgo": 215
+                    }
+                ]
+            },
+            {
+                "name": "Nadzór autorski",
+                "type": "AUTHORS_SUPERVISION",
+                "deadlineInDays": -130,
+                "installment": {
+                    "value": 6000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 121
+                },
+                "tasks": [
+                    {
+                        "name": "Odbiór prac wykończeniowych",
+                        "type": "CONCEPT",
+                        "status": "DONE",
+                        "startedDaysAgo": 200,
+                        "finishedDaysAgo": 126
+                    }
+                ]
+            }
+        ],
+        "costs": [
+            {
+                "name": "Dojazdy do Gdańska",
+                "category": "FUEL",
+                "value": 860,
+                "dateDaysAgo": 395,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 390
+            }
+        ],
+        "contractorJobs": [
+            {
+                "name": "Zabudowa kuchenna",
+                "contractor": "Kow-Bud. Zakład remontowo - budowlany",
+                "value": 21000,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 160
+            }
+        ],
+        "supplies": [
+            {
+                "name": "Oświetlenie",
+                "supplier": "PUFFO",
+                "value": 5400,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 170
+            }
+        ]
+    },
+    {
+        "name": "Lokal usługowy na Starym Mieście",
+        "type": "INTERIOR_OFFICE",
+        "clientEmail": "w.lesniak@gmail.com",
+        "architect": "Karolina Flis",
+        "offerValue": 26000.0,
+        "createdDaysAgo": 160,
+        "deadlineInDays": 30,
+        "contractStatus": "TERMINATED",
+        "signedDaysAgo": 150,
+        "contractEndedDaysAgo": 70,
+        "stages": [
+            {
+                "name": "Układ lokalu",
+                "type": "FUNCTIONAL_LAYOUT",
+                "deadlineInDays": -120,
+                "installment": {
+                    "value": 8000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 118
+                },
+                "tasks": [
+                    {
+                        "name": "Układ sali sprzedaży",
+                        "type": "CONCEPT",
+                        "status": "DONE",
+                        "startedDaysAgo": 148,
+                        "finishedDaysAgo": 125
+                    }
+                ]
+            },
+            {
+                "name": "Wizualizacje lokalu",
+                "type": "VISUALISATIONS",
+                "note": "Umowa rozwiązana w trakcie etapu, rata nieopłacona.",
+                "deadlineInDays": -80,
+                "installment": {
+                    "value": 9000,
+                    "hasInvoice": true,
+                    "paid": false
+                },
+                "tasks": [
+                    {
+                        "name": "Wizualizacja witryny",
+                        "type": "RENDER",
+                        "status": "IN_PROGRESS",
+                        "startedDaysAgo": 100
+                    },
+                    {
+                        "name": "Wizualizacja zaplecza",
+                        "type": "RENDER"
+                    }
+                ]
+            },
+            {
+                "name": "Projekt wykonawczy lokalu",
+                "type": "EXECUTIVE_PROJECT",
+                "deadlineInDays": -40,
+                "installment": {
+                    "value": 6000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 90,
+                    "note": "Zaliczka wpłacona przed rozwiązaniem umowy."
+                },
+                "tasks": [
+                    {
+                        "name": "Rysunki wykonawcze",
+                        "type": "CONCEPT"
+                    }
+                ]
+            }
+        ],
+        "costs": [
+            {
+                "name": "Poprawki rysunków",
+                "category": "MISTAKE",
+                "value": 400,
+                "dateDaysAgo": 110,
+                "hasInvoice": false,
+                "payable": true,
+                "paid": false
+            }
+        ]
+    },
+    {
+        "name": "Dom jednorodzinny w Wilanowie",
+        "type": "ARCHITECTURE_HOUSE",
+        "clientEmail": "jagoda.stasiak@gmail.com",
+        "architect": "Oskar Ciuryła",
+        "offerValue": 120000.0,
+        "createdDaysAgo": 300,
+        "deadlineInDays": -60,
+        "contractStatus": "SIGNED",
+        "signedDaysAgo": 280,
+        "stages": [
+            {
+                "name": "Koncepcja architektoniczna",
+                "type": "FUNCTIONAL_LAYOUT",
+                "deadlineInDays": -220,
+                "installment": {
+                    "value": 30000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 215
+                },
+                "tasks": [
+                    {
+                        "name": "Analiza warunków zabudowy",
+                        "type": "CONCEPT",
+                        "status": "DONE",
+                        "startedDaysAgo": 278,
+                        "finishedDaysAgo": 260
+                    },
+                    {
+                        "name": "Koncepcja bryły",
+                        "type": "CONCEPT",
+                        "status": "DONE",
+                        "startedDaysAgo": 260,
+                        "finishedDaysAgo": 225
+                    }
+                ]
+            },
+            {
+                "name": "Wizualizacje bryły",
+                "type": "VISUALISATIONS",
+                "deadlineInDays": -190,
+                "installment": {
+                    "value": 10000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 185
+                },
+                "tasks": [
+                    {
+                        "name": "Wizualizacja elewacji",
+                        "type": "RENDER",
+                        "status": "DONE",
+                        "startedDaysAgo": 240,
+                        "finishedDaysAgo": 200
+                    }
+                ]
+            },
+            {
+                "name": "Projekt budowlany",
+                "type": "EXECUTIVE_PROJECT",
+                "note": "Opóźnienie przez uzgodnienia z gminą.",
+                "deadlineInDays": -90,
+                "installment": {
+                    "value": 50000,
+                    "hasInvoice": true,
+                    "paid": false,
+                    "note": "Faktura wystawiona po oddaniu części rysunków."
+                },
+                "tasks": [
+                    {
+                        "name": "Rysunki konstrukcyjne",
+                        "type": "CONCEPT",
+                        "status": "DONE",
+                        "startedDaysAgo": 210,
+                        "finishedDaysAgo": 150
+                    },
+                    {
+                        "name": "Projekt instalacji",
+                        "type": "CONCEPT",
+                        "status": "IN_PROGRESS",
+                        "startedDaysAgo": 140
+                    }
+                ]
+            },
+            {
+                "name": "Projekt wykonawczy",
+                "type": "EXECUTIVE_PROJECT",
+                "deadlineInDays": -20,
+                "installment": {
+                    "value": 40000,
+                    "hasInvoice": true,
+                    "paid": true,
+                    "paymentDaysAgo": 160,
+                    "note": "Zaliczka na poczet projektu wykonawczego."
+                },
+                "tasks": [
+                    {
+                        "name": "Detale wykonawcze",
+                        "type": "CONCEPT"
+                    }
+                ]
+            },
+            {
+                "name": "Nadzór autorski",
+                "type": "AUTHORS_SUPERVISION",
+                "deadlineInDays": 60,
+                "tasks": [
+                    {
+                        "name": "Nadzór nad budową stanu surowego",
+                        "type": "CONCEPT"
+                    }
+                ]
+            }
+        ],
+        "costs": [
+            {
+                "name": "Mapa do celów projektowych",
+                "category": "FUEL",
+                "value": 1200,
+                "dateDaysAgo": 270,
+                "hasInvoice": true,
+                "payable": true,
+                "paid": true,
+                "paymentDaysAgo": 268
+            },
+            {
+                "name": "Ponowne uzgodnienia",
+                "category": "MISTAKE",
+                "value": 900,
+                "dateDaysAgo": 100,
+                "hasInvoice": false,
+                "payable": true,
+                "paid": false
+            }
+        ]
+    },
+    {
+        "name": "Kawalerka na Pradze",
+        "type": "INTERIOR_APARTMENT",
+        "clientEmail": "t.bednarczyk@wp.pl",
+        "architect": "Rajesh Koothrappali",
+        "offerValue": 12000.0,
+        "createdDaysAgo": 1,
+        "deadlineInDays": 45,
+        "contractStatus": "ACCEPTED",
+        "stages": [
+            {
+                "name": "Układ funkcjonalny",
+                "type": "FUNCTIONAL_LAYOUT",
+                "deadlineInDays": 14,
+                "installment": {
+                    "value": 4000,
+                    "hasInvoice": false,
+                    "paid": false
+                },
+                "tasks": [
+                    {
+                        "name": "Inwentaryzacja",
+                        "type": "CONCEPT"
+                    },
+                    {
+                        "name": "Układ funkcjonalny",
+                        "type": "CONCEPT"
+                    }
+                ]
+            },
+            {
+                "name": "Wizualizacje",
+                "type": "VISUALISATIONS",
+                "deadlineInDays": 30,
+                "installment": {
+                    "value": 4000,
+                    "hasInvoice": false,
+                    "paid": true,
+                    "paymentDaysAgo": 0,
+                    "note": "Zaliczka wpłacona przy akceptacji oferty."
+                },
+                "tasks": [
+                    {
+                        "name": "Wizualizacja pokoju dziennego",
+                        "type": "RENDER"
                     }
                 ]
             }

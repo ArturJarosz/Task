@@ -97,7 +97,19 @@ public class Task extends AbstractHistoryAwareEntity implements WorkflowAware<Ta
 
     @Override
     public void changeStatus(TaskStatus newStatus) {
+        TaskStatus oldStatus = this.status;
         this.status = newStatus;
+        // dates provided earlier by user should not be overridden
+        if (newStatus == TaskStatus.IN_PROGRESS && this.startDate == null) {
+            this.startDate = LocalDate.now();
+        }
+        if (newStatus == TaskStatus.DONE && this.endDate == null) {
+            this.endDate = LocalDate.now();
+        }
+        // task reopened from DONE is not finished anymore
+        if (oldStatus == TaskStatus.DONE && newStatus != TaskStatus.DONE) {
+            this.endDate = null;
+        }
     }
 
     public TaskType getType() {
