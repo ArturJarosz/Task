@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "move-contract-sequence-past-existing-ids"
+      changes:
+        # Contract ids were taken from revinfo_seqence until Contract got its own generator, so contract_sequence has to
+        # continue after the highest existing contract id to avoid primary key collisions.
+        - sql:
+            dbms: "postgresql"
+            sql: "select setval('contract_sequence', greatest(
+            (select coalesce(max(ID), 0) from CONTRACT),
+            (select last_value from contract_sequence)))"

@@ -6,12 +6,12 @@ import com.arturjarosz.task.dto.GoogleCalendarConnectionStatusDto
 import com.arturjarosz.task.dto.SystemParameterDto
 import com.arturjarosz.task.systemparameter.domain.SystemParameters
 import com.arturjarosz.task.systemparameter.query.SystemParameterQueryService
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.ObjectMapper
 
 import java.security.KeyPairGenerator
 

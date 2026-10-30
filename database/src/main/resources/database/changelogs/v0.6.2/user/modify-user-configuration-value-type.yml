@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "modify-user-configuration-value-type"
+      comment: "Values such as the dashboard layout are longer than 255 characters"
+      changes:
+        - modifyDataType:
+            tableName: "USER_CONFIGURATION"
+            columnName: "VALUE"
+            newDataType: "TEXT"

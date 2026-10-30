@@ -6,12 +6,12 @@ import com.arturjarosz.task.systemparameter.application.TaxRatesProvider
 import com.arturjarosz.task.systemparameter.application.impl.SystemParameterInitializer
 import com.arturjarosz.task.systemparameter.domain.SystemParameters
 import com.arturjarosz.task.systemparameter.infrastructure.repository.SystemParameterRepository
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.ObjectMapper
 
 class SystemParameterTestIT extends BaseTestIT {
     static final String SYSTEM_PARAMETERS_URI = "/system-parameters"

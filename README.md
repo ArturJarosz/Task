@@ -39,11 +39,17 @@ For more help with script run with `-h` (help) flag:
 That script uses matching `.env` with passed environment (for `local` it will be `local.env`) located in /docker/env.
 To make it work provide all needed environment variables there. You can uses `example.env` for full list of them.
 
+PostgreSQL 18 and newer images keep the database in `docker/taskDb/<major version>/docker`, older ones kept it directly
+in `docker/taskDb`. When the script finds a cluster of an older PostgreSQL there, it moves it to
+`docker/taskDb-pg<version>-backup` before starting the environment, and with `-b only-run` it also copies the database
+into the new cluster. Remove the backup directory (with `sudo`, its files belong to the container's postgres user) once
+the upgraded database is checked.
+
 ### 2.2. Local environment without docker (with IntelliJ)
 
 #### Prerequisites
 
-Project requires JDK in version 17, Maven, and instance of Postgresql database.
+Project requires JDK in version 25, Maven, and instance of Postgresql database.
 
 Clone current repository locally:
 

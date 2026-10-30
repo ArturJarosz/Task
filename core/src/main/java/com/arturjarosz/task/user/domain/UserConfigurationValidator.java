@@ -15,6 +15,9 @@ import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createM
  */
 public final class UserConfigurationValidator {
 
+    // The frontend owns the layout format, so only its size is checked here
+    static final int MAX_DASHBOARD_LAYOUT_LENGTH = 4000;
+
     private UserConfigurationValidator() {
         throw new IllegalStateException(ExceptionCodes.NOT_FOR_INSTANTIATING);
     }
@@ -28,6 +31,10 @@ public final class UserConfigurationValidator {
             case THEME_MODE -> assertIsTrue(isEnumValue(value, ThemeMode.class),
                     createMessageCode(ExceptionCodes.NOT_VALID, UserExceptionCodes.USER,
                             UserExceptionCodes.CONFIGURATION, UserExceptionCodes.THEME_MODE), value);
+            case DASHBOARD_LAYOUT -> assertIsTrue(!value.isBlank() && value.length() <= MAX_DASHBOARD_LAYOUT_LENGTH,
+                    createMessageCode(ExceptionCodes.NOT_VALID, UserExceptionCodes.USER,
+                            UserExceptionCodes.CONFIGURATION, UserExceptionCodes.DASHBOARD_LAYOUT),
+                    String.valueOf(MAX_DASHBOARD_LAYOUT_LENGTH));
         }
     }
 

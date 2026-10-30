@@ -7,7 +7,6 @@ spring:
   liquibase:
     drop-first: true
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     generate-ddl: true
     hibernate:
       ddl-auto: create

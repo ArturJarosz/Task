@@ -4,12 +4,12 @@ import com.arturjarosz.task.configuration.BaseTestIT
 import com.arturjarosz.task.dto.*
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
 import com.arturjarosz.task.utils.TestsHelper
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.ObjectMapper
 
 class TaskTestIT extends BaseTestIT {
     static final String ARCHITECTS_URI = "/architects"
@@ -41,11 +41,6 @@ class TaskTestIT extends BaseTestIT {
 
     @Autowired
     private MockMvc mockMvc
-
-    @Override
-    def setupSpec() {
-        MAPPER.findAndRegisterModules()
-    }
 
     @Transactional
     def "Creating task for not existing project should return code 404 and error message"() {

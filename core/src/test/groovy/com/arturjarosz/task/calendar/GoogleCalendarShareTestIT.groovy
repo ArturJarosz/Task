@@ -3,11 +3,11 @@ package com.arturjarosz.task.calendar
 import com.arturjarosz.task.configuration.BaseTestIT
 import com.arturjarosz.task.dto.CalendarShareDto
 import com.arturjarosz.task.dto.CalendarShareRoleDto
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import tools.jackson.databind.ObjectMapper
 
 // Google cannot be reached from tests, so only requests refused before calling Google are checked here
 class GoogleCalendarShareTestIT extends BaseTestIT {

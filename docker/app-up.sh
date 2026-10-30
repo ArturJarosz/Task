@@ -12,6 +12,8 @@ COMPOSE_FILE=""
 
 BUILD_ENV=true
 PULL_IMAGES=false
+# full drops the schema and loads sample data again, so only only-run needs the database data kept
+KEEP_DATABASE_DATA=false
 
 # reading script flags
 while getopts "e:v:b:h" flag; do
@@ -63,6 +65,7 @@ case "$BUILD_TYPE" in
         ;;
     "only-run") echo "only run deployment"
         COMPOSE_FILE="docker-compose-run.yml"
+        KEEP_DATABASE_DATA=true
         ;;
     "pull-images") echo "pull newest images"
         COMPOSE_FILE="docker-compose-full.yml"
@@ -79,7 +82,8 @@ if [[ $PULL_IMAGES = "true" ]] ; then
 fi
 
 if [[ $BUILD_ENV = "true" ]] ; then
+    upgradeDatabaseCluster "${COMPOSE_FILE}" "${KEEP_DATABASE_DATA}"
     echo "Building environment."
-    docker compose --env-file "$ENV_FILE" -f "${COMPOSE_FILE}" up -d
+    docker compose --env-file "$ENV_FILE" -f "${COMPOSE_FILE}" up -d --wait
 fi
 

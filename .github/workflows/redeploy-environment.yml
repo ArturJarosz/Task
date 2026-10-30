@@ -25,7 +25,7 @@ on:
         default: "0.6.2-SNAPSHOT"
 
 env:
-  JAVA_VERSION: 17
+  JAVA_VERSION: 25
   VERSION: ""
 
 jobs:
@@ -35,8 +35,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK version ${{env.JAVA_VERSION}}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
+          distribution: temurin
           java-version: ${{env.JAVA_VERSION}}
 
       - name: Calculating metadata
