@@ -84,7 +84,9 @@ jobs:
           docker save -o task-fe.tar azjarosz/task-fe:$VERSION
           docker save -o task-sample-data.tar azjarosz/task-sample-data:$VERSION
           docker save -o task-schema.tar azjarosz/task-schema:$VERSION
-          docker save -o postgres.tar postgres:${{ vars.POSTGRES_VERSION }}
+          # postgres image is taken from the compose file, so it is the same one that was pulled by app-up.sh
+          postgres_image=$(grep -m1 -oP 'image:\s*\Kpostgres:\S+' docker/docker-compose-full.yml)
+          docker save -o postgres.tar "$postgres_image"
           sudo chmod 755 task-backend.tar task-fe.tar task-sample-data.tar task-schema.tar task-schema.tar postgres.tar
           cd docker/env
           sed -i 's|\$DATABASE_PASSWORD|${{ secrets.DATABASE_PASSWORD }}|g' hetzner.env
