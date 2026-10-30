@@ -32,9 +32,9 @@ jobs:
   build_and_publish:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Set up JDK version ${{env.JAVA_VERSION}}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: ${{env.JAVA_VERSION}}
