@@ -4212,9 +4212,12 @@ components:
 
     UserConfigurationName:
       type: string
-      description: Settings a user can define; THEME_MODE takes a ThemeMode value
+      description: >
+        Settings a user can define; THEME_MODE takes a ThemeMode value, DASHBOARD_LAYOUT a JSON document with the
+        rows and widgets of the user's dashboard (its format belongs to the frontend, at most 4000 characters)
       enum:
         - THEME_MODE
+        - DASHBOARD_LAYOUT
 
     ThemeMode:
       type: string

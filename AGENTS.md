@@ -123,7 +123,7 @@ Example: `ProjectWorkflow` defines TO_DO → IN_PROGRESS → DONE flow with vali
 
 ## Tech Stack
 
-- Java 17, Spring Boot 3.1
+- Java 25, Spring Boot 4.1
 - PostgreSQL with Liquibase migrations
 - QueryDSL for type-safe queries
 - MapStruct Lombok for mapping

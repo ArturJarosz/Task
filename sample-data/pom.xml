@@ -26,6 +26,14 @@
                     <groupId>com.okta.spring</groupId>
                     <artifactId>okta-spring-boot-starter</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-security-oauth2-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-security-oauth2-resource-server</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -57,10 +65,29 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>fatJar</id>
             <build>
+                <finalName>${project.artifactId}</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
@@ -74,7 +101,6 @@
                         </executions>
                         <configuration>
                             <classifier>fat</classifier>
-                            <finalName>${project.artifactId}</finalName>
                         </configuration>
                     </plugin>
                 </plugins>

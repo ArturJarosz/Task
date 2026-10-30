@@ -14,7 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -33,6 +33,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfiguration {
     private static final String MATCH_ALL = "/**";
+    private static final String LOGOUT_URL = "/logout";
 
     private static final List<String> HEADERS = List.of(
             HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
@@ -49,10 +50,11 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
+                // without CSRF protection Spring Security accepts logout with any method
+                .logout(logout -> logout.logoutRequestMatcher(
+                        PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, LOGOUT_URL)))
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.ignoringRequestMatchers(MATCH_ALL))
-                .authorizeHttpRequests(
-                        request -> request.requestMatchers(new AntPathRequestMatcher(MATCH_ALL)).authenticated())
+                .authorizeHttpRequests(request -> request.anyRequest().authenticated())
                 .oauth2Login(withDefaults())
                 .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))
                 .httpBasic(Customizer.withDefaults());

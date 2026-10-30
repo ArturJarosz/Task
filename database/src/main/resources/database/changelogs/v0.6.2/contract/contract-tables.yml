@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: "move-contract-sequence-past-existing-ids.yml"
+      relativeToChangelogFile: true

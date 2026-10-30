@@ -5,5 +5,7 @@ package com.arturjarosz.task.user.model;
  * checked by {@link com.arturjarosz.task.user.domain.UserConfigurationValidator}.
  */
 public enum UserConfigurationName {
-    THEME_MODE
+    THEME_MODE,
+    // JSON document with the rows and widgets of the user's dashboard; its format belongs to the frontend
+    DASHBOARD_LAYOUT
 }

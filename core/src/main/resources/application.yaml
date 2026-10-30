@@ -1,7 +1,5 @@
 spring:
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    database: postgresql
     openInView: false
     show_sql: false
     generate-ddl: false

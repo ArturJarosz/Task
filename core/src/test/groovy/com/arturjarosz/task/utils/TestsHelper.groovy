@@ -4,9 +4,9 @@ import com.arturjarosz.task.dto.ArchitectDto
 import com.arturjarosz.task.dto.ClientDto
 import com.arturjarosz.task.dto.ProjectCreateDto
 import com.arturjarosz.task.dto.ProjectDto
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import tools.jackson.databind.ObjectMapper
 
 class TestsHelper {
 

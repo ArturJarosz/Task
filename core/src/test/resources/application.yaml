@@ -1,12 +1,15 @@
 spring:
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    url: ${test.database.url}
-    username: ${test.database.username}
-    password: ${test.database.password}
+    # keep the PostgreSQL version in sync with the database image in docker/docker-compose-*.yml
+    url: jdbc:tc:postgresql:18.6:///test
+    username: test
+    password: test
   jpa:
-    database-platform: ${test.database.dialect}
-    database: ${test.database.type}
+    open-in-view: false
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   liquibase:
     enabled: true
     change-log: database/changelogs/changelog-master.yml

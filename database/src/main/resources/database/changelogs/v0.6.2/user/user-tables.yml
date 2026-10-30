@@ -11,3 +11,6 @@ databaseChangeLog:
   - include:
       file: "create-user-configuration-table.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "modify-user-configuration-value-type.yml"
+      relativeToChangelogFile: true

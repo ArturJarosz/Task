@@ -6,8 +6,6 @@ import com.arturjarosz.task.dto.UserConfigurationNameDto
 import com.arturjarosz.task.user.infrastructure.repository.UserRepository
 import com.arturjarosz.task.user.model.User
 import com.arturjarosz.task.user.model.UserConfigurationName
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.jdbc.core.JdbcTemplate
@@ -16,10 +14,13 @@ import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.ObjectMapper
 
 class UserTestIT extends BaseTestIT {
     static final String CONFIGURATIONS_URI = "/users/current/configurations"
     static final String THEME_MODE_URI = CONFIGURATIONS_URI + "/THEME_MODE"
+    static final String DASHBOARD_LAYOUT_URI = CONFIGURATIONS_URI + "/DASHBOARD_LAYOUT"
     static final String AUTH_ID = "auth0|configuration-test"
     static final ObjectMapper MAPPER = new ObjectMapper()
 
@@ -81,6 +82,33 @@ class UserTestIT extends BaseTestIT {
                     user.id) == 0
     }
 
+    def "Saving dashboard layout longer than 255 characters should store all of it"() {
+        given:
+            def user = this.userRepository.save(new User("Configuration user", "configuration@example.com", AUTH_ID))
+            this.authenticate(AUTH_ID)
+            def widgets = (1..20).collect { '{"type":"widget-' + it + '","width":25}' }.join(",")
+            def layout = '{"version":1,"rows":[{"widgets":[' + widgets + ']}]}'
+        when:
+            def response = this.putConfiguration(DASHBOARD_LAYOUT_URI, layout)
+        then:
+            layout.length() > 255
+            response.status == HttpStatus.OK.value()
+            this.jdbcTemplate.queryForList("SELECT VALUE FROM USER_CONFIGURATION WHERE USER_ID = ?", String, user.id) ==
+                    [layout]
+    }
+
+    def "Saving dashboard layout longer than 4000 characters should return 400 and store nothing"() {
+        given:
+            def user = this.userRepository.save(new User("Configuration user", "configuration@example.com", AUTH_ID))
+            this.authenticate(AUTH_ID)
+        when:
+            def response = this.putConfiguration(DASHBOARD_LAYOUT_URI, "x" * 4001)
+        then:
+            response.status == HttpStatus.BAD_REQUEST.value()
+            this.jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USER_CONFIGURATION WHERE USER_ID = ?", Integer,
+                    user.id) == 0
+    }
+
     def "Saving configuration with unknown name should return 400"() {
         given:
             this.userRepository.save(new User("Configuration user", "configuration@example.com", AUTH_ID))
@@ -111,7 +139,11 @@ class UserTestIT extends BaseTestIT {
     }
 
     private def putThemeMode(String value) {
-        return this.mockMvc.perform(MockMvcRequestBuilders.put(URI.create(HOST + ":" + port + THEME_MODE_URI))
+        return this.putConfiguration(THEME_MODE_URI, value)
+    }
+
+    private def putConfiguration(String uri, String value) {
+        return this.mockMvc.perform(MockMvcRequestBuilders.put(URI.create(HOST + ":" + port + uri))
                 .header("Content-Type", "application/json")
                 .content(MAPPER.writeValueAsString(new UserConfigurationDto(value: value)))).andReturn().response
     }
