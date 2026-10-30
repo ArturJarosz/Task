@@ -151,6 +151,70 @@ displayCurrentVersion() {
     echo "Current version is: ${currentVersion}"
 }
 
+waitForDatabase() {
+    for _ in {1..30}; do
+        if docker exec "$1" pg_isready -q -U "$DB_USER" > /dev/null 2>&1; then
+            return 0
+        fi
+        sleep 2
+    done
+    return 1
+}
+
+# PostgreSQL 18+ images keep the cluster in taskDb/<major version>/docker, older ones kept it directly in taskDb.
+# A cluster left there by an older image is moved to taskDb-pg<version>-backup. With keepData=true its database is
+# copied into the new cluster first, so the environment starts with the data it had.
+upgradeDatabaseCluster() {
+    composeFile=$1
+    keepData=$2
+    image=$(docker compose --env-file "$ENV_FILE" -f "$composeFile" config --images task-database)
+    oldVersion=$(docker run --rm -v "$(pwd)/taskDb:/data" --entrypoint sh "$image" -c \
+        'cat /data/PG_VERSION 2>/dev/null || true')
+    if [[ -z "$oldVersion" ]]; then
+        return 0
+    fi
+    backupDir="taskDb-pg${oldVersion}-backup"
+    dumpFile="taskDb-pg${oldVersion}.dump"
+    newCluster=$(docker run --rm -v "$(pwd)/taskDb:/data" --entrypoint sh "$image" -c \
+        'ls -d /data/*/docker 2>/dev/null || true')
+    if [[ -n "$newCluster" ]]; then
+        echo "Error: taskDb holds both a PostgreSQL ${oldVersion} cluster and a cluster of ${image} in ${newCluster#/data/}."
+        echo "Remove taskDb/${newCluster#/data/} to have the PostgreSQL ${oldVersion} data moved into ${image}."
+        exit 1
+    fi
+    if [[ -e "$backupDir" ]]; then
+        echo "Error: taskDb holds a PostgreSQL ${oldVersion} cluster, but ${backupDir} to move it to already exists."
+        exit 1
+    fi
+
+    echo "Found PostgreSQL ${oldVersion} cluster in taskDb, upgrading it to ${image}."
+    if [[ $keepData = "true" ]]; then
+        echo " -- Dumping database ${DB_DATABASE}"
+        docker run -d --rm --name task-database-upgrade -v "$(pwd)/taskDb:/var/lib/postgresql/data" \
+            "postgres:${oldVersion}" > /dev/null
+        if ! waitForDatabase task-database-upgrade || ! docker exec task-database-upgrade \
+                pg_dump -U "$DB_USER" -d "$DB_DATABASE" --format=custom > "$dumpFile"; then
+            docker stop task-database-upgrade > /dev/null 2>&1 || true
+            rm -f "$dumpFile"
+            echo "Error: could not dump database ${DB_DATABASE}, taskDb was left as it was."
+            exit 1
+        fi
+        docker stop task-database-upgrade > /dev/null
+    fi
+    docker run --rm -v "$(pwd):/work" --entrypoint mv "$image" /work/taskDb "/work/${backupDir}"
+    echo " -- Moved PostgreSQL ${oldVersion} cluster to ${backupDir}, remove it once the upgraded database is checked"
+    if [[ $keepData = "true" ]]; then
+        echo " -- Restoring database ${DB_DATABASE}"
+        docker compose --env-file "$ENV_FILE" -f "$composeFile" up -d --wait task-database
+        if ! docker compose --env-file "$ENV_FILE" -f "$composeFile" exec -T task-database \
+                pg_restore -U "$DB_USER" -d "$DB_DATABASE" --exit-on-error < "$dumpFile"; then
+            echo "Error: could not restore ${dumpFile}, the PostgreSQL ${oldVersion} cluster is in ${backupDir}."
+            exit 1
+        fi
+        rm "$dumpFile"
+    fi
+}
+
 prepareNginxConf() {
     echo "Preparing nginx configuration"
     echo " -- Setting base url to $BASE_URL"

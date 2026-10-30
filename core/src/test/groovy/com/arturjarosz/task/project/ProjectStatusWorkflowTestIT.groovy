@@ -4,13 +4,13 @@ import com.arturjarosz.task.configuration.BaseTestIT
 import com.arturjarosz.task.dto.*
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
 import com.arturjarosz.task.utils.TestsHelper
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.ObjectMapper
 
 import java.time.LocalDate
 
@@ -34,11 +34,6 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
 
     @Autowired
     private MockMvc mockMvc
-
-    @Override
-    def setupSpec() {
-        MAPPER.findAndRegisterModules()
-    }
 
     @Transactional
     def "Creating project should return code 200 and put project in TO_DO status"() {

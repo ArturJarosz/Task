@@ -29,6 +29,8 @@ hs_err_pid*
 
 # database files
 /docker/taskDb/
+/docker/taskDb-pg*-backup/
+/docker/taskDb-pg*.dump
 /docker/env/local.env
 **/.m2/
 

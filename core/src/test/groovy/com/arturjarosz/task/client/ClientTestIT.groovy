@@ -6,12 +6,12 @@ import com.arturjarosz.task.dto.ClientDto
 import com.arturjarosz.task.dto.ProjectCreateDto
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
 import com.arturjarosz.task.utils.TestsHelper
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.ObjectMapper
 
 class ClientTestIT extends BaseTestIT {
 

@@ -3,12 +3,12 @@ package com.arturjarosz.task.supplier
 import com.arturjarosz.task.configuration.BaseTestIT
 import com.arturjarosz.task.dto.SupplierDto
 import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
-import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import tools.jackson.databind.ObjectMapper
 
 class SupplierTestIT extends BaseTestIT {
 

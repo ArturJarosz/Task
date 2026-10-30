@@ -13,6 +13,7 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
 
 import java.io.Serial;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 
 @SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
+@SequenceGenerator(name = "sequence_generator", sequenceName = "contract_sequence", allocationSize = 1)
 @DiscriminatorValue(value = "CONTRACT")
 public class Contract extends AbstractAggregateRoot implements WorkflowAware<ContractStatus> {
     @Serial
