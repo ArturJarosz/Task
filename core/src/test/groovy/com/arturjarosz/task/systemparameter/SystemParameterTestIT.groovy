@@ -41,7 +41,7 @@ class SystemParameterTestIT extends BaseTestIT {
             def valuesByName = parameters.collectEntries { [(it.name): it.value] }
             valuesByName[SystemParameters.VAT_TAX] == "0.23"
             valuesByName[SystemParameters.INCOME_TAX] == "0.18"
-            valuesByName[SystemParameters.THEME_COLOR] == "#465fff"
+            valuesByName[SystemParameters.THEME_COLOR] == "#415cc8"
     }
 
     def "Initializing system parameters should not override values already stored in database"() {
@@ -97,7 +97,7 @@ class SystemParameterTestIT extends BaseTestIT {
                     .content(MAPPER.writeValueAsString(updateDto))).andReturn().response
         then:
             response.status == HttpStatus.BAD_REQUEST.value()
-            this.getParameterByName(SystemParameters.THEME_COLOR).value == "#465fff"
+            this.getParameterByName(SystemParameters.THEME_COLOR).value == "#415cc8"
     }
 
     private SystemParameterDto getParameterByName(String name) {
