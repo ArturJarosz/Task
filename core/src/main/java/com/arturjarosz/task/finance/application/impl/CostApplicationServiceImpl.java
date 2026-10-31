@@ -60,7 +60,7 @@ public class CostApplicationServiceImpl implements CostApplicationService {
         this.costValidator.validateUpdateCostDto(costDto);
 
         var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
-        var cost = projectFinancialData.updateCost(costDto);
+        var cost = projectFinancialData.updateCost(costId, costDto);
 
         this.projectFinancialDataRepository.save(projectFinancialData);
         this.projectFinanceAwareObjectService.onUpdate(projectId);

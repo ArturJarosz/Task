@@ -82,10 +82,10 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
         this.costs.removeIf(cost -> cost.getId().equals(costId));
     }
 
-    public Cost updateCost(CostDto costDto) {
+    public Cost updateCost(Long costId, CostDto costDto) {
         Cost cost = this.getCosts()
                 .stream()
-                .filter(costOnProject -> costOnProject.getId().equals(costDto.getId()))
+                .filter(costOnProject -> costOnProject.getId().equals(costId))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
         cost.updateCost(costDto);
