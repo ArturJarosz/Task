@@ -15,6 +15,7 @@ class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
     private static final String ARCHITECT_ID = "architectId"
     private static final String ARRANGEMENT = "arrangement"
     private static final String CLIENT_ID = "clientId"
+    private static final String CONTRACT_ID = "contractId"
     private static final String END_DATE = "endDate"
     private static final String NAME = "name"
     private static final String NOTE = "note"
@@ -30,6 +31,11 @@ class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
 
     ProjectBuilder withEndDate(LocalDate endDate) {
         TestUtils.setFieldForObject(this.object, END_DATE, endDate)
+        return this
+    }
+
+    ProjectBuilder withContractId(Long contractId) {
+        TestUtils.setFieldForObject(this.object, CONTRACT_ID, contractId)
         return this
     }
 

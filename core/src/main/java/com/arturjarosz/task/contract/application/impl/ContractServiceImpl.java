@@ -14,10 +14,12 @@ import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 @Slf4j
 @ApplicationService
@@ -97,6 +99,16 @@ public class ContractServiceImpl implements ContractService {
         var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
 
         return this.contractMapper.mapToDto(contract);
+    }
+
+    @Override
+    public Map<Long, ContractDto> getContractsByIds(Collection<Long> contractIds) {
+        if (contractIds.isEmpty()) {
+            return Map.of();
+        }
+        return this.contractRepository.findAllById(contractIds)
+                .stream()
+                .collect(Collectors.toMap(Contract::getId, this.contractMapper::mapToDto));
     }
 
     @Transactional
