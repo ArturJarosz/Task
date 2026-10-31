@@ -3,9 +3,10 @@ package com.arturjarosz.task.user
 import com.arturjarosz.task.configuration.BaseTestIT
 import com.arturjarosz.task.dto.UserConfigurationDto
 import com.arturjarosz.task.dto.UserConfigurationNameDto
+import com.arturjarosz.task.dto.UserDto
+import com.arturjarosz.task.user.application.CurrentUserProvider
 import com.arturjarosz.task.user.infrastructure.repository.UserRepository
 import com.arturjarosz.task.user.model.User
-import com.arturjarosz.task.user.model.UserConfigurationName
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.jdbc.core.JdbcTemplate
@@ -17,11 +18,18 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import tools.jackson.core.type.TypeReference
 import tools.jackson.databind.ObjectMapper
 
+import java.util.concurrent.Callable
+import java.util.concurrent.CyclicBarrier
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
 class UserTestIT extends BaseTestIT {
-    static final String CONFIGURATIONS_URI = "/users/current/configurations"
+    static final String CURRENT_USER_URI = "/users/current"
+    static final String CONFIGURATIONS_URI = CURRENT_USER_URI + "/configurations"
     static final String THEME_MODE_URI = CONFIGURATIONS_URI + "/THEME_MODE"
     static final String DASHBOARD_LAYOUT_URI = CONFIGURATIONS_URI + "/DASHBOARD_LAYOUT"
     static final String AUTH_ID = "auth0|configuration-test"
+    static final String M2M_AUTH_ID = "configuration-test-client@clients"
     static final ObjectMapper MAPPER = new ObjectMapper()
 
     @Autowired
@@ -66,8 +74,7 @@ class UserTestIT extends BaseTestIT {
             response.status == HttpStatus.OK.value()
             this.jdbcTemplate.queryForList("SELECT VALUE FROM USER_CONFIGURATION WHERE USER_ID = ?", String, user.id) ==
                     ["LIGHT"]
-            this.userRepository.findByAuthId(AUTH_ID).get()
-                    .getConfiguration(UserConfigurationName.THEME_MODE).get().value == "LIGHT"
+            this.getConfigurations() == [new UserConfigurationDto(name: UserConfigurationNameDto.THEME_MODE, value: "LIGHT")]
     }
 
     def "Saving theme mode with value that is not a theme mode should return 400 and store nothing"() {
@@ -122,20 +129,88 @@ class UserTestIT extends BaseTestIT {
             response.status == HttpStatus.BAD_REQUEST.value()
     }
 
-    def "Saving theme mode when current user does not exist should return 404"() {
+    def "Saving theme mode when current user does not exist should create the user and store the configuration"() {
         given:
-            this.authenticate("auth0|not-registered")
+            this.authenticate(AUTH_ID)
         when:
             def response = this.putThemeMode("LIGHT")
         then:
-            response.status == HttpStatus.NOT_FOUND.value()
+            response.status == HttpStatus.OK.value()
+            this.getConfigurations() == [new UserConfigurationDto(name: UserConfigurationNameDto.THEME_MODE, value: "LIGHT")]
+    }
+
+    def "Getting current user on first login should create the user from token claims"() {
+        given:
+            this.authenticateWithProfile(AUTH_ID, "new@example.com", "New user")
+        when:
+            def user = this.getCurrentUser()
+        then:
+            user.id != null
+            user.authId == AUTH_ID
+            user.username == "New user"
+            user.email == "new@example.com"
+        and:
+            this.jdbcTemplate.queryForList("SELECT USERNAME, EMAIL FROM LOCAL_USER WHERE AUTH_ID = ?", AUTH_ID) ==
+                    [[username: "New user", email: "new@example.com"]]
+    }
+
+    def "Getting current user with machine-to-machine token should not create a user"() {
+        given:
+            this.authenticate(M2M_AUTH_ID, ["gty": "client-credentials"])
+        when:
+            def user = this.getCurrentUser()
+        then:
+            user.id == null
+            this.userRepository.findByAuthId(M2M_AUTH_ID).isEmpty()
+    }
+
+    def "Getting current user again should keep one user and refresh it from token claims"() {
+        given:
+            this.authenticateWithProfile(AUTH_ID, "new@example.com", "New user")
+            def createdUser = this.getCurrentUser()
+            this.authenticateWithProfile(AUTH_ID, "changed@example.com", "Changed")
+        when:
+            def user = this.getCurrentUser()
+        then:
+            user.id == createdUser.id
+            user.username == "Changed"
+            user.email == "changed@example.com"
+            this.jdbcTemplate.queryForObject("SELECT COUNT(*) FROM LOCAL_USER WHERE AUTH_ID = ?", Integer, AUTH_ID) == 1
+    }
+
+    def "Concurrent first requests of the same user should all succeed and create one user"() {
+        given:
+            def requests = 8
+            def executor = Executors.newFixedThreadPool(requests)
+            // Releases all requests at once, so they race for creating the user
+            def allReady = new CyclicBarrier(requests)
+            def tasks = (1..requests).collect {
+                { ->
+                    try {
+                        allReady.await()
+                        authenticateWithProfile(AUTH_ID, "new@example.com", null)
+                        return this.getCurrentUserResponse().status
+                    } finally {
+                        SecurityContextHolder.clearContext()
+                    }
+                } as Callable<Integer>
+            }
+        when:
+            // One deadline for all requests; a cancelled (timed out) one fails the test in get()
+            def statuses = executor.invokeAll(tasks, 30, TimeUnit.SECONDS)*.get()
+        then:
+            statuses == [HttpStatus.OK.value()] * requests
+            this.jdbcTemplate.queryForObject("SELECT COUNT(*) FROM LOCAL_USER WHERE AUTH_ID = ?", Integer, AUTH_ID) == 1
+        cleanup:
+            executor.shutdownNow()
     }
 
     def "Configurations of current user who does not exist should be empty"() {
         given:
-            this.authenticate("auth0|not-registered")
+            this.authenticate(AUTH_ID)
         expect:
             this.getConfigurations().isEmpty()
+            this.userRepository.findByAuthId(AUTH_ID).isEmpty()
     }
 
     private def putThemeMode(String value) {
@@ -148,6 +223,15 @@ class UserTestIT extends BaseTestIT {
                 .content(MAPPER.writeValueAsString(new UserConfigurationDto(value: value)))).andReturn().response
     }
 
+    private def getCurrentUserResponse() {
+        return this.mockMvc.perform(MockMvcRequestBuilders.get(URI.create(HOST + ":" + port + CURRENT_USER_URI)))
+                .andReturn().response
+    }
+
+    private UserDto getCurrentUser() {
+        return MAPPER.readValue(this.getCurrentUserResponse().contentAsString, UserDto)
+    }
+
     private List<UserConfigurationDto> getConfigurations() {
         def response = this.mockMvc.perform(MockMvcRequestBuilders
                 .get(URI.create(HOST + ":" + port + CONFIGURATIONS_URI))).andReturn().response
@@ -155,8 +239,14 @@ class UserTestIT extends BaseTestIT {
     }
 
     // The test profile runs without the security filter chain, so the JWT goes straight into the context
-    private static void authenticate(String authId) {
-        def jwt = new Jwt("token", null, null, ["alg": "RS256"], ["sub": authId])
+    private static void authenticate(String authId, Map<String, Object> otherClaims = [:]) {
+        def jwt = new Jwt("token", null, null, ["alg": "RS256"], ["sub": authId] + otherClaims)
         SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt))
+    }
+
+    // Claims the Auth0 Action adds; a null value leaves the claim out
+    private static void authenticateWithProfile(String authId, String email, String name) {
+        authenticate(authId, [(CurrentUserProvider.EMAIL_CLAIM): email, (CurrentUserProvider.NAME_CLAIM): name]
+                .findAll { it.value != null })
     }
 }

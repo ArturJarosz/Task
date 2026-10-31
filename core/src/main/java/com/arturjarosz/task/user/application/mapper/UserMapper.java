@@ -13,8 +13,6 @@ public interface UserMapper {
 
     UserDto mapToDto(User user);
 
-    User mapFromDto(UserDto userDto);
-
     UserConfigurationDto mapToDto(UserConfiguration userConfiguration);
 
     UserConfigurationName mapConfigurationName(UserConfigurationNameDto userConfigurationNameDto);

@@ -9,15 +9,11 @@ import java.util.List;
 public interface UserApplicationService {
 
     /**
-     * Returns the {@link com.arturjarosz.task.user.model.User} matching the email from the current JWT token.
-     * If no user is found, an empty {@link UserDto} is returned.
+     * Returns the {@link com.arturjarosz.task.user.model.User} matching the subject of the current JWT token, creating
+     * it from the token claims on the first login. An empty {@link UserDto} is returned when the token does not belong
+     * to a person.
      */
     UserDto getCurrentUser();
-
-    /**
-     * Creates a new {@link com.arturjarosz.task.user.model.User} from given {@link UserDto}.
-     */
-    UserDto createUser(UserDto userDto);
 
     /**
      * Returns configurations the {@link com.arturjarosz.task.user.model.User} matching the current JWT token has
@@ -27,8 +23,9 @@ public interface UserApplicationService {
 
     /**
      * Creates or updates configuration with given name of the {@link com.arturjarosz.task.user.model.User} matching
-     * the current JWT token. Throws {@link com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException}
-     * when there is no such user.
+     * the current JWT token, creating the user when it does not exist yet. Throws
+     * {@link com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException} when the token does not belong to a
+     * person.
      */
     UserConfigurationDto updateCurrentUserConfiguration(UserConfigurationNameDto name,
             UserConfigurationDto userConfigurationDto);
