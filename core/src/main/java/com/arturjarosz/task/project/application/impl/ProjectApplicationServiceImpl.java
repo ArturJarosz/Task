@@ -6,7 +6,6 @@ import com.arturjarosz.task.client.application.ClientApplicationService;
 import com.arturjarosz.task.client.application.ClientValidator;
 import com.arturjarosz.task.contract.application.ContractService;
 import com.arturjarosz.task.contract.application.mapper.ContractMapper;
-import com.arturjarosz.task.contract.query.ContractQueryService;
 import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
@@ -60,8 +59,6 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final CostApplicationService costApplicationService;
     @NonNull
     private final SupervisionApplicationService supervisionApplicationService;
-    @NonNull
-    private final ContractQueryService contractQueryService;
 
     @Transactional
     @Override
@@ -155,16 +152,14 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
                 projects.stream().map(Project::getClientId).collect(Collectors.toSet()));
         var architectsById = this.architectApplicationService.getArchitectsBasicData(
                 projects.stream().map(Project::getArchitectId).collect(Collectors.toSet()));
-        var contractValueByProjectId = this.contractQueryService.getContractValuesForProjects(
-                projects.stream().map(Project::getId).toList());
+        // The whole contract (dates, deadline, status), so the projects timeline can draw it from the list
+        var contractsById = this.contractService.getContractsByIds(
+                projects.stream().map(Project::getContractId).collect(Collectors.toSet()));
 
         return projects.stream().map(project -> {
             var projectDto = this.projectMapper.mapToDto(clientsById.get(project.getClientId()),
                     architectsById.get(project.getArchitectId()), project);
-            var contractValue = contractValueByProjectId.get(project.getId());
-            if (contractValue != null) {
-                projectDto.setContract(new ContractDto().offerValue(contractValue.doubleValue()));
-            }
+            projectDto.setContract(contractsById.get(project.getContractId()));
             return projectDto;
         }).toList();
     }
