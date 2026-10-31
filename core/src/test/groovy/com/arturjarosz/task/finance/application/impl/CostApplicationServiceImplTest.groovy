@@ -249,6 +249,16 @@ class CostApplicationServiceImplTest extends Specification {
             false        | false          | null
     }
 
+    def "update cost should find cost by costId when id is not set on costDto"() {
+        given:
+            def costDto = this.prepareUpdateCostDto()
+        when:
+            def updatedCostDto = this.projectCostApplicationService.updateCost(PROJECT_WITH_COST_ID, COST_ID, costDto)
+        then:
+            updatedCostDto.name == NEW_NAME
+            updatedCostDto.value == NEW_VALUE
+    }
+
     def "update cost should call onUpdate on projectFinanceAwareObjectService"() {
         given:
             CostDto costDto = this.prepareUpdateCostDto()
