@@ -14,7 +14,7 @@ class SystemParameterInitializerTest extends Specification {
 
     def systemParameterRepository = Mock(SystemParameterRepository)
     def systemParameterValidatorService = Mock(SystemParameterValidatorService)
-    def userProperties = new UserProperties(vatTax: 0.23D, incomeTax: 0.18D, themeColor: "#465fff")
+    def userProperties = new UserProperties(vatTax: 0.23D, incomeTax: 0.18D, themeColor: "#415cc8")
     def googleCalendarProperties = new GoogleCalendarProperties(true, null, "Task app", "Office", null, null)
 
     def systemParameterInitializer = new SystemParameterInitializer(systemParameterRepository,
@@ -35,7 +35,7 @@ class SystemParameterInitializerTest extends Specification {
             saved.collectEntries { [(it.name): it.value] } ==
                     [(SystemParameters.VAT_TAX)                         : "0.23",
                      (SystemParameters.INCOME_TAX)                      : "0.18",
-                     (SystemParameters.THEME_COLOR)                     : "#465fff",
+                     (SystemParameters.THEME_COLOR)                     : "#415cc8",
                      (SystemParameters.GOOGLE_CALENDAR_CREDENTIALS)     : "",
                      (SystemParameters.GOOGLE_CALENDAR_NAME)            : "Office",
                      (SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME): "Task app",
@@ -54,6 +54,7 @@ class SystemParameterInitializerTest extends Specification {
                      (SystemParameters.GOOGLE_CALENDAR_SYNC)            : SystemParameterType.BOOLEAN]
             saved.every { it.singleValue }
             saved.find { it.name == SystemParameters.GOOGLE_CALENDAR_CREDENTIALS }.defaultValue == ""
+            saved.find { it.name == SystemParameters.THEME_COLOR }.defaultValue == "#415cc8"
     }
 
     def "run should not override parameters that are already in the database"() {

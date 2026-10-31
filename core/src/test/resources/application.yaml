@@ -30,4 +30,4 @@ task:
     default-values:
       vat-tax: 0.23
       income-tax: 0.18
-      theme-color: "#465fff"
+      theme-color: "#415cc8"
