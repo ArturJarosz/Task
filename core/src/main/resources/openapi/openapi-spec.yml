@@ -3059,33 +3059,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
 
-  /users:
-    post:
-      tags:
-        - user
-      summary: Create a new user
-      operationId: createUser
-      requestBody:
-        description: New user data
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/User"
-      responses:
-        201:
-          description: User successfully created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        400:
-          description: Validator error message
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ValidatorError"
-
   /users/current:
     get:
       tags:
