@@ -3486,6 +3486,10 @@ components:
         nextStatuses:
           items:
             $ref: "#/components/schemas/ContractStatus"
+        deposit:
+          description: The deposit, required when the contract is signed and the project has no deposit yet. Only
+            read on a status change to SIGNED and never returned.
+          $ref: "#/components/schemas/Installment"
         createdDateTime:
           type: string
           format: time
@@ -3651,6 +3655,8 @@ components:
           format: int64
         stageName:
           type: string
+        type:
+          $ref: "#/components/schemas/InstallmentType"
         hasInvoice:
           type: boolean
         paid:
@@ -3663,6 +3669,13 @@ components:
         lastModifiedDateTime:
           type: string
           format: time
+
+    InstallmentType:
+      type: string
+      description: STAGE pays for a stage of the project, DEPOSIT is the deposit for the whole project, paid on signing
+      enum:
+        - STAGE
+        - DEPOSIT
 
     Installments:
       type: array
@@ -3776,6 +3789,8 @@ components:
           items:
             type: integer
             format: int64
+        hasDeposit:
+          type: boolean
 
     CostProjectData:
       type: object

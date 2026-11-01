@@ -25,6 +25,8 @@ public class ProjectSample {
     private Integer deadlineInDays;
     private ContractStatusDto contractStatus;
     private Integer signedDaysAgo;
+    // paid on signing, required for a contract that is signed
+    private InstallmentSample deposit;
     // end date of terminated or completed contract, today when not provided
     private Integer contractEndedDaysAgo;
     private int createdDaysAgo;

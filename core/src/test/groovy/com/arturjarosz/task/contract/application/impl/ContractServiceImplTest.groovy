@@ -10,6 +10,9 @@ import com.arturjarosz.task.contract.status.ContractStatusWorkflow
 import com.arturjarosz.task.utils.ContractBuilder
 import com.arturjarosz.task.dto.ContractDto
 import com.arturjarosz.task.dto.ContractStatusDto
+import com.arturjarosz.task.dto.InstallmentDto
+import com.arturjarosz.task.finance.application.InstallmentApplicationService
+import com.arturjarosz.task.project.query.ProjectQueryService
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.model.Money
 import spock.lang.Specification
@@ -28,6 +31,7 @@ class ContractServiceImplTest extends Specification {
     static final NEW_START_DATE = LocalDate.of(2000, 1, 1)
     static final NEW_END_DATE = LocalDate.of(2105, 1, 1)
     static final NEW_STATUS = ContractStatusDto.REJECTED
+    static final PROJECT_ID = 10L
 
     static final NEW_SIGNING_DATE = LocalDate.of(2000, 1, 1)
     static final CONTRACT_STATUS_WORKFLOW = new ContractStatusWorkflow()
@@ -36,8 +40,11 @@ class ContractServiceImplTest extends Specification {
     def contractRepository = Mock(ContractRepository)
     def contractMapper = new ContractMapperImpl()
     def contractDomainService = Mock(ContractDomainService)
+    def projectQueryService = Mock(ProjectQueryService)
+    def installmentApplicationService = Mock(InstallmentApplicationService)
 
-    def subject = new ContractServiceImpl(contractValidator, contractRepository, contractMapper, contractDomainService)
+    def subject = new ContractServiceImpl(contractValidator, contractRepository, contractMapper, contractDomainService,
+            projectQueryService, installmentApplicationService)
 
     def setup() {
         var newContract = new Contract(OFFER_VALUE, DEADLINE, CONTRACT_STATUS_WORKFLOW)
@@ -49,6 +56,49 @@ class ContractServiceImplTest extends Specification {
         var contract = new Contract(OFFER_VALUE, DEADLINE, CONTRACT_STATUS_WORKFLOW)
         contract.changeStatus(ContractStatus.ACCEPTED)
         this.contractRepository.findById(EXISTING_CONTRACT_ID) >> Optional.of(contract)
+        this.projectQueryService.getProjectIdForContract(ACCEPTED_CONTRACT_ID) >> PROJECT_ID
+    }
+
+    def "changeStatus should not sign the contract when the deposit check fails"() {
+        given:
+            def contractDto = new ContractDto(status: ContractStatusDto.SIGNED, id: ACCEPTED_CONTRACT_ID)
+            this.installmentApplicationService.validateDepositForSigning(PROJECT_ID, null) >> { throw new IllegalArgumentException("isNull.deposit") }
+        when:
+            this.subject.changeStatus(ACCEPTED_CONTRACT_ID, contractDto)
+        then:
+            thrown(IllegalArgumentException)
+            0 * this.contractDomainService.updateContractStatus(_ as Contract, _ as ContractDto)
+            0 * this.installmentApplicationService.createDeposit(_, _)
+    }
+
+    def "changeStatus should add the deposit to the project after signing the contract"() {
+        given:
+            def deposit = new InstallmentDto(value: 3000.0, hasInvoice: true, paid: false)
+            def contractDto = new ContractDto(status: ContractStatusDto.SIGNED, id: ACCEPTED_CONTRACT_ID, deposit: deposit)
+            def signedContract = new Contract(OFFER_VALUE, DEADLINE, CONTRACT_STATUS_WORKFLOW)
+            signedContract.changeStatus(ContractStatus.SIGNED)
+        when:
+            this.subject.changeStatus(ACCEPTED_CONTRACT_ID, contractDto)
+        then:
+            1 * this.installmentApplicationService.validateDepositForSigning(PROJECT_ID, deposit)
+        then:
+            1 * this.contractDomainService.updateContractStatus(_ as Contract, _ as ContractDto) >> signedContract
+        then:
+            1 * this.installmentApplicationService.createDeposit(PROJECT_ID, deposit)
+    }
+
+    def "changeStatus should not touch deposits when the contract is not being signed"() {
+        given:
+            def contractDto = new ContractDto(status: ContractStatusDto.REJECTED, id: ACCEPTED_CONTRACT_ID,
+                    deposit: new InstallmentDto(value: 3000.0))
+            def rejectedContract = new Contract(OFFER_VALUE, DEADLINE, CONTRACT_STATUS_WORKFLOW)
+            rejectedContract.changeStatus(ContractStatus.REJECTED)
+            this.contractDomainService.updateContractStatus(_ as Contract, _ as ContractDto) >> rejectedContract
+        when:
+            this.subject.changeStatus(ACCEPTED_CONTRACT_ID, contractDto)
+        then:
+            0 * this.installmentApplicationService.validateDepositForSigning(_, _)
+            0 * this.installmentApplicationService.createDeposit(_, _)
     }
 
     def "createContract does not create any contract on missing contractDto"() {
@@ -159,7 +209,7 @@ class ContractServiceImplTest extends Specification {
 
     def "updateContract should not update contract if validation fails"() {
         given:
-            def updateContract = new ContractDto(NOT_EXISTING_CONTRACT_ID, NEW_OFFER_VALUE, NEW_SIGNING_DATE, NEW_DEADLINE, NEW_START_DATE, NEW_END_DATE, NEW_STATUS, null, null, null)
+            def updateContract = new ContractDto(NOT_EXISTING_CONTRACT_ID, NEW_OFFER_VALUE, NEW_SIGNING_DATE, NEW_DEADLINE, NEW_START_DATE, NEW_END_DATE, NEW_STATUS, null, null, null, null)
             mockExistenceThrowsAnException()
         when:
             def result = subject.updateContract(NOT_EXISTING_CONTRACT_ID, updateContract)
@@ -173,7 +223,7 @@ class ContractServiceImplTest extends Specification {
             def contract = new Contract(OFFER_VALUE, DEADLINE, CONTRACT_STATUS_WORKFLOW)
             contract.changeStatus(ContractStatus.OFFER)
             contractRepository.findById(100L) >> Optional.of(contract)
-            def updateContractDto = new ContractDto(100L, NEW_OFFER_VALUE, NEW_SIGNING_DATE, NEW_DEADLINE, NEW_START_DATE, NEW_END_DATE, NEW_STATUS, [ContractStatusDto.OFFER], null, null)
+            def updateContractDto = new ContractDto(100L, NEW_OFFER_VALUE, NEW_SIGNING_DATE, NEW_DEADLINE, NEW_START_DATE, NEW_END_DATE, NEW_STATUS, [ContractStatusDto.OFFER], null, null, null)
             def updatedContract = new Contract(NEW_OFFER_VALUE, NEW_DEADLINE, CONTRACT_STATUS_WORKFLOW)
             updatedContract.changeStatus(ContractStatus.ACCEPTED)
             contractDomainService.updateContract(_ as Contract, _ as ContractDto) >> updatedContract

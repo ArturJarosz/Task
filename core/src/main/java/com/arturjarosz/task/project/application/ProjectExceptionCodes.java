@@ -9,6 +9,7 @@ public final class ProjectExceptionCodes {
     public static final String CLIENT = "client";
     public static final String CONTRACT = "contract";
     public static final String CONTRACTOR_JOB = "contractorJob";
+    public static final String DEPOSIT = "deposit";
     public static final String COST = "cost";
     public static final String INSTALLMENT = "installment";
     public static final String PROJECT = "project";
@@ -41,6 +42,7 @@ public final class ProjectExceptionCodes {
     public static final String CREATE = "create";
     public static final String CHANGE = "change";
     public static final String REOPEN = "reopen";
+    public static final String REMOVE = "remove";
     public static final String SIGN = "sign";
     public static final String UPDATE = "update";
 

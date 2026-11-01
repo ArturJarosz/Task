@@ -14,6 +14,9 @@ public class ContractStatusWorkflow extends Workflow<ContractStatus> implements 
             ContractStatus.SIGNED);
     private static final Set<ContractStatus> STATUSES_THAT_ALLOW_CREATING = Set.of(ContractStatus.OFFER,
             ContractStatus.ACCEPTED, ContractStatus.SIGNED);
+    // The deposit is paid on signing, so it can be recorded once the contract has been signed
+    private static final Set<ContractStatus> STATUSES_THAT_ALLOW_DEPOSIT = Set.of(ContractStatus.SIGNED,
+            ContractStatus.COMPLETED, ContractStatus.TERMINATED);
 
     public ContractStatusWorkflow() {
         super(CONTRACT_WORKFLOW, ContractStatus.OFFER, Arrays.asList(ContractStatus.values()));
@@ -27,6 +30,10 @@ public class ContractStatusWorkflow extends Workflow<ContractStatus> implements 
     @Override
     public Set<ContractStatus> getStatusesThatAllowCreatingWorkObjects() {
         return STATUSES_THAT_ALLOW_CREATING;
+    }
+
+    public Set<ContractStatus> getStatusesThatAllowDeposit() {
+        return STATUSES_THAT_ALLOW_DEPOSIT;
     }
 
 

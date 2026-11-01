@@ -1,5 +1,6 @@
 package com.arturjarosz.task.finance.application.impl;
 
+import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator;
 import com.arturjarosz.task.dto.InstallmentDto;
 import com.arturjarosz.task.dto.InstallmentProjectDataDto;
 import com.arturjarosz.task.finance.application.InstallmentApplicationService;
@@ -12,12 +13,18 @@ import com.arturjarosz.task.finance.model.Installment;
 import com.arturjarosz.task.finance.model.PartialFinancialDataType;
 import com.arturjarosz.task.finance.model.ProjectFinancialData;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
+import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageValidator;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class InstallmentApplicationServiceImpl implements InstallmentApplicationService {
 
     private final ProjectValidator projectValidator;
+    private final ContractWorkflowValidator contractWorkflowValidator;
     private final StageValidator stageValidator;
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
     private final FinancialDataQueryService financialDataQueryService;
@@ -59,6 +67,37 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
 
     @Transactional
     @Override
+    public InstallmentDto createDeposit(Long projectId, InstallmentDto installmentDto) {
+        LOG.info("Creating deposit on project with projectId {}.", projectId);
+        this.projectValidator.validateProjectExistence(projectId);
+        this.contractWorkflowValidator.validateContractAllowsDeposit(projectId);
+        this.installmentValidator.validateCreateDepositDto(installmentDto);
+        var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
+        this.installmentValidator.validateProjectNotHavingDeposit(projectFinancialData);
+        var deposit = this.installmentDtoMapper.mapDepositFromDto(installmentDto);
+        projectFinancialData.addInstallment(deposit);
+        try {
+            projectFinancialData = this.projectFinancialDataRepository.saveAndFlush(projectFinancialData);
+        } catch (DataIntegrityViolationException exception) {
+            // Another request added a deposit after the check above; the unique index on deposits stopped this one
+            throw new IllegalArgumentException(createMessageCode(ExceptionCodes.ALREADY_SET,
+                    ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.DEPOSIT));
+        }
+        LOG.info("Deposit created.");
+        var createdDeposit = this.installmentDtoMapper.mapToDto(deposit, null);
+        createdDeposit.setId(this.getIdForCreatedInstallment(projectFinancialData, deposit));
+        this.projectFinanceAwareObjectService.onCreate(projectId);
+        return createdDeposit;
+    }
+
+    @Override
+    public void validateDepositForSigning(Long projectId, InstallmentDto deposit) {
+        var projectFinancialData = this.projectFinancialDataRepository.getProjectFinancialDataByProjectId(projectId);
+        this.installmentValidator.validateDepositForSigning(projectFinancialData, deposit);
+    }
+
+    @Transactional
+    @Override
     public InstallmentDto updateInstallment(Long projectId, Long installmentId, InstallmentDto installmentDto) {
         LOG.info("Updating Installment with installmentId {}", installmentId);
 
@@ -87,6 +126,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         var installment = projectFinancialData.getInstallment(installmentId);
         this.installmentValidator.validateInstallmentExistence(installment, installmentId, projectId);
         this.installmentValidator.validateInstallmentNotPaid(installment);
+        this.installmentValidator.validateInstallmentNotDeposit(installment);
         projectFinancialData.removeInstallment(installmentId);
         this.projectFinancialDataRepository.save(projectFinancialData);
         this.projectFinanceAwareObjectService.onRemove(projectId);
