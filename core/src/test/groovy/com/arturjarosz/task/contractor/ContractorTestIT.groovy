@@ -38,7 +38,7 @@ class ContractorTestIT extends BaseTestIT {
         and:
             def createdContractor = MAPPER.readValue(response.contentAsString, ContractorDto)
             createdContractor.name == createContractorDto.name
-            createdContractor.category == createContractorDto.category
+            createdContractor.categoryId == createContractorDto.categoryId
             createdContractor.createdDateTime != null
         and:
             response.getHeader(LOCATION) == "$CONTRACTORS_URI/${createdContractor.id}"
@@ -47,7 +47,7 @@ class ContractorTestIT extends BaseTestIT {
     @Transactional
     def "Creating new Contractor with not correct dto should return code 400 and error message"() {
         given:
-            createContractorDto.category = null
+            createContractorDto.categoryId = null
             def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(createContractorDto)
         when:
             def response = this.mockMvc.perform(MockMvcRequestBuilders.post("$CONTRACTORS_URI")
@@ -74,7 +74,7 @@ class ContractorTestIT extends BaseTestIT {
         and:
             def updatedContractor = MAPPER.readValue(response.contentAsString, ContractorDto)
             updatedContractor.name == updateContractorDto.name
-            updatedContractor.category == updateContractorDto.category
+            updatedContractor.categoryId == updateContractorDto.categoryId
             updatedContractor.telephone == updateContractorDto.telephone
             updatedContractor.email == updateContractorDto.email
             updatedContractor.note == updateContractorDto.note

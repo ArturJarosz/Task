@@ -63,7 +63,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-@Order(6)
+@Order(8)
 @RequiredArgsConstructor
 public class ProjectDataInitializer implements DataInitializer {
     private static final String FILE_NAME = "sampleData/projectsSample.json";

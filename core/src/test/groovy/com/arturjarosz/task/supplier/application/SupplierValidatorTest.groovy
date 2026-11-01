@@ -1,10 +1,9 @@
 package com.arturjarosz.task.supplier.application
 
-import com.arturjarosz.task.dto.SupplierCategoryDto
 import com.arturjarosz.task.dto.SupplierDto
+import com.arturjarosz.task.supplier.infrastructure.SupplierCategoryRepository
 import com.arturjarosz.task.supplier.infrastructure.SupplierRepository
 import com.arturjarosz.task.supplier.model.Supplier
-import com.arturjarosz.task.supplier.model.SupplierCategory
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -12,15 +11,19 @@ class SupplierValidatorTest extends Specification {
     private final static Long EXISTING_SUPPLIER_ID = 1L
     private final static Long NOT_EXISTING_SUPPLIER_ID = 10L
     private final static String NAME = "name"
-    private final static SupplierCategoryDto SUPPLIER_CATEGORY = SupplierCategoryDto.PAINT_SHOP
+    private final static Long SUPPLIER_CATEGORY = 1L
+    private final static Long NOT_EXISTING_SUPPLIER_CATEGORY = 99L
     final static String NOTE = "some note"
     final static String TELEPHONE = "123-456-789"
     final static String EMAIL = "test@email.com"
 
     def supplierRepository = Mock(SupplierRepository)
+    def supplierCategoryRepository = Stub(SupplierCategoryRepository) {
+        existsById(SUPPLIER_CATEGORY) >> true
+    }
 
     @Subject
-    def supplierValidator = new SupplierValidator(supplierRepository)
+    def supplierValidator = new SupplierValidator(supplierRepository, supplierCategoryRepository)
 
     def "validateCreateSupplierDto throws exception with proper error message"() {
         given: "SupplierDto"
@@ -28,7 +31,7 @@ class SupplierValidatorTest extends Specification {
             if (supplierDto != null) {
                 supplierDto.with { testedSupplierDto ->
                     testedSupplierDto.name = name
-                    testedSupplierDto.category = category
+                    testedSupplierDto.categoryId = category
                 }
             }
 
@@ -40,17 +43,18 @@ class SupplierValidatorTest extends Specification {
             exception.message == exceptionMessage
 
         where:
-            givenSupplierDto  | name | category          || exceptionMessage
-            null              | null | null              || "isNull.supplier"
-            new SupplierDto() | null | SUPPLIER_CATEGORY || "isNull.supplier.name"
-            new SupplierDto() | ""   | SUPPLIER_CATEGORY || "isEmpty.supplier.name"
-            new SupplierDto() | NAME | null              || "isNull.supplier.category"
+            givenSupplierDto  | name | category                       || exceptionMessage
+            null              | null | null                           || "isNull.supplier"
+            new SupplierDto() | null | SUPPLIER_CATEGORY              || "isNull.supplier.name"
+            new SupplierDto() | ""   | SUPPLIER_CATEGORY              || "isEmpty.supplier.name"
+            new SupplierDto() | NAME | null                           || "isNull.supplier.category"
+            new SupplierDto() | NAME | NOT_EXISTING_SUPPLIER_CATEGORY || "notExist.supplierCategory"
 
     }
 
     def "validateCreateSupplierDto does not throw any exception when passed proper supplierDto"() {
         given: "Proper SupplierDto"
-            SupplierDto supplierDto = new SupplierDto(name: NAME, category: SUPPLIER_CATEGORY)
+            SupplierDto supplierDto = new SupplierDto(name: NAME, categoryId: SUPPLIER_CATEGORY)
 
         when: "Calling validateCreateSupplierDto"
             this.supplierValidator.validateCreateSupplierDto(supplierDto)
@@ -65,7 +69,7 @@ class SupplierValidatorTest extends Specification {
             if (supplierDto != null) {
                 supplierDto.with { testedSupplierDto ->
                     testedSupplierDto.name = name
-                    testedSupplierDto.category = category
+                    testedSupplierDto.categoryId = category
                 }
             }
 
@@ -77,17 +81,18 @@ class SupplierValidatorTest extends Specification {
             exception.message == exceptionMessage
 
         where:
-            givenSupplierDto  | name | category          || exceptionMessage
-            null              | null | null              || "isNull.supplier"
-            new SupplierDto() | null | SUPPLIER_CATEGORY || "isNull.supplier.name"
-            new SupplierDto() | ""   | SUPPLIER_CATEGORY || "isEmpty.supplier.name"
-            new SupplierDto() | NAME | null              || "isNull.supplier.category"
+            givenSupplierDto  | name | category                       || exceptionMessage
+            null              | null | null                           || "isNull.supplier"
+            new SupplierDto() | null | SUPPLIER_CATEGORY              || "isNull.supplier.name"
+            new SupplierDto() | ""   | SUPPLIER_CATEGORY              || "isEmpty.supplier.name"
+            new SupplierDto() | NAME | null                           || "isNull.supplier.category"
+            new SupplierDto() | NAME | NOT_EXISTING_SUPPLIER_CATEGORY || "notExist.supplierCategory"
 
     }
 
     def "validateUpdateSupplierDto does not throw any exception when passed proper supplierDto"() {
         given: "Proper SupplierDto"
-            def supplierDto = new SupplierDto(name: NAME, category: SUPPLIER_CATEGORY)
+            def supplierDto = new SupplierDto(name: NAME, categoryId: SUPPLIER_CATEGORY)
 
         when: "Calling validateCreateSupplierDto"
             this.supplierValidator.validateUpdateSupplierDto(supplierDto)
@@ -120,7 +125,7 @@ class SupplierValidatorTest extends Specification {
     }
 
     private void mockSupplierRepositoryLoadOfExistingSupplier() {
-        1 * this.supplierRepository.findById(EXISTING_SUPPLIER_ID) >> Optional.of(new Supplier(NAME, SupplierCategory.valueOf(SUPPLIER_CATEGORY.name()), EMAIL, TELEPHONE, NOTE))
+        1 * this.supplierRepository.findById(EXISTING_SUPPLIER_ID) >> Optional.of(new Supplier(NAME, SUPPLIER_CATEGORY, EMAIL, TELEPHONE, NOTE))
     }
 
     private void mockSupplierRepositoryLoadOfNotExistingSupplier() {

@@ -22,3 +22,43 @@ databaseChangeLog:
               - column:
                   name: "CREATED_DATETIME"
                   valueComputed: "now()"
+  - changeSet:
+      author: "liquibase"
+      id: "insert-test-contractor-category"
+      changes:
+        # Contractor fixtures in json/contractor use this category
+        - insert:
+            tableName: "CONTRACTOR_CATEGORY"
+            columns:
+              - column:
+                  name: "ID"
+                  valueNumeric: 1
+              - column:
+                  name: "UUID"
+                  value: "7b1e3f5a-4d2c-4f9b-8e6a-2c3d4e5f6a71"
+              - column:
+                  name: "NAME"
+                  value: "General"
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"
+  - changeSet:
+      author: "liquibase"
+      id: "insert-test-supplier-category"
+      changes:
+        # Supplier fixtures in json/supplier use this category
+        - insert:
+            tableName: "SUPPLIER_CATEGORY"
+            columns:
+              - column:
+                  name: "ID"
+                  valueNumeric: 1
+              - column:
+                  name: "UUID"
+                  value: "8c2f4a6b-5e3d-4a0c-9f7b-3d4e5f6a7b82"
+              - column:
+                  name: "NAME"
+                  value: "Flooring shop"
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

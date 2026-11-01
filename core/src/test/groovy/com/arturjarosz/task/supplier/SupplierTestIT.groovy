@@ -42,7 +42,7 @@ class SupplierTestIT extends BaseTestIT {
         and:
             def createdSupplier = MAPPER.readValue(response.contentAsString, SupplierDto)
             createdSupplier != null
-            createdSupplier.category == createSupplierDto.category
+            createdSupplier.categoryId == createSupplierDto.categoryId
             createdSupplier.name == createSupplierDto.name
             createdSupplier.createdDateTime != null
         and:

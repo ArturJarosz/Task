@@ -1605,7 +1605,7 @@
                         "header": [],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"X-Kom\",\n    \"category\": \"PAINT_SHOP\"\n}",
+                            "raw": "{\n    \"name\": \"X-Kom\",\n    \"categoryId\": 100\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -1631,7 +1631,7 @@
                         "header": [],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Leroy Merlin\",\n    \"category\": \"SHOP_WITH_TILES\",\n    \"email\": \"testmail@test.pl\",\n    \"telephone\": \"606225578\",\n    \"note\": \"some basic note\"\n}",
+                            "raw": "{\n    \"name\": \"Leroy Merlin\",\n    \"categoryId\": 100,\n    \"email\": \"testmail@test.pl\",\n    \"telephone\": \"606225578\",\n    \"note\": \"some basic note\"\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -1699,7 +1699,7 @@
                         "header": [],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"X-Kom\",\n    \"category\": \"GENERAL\"\n}",
+                            "raw": "{\n    \"name\": \"X-Kom\",\n    \"categoryId\": 100\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -1725,7 +1725,7 @@
                         "header": [],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"New Contractor\",\n    \"category\": \"CARPENTER\",\n    \"email\": \"testmail@test.pl\",\n    \"telephone\": \"606225578\",\n    \"note\": \"some basic note\"\n}",
+                            "raw": "{\n    \"name\": \"New Contractor\",\n    \"categoryId\": 100,\n    \"email\": \"testmail@test.pl\",\n    \"telephone\": \"606225578\",\n    \"note\": \"some basic note\"\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"

@@ -1,34 +1,30 @@
 [
     {
-        "id": "100",
         "name": "IISKELO",
         "note": "Robią wszystko, w miarę okej. Wtopa z malowaniem, ale ogarneli.",
         "telephone": "691 175 354",
         "email": "kontakt@iiskelo.pl",
-        "category": "GENERAL"
+        "category": "General"
     },
     {
-        "id": "101",
         "name": "Obelisk Usługi Remontowo Budowlane",
         "note": "Trochę wolni, ale dobrze ogarniają.",
         "telephone": "606 710 823",
         "email": "kontakt@obelisk.pl",
-        "category": "GENERAL"
+        "category": "General"
     },
     {
-        "id": "102",
         "name": "Kow-Bud. Zakład remontowo - budowlany",
         "note": "",
         "telephone": "81 740 10 14",
         "email": "kontakt-kowbud@gmail.pl",
-        "category": "GENERAL"
+        "category": "General"
     },
     {
-        "id": "103",
         "name": "NORSON",
         "note": "Tylko hydraulika",
         "telephone": "506 804 322",
         "email": "kontakt-norson@norson.com",
-        "category": "PLUMBER"
+        "category": "Plumber"
     }
 ]
