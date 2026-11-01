@@ -1,8 +1,6 @@
 package com.arturjarosz.task.finance.application.mapper
 
-import com.arturjarosz.task.dto.CostCategoryDto
 import com.arturjarosz.task.finance.model.Cost
-import com.arturjarosz.task.finance.model.CostCategory
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -10,7 +8,7 @@ import java.time.LocalDate
 class CostMapperTest extends Specification {
     static final NAME = "name"
     static final VALUE = 200.0D
-    static final CATEGORY = CostCategory.FUEL
+    static final CATEGORY = 1L
     static final DATE = LocalDate.of(2022, 01, 02)
     static final NOTE = "some note"
     static final HAS_INVOICE = true
@@ -28,7 +26,7 @@ class CostMapperTest extends Specification {
         then:
             result.name == NAME
             result.value == BigDecimal.valueOf(VALUE)
-            result.category == CostCategoryDto.valueOf(CATEGORY.name())
+            result.categoryId == CATEGORY
             result.date == DATE
             result.note == NOTE
             result.hasInvoice

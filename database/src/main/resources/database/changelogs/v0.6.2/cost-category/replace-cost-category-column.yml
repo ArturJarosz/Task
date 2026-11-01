@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "replace-cost-category-column"
+      changes:
+        - addColumn:
+            tableName: "COST"
+            columns:
+              - column:
+                  name: "CATEGORY_ID"
+                  type: "${long.type}"
+        # Each former category value becomes a category named like its label ("MISTAKE" -> "Mistake"): all enum
+        # values, so they can still be chosen, plus any other value in use, so databases with existing rows keep their data
+        - sql:
+            dbms: "postgresql"
+            sql: >
+              insert into COST_CATEGORY (ID, UUID, NAME, CREATED_DATETIME)
+              select nextval('cost_category_sequence'), gen_random_uuid(),
+                     upper(left(CATEGORY, 1)) || lower(replace(substr(CATEGORY, 2), '_', ' ')), now()
+              from (select 'FUEL' as CATEGORY union select 'MISTAKE' union select distinct CATEGORY from COST) former_categories;
+              update COST set CATEGORY_ID = (select ID from COST_CATEGORY
+                  where NAME = upper(left(COST.CATEGORY, 1)) || lower(replace(substr(COST.CATEGORY, 2), '_', ' ')))
+        - addNotNullConstraint:
+            tableName: "COST"
+            columnName: "CATEGORY_ID"
+            columnDataType: "${long.type}"
+        - addForeignKeyConstraint:
+            baseTableName: "COST"
+            baseColumnNames: "CATEGORY_ID"
+            constraintName: "FK_COST_COST_CATEGORY"
+            referencedTableName: "COST_CATEGORY"
+            referencedColumnNames: "ID"
+        - dropColumn:
+            tableName: "COST"
+            columnName: "CATEGORY"

@@ -151,7 +151,7 @@
         "costs": [
             {
                 "name": "Dojazdy na inwentaryzację",
-                "category": "FUEL",
+                "category": "Fuel",
                 "value": 180,
                 "dateDaysAgo": 55,
                 "hasInvoice": true,
@@ -161,7 +161,7 @@
             },
             {
                 "name": "Poprawki po błędnym pomiarze",
-                "category": "MISTAKE",
+                "category": "Mistake",
                 "value": 350,
                 "dateDaysAgo": 20,
                 "hasInvoice": false,
@@ -298,7 +298,7 @@
         "costs": [
             {
                 "name": "Dojazd na spotkanie z klientem",
-                "category": "FUEL",
+                "category": "Fuel",
                 "value": 95,
                 "dateDaysAgo": 7,
                 "hasInvoice": false,
@@ -455,7 +455,7 @@
         "costs": [
             {
                 "name": "Dojazdy na nadzór",
-                "category": "FUEL",
+                "category": "Fuel",
                 "value": 620,
                 "dateDaysAgo": 30,
                 "hasInvoice": true,
@@ -534,7 +534,7 @@
         "costs": [
             {
                 "name": "Dojazd na działkę",
-                "category": "FUEL",
+                "category": "Fuel",
                 "value": 240,
                 "dateDaysAgo": 3,
                 "hasInvoice": false,
@@ -714,7 +714,7 @@
         "costs": [
             {
                 "name": "Dojazdy do Gdańska",
-                "category": "FUEL",
+                "category": "Fuel",
                 "value": 860,
                 "dateDaysAgo": 395,
                 "hasInvoice": true,
@@ -829,7 +829,7 @@
         "costs": [
             {
                 "name": "Poprawki rysunków",
-                "category": "MISTAKE",
+                "category": "Mistake",
                 "value": 400,
                 "dateDaysAgo": 110,
                 "hasInvoice": false,
@@ -962,7 +962,7 @@
         "costs": [
             {
                 "name": "Mapa do celów projektowych",
-                "category": "FUEL",
+                "category": "Fuel",
                 "value": 1200,
                 "dateDaysAgo": 270,
                 "hasInvoice": true,
@@ -972,7 +972,7 @@
             },
             {
                 "name": "Ponowne uzgodnienia",
-                "category": "MISTAKE",
+                "category": "Mistake",
                 "value": 900,
                 "dateDaysAgo": 100,
                 "hasInvoice": false,

@@ -29,6 +29,15 @@ class SupplierTestIT extends BaseTestIT {
     @Autowired
     private MockMvc mockMvc
 
+
+    def setup() {
+        // ids of the data created by BaseTestIT
+        createSupplierDto.categoryId = supplierCategoryId
+        incorrectCreateSupplierDto.categoryId = supplierCategoryId
+        updateSupplierDto.categoryId = supplierCategoryId
+        incorrectUpdateSupplierDto.categoryId = supplierCategoryId
+    }
+
     @Transactional
     def "Creating new supplier should return created SupplierDto, code 201 and entity location"() {
         given:

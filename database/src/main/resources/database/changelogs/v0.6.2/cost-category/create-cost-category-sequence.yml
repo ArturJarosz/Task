@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-cost-category-sequence"
+      changes:
+        - createSequence:
+            sequenceName: "cost_category_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1

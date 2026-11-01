@@ -13,7 +13,9 @@ import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface FinancialDataQueryService {
 
@@ -38,6 +40,11 @@ public interface FinancialDataQueryService {
     CostDto getCostById(long costId);
 
     List<CostDto> getCostsByProjectId(long projectId);
+
+    /**
+     * Number of costs of each of given cost categories, 0 for a category with no costs.
+     */
+    Map<Long, Long> getNumberOfCostsByCategoryIds(Collection<Long> categoryIds);
 
     List<InstallmentDto> getInstallmentsByProjectId(long projectId);
 

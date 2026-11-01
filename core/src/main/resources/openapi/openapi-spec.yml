@@ -24,6 +24,8 @@ tags:
     description: ContractorJob API and models
   - name: cost
     description: Cost API and models
+  - name: costCategory
+    description: Cost category API and models
   - name: installment
     description: Installment API and models
   - name: financialData
@@ -1071,6 +1073,147 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ContractorJobProjectData"
+
+  /cost-categories:
+    post:
+      tags:
+        - costCategory
+      summary: Create a new cost category
+      operationId: createCostCategory
+      requestBody:
+        description: New cost category data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CostCategory"
+      responses:
+        201:
+          description: Cost category successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CostCategory"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - costCategory
+      summary: Get list of cost categories with the number of costs of each category
+      operationId: getCostCategories
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CostCategories"
+
+  /cost-categories/{costCategoryId}:
+    get:
+      tags:
+        - costCategory
+      summary: Get a cost category with given costCategoryId
+      operationId: getCostCategory
+      parameters:
+        - name: costCategoryId
+          in: path
+          description: "A unique identifier of the cost category"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CostCategory"
+        404:
+          description: Cost category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - costCategory
+      summary: Update (rename) a cost category with given costCategoryId
+      operationId: updateCostCategory
+      parameters:
+        - name: costCategoryId
+          in: path
+          description: "A unique identifier of the cost category"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of updated cost category
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CostCategory"
+      responses:
+        200:
+          description: Cost category successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CostCategory"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Cost category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - costCategory
+      summary: Delete a cost category with given costCategoryId; a category used by any cost cannot be deleted
+      operationId: deleteCostCategory
+      parameters:
+        - name: costCategoryId
+          in: path
+          description: "A unique identifier of the cost category"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Cost category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
 
   /projects/{projectId}/costs:
     post:
@@ -3907,8 +4050,9 @@ components:
         date:
           type: string
           format: date
-        category:
-          $ref: "#/components/schemas/CostCategory"
+        categoryId:
+          type: integer
+          format: int64
         value:
           type: number
         note:
@@ -3935,10 +4079,28 @@ components:
         $ref: "#/components/schemas/Cost"
 
     CostCategory:
-      type: string
-      enum:
-        - FUEL
-        - MISTAKE
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        numberOfCosts:
+          type: integer
+          format: int64
+          description: Number of costs of this category; a category with costs cannot be deleted
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
+
+    CostCategories:
+      type: array
+      items:
+        $ref: "#/components/schemas/CostCategory"
 
     Installment:
       type: object

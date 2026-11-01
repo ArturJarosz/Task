@@ -38,6 +38,14 @@ class ProjectTestIT extends BaseTestIT {
     @Autowired
     private MockMvc mockMvc
 
+
+    def setup() {
+        // ids of the data created by BaseTestIT
+        properProjectDto.typeId = projectTypeId
+        notProperProjectDto.typeId = projectTypeId
+        updateProjectDto.typeId = projectTypeId
+    }
+
     @Transactional
     def "Creating project with proper data should return code 201, dto of created project and project location header"() {
         given: "Existing architect"

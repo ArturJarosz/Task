@@ -25,6 +25,13 @@ class ContractorTestIT extends BaseTestIT {
     final createContractorDto = createObjectFromJson("json/contractor/createContractor.json", ContractorDto)
     final updateContractorDto = createObjectFromJson("json/contractor/updateContractor.json", ContractorDto)
 
+
+    def setup() {
+        // ids of the data created by BaseTestIT
+        createContractorDto.categoryId = contractorCategoryId
+        updateContractorDto.categoryId = contractorCategoryId
+    }
+
     @Transactional
     def "Creating new Contractor should return created ContractorDto, code 201 and entity location"() {
         given:

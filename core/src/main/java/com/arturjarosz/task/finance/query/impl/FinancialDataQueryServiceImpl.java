@@ -28,7 +28,11 @@ import com.querydsl.core.types.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Finder
 public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinancialData> implements FinancialDataQueryService {
@@ -188,6 +192,24 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
                 .fetch();
 
         return costs.stream().map(this.costMapper::mapToDto).toList();
+    }
+
+    @Override
+    public Map<Long, Long> getNumberOfCostsByCategoryIds(Collection<Long> categoryIds) {
+        Map<Long, Long> countsByCategoryId = new HashMap<>();
+        categoryIds.stream().filter(Objects::nonNull).forEach(id -> countsByCategoryId.put(id, 0L));
+        if (countsByCategoryId.isEmpty()) {
+            return countsByCategoryId;
+        }
+        this.query()
+                .from(COST)
+                .where(COST.categoryId.in(countsByCategoryId.keySet()))
+                .groupBy(COST.categoryId)
+                .select(COST.categoryId, COST.count())
+                .fetch()
+                .forEach(categoryIdToCount -> countsByCategoryId.put(categoryIdToCount.get(COST.categoryId),
+                        categoryIdToCount.get(COST.count())));
+        return countsByCategoryId;
     }
 
     @Override

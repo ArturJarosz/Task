@@ -35,6 +35,12 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     @Autowired
     private MockMvc mockMvc
 
+
+    def setup() {
+        // ids of the data created by BaseTestIT
+        properProjectDto.typeId = projectTypeId
+    }
+
     @Transactional
     def "Creating project should return code 200 and put project in TO_DO status"() {
         given: "Existing architect"

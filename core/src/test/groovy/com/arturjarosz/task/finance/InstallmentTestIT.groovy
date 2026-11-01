@@ -40,6 +40,12 @@ class InstallmentTestIT extends BaseTestIT {
     @Autowired
     private MockMvc mockMvc
 
+
+    def setup() {
+        // ids of the data created by BaseTestIT
+        projectDto.typeId = projectTypeId
+    }
+
     @Transactional
     def "signing contract without deposit should return code 400 and error message and keep the contract unsigned"() {
         given:

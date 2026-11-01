@@ -11,6 +11,7 @@ public final class ProjectExceptionCodes {
     public static final String CONTRACTOR_JOB = "contractorJob";
     public static final String DEPOSIT = "deposit";
     public static final String COST = "cost";
+    public static final String COST_CATEGORY = "costCategory";
     public static final String INSTALLMENT = "installment";
     public static final String PROJECT = "project";
     public static final String PROJECT_TYPE = "projectType";
@@ -21,6 +22,7 @@ public final class ProjectExceptionCodes {
     //Fields
     public static final String CATEGORY = "category";
     public static final String CONTRACTOR = "contractor";
+    public static final String COSTS = "costs";
     public static final String COST_DATE = "costDate";
     public static final String DEADLINE = "deadline";
     public static final String END_DATE = "endDate";
