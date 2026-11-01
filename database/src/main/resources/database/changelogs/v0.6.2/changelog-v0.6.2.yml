@@ -29,6 +29,9 @@ databaseChangeLog:
   - include:
       file: "supplier-category/supplier-category-tables.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "cost-category/cost-category-tables.yml"
+      relativeToChangelogFile: true
   - changeSet:
       author: "liquibase"
       id: "tag-version_0.6.2"

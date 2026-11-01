@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-cost-category-name-unique-index"
+      changes:
+        # Names are unique regardless of letter case, as the application checks them
+        - sql:
+            dbms: "postgresql"
+            sql: "create unique index UK_COST_CATEGORY_NAME on COST_CATEGORY (lower(NAME))"
+  - changeSet:
+      author: "liquibase"
+      id: "create-cost-category-index"
+      changes:
+        - createIndex:
+            tableName: "COST"
+            indexName: "IDX_COST_CATEGORY_ID"
+            columns:
+              - column:
+                  name: "CATEGORY_ID"

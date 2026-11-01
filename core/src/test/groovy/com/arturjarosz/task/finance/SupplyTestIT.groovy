@@ -38,6 +38,13 @@ class SupplyTestIT extends BaseTestIT {
     @Autowired
     private MockMvc mockMvc
 
+
+    def setup() {
+        // ids of the data created by BaseTestIT
+        projectDto.typeId = projectTypeId
+        createSupplierDto.categoryId = supplierCategoryId
+    }
+
     @Transactional
     def "creating supply with wrong input data should return code 404 and error message"() {
         given:
