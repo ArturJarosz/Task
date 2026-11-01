@@ -1,7 +1,7 @@
 [
     {
         "name": "Mieszkanie na Mokotowie",
-        "type": "INTERIOR_APARTMENT",
+        "type": "Interior apartment",
         "clientEmail": "czerwinski@gmail.com",
         "architect": "Oskar Ciuryła",
         "offerValue": 42000.0,
@@ -213,7 +213,7 @@
     },
     {
         "name": "Biuro Ciuba & Partnerzy",
-        "type": "INTERIOR_OFFICE",
+        "type": "Interior office",
         "clientEmail": "ciuba@mail.com",
         "architect": "Alicja Ciuryła",
         "offerValue": 68000.0,
@@ -324,7 +324,7 @@
     },
     {
         "name": "Dom w Zielonej Górze",
-        "type": "INTERIOR_HOUSE",
+        "type": "Interior house",
         "clientEmail": "mdobrzanski@wp.pl",
         "architect": "Karolina Flis",
         "offerValue": 55000.0,
@@ -495,7 +495,7 @@
     },
     {
         "name": "Koncepcja domu letniskowego",
-        "type": "CONCEPT",
+        "type": "Concept",
         "clientEmail": "amilewski@gmail.com",
         "architect": "Oskar Ciuryła",
         "offerValue": 9000.0,
@@ -533,7 +533,7 @@
     },
     {
         "name": "Dom pod Lublinem",
-        "type": "ARCHITECTURE_HOUSE",
+        "type": "Architecture house",
         "clientEmail": "m.krajewska@onet.pl",
         "architect": "Karolina Flis",
         "offerValue": 85000.0,
@@ -561,7 +561,7 @@
     },
     {
         "name": "Apartament w Gdańsku",
-        "type": "INTERIOR_APARTMENT",
+        "type": "Interior apartment",
         "clientEmail": "b.kolodziejczyk@gmail.com",
         "architect": "Alicja Ciuryła",
         "offerValue": 38000.0,
@@ -730,7 +730,7 @@
     },
     {
         "name": "Lokal usługowy na Starym Mieście",
-        "type": "INTERIOR_OFFICE",
+        "type": "Interior office",
         "clientEmail": "w.lesniak@gmail.com",
         "architect": "Karolina Flis",
         "offerValue": 26000.0,
@@ -816,7 +816,7 @@
     },
     {
         "name": "Dom jednorodzinny w Wilanowie",
-        "type": "ARCHITECTURE_HOUSE",
+        "type": "Architecture house",
         "clientEmail": "jagoda.stasiak@gmail.com",
         "architect": "Oskar Ciuryła",
         "offerValue": 120000.0,
@@ -953,7 +953,7 @@
     },
     {
         "name": "Kawalerka na Pradze",
-        "type": "INTERIOR_APARTMENT",
+        "type": "Interior apartment",
         "clientEmail": "t.bednarczyk@wp.pl",
         "architect": "Rajesh Koothrappali",
         "offerValue": 12000.0,

@@ -6,7 +6,6 @@ import com.arturjarosz.task.project.application.mapper.ProjectMapper;
 import com.arturjarosz.task.project.domain.ProjectDataValidator;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.model.Project;
-import com.arturjarosz.task.project.model.ProjectType;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.project.status.project.ProjectStatusTransitionService;
 import com.arturjarosz.task.project.status.project.ProjectWorkflow;
@@ -43,13 +42,13 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
         this.statusToUpdater.put(ProjectStatus.TO_DO, (project, projectDto) -> {
             project.updateProjectBasicData(projectDto.getName(), projectDto.getNote());
             project.setArchitectId(projectDto.getArchitect().getId());
-            project.setProjectType(ProjectType.valueOf(projectDto.getType().getValue()));
+            project.setProjectTypeId(projectDto.getTypeId());
             project.setEndDate(null);
         });
         this.statusToUpdater.put(ProjectStatus.IN_PROGRESS, (project, projectDto) -> {
             project.updateProjectBasicData(projectDto.getName(), projectDto.getNote());
             project.setArchitectId(projectDto.getArchitect().getId());
-            project.setProjectType(ProjectType.valueOf(projectDto.getType().getValue()));
+            project.setProjectTypeId(projectDto.getTypeId());
             project.setStartDate(projectDto.getStartDate());
             project.setEndDate(null);
         });
@@ -66,7 +65,7 @@ public class ProjectDomainServiceImpl implements ProjectDomainService {
         this.statusToUpdater.put(ProjectStatus.REJECTED, (project, projectDto) -> {
             project.updateProjectBasicData(projectDto.getName(), projectDto.getNote());
             project.setArchitectId(projectDto.getArchitect().getId());
-            project.setProjectType(ProjectType.valueOf(projectDto.getType().getValue()));
+            project.setProjectTypeId(projectDto.getTypeId());
             project.setStartDate(projectDto.getStartDate());
             project.setEndDate(null);
         });

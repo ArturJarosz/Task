@@ -48,7 +48,7 @@ public class ProjectValidator {
         assertNotNull(projectCreateDto.getArchitectId(),
                 BaseValidator.createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
                         ProjectExceptionCodes.ARCHITECT));
-        assertNotNull(projectCreateDto.getType(),
+        assertNotNull(projectCreateDto.getTypeId(),
                 BaseValidator.createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT,
                         ProjectExceptionCodes.TYPE));
     }
@@ -77,6 +77,9 @@ public class ProjectValidator {
         }
         // end date is not updatable, it is set only on finishing project, so start date is checked against stored one
         this.validateStartAndEndDate(projectDto.getStartDate(), project.getEndDate());
+        // the type is always sent, the current one when it is not changed
+        assertNotNull(projectDto.getTypeId(),
+                createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.PROJECT, ProjectExceptionCodes.TYPE));
     }
 
     public void validateStartDate(LocalDate startDate) {
