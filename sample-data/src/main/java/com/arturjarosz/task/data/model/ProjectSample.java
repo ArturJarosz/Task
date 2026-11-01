@@ -1,7 +1,6 @@
 package com.arturjarosz.task.data.model;
 
 import com.arturjarosz.task.dto.ContractStatusDto;
-import com.arturjarosz.task.dto.ProjectTypeDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +17,8 @@ import java.util.List;
 @Setter
 public class ProjectSample {
     private String name;
-    private ProjectTypeDto type;
+    // name of the Project type
+    private String type;
     private String clientEmail;
     private String architect;
     private Double offerValue;

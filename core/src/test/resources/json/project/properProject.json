@@ -1,5 +1,5 @@
 {
   "name": "Lublin 01",
-  "type": "INTERIOR_HOUSE",
+  "typeId": 1,
   "offerValue": 8000.00
 }

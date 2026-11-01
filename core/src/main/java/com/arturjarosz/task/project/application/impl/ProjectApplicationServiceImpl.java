@@ -12,6 +12,7 @@ import com.arturjarosz.task.dto.ProjectDto;
 import com.arturjarosz.task.finance.application.CostApplicationService;
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
+import com.arturjarosz.task.project.application.ProjectTypeValidator;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.mapper.ProjectMapper;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
@@ -48,6 +49,8 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     @NonNull
     private final ProjectValidator projectValidator;
     @NonNull
+    private final ProjectTypeValidator projectTypeValidator;
+    @NonNull
     private final ProjectFinancialDataService projectFinancialDataService;
     @NonNull
     private final ContractService contractService;
@@ -68,6 +71,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectValidator.validateProjectBasicDto(projectCreateDto);
         this.architectValidator.validateArchitectExistence(projectCreateDto.getArchitectId());
         this.clientValidator.validateClientExistence(projectCreateDto.getClientId());
+        this.projectTypeValidator.validateProjectTypeExistence(projectCreateDto.getTypeId());
 
         var contractDto = this.contractMapper.projectDtoToContractDto(projectCreateDto);
         var contract = this.contractService.createContract(contractDto);
@@ -106,6 +110,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.projectValidator.validateUpdateProjectDto(projectDto, project);
+        this.projectTypeValidator.validateProjectTypeExistence(projectDto.getTypeId());
         project = this.projectDomainService.updateProject(project, projectDto);
         project = this.projectRepository.save(project);
 

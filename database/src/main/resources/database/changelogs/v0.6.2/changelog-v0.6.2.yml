@@ -17,6 +17,9 @@ databaseChangeLog:
   - include:
       file: "contract/contract-tables.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "project-type/project-type-tables.yml"
+      relativeToChangelogFile: true
   - changeSet:
       author: "liquibase"
       id: "tag-version_0.6.2"

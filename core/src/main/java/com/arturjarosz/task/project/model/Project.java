@@ -57,9 +57,8 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
 
     @Getter
     @Setter
-    @Enumerated(EnumType.STRING)
-    @Column(name = "PROJECT_TYPE")
-    private ProjectType projectType;
+    @Column(name = "PROJECT_TYPE_ID", nullable = false)
+    private Long projectTypeId;
 
     @Column(name = "CONTRACT_ID", nullable = false)
     private long contractId;
@@ -75,12 +74,12 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
         // needed by JPA
     }
 
-    public Project(String name, Long architectId, Long clientId, ProjectType projectType,
+    public Project(String name, Long architectId, Long clientId, Long projectTypeId,
             ProjectWorkflow projectWorkflow, long contractId) {
         this.name = name;
         this.architectId = architectId;
         this.clientId = clientId;
-        this.projectType = projectType;
+        this.projectTypeId = projectTypeId;
         this.workflowName = projectWorkflow.getName();
         this.contractId = contractId;
     }

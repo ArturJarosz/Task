@@ -28,6 +28,6 @@ public interface ProjectsToEntityProjectsSummaryDtoMapper {
     }
 
     @Mapping(source = "name", target = "name")
-    @Mapping(source = "projectType", target = "type")
+    @Mapping(source = "projectTypeId", target = "typeId")
     ProjectSummaryDto mapProjectToProjectSummaryDto(Project project);
 }

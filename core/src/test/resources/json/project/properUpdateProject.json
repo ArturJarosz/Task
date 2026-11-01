@@ -1,6 +1,6 @@
 {
     "name": "Lublin 01",
-    "type": "CONCEPT",
+    "typeId": 1,
     "note": "some note about project",
     "architect": {
         "id": "101"

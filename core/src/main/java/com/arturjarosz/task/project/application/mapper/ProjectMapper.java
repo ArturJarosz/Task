@@ -26,11 +26,11 @@ public interface ProjectMapper {
     @Mapping(target = "projectWorkflow", source = "projectWorkflow")
     @Mapping(source = "projectCreateDto.name", target = "name")
     @Mapping(source = "contractId", target = "contractId")
-    @Mapping(source = "projectCreateDto.type", target = "projectType")
+    @Mapping(source = "projectCreateDto.typeId", target = "projectTypeId")
     Project mapFromCreateDto(ProjectCreateDto projectCreateDto, Long contractId,
             ProjectWorkflow projectWorkflow);
 
-    @Mapping(source = "project.projectType", target = "type")
+    @Mapping(source = "project.projectTypeId", target = "typeId")
     @Mapping(source = "project.name", target = "name")
     @Mapping(source = "project.startDate", target = "startDate")
     @Mapping(source = "project.endDate", target = "endDate")
@@ -52,7 +52,7 @@ public interface ProjectMapper {
     ProjectDto mapToDto(ClientDto clientDto, ArchitectDto architectDto, Project project, ContractDto contractDto,
             List<CostDto> costDtos, SupervisionDto supervisionDto);
 
-    @Mapping(source = "project.projectType", target = "type")
+    @Mapping(source = "project.projectTypeId", target = "typeId")
     @Mapping(source = "project.name", target = "name")
     @Mapping(source = "project.startDate", target = "startDate")
     @Mapping(source = "project.note", target = "note")
@@ -65,7 +65,7 @@ public interface ProjectMapper {
     @Mapping(source = "project.lastModifiedDateTime", target = "lastModifiedDateTime")
     ProjectDto mapToDto(Project project, ContractDto contract);
 
-    @Mapping(source = "projectType", target = "type")
+    @Mapping(source = "projectTypeId", target = "typeId")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "startDate", target = "startDate")
     @Mapping(source = "note", target = "note")
@@ -73,7 +73,7 @@ public interface ProjectMapper {
     @Mapping(source = "project", target = "nextStatuses", qualifiedByName = "getNextStatuses")
     ProjectDto mapToDto(Project project);
 
-    @Mapping(source = "project.projectType", target = "type")
+    @Mapping(source = "project.projectTypeId", target = "typeId")
     @Mapping(source = "project.name", target = "name")
     @Mapping(source = "project.id", target = "id")
     @Mapping(source = "project.startDate", target = "startDate")

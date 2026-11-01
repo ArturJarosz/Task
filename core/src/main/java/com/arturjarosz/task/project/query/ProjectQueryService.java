@@ -42,6 +42,11 @@ public interface ProjectQueryService {
     Map<Long, ProjectCounts> getProjectCountsByClientIds(Collection<Long> clientIds, Set<ProjectStatus> activeStatuses);
 
     /**
+     * Count projects of each Project type from projectTypeIds. Types without projects get ProjectCounts.NONE.
+     */
+    Map<Long, ProjectCounts> getProjectCountsByProjectTypeIds(Collection<Long> projectTypeIds);
+
+    /**
      * Retrieve Task as TaskDto of given TaskId.
      */
     TaskDto getTaskByTaskId(long taskId);

@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-project-type-name-unique-index"
+      changes:
+        # Names are unique regardless of letter case, as the application checks them
+        - sql:
+            dbms: "postgresql"
+            sql: "create unique index UK_PROJECT_TYPE_NAME on PROJECT_TYPE (lower(NAME))"
+  - changeSet:
+      author: "liquibase"
+      id: "create-project-project-type-index"
+      changes:
+        - createIndex:
+            tableName: "PROJECT"
+            indexName: "IDX_PROJECT_PROJECT_TYPE_ID"
+            columns:
+              - column:
+                  name: "PROJECT_TYPE_ID"
