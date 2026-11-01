@@ -6,6 +6,8 @@ import com.arturjarosz.task.sharedkernel.model.Money;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -32,9 +34,15 @@ public class Installment extends AbstractHistoryAwareEntity implements PartialFi
     @Column(name = "PROJECT_FINANCIAL_DATA_ID", insertable = false, updatable = false)
     private Long projectFinancialDataId;
 
+    // Empty for a deposit
     @Getter
-    @Column(name = "STAGE_ID", nullable = false)
+    @Column(name = "STAGE_ID")
     private Long stageId;
+
+    @Getter
+    @Column(name = "TYPE", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private InstallmentType type;
 
     @Getter
     @Column(name = "NOTE")
@@ -45,9 +53,25 @@ public class Installment extends AbstractHistoryAwareEntity implements PartialFi
     }
 
     public Installment(InstallmentDto installmentDto, Long stageId) {
-        this.financialData = new FinancialData(new Money(installmentDto.getValue()), installmentDto.getHasInvoice(),
-                true, installmentDto.getPaid(), installmentDto.getPaymentDate());
+        this(installmentDto, stageId, InstallmentType.STAGE);
+    }
+
+    private Installment(InstallmentDto installmentDto, Long stageId, InstallmentType type) {
+        // Flags left out of the request count as not set
+        this.financialData = new FinancialData(new Money(installmentDto.getValue()),
+                Boolean.TRUE.equals(installmentDto.getHasInvoice()), true, Boolean.TRUE.equals(installmentDto.getPaid()),
+                installmentDto.getPaymentDate());
+        this.note = installmentDto.getNote();
         this.stageId = stageId;
+        this.type = type;
+    }
+
+    public static Installment deposit(InstallmentDto installmentDto) {
+        return new Installment(installmentDto, null, InstallmentType.DEPOSIT);
+    }
+
+    public boolean isDeposit() {
+        return this.type == InstallmentType.DEPOSIT;
     }
 
     public void payInstallment(LocalDate date) {

@@ -12,6 +12,19 @@ public interface InstallmentApplicationService {
     InstallmentDto createInstallment(Long projectId, Long stageId, InstallmentDto installmentDto);
 
     /**
+     * Creates the deposit of the project according to installmentDto, as part of signing its contract. A deposit
+     * belongs to the project, not to a stage. If the project does not exist, its contract has not been signed or it
+     * already has a deposit, exception is thrown and the deposit is not created.
+     */
+    InstallmentDto createDeposit(Long projectId, InstallmentDto installmentDto);
+
+    /**
+     * Checks that the contract of the project can be signed with the given deposit: a valid deposit when the project
+     * has none, no deposit when it already has one.
+     */
+    void validateDepositForSigning(Long projectId, InstallmentDto deposit);
+
+    /**
      * Updates Installment according to installmentDto in given project.
      * If project or installment does not exist, exception is thrown and installment is not updated.
      */

@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: "add-installment-type.yml"
+      relativeToChangelogFile: true

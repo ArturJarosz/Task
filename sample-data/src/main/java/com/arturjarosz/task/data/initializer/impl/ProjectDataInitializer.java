@@ -213,12 +213,15 @@ public class ProjectDataInitializer implements DataInitializer {
     }
 
     private void createInstallment(Long projectId, Long stageId, InstallmentSample installmentSample) {
-        this.installmentApplicationService.createInstallment(projectId, stageId,
-                new InstallmentDto().value(installmentSample.getValue())
-                        .note(installmentSample.getNote())
-                        .hasInvoice(installmentSample.isHasInvoice())
-                        .paid(installmentSample.isPaid())
-                        .paymentDate(paymentDate(installmentSample.isPaid(), installmentSample.getPaymentDaysAgo())));
+        this.installmentApplicationService.createInstallment(projectId, stageId, toInstallmentDto(installmentSample));
+    }
+
+    private static InstallmentDto toInstallmentDto(InstallmentSample installmentSample) {
+        return new InstallmentDto().value(installmentSample.getValue())
+                .note(installmentSample.getNote())
+                .hasInvoice(installmentSample.isHasInvoice())
+                .paid(installmentSample.isPaid())
+                .paymentDate(paymentDate(installmentSample.isPaid(), installmentSample.getPaymentDaysAgo()));
     }
 
     private void createCost(Long projectId, CostSample costSample) {
@@ -277,11 +280,18 @@ public class ProjectDataInitializer implements DataInitializer {
                         String.format("Signed contract of project '%1$s' requires signedDaysAgo in %2$s",
                                 projectSample.getName(), FILE_NAME), null);
             }
+            // Signing requires the deposit
+            if (projectSample.getDeposit() == null) {
+                throw new SampleDataInitializingException(
+                        String.format("Signed contract of project '%1$s' requires deposit in %2$s",
+                                projectSample.getName(), FILE_NAME), null);
+            }
             this.contractService.changeStatus(contractId, new ContractDto().status(ContractStatusDto.SIGNED)
                     .offerValue(projectSample.getOfferValue())
                     .signingDate(signingDate)
                     .startDate(signingDate)
-                    .deadline(validContractDeadline(projectSample)));
+                    .deadline(validContractDeadline(projectSample))
+                    .deposit(toInstallmentDto(projectSample.getDeposit())));
         }
     }
 

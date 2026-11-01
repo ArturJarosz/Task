@@ -2,6 +2,7 @@ package com.arturjarosz.task.finance.application.mapper
 
 import com.arturjarosz.task.common.mapper.MoneyMapperImpl
 import com.arturjarosz.task.dto.InstallmentDto
+import com.arturjarosz.task.dto.InstallmentTypeDto
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto
 import com.arturjarosz.task.finance.model.PartialFinancialDataType
 import com.arturjarosz.task.finance.model.ProjectFinancialPartialData
@@ -30,6 +31,7 @@ class InstallmentProjectDataMapperTest extends Specification {
         then:
             result.stagesWithoutInstallment.size() == 2
             result.installments.size() == 2
+            !result.hasDeposit
             with(result.financialData) {
                 count == 2
                 netValue == 100.0D
@@ -37,5 +39,18 @@ class InstallmentProjectDataMapperTest extends Specification {
                 vatTax == 23.45D
                 incomeTax == 20.0D
             }
+    }
+
+    def "mapToProjectFinancialPartialDataDto should mark project with a deposit"() {
+        given:
+            def partialData = new ProjectFinancialPartialData(PartialFinancialDataType.INSTALLMENT, new FinancialValueDto())
+            def deposit = new InstallmentDto(type: InstallmentTypeDto.DEPOSIT)
+            def stageInstallment = new InstallmentDto(type: InstallmentTypeDto.STAGE)
+
+        when:
+            def result = subject.mapToProjectFinancialPartialDataDto(partialData, [deposit, stageInstallment], [])
+
+        then:
+            result.hasDeposit
     }
 }

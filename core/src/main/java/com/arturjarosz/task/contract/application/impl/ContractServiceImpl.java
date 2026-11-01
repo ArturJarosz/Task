@@ -1,5 +1,7 @@
 package com.arturjarosz.task.contract.application.impl;
 
+import com.arturjarosz.task.finance.application.InstallmentApplicationService;
+import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.contract.application.ContractService;
 import com.arturjarosz.task.contract.application.ContractValidator;
 import com.arturjarosz.task.contract.application.mapper.ContractMapper;
@@ -33,16 +35,24 @@ public class ContractServiceImpl implements ContractService {
     private final ContractMapper contractMapper;
     @NonNull
     private final ContractDomainService contractDomainService;
+    @NonNull
+    private final ProjectQueryService projectQueryService;
+    @NonNull
+    private final InstallmentApplicationService installmentApplicationService;
 
     private Map<ContractStatus, BiConsumer<Contract, ContractDto>> statusToValidator;
 
     public ContractServiceImpl(@NonNull ContractValidator contractValidator,
             @NonNull ContractRepository contractRepository,
-            @NonNull ContractMapper contractMapper, @NonNull ContractDomainService contractDomainService) {
+            @NonNull ContractMapper contractMapper, @NonNull ContractDomainService contractDomainService,
+            @NonNull ProjectQueryService projectQueryService,
+            @NonNull InstallmentApplicationService installmentApplicationService) {
         this.contractValidator = contractValidator;
         this.contractRepository = contractRepository;
         this.contractMapper = contractMapper;
         this.contractDomainService = contractDomainService;
+        this.projectQueryService = projectQueryService;
+        this.installmentApplicationService = installmentApplicationService;
         this.prepareContractValidators();
     }
 
@@ -80,11 +90,23 @@ public class ContractServiceImpl implements ContractService {
         this.contractValidator.validateBaseContractDto(contractDto);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
-        Optional.ofNullable(this.statusToValidator.get(ContractStatus.valueOf(contractDto.getStatus().name())))
+        var targetStatus = ContractStatus.valueOf(contractDto.getStatus().name());
+        Optional.ofNullable(this.statusToValidator.get(targetStatus))
                 .ifPresent(statusValidator -> statusValidator.accept(contract, contractDto));
+        // Signing needs a deposit; the project may already have one when a terminated contract is reopened
+        var signing = targetStatus == ContractStatus.SIGNED;
+        var projectId = signing ? this.projectQueryService.getProjectIdForContract(contractId) : null;
+        if (signing) {
+            this.installmentApplicationService.validateDepositForSigning(projectId, contractDto.getDeposit());
+        }
         var updatedContract = this.contractDomainService.updateContractStatus(contract, contractDto);
 
         this.contractRepository.save(updatedContract);
+        // Added after the status change, as a deposit is taken only on a signed contract. In the same transaction, so
+        // the contract is not signed when the deposit fails
+        if (signing && contractDto.getDeposit() != null) {
+            this.installmentApplicationService.createDeposit(projectId, contractDto.getDeposit());
+        }
         LOG.info("Contract status for contract with id {} was updated.", contractId);
 
         return this.contractMapper.mapToDto(updatedContract);

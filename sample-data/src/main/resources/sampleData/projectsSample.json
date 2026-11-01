@@ -9,6 +9,12 @@
         "deadlineInDays": 90,
         "contractStatus": "SIGNED",
         "signedDaysAgo": 60,
+        "deposit": {
+            "value": 4000,
+            "hasInvoice": true,
+            "paid": true,
+            "paymentDaysAgo": 60
+        },
         "stages": [
             {
                 "name": "Układ funkcjonalny",
@@ -332,6 +338,12 @@
         "deadlineInDays": -25,
         "contractStatus": "SIGNED",
         "signedDaysAgo": 180,
+        "deposit": {
+            "value": 5000,
+            "hasInvoice": true,
+            "paid": true,
+            "paymentDaysAgo": 180
+        },
         "stages": [
             {
                 "name": "Układ funkcjonalny parteru i piętra",
@@ -569,6 +581,12 @@
         "deadlineInDays": -100,
         "contractStatus": "COMPLETED",
         "signedDaysAgo": 400,
+        "deposit": {
+            "value": 4000,
+            "hasInvoice": true,
+            "paid": true,
+            "paymentDaysAgo": 400
+        },
         "contractEndedDaysAgo": 120,
         "stages": [
             {
@@ -738,6 +756,12 @@
         "deadlineInDays": 30,
         "contractStatus": "TERMINATED",
         "signedDaysAgo": 150,
+        "deposit": {
+            "value": 3000,
+            "hasInvoice": true,
+            "paid": true,
+            "paymentDaysAgo": 150
+        },
         "contractEndedDaysAgo": 70,
         "stages": [
             {
@@ -824,6 +848,12 @@
         "deadlineInDays": -60,
         "contractStatus": "SIGNED",
         "signedDaysAgo": 280,
+        "deposit": {
+            "value": 12000,
+            "hasInvoice": true,
+            "paid": true,
+            "paymentDaysAgo": 280
+        },
         "stages": [
             {
                 "name": "Koncepcja architektoniczna",

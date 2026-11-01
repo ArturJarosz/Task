@@ -91,7 +91,7 @@ public class StageValidator {
         }
         Optional<Installment> maybeInstallment = projectFinancialData.getInstallments()
                 .stream()
-                .filter(projectInstallment -> projectInstallment.getStageId().equals(stageId))
+                .filter(projectInstallment -> stageId.equals(projectInstallment.getStageId()))
                 .findFirst();
         assertIsTrue(maybeInstallment.isEmpty(),
                 createMessageCode(ExceptionCodes.ALREADY_SET, ProjectExceptionCodes.STAGE,

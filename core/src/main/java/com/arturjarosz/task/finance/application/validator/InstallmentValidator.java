@@ -2,6 +2,7 @@ package com.arturjarosz.task.finance.application.validator;
 
 import com.arturjarosz.task.dto.InstallmentDto;
 import com.arturjarosz.task.finance.model.Installment;
+import com.arturjarosz.task.finance.model.ProjectFinancialData;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
@@ -32,6 +33,22 @@ public class InstallmentValidator {
         assertNotNull(installmentDto.getValue(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.INSTALLMENT, ProjectExceptionCodes.VALUE));
         this.validateValueNotNegative(installmentDto.getValue());
+    }
+
+    /**
+     * A deposit is checked like any new installment, and a paid one also needs a payment date that is not in the
+     * future: the financial report counts income by payment date.
+     */
+    public void validateCreateDepositDto(InstallmentDto installmentDto) {
+        this.validateCreateInstallmentDto(installmentDto);
+        assertIsTrue(installmentDto.getValue().signum() > 0,
+                createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.DEPOSIT, ProjectExceptionCodes.VALUE));
+        if (Boolean.TRUE.equals(installmentDto.getPaid())) {
+            assertNotNull(installmentDto.getPaymentDate(),
+                    createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.INSTALLMENT,
+                            ProjectExceptionCodes.PAY_DATE));
+            this.validatePayDateNotFuture(installmentDto.getPaymentDate());
+        }
     }
 
     public void validatePayDateNotFuture(LocalDate date) {
@@ -77,6 +94,31 @@ public class InstallmentValidator {
         assertIsTrue(value.doubleValue() >= 0.0D,
                 createMessageCode(ExceptionCodes.NEGATIVE, ProjectExceptionCodes.INSTALLMENT,
                         ProjectExceptionCodes.VALUE));
+    }
+
+    /**
+     * Signing needs a deposit: the one given with the contract, or one the project already has (a reopened contract).
+     */
+    public void validateDepositForSigning(ProjectFinancialData projectFinancialData, InstallmentDto deposit) {
+        if (deposit == null) {
+            assertIsTrue(projectFinancialData.hasDeposit(),
+                    createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.DEPOSIT));
+            return;
+        }
+        this.validateProjectNotHavingDeposit(projectFinancialData);
+        this.validateCreateDepositDto(deposit);
+    }
+
+    // The signed contract requires the deposit
+    public void validateInstallmentNotDeposit(Installment installment) {
+        assertIsTrue(!installment.isDeposit(),
+                createMessageCode(ExceptionCodes.NOT_VALID, ProjectExceptionCodes.DEPOSIT, ProjectExceptionCodes.REMOVE));
+    }
+
+    public void validateProjectNotHavingDeposit(ProjectFinancialData projectFinancialData) {
+        assertIsTrue(!projectFinancialData.hasDeposit(),
+                createMessageCode(ExceptionCodes.ALREADY_SET, ProjectExceptionCodes.PROJECT,
+                        ProjectExceptionCodes.DEPOSIT));
     }
 
     public void validateInstallmentNotPaid(Installment installment) {

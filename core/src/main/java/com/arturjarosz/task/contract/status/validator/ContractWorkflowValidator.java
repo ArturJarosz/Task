@@ -28,6 +28,14 @@ public class ContractWorkflowValidator {
                 contractStatus.getStatusName());
     }
 
+    public void validateContractAllowsDeposit(Long projectId) {
+        ContractStatus contractStatus = this.projectQueryService.getContractStatusForProject(projectId);
+        assertIsTrue(this.contractWorkflow.getStatusesThatAllowDeposit().contains(contractStatus),
+                createMessageCode(ExceptionCodes.NOT_VALID, ContractExceptionCodes.CONTRACT,
+                        ContractExceptionCodes.STATUS, ContractExceptionCodes.DEPOSIT),
+                contractStatus.getStatusName());
+    }
+
     public void validateContractAllowsWorking(Long projectId) {
         ContractStatus contractStatus = this.projectQueryService.getContractStatusForProject(projectId);
         assertIsTrue(this.contractWorkflow.getStatusesThatAllowWorking().contains(contractStatus),
