@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: "create-project-type-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-project-type-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "replace-project-type-column.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "add-project-type-indexes.yml"
+      relativeToChangelogFile: true

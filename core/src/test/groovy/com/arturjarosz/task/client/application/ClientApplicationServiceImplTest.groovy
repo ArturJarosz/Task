@@ -12,7 +12,6 @@ import com.arturjarosz.task.dto.ClientTypeDto
 import com.arturjarosz.task.dto.ContactDto
 import com.arturjarosz.task.project.application.mapper.ProjectsToEntityProjectsSummaryDtoMapperImpl
 import com.arturjarosz.task.project.model.Project
-import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.query.ProjectCounts
 import com.arturjarosz.task.project.query.ProjectQueryService
 import com.arturjarosz.task.project.status.project.ProjectStatus
@@ -294,9 +293,9 @@ class ClientApplicationServiceImplTest extends Specification {
     }
 
     def mockGetProjectsAndContractsForClient() {
-        def project1 = new Project("project name 1", null, null, ProjectType.CONCEPT, new ProjectWorkflow(), 1L)
+        def project1 = new Project("project name 1", null, null, 1L, new ProjectWorkflow(), 1L)
         TestUtils.setFieldForObject(project1, "id", PROJECT_ID_1)
-        def project2 = new Project("project name 2", null, null, ProjectType.CONCEPT, new ProjectWorkflow(), 2L)
+        def project2 = new Project("project name 2", null, null, 1L, new ProjectWorkflow(), 2L)
         TestUtils.setFieldForObject(project2, "id", PROJECT_ID_2)
         this.projectQueryService.getProjectsForClientId(EXISTING_PRIVATE_ID) >> [project1, project2]
         this.contractQueryService.getContractValuesForProjectsByClientId(EXISTING_PRIVATE_ID) >> [(PROJECT_ID_1): BigDecimal.valueOf(50.0D), (PROJECT_ID_2): BigDecimal.valueOf(100.0D)]

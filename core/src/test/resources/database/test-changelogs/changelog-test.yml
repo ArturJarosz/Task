@@ -1,0 +1,24 @@
+# Main changelog plus data that integration tests rely on
+databaseChangeLog:
+  - include:
+      file: "database/changelogs/changelog-master.yml"
+  - changeSet:
+      author: "liquibase"
+      id: "insert-test-project-type"
+      changes:
+        # Project fixtures in json/project use this type; ids below the sequence start keep it clear of created types
+        - insert:
+            tableName: "PROJECT_TYPE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueNumeric: 1
+              - column:
+                  name: "UUID"
+                  value: "6a0f2d4e-3c1b-4e8a-9d7f-1b2c3d4e5f60"
+              - column:
+                  name: "NAME"
+                  value: "Interior house"
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

@@ -11,6 +11,7 @@ import com.arturjarosz.task.contract.status.ContractStatusWorkflow
 import com.arturjarosz.task.dto.*
 import com.arturjarosz.task.finance.application.CostApplicationService
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService
+import com.arturjarosz.task.project.application.ProjectTypeValidator
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.mapper.ProjectMapperImpl
 import com.arturjarosz.task.project.domain.impl.ProjectDomainServiceImpl
@@ -27,6 +28,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     static final String NEW_PROJECT_NAME = "newProjectName"
     static final String PROJECT_NAME = "projectName"
     static final String NEW_PROJECT_NOTE = "newProjectNote"
+    static final Long NEW_PROJECT_TYPE_ID = 2L
     static final Long ARCHITECT_ID = 1L
     static final Long CLIENT_ID = 10L
     static final Long EXISTING_PROJECT_ID = 100L
@@ -48,6 +50,7 @@ class ProjectApplicationServiceImplTest extends Specification {
     def projectRepository = Mock(ProjectRepository)
     def projectDomainService = Mock(ProjectDomainServiceImpl)
     def projectValidator = Mock(ProjectValidator)
+    def projectTypeValidator = Mock(ProjectTypeValidator)
     def contractService = Mock(ContractServiceImpl) {
         getContractsByIds(_) >> [:]
     }
@@ -60,8 +63,8 @@ class ProjectApplicationServiceImplTest extends Specification {
 
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator,
-            projectFinancialDataService, contractService, contractMapper, projectMapper, costApplicationService,
-            supervisionApplicationService)
+            projectTypeValidator, projectFinancialDataService, contractService, contractMapper, projectMapper,
+            costApplicationService, supervisionApplicationService)
 
     def "createProject should call validateProjectBasicDto on projectValidator"() {
         given:
@@ -194,6 +197,27 @@ class ProjectApplicationServiceImplTest extends Specification {
             this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
             1 * this.projectValidator.validateProjectExistence(_ as Optional<Project>, EXISTING_PROJECT_ID)
+    }
+
+    def "createProject should validate that the project type exists"() {
+        given:
+            this.mockProjectRepositorySaveNewProject()
+            this.mockContractServiceCreateContract()
+            def projectCreateDto = this.prepareCreateProjectDto()
+        when:
+            this.projectApplicationService.createProject(projectCreateDto)
+        then:
+            1 * this.projectTypeValidator.validateProjectTypeExistence(projectCreateDto.typeId)
+    }
+
+    def "updateProject should validate that the project type exists"() {
+        given:
+            this.mockProjectRepositoryLoad()
+            def projectDto = this.prepareUpdateProjectDto()
+        when:
+            this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
+        then:
+            1 * this.projectTypeValidator.validateProjectTypeExistence(NEW_PROJECT_TYPE_ID)
     }
 
     def "updateProject should call validateUpdateProjectDto on project validator"() {
@@ -451,12 +475,13 @@ class ProjectApplicationServiceImplTest extends Specification {
 
     private ProjectCreateDto prepareCreateProjectDto() {
         def projectCreateDto = new ProjectCreateDto(name: PROJECT_NAME, architectId: ARCHITECT_ID,
-                clientId: CLIENT_ID, type: ProjectTypeDto.CONCEPT, offerValue: PROJECT_VALUE)
+                clientId: CLIENT_ID, typeId: 1L, offerValue: PROJECT_VALUE)
         return projectCreateDto
     }
 
     private ProjectDto prepareUpdateProjectDto() {
-        def projectDto = new ProjectDto(id: EXISTING_PROJECT_ID, name: NEW_PROJECT_NAME, note: NEW_PROJECT_NOTE)
+        def projectDto = new ProjectDto(id: EXISTING_PROJECT_ID, name: NEW_PROJECT_NAME, note: NEW_PROJECT_NOTE,
+                typeId: NEW_PROJECT_TYPE_ID)
         return projectDto
     }
 

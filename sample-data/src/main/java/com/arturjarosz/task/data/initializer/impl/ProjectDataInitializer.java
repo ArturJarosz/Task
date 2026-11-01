@@ -35,6 +35,8 @@ import com.arturjarosz.task.finance.application.SupplyApplicationService;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.TaskApplicationService;
+import com.arturjarosz.task.project.infrastructure.repositor.ProjectTypeRepository;
+import com.arturjarosz.task.project.model.ProjectType;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.supplier.infrastructure.SupplierRepository;
 import com.arturjarosz.task.supplier.model.Supplier;
@@ -56,12 +58,12 @@ import java.util.stream.Collectors;
 /**
  * Loads sample Projects with Stages, Tasks and financial data. Objects are created through application services, and
  * statuses are reached by regular status transitions, so all validators and status listeners are applied. Has to be
- * run after architects, clients, contractors and suppliers are loaded. Dates that can't be set through application
- * services (passed deadlines, start and end dates of work, creation time) are changed by {@link SampleDateUpdater}.
+ * run after architects, clients, contractors, suppliers and project types are loaded. Dates that can't be set through
+ * application services (passed deadlines, start and end dates of work, creation time) are changed by {@link SampleDateUpdater}.
  */
 @Slf4j
 @Component
-@Order(5)
+@Order(6)
 @RequiredArgsConstructor
 public class ProjectDataInitializer implements DataInitializer {
     private static final String FILE_NAME = "sampleData/projectsSample.json";
@@ -77,6 +79,7 @@ public class ProjectDataInitializer implements DataInitializer {
     private final ClientRepository clientRepository;
     private final ContractorRepository contractorRepository;
     private final SupplierRepository supplierRepository;
+    private final ProjectTypeRepository projectTypeRepository;
     private final ProjectApplicationService projectApplicationService;
     private final StageApplicationService stageApplicationService;
     private final TaskApplicationService taskApplicationService;
@@ -102,7 +105,8 @@ public class ProjectDataInitializer implements DataInitializer {
                 idsByKey(this.clientRepository.findAll(),
                         client -> client.getEmail() == null ? null : client.getEmail().getValue()),
                 idsByKey(this.contractorRepository.findAll(), Contractor::getName),
-                idsByKey(this.supplierRepository.findAll(), Supplier::getName));
+                idsByKey(this.supplierRepository.findAll(), Supplier::getName),
+                idsByKey(this.projectTypeRepository.findAll(), ProjectType::getName));
     }
 
     /**
@@ -120,7 +124,7 @@ public class ProjectDataInitializer implements DataInitializer {
         LOG.info("Importing project {}.", projectSample.getName());
         var architectId = getId(referencedIds.architectIdsByName(), projectSample.getArchitect(), "architect");
         var projectCreateDto = new ProjectCreateDto().name(projectSample.getName())
-                .type(projectSample.getType())
+                .typeId(getId(referencedIds.projectTypeIdsByName(), projectSample.getType(), "project type"))
                 .architectId(architectId)
                 .clientId(getId(referencedIds.clientIdsByEmail(), projectSample.getClientEmail(), "client"))
                 .offerValue(projectSample.getOfferValue())
@@ -365,6 +369,7 @@ public class ProjectDataInitializer implements DataInitializer {
     }
 
     private record ReferencedIds(Map<String, Long> architectIdsByName, Map<String, Long> clientIdsByEmail,
-            Map<String, Long> contractorIdsByName, Map<String, Long> supplierIdsByName) {
+            Map<String, Long> contractorIdsByName, Map<String, Long> supplierIdsByName,
+            Map<String, Long> projectTypeIdsByName) {
     }
 }

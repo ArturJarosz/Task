@@ -12,7 +12,7 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
   liquibase:
     enabled: true
-    change-log: database/changelogs/changelog-master.yml
+    change-log: database/test-changelogs/changelog-test.yml
     default-schema: public
 server:
   port: 9565

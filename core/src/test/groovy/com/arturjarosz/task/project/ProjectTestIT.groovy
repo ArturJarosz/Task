@@ -21,6 +21,7 @@ class ProjectTestIT extends BaseTestIT {
     static final long NOT_EXISTING_CLIENT_ID = 10000l
     static final long NOT_EXISTING_ARCHITECT_ID = 10000l
     static final long NOT_EXISTING_PROJECT_ID = 10000l
+    static final long NOT_EXISTING_PROJECT_TYPE_ID = 10000l
     static final ObjectMapper MAPPER = new ObjectMapper()
 
     final def architect = MAPPER.readValue(new File(getClass().classLoader.getResource('json/architect/architect.json').file),
@@ -126,6 +127,28 @@ class ProjectTestIT extends BaseTestIT {
     }
 
     @Transactional
+    def "Creating project with not existing project type should give code 404 and error message"() {
+        given: "Existing architect"
+            def architectDto = TestsHelper.createArchitect(architect, this.createArchitectUri(), this.mockMvc)
+            properProjectDto.architectId = architectDto.id
+        and: "Existing client"
+            def clientDto = TestsHelper.createClient(this.privateClientDto, this.createClientUri(), this.mockMvc)
+            properProjectDto.clientId = clientDto.id
+        and: "Not existing project type"
+            properProjectDto.typeId = NOT_EXISTING_PROJECT_TYPE_ID
+        when:
+            def projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(properProjectDto)
+            def projectResponse = this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create(HOST + ":" + port + PROJECTS_URI))
+                    .header("Content-Type", "application/json")
+                    .content(projectRequestBody)).andReturn().response
+        then:
+            projectResponse.status == HttpStatus.NOT_FOUND.value()
+        and:
+            def message = MAPPER.readValue(projectResponse.contentAsString, ErrorMessage)
+            message.getMessage() == "Project type with id 10,000 does not exist."
+    }
+
+    @Transactional
     def "Getting not existing project should give code 404 and error message"() {
         given:
         when:
@@ -187,6 +210,26 @@ class ProjectTestIT extends BaseTestIT {
     }
 
     @Transactional
+    def "Updating project with not existing project type should give code 404 and error message"() {
+        given:
+            properProjectDto.architectId = TestsHelper.createArchitect(architect, this.createArchitectUri(), this.mockMvc).id
+            properProjectDto.clientId = TestsHelper.createClient(this.privateClientDto, this.createClientUri(), this.mockMvc).id
+            def createdProject = TestsHelper.createProject(properProjectDto, HOST + ":" + port + PROJECTS_URI, this.mockMvc)
+            updateProjectDto.typeId = NOT_EXISTING_PROJECT_TYPE_ID
+        when:
+            def projectRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateProjectDto)
+            def projectResponse = this.mockMvc.perform(MockMvcRequestBuilders
+                    .put(URI.create(HOST + ":" + port + PROJECTS_URI + "/" + createdProject.id))
+                    .header("Content-Type", "application/json")
+                    .content(projectRequestBody)).andReturn().response
+        then:
+            projectResponse.status == HttpStatus.NOT_FOUND.value()
+        and:
+            def message = MAPPER.readValue(projectResponse.contentAsString, ErrorMessage)
+            message.getMessage() == "Project type with id 10,000 does not exist."
+    }
+
+    @Transactional
     def "Updating existing project with proper data should give code 200 and dto of updated project"() {
         given: "Existing architect"
             def architectDto = TestsHelper.createArchitect(architect, this.createArchitectUri(), this.mockMvc)
@@ -213,7 +256,7 @@ class ProjectTestIT extends BaseTestIT {
             def projectDto = MAPPER.readValue(creatingProjectResponse.contentAsString, ProjectDto)
             createdProject.name == projectDto.name
             createdProject.note == projectDto.note
-            createdProject.type == projectDto.type
+            createdProject.typeId == projectDto.typeId
             projectDto.lastModifiedDateTime != null
 
         and:

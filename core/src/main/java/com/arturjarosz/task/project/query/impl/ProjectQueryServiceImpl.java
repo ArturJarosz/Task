@@ -75,6 +75,12 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
         return this.getProjectCountsBy(PROJECT.clientId, clientIds, activeStatuses);
     }
 
+    @Override
+    public Map<Long, ProjectCounts> getProjectCountsByProjectTypeIds(Collection<Long> projectTypeIds) {
+        // project types have no active projects of their own, only the number of all projects is used
+        return this.getProjectCountsBy(PROJECT.projectTypeId, projectTypeIds, Set.of());
+    }
+
     private Map<Long, ProjectCounts> getProjectCountsBy(NumberPath<Long> ownerId, Collection<Long> ownerIds,
             Set<ProjectStatus> activeStatuses) {
         Map<Long, ProjectCounts> countsByOwnerId = new HashMap<>();

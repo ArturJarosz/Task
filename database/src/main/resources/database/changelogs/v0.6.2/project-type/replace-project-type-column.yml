@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "replace-project-type-column"
+      changes:
+        - dropColumn:
+            tableName: "PROJECT"
+            columnName: "PROJECT_TYPE"
+        - addColumn:
+            tableName: "PROJECT"
+            columns:
+              - column:
+                  name: "PROJECT_TYPE_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+                    foreignKeyName: "FK_PROJECT_PROJECT_TYPE"
+                    referencedTableName: "PROJECT_TYPE"
+                    referencedColumnNames: "ID"
+        - dropColumn:
+            tableName: "PROJECT_AUD"
+            columnName: "PROJECT_TYPE"
+        - addColumn:
+            tableName: "PROJECT_AUD"
+            columns:
+              - column:
+                  name: "PROJECT_TYPE_ID"
+                  type: "${long.type}"

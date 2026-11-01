@@ -8,7 +8,6 @@ import com.arturjarosz.task.contract.query.ContractQueryService
 import com.arturjarosz.task.dto.ArchitectDto
 import com.arturjarosz.task.project.application.mapper.ProjectsToEntityProjectsSummaryDtoMapperImpl
 import com.arturjarosz.task.project.model.Project
-import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.query.ProjectCounts
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
 import com.arturjarosz.task.project.status.project.ProjectStatus
@@ -241,7 +240,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
     }
 
     void mockGetContractValuesForProjects() {
-        var project = new Project("name", EXISTING_ID, 101L, ProjectType.CONCEPT, new ProjectWorkflow(), 102L)
+        var project = new Project("name", EXISTING_ID, 101L, 1L, new ProjectWorkflow(), 102L)
         TestUtils.setFieldForObject(project, "id", PROJECT_ID)
         projectQueryService.getProjectsForArchitect(_ as Long) >> [project]
         this.contractQueryService.getContractValuesForProjects(_ as List) >> [(PROJECT_ID): BigDecimal.valueOf(1.0D)]

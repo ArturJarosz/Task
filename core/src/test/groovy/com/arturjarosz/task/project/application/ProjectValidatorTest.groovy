@@ -2,7 +2,6 @@ package com.arturjarosz.task.project.application
 
 import com.arturjarosz.task.dto.ProjectCreateDto
 import com.arturjarosz.task.dto.ProjectDto
-import com.arturjarosz.task.dto.ProjectTypeDto
 import com.arturjarosz.task.project.query.ProjectQueryService
 import com.arturjarosz.task.utils.ProjectBuilder
 import spock.lang.Specification
@@ -17,7 +16,7 @@ class ProjectValidatorTest extends Specification {
 
     static final String EMPTY_PROJECT_NAME = ""
     static final String PROJECT_NAME = "name"
-    static final ProjectTypeDto PROJECT_TYPE_CONCEPT = ProjectTypeDto.CONCEPT
+    static final Long PROJECT_TYPE_ID = 1L
 
     def project = new ProjectBuilder().withName("name").build()
 
@@ -63,7 +62,7 @@ class ProjectValidatorTest extends Specification {
     def "passing projectCreateDto with null as a clientId to validateProjectBasicDto should thrown an exception"() {
         given:
             def projectCreateDto = new ProjectCreateDto(name: PROJECT_NAME, architectId: ARCHITECT_ID,
-                    clientId: null, type: PROJECT_TYPE_CONCEPT)
+                    clientId: null, typeId: PROJECT_TYPE_ID)
         when:
             this.projectValidator.validateProjectBasicDto(projectCreateDto)
         then:
@@ -74,7 +73,7 @@ class ProjectValidatorTest extends Specification {
     def "passing projectCreateDto with null as a architectId to validateProjectBasicDto should thrown an exception"() {
         given:
             def projectCreateDto = new ProjectCreateDto(name: PROJECT_NAME, architectId: null,
-                    clientId: CLIENT_ID, type: PROJECT_TYPE_CONCEPT)
+                    clientId: CLIENT_ID, typeId: PROJECT_TYPE_ID)
         when:
             this.projectValidator.validateProjectBasicDto(projectCreateDto)
         then:
@@ -85,7 +84,7 @@ class ProjectValidatorTest extends Specification {
     def "passing projectCreateDto with null as a projectType to validateProjectBasicDto should thrown an exception"() {
         given:
             def projectCreateDto = new ProjectCreateDto(name: PROJECT_NAME, architectId: ARCHITECT_ID,
-                    clientId: CLIENT_ID, type: null)
+                    clientId: CLIENT_ID, typeId: null)
         when:
             this.projectValidator.validateProjectBasicDto(projectCreateDto)
         then:
@@ -96,7 +95,7 @@ class ProjectValidatorTest extends Specification {
     def "passing proper projectCreateDto to validateProjectBasicDto should not throw any exception"() {
         given:
             def projectCreateDto = new ProjectCreateDto(name: PROJECT_NAME, architectId: ARCHITECT_ID,
-                    clientId: CLIENT_ID, type: PROJECT_TYPE_CONCEPT)
+                    clientId: CLIENT_ID, typeId: PROJECT_TYPE_ID)
         when:
             this.projectValidator.validateProjectBasicDto(projectCreateDto)
         then:
@@ -224,7 +223,7 @@ class ProjectValidatorTest extends Specification {
         given:
             def project = new ProjectBuilder().withEndDate(LocalDate.now().minusDays(5)).build()
             def projectDto = new ProjectDto(name: PROJECT_NAME, startDate: LocalDate.now().minusDays(10),
-                    endDate: LocalDate.now().minusDays(20))
+                    endDate: LocalDate.now().minusDays(20), typeId: PROJECT_TYPE_ID)
         when:
             this.projectValidator.validateUpdateProjectDto(projectDto, project)
         then:
@@ -245,10 +244,21 @@ class ProjectValidatorTest extends Specification {
     def "validateUpdateProjectDto should not require start date for not started project"() {
         given:
             def project = new ProjectBuilder().build()
-            def projectDto = new ProjectDto(name: PROJECT_NAME)
+            def projectDto = new ProjectDto(name: PROJECT_NAME, typeId: PROJECT_TYPE_ID)
         when:
             this.projectValidator.validateUpdateProjectDto(projectDto, project)
         then:
             noExceptionThrown()
+    }
+
+    def "validateUpdateProjectDto should throw an exception when project type is not given"() {
+        given:
+            def project = new ProjectBuilder().build()
+            def projectDto = new ProjectDto(name: PROJECT_NAME)
+        when:
+            this.projectValidator.validateUpdateProjectDto(projectDto, project)
+        then:
+            Exception ex = thrown()
+            ex.message == "isNull.project.type"
     }
 }

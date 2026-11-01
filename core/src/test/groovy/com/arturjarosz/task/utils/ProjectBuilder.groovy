@@ -2,7 +2,6 @@ package com.arturjarosz.task.utils
 
 import com.arturjarosz.task.contract.model.Contract
 import com.arturjarosz.task.project.model.Project
-import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.sharedkernel.testhelpers.AbstractBuilder
@@ -23,7 +22,7 @@ class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
     private static final String STAGES = "stages"
     private static final String START_DATE = "startDate"
     private static final String STATUS = "status"
-    private static final String PROJECT_TYPE = "projectType"
+    private static final String PROJECT_TYPE_ID = "projectTypeId"
 
     ProjectBuilder() {
         super(Project)
@@ -91,8 +90,8 @@ class ProjectBuilder extends AbstractBuilder<Project, ProjectBuilder> {
         return this
     }
 
-    ProjectBuilder withType(ProjectType projectType) {
-        TestUtils.setFieldForObject(this.object, PROJECT_TYPE, projectType)
+    ProjectBuilder withTypeId(Long projectTypeId) {
+        TestUtils.setFieldForObject(this.object, PROJECT_TYPE_ID, projectTypeId)
         return this
     }
 }

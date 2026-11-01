@@ -4,11 +4,9 @@ package com.arturjarosz.task.project.domain.impl
 import com.arturjarosz.task.dto.ArchitectDto
 import com.arturjarosz.task.dto.ProjectCreateDto
 import com.arturjarosz.task.dto.ProjectDto
-import com.arturjarosz.task.dto.ProjectTypeDto
 import com.arturjarosz.task.project.application.mapper.ProjectMapperImpl
 import com.arturjarosz.task.project.domain.ProjectDataValidator
 import com.arturjarosz.task.project.model.Project
-import com.arturjarosz.task.project.model.ProjectType
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.project.status.project.ProjectWorkflow
 import com.arturjarosz.task.project.status.project.impl.ProjectStatusTransitionServiceImpl
@@ -29,8 +27,8 @@ class ProjectDomainServiceImplTest extends Specification {
     static final LocalDate NEW_START_DATE = LocalDate.of(2022, 01, 02)
     static final LocalDate END_DATE = LocalDate.of(2023, 01, 01)
     static final LocalDate NEW_END_DATE = LocalDate.of(2023, 01, 02)
-    static final ProjectType TYPE = ProjectType.ARCHITECTURE_HOUSE
-    static final ProjectType NEW_TYPE = ProjectType.CONCEPT
+    static final Long TYPE = 1L
+    static final Long NEW_TYPE = 2L
     static final Long CLIENT_ID = 1000L
     static final Long CONTRACT_ID = 50L
 
@@ -70,13 +68,13 @@ class ProjectDomainServiceImplTest extends Specification {
                     .name(NEW_NAME)
                     .note(NEW_NOTE)
                     .architect(new ArchitectDto().id(NEW_ARCHITECT_ID))
-                    .type(ProjectTypeDto.fromValue(NEW_TYPE.name()))
+                    .typeId(NEW_TYPE)
                     .startDate(NEW_START_DATE)
             def project = new ProjectBuilder()
                     .withName(NAME)
                     .withNote(NOTE)
                     .withArchitectId(ARCHITECT_ID)
-                    .withType(TYPE)
+                    .withTypeId(TYPE)
                     .withStartDate(START_DATE)
                     .withEndDate(END_DATE)
                     .withStatus(givenProjectStatus)
@@ -87,7 +85,7 @@ class ProjectDomainServiceImplTest extends Specification {
             updatedProject.name == name
             updatedProject.note == note
             updatedProject.architectId == architectId
-            updatedProject.projectType == type
+            updatedProject.projectTypeId == type
             updatedProject.startDate == startDate
             updatedProject.endDate == endDate
         where:
@@ -208,12 +206,12 @@ class ProjectDomainServiceImplTest extends Specification {
 
     private ProjectCreateDto prepareCreateProjectDto() {
         def projectCreateDto = new ProjectCreateDto(name: NAME, architectId: ARCHITECT_ID,
-                clientId: CLIENT_ID, type: ProjectTypeDto.CONCEPT)
+                clientId: CLIENT_ID, typeId: 1L)
         return projectCreateDto
     }
 
     private ProjectDto prepareUpdateProjectDto() {
-        def projectDto = new ProjectDto(name: NEW_NAME, note: NEW_NOTE, architect: new ArchitectDto(id: ARCHITECT_ID), type: ProjectTypeDto.ARCHITECTURE_HOUSE)
+        def projectDto = new ProjectDto(name: NEW_NAME, note: NEW_NOTE, architect: new ArchitectDto(id: ARCHITECT_ID), typeId: 1L)
         return projectDto
     }
 }
