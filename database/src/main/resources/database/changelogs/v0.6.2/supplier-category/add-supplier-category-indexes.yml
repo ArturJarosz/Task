@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-supplier-category-name-unique-index"
+      changes:
+        # Names are unique regardless of letter case, as the application checks them
+        - sql:
+            dbms: "postgresql"
+            sql: "create unique index UK_SUPPLIER_CATEGORY_NAME on SUPPLIER_CATEGORY (lower(NAME))"
+  - changeSet:
+      author: "liquibase"
+      id: "create-supplier-category-index"
+      changes:
+        - createIndex:
+            tableName: "SUPPLIER"
+            indexName: "IDX_SUPPLIER_CATEGORY_ID"
+            columns:
+              - column:
+                  name: "CATEGORY_ID"

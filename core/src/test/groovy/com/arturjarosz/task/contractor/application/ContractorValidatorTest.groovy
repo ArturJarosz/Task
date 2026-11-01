@@ -1,9 +1,8 @@
 package com.arturjarosz.task.contractor.application
 
+import com.arturjarosz.task.contractor.infrastructure.ContractorCategoryRepository
 import com.arturjarosz.task.contractor.infrastructure.ContractorRepository
 import com.arturjarosz.task.contractor.model.Contractor
-import com.arturjarosz.task.contractor.model.ContractorCategory
-import com.arturjarosz.task.dto.ContractorCategoryDto
 import com.arturjarosz.task.dto.ContractorDto
 import spock.lang.Specification
 import spock.lang.Subject
@@ -13,16 +12,20 @@ class ContractorValidatorTest extends Specification {
     final static Long EXISTING_CONTRACTOR_ID = 1L
     final static Long NOT_EXISTING_CONTRACTOR_ID = 10L
     final static String NAME = "name"
-    final static ContractorCategoryDto CONTRACTOR_CATEGORY = ContractorCategoryDto.ARTIST
+    final static Long CONTRACTOR_CATEGORY = 1L
+    final static Long NOT_EXISTING_CONTRACTOR_CATEGORY = 99L
     final static String NOTE = "some note"
     final static String TELEPHONE = "123-456-789"
     final static String EMAIL = "test@email.com"
 
 
     def contractorRepository = Mock(ContractorRepository)
+    def contractorCategoryRepository = Stub(ContractorCategoryRepository) {
+        existsById(CONTRACTOR_CATEGORY) >> true
+    }
 
     @Subject
-    def contractorValidator = new ContractorValidator(contractorRepository)
+    def contractorValidator = new ContractorValidator(contractorRepository, contractorCategoryRepository)
 
     @Unroll
     def "validateCreateContractorDto throws exception with proper error message"() {
@@ -31,7 +34,7 @@ class ContractorValidatorTest extends Specification {
             if (contractorDto != null) {
                 contractorDto.with { testedContractorDto ->
                     testedContractorDto.name = name
-                    testedContractorDto.category = category
+                    testedContractorDto.categoryId = category
                 }
             }
 
@@ -43,17 +46,18 @@ class ContractorValidatorTest extends Specification {
             exception.message == exceptionMessage
 
         where:
-            givenContractorDto  | name | category            || exceptionMessage
-            null                | null | null                || "isNull.contractor"
-            new ContractorDto() | null | CONTRACTOR_CATEGORY || "isNull.contractor.name"
-            new ContractorDto() | ""   | CONTRACTOR_CATEGORY || "isEmpty.contractor.name"
-            new ContractorDto() | NAME | null                || "isNull.contractor.category"
+            givenContractorDto  | name | category                         || exceptionMessage
+            null                | null | null                             || "isNull.contractor"
+            new ContractorDto() | null | CONTRACTOR_CATEGORY              || "isNull.contractor.name"
+            new ContractorDto() | ""   | CONTRACTOR_CATEGORY              || "isEmpty.contractor.name"
+            new ContractorDto() | NAME | null                             || "isNull.contractor.category"
+            new ContractorDto() | NAME | NOT_EXISTING_CONTRACTOR_CATEGORY || "notExist.contractorCategory"
 
     }
 
     def "validateCreateContractorDto does not throw any exception when passed proper contractorDto"() {
         given: "Proper ContractorDto"
-            ContractorDto contractorDto = new ContractorDto(name: NAME, category: CONTRACTOR_CATEGORY)
+            ContractorDto contractorDto = new ContractorDto(name: NAME, categoryId: CONTRACTOR_CATEGORY)
 
         when: "Calling validateCreateContractorDto"
             this.contractorValidator.validateCreateContractorDto(contractorDto)
@@ -69,7 +73,7 @@ class ContractorValidatorTest extends Specification {
             if (contractorDto != null) {
                 contractorDto.with { testedContractorDto ->
                     testedContractorDto.name = name
-                    testedContractorDto.category = category
+                    testedContractorDto.categoryId = category
                 }
             }
 
@@ -81,17 +85,18 @@ class ContractorValidatorTest extends Specification {
             exception.message == exceptionMessage
 
         where:
-            givenContractorDto  | name | category            || exceptionMessage
-            null                | null | null                || "isNull.contractor"
-            new ContractorDto() | null | CONTRACTOR_CATEGORY || "isNull.contractor.name"
-            new ContractorDto() | ""   | CONTRACTOR_CATEGORY || "isEmpty.contractor.name"
-            new ContractorDto() | NAME | null                || "isNull.contractor.category"
+            givenContractorDto  | name | category                         || exceptionMessage
+            null                | null | null                             || "isNull.contractor"
+            new ContractorDto() | null | CONTRACTOR_CATEGORY              || "isNull.contractor.name"
+            new ContractorDto() | ""   | CONTRACTOR_CATEGORY              || "isEmpty.contractor.name"
+            new ContractorDto() | NAME | null                             || "isNull.contractor.category"
+            new ContractorDto() | NAME | NOT_EXISTING_CONTRACTOR_CATEGORY || "notExist.contractorCategory"
 
     }
 
     def "validateUpdateContractorDto does not throw any exception when passed proper contractorDto"() {
         given: "Proper ContractorDto"
-            ContractorDto contractorDto = new ContractorDto(name: NAME, category: CONTRACTOR_CATEGORY)
+            ContractorDto contractorDto = new ContractorDto(name: NAME, categoryId: CONTRACTOR_CATEGORY)
 
         when: "Calling validateUpdateContractorDto"
             this.contractorValidator.validateUpdateContractorDto(contractorDto)
@@ -125,7 +130,7 @@ class ContractorValidatorTest extends Specification {
 
     private void mockContractorRepositoryLoadOfExistingContractor() {
         1 * this.contractorRepository.findById(EXISTING_CONTRACTOR_ID) >>
-                Optional.of(new Contractor(NAME, ContractorCategory.valueOf(CONTRACTOR_CATEGORY.name()), EMAIL, TELEPHONE, NOTE))
+                Optional.of(new Contractor(NAME, CONTRACTOR_CATEGORY, EMAIL, TELEPHONE, NOTE))
     }
 
     private void mockContractorRepositoryLoadOfNotExistingContractor() {

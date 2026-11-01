@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-@Order(5)
+@Order(7)
 @RequiredArgsConstructor
 public class ProjectTypeDataInitializer implements DataInitializer {
     private static final String FILE_NAME = "sampleData/projectTypesSample.json";

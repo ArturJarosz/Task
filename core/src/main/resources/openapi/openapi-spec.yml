@@ -18,6 +18,8 @@ tags:
     description: Contract API and models
   - name: contractor
     description: Contractor API and models
+  - name: contractorCategory
+    description: Contractor category API and models
   - name: contractorJob
     description: ContractorJob API and models
   - name: cost
@@ -36,6 +38,8 @@ tags:
     description: Supervision data API and models
   - name: supplier
     description: Supplier data API and models
+  - name: supplierCategory
+    description: Supplier category API and models
   - name: systemParameter
     description: SystemParameter data API and models
   - name: user
@@ -444,6 +448,288 @@ paths:
                 $ref: "#/components/schemas/Contract"
         400:
           description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /contractor-categories:
+    post:
+      tags:
+        - contractorCategory
+      summary: Create a new contractor category
+      operationId: createContractorCategory
+      requestBody:
+        description: New contractor category data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContractorCategory"
+      responses:
+        201:
+          description: Contractor category successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractorCategory"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - contractorCategory
+      summary: Get list of contractor categories with the number of contractors of each category
+      operationId: getContractorCategories
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractorCategories"
+
+  /contractor-categories/{contractorCategoryId}:
+    get:
+      tags:
+        - contractorCategory
+      summary: Get a contractor category with given contractorCategoryId
+      operationId: getContractorCategory
+      parameters:
+        - name: contractorCategoryId
+          in: path
+          description: "A unique identifier of the contractor category"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractorCategory"
+        404:
+          description: Contractor category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - contractorCategory
+      summary: Update (rename) a contractor category with given contractorCategoryId
+      operationId: updateContractorCategory
+      parameters:
+        - name: contractorCategoryId
+          in: path
+          description: "A unique identifier of the contractor category"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of updated contractor category
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContractorCategory"
+      responses:
+        200:
+          description: Contractor category successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractorCategory"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Contractor category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - contractorCategory
+      summary: Delete a contractor category with given contractorCategoryId; a category used by any contractor cannot be deleted
+      operationId: deleteContractorCategory
+      parameters:
+        - name: contractorCategoryId
+          in: path
+          description: "A unique identifier of the contractor category"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Contractor category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /supplier-categories:
+    post:
+      tags:
+        - supplierCategory
+      summary: Create a new supplier category
+      operationId: createSupplierCategory
+      requestBody:
+        description: New supplier category data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SupplierCategory"
+      responses:
+        201:
+          description: Supplier category successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierCategory"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - supplierCategory
+      summary: Get list of supplier categories with the number of suppliers of each category
+      operationId: getSupplierCategories
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierCategories"
+
+  /supplier-categories/{supplierCategoryId}:
+    get:
+      tags:
+        - supplierCategory
+      summary: Get a supplier category with given supplierCategoryId
+      operationId: getSupplierCategory
+      parameters:
+        - name: supplierCategoryId
+          in: path
+          description: "A unique identifier of the supplier category"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierCategory"
+        404:
+          description: Supplier category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - supplierCategory
+      summary: Update (rename) a supplier category with given supplierCategoryId
+      operationId: updateSupplierCategory
+      parameters:
+        - name: supplierCategoryId
+          in: path
+          description: "A unique identifier of the supplier category"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of updated supplier category
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SupplierCategory"
+      responses:
+        200:
+          description: Supplier category successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierCategory"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Supplier category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - supplierCategory
+      summary: Delete a supplier category with given supplierCategoryId; a category used by any supplier cannot be deleted
+      operationId: deleteSupplierCategory
+      parameters:
+        - name: supplierCategoryId
+          in: path
+          description: "A unique identifier of the supplier category"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Supplier category does not exist
           content:
             application/json:
               schema:
@@ -3521,8 +3807,9 @@ components:
           type: string
         telephone:
           type: string
-        category:
-          $ref: "#/components/schemas/ContractorCategory"
+        categoryId:
+          type: integer
+          format: int64
         createdDateTime:
           type: string
           format: time
@@ -3552,14 +3839,28 @@ components:
           $ref: "#/components/schemas/FinancialPartialData"
 
     ContractorCategory:
-      type: string
-      enum:
-        - GENERAL
-        - PLUMBER
-        - ELECTRICIAN
-        - TILER
-        - CARPENTER
-        - ARTIST
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        numberOfContractors:
+          type: integer
+          format: int64
+          description: Number of contractors of this category; a category with contractors cannot be deleted
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
+
+    ContractorCategories:
+      type: array
+      items:
+        $ref: "#/components/schemas/ContractorCategory"
 
     ContractorJob:
       type: object
@@ -4135,8 +4436,9 @@ components:
           type: string
         telephone:
           type: string
-        category:
-          $ref: "#/components/schemas/SupplierCategory"
+        categoryId:
+          type: integer
+          format: int64
         createdDateTime:
           type: string
           format: time
@@ -4165,16 +4467,28 @@ components:
 
 
     SupplierCategory:
-      type: string
-      enum:
-        - SHOP_WITH_BATHROOM_FITTINGS
-        - SHOP_WITH_TILES
-        - BATHROOM_CERAMICS_SHOP
-        - PAINT_SHOP
-        - FLOORING_SHOP
-        - LIGHTING_SHOP
-        - GENERAL_SHOP
-        - FURNITURE_SHOP
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        numberOfSuppliers:
+          type: integer
+          format: int64
+          description: Number of suppliers of this category; a category with suppliers cannot be deleted
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
+
+    SupplierCategories:
+      type: array
+      items:
+        $ref: "#/components/schemas/SupplierCategory"
 
     SystemParameter:
       type: object
