@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: "create-cost-category-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-cost-category-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "replace-cost-category-column.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "add-cost-category-indexes.yml"
+      relativeToChangelogFile: true

@@ -1,6 +1,5 @@
 {
     "name": "Lublin 01",
-    "typeId": 1,
     "note": "some note about project",
     "architect": {
         "id": "101"

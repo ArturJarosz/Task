@@ -35,6 +35,13 @@ class ContractorJobTestIT extends BaseTestIT {
     @Autowired
     private MockMvc mockMvc
 
+
+    def setup() {
+        // ids of the data created by BaseTestIT
+        projectDto.typeId = projectTypeId
+        createContractorDto.categoryId = contractorCategoryId
+    }
+
     @Transactional
     def "creating contractorJob with wrong input should return code 400 and error message"() {
         given:

@@ -18,7 +18,7 @@ class ContractorCategoryTestIT extends BaseTestIT {
     static final String CONTENT_TYPE = "Content-Type"
     static final String APPLICATION_JSON = "application/json"
     static final long NOT_EXISTING_CATEGORY_ID = 10000L
-    // inserted by the test changelog and used by the contractor fixtures
+    // created by BaseTestIT for the contractor fixtures
     static final String SEEDED_CATEGORY_NAME = "General"
     static final ObjectMapper MAPPER = new ObjectMapper()
 

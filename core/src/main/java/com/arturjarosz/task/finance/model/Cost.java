@@ -24,9 +24,8 @@ public class Cost extends AbstractHistoryAwareEntity implements PartialFinancial
     private String name;
 
     @Getter
-    @Column(name = "CATEGORY", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private CostCategory category;
+    @Column(name = "CATEGORY_ID", nullable = false)
+    private Long categoryId;
 
     @Getter
     @Column(name = "DATE")
@@ -49,10 +48,10 @@ public class Cost extends AbstractHistoryAwareEntity implements PartialFinancial
         // needed by JPA
     }
 
-    public Cost(String name, BigDecimal value, CostCategory category, LocalDate date, String note, boolean hasInvoice,
+    public Cost(String name, BigDecimal value, Long categoryId, LocalDate date, String note, boolean hasInvoice,
             boolean payable, boolean paid, LocalDate paymentDate) {
         this.name = name;
-        this.category = category;
+        this.categoryId = categoryId;
         this.date = date;
         this.note = note;
         this.financialData = new FinancialData(new Money(value), hasInvoice, payable, paid, paymentDate);
@@ -71,7 +70,7 @@ public class Cost extends AbstractHistoryAwareEntity implements PartialFinancial
         this.name = costDto.getName();
         this.date = costDto.getDate();
         this.note = costDto.getNote();
-        this.category = CostCategory.valueOf(costDto.getCategory().name());
+        this.categoryId = costDto.getCategoryId();
         this.financialData.setValue(new Money(costDto.getValue()));
         this.financialData.setHasInvoice(costDto.getHasInvoice());
         if (costDto.getPaid()) {

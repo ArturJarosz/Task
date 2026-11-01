@@ -1,6 +1,5 @@
 {
     "name": "test contractor",
-    "categoryId": 1,
     "note": "test note",
     "telephone": "223456789",
     "email": "test@test.pl"

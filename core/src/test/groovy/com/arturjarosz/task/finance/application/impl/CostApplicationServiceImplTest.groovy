@@ -1,13 +1,11 @@
 package com.arturjarosz.task.finance.application.impl
 
-import com.arturjarosz.task.dto.CostCategoryDto
 import com.arturjarosz.task.dto.CostDto
 import com.arturjarosz.task.finance.application.mapper.CostMapperImpl
 import com.arturjarosz.task.finance.application.mapper.CostProjectDataMapperImpl
 import com.arturjarosz.task.finance.application.validator.CostValidator
 import com.arturjarosz.task.finance.infrastructure.ProjectFinancialDataRepository
 import com.arturjarosz.task.finance.model.Cost
-import com.arturjarosz.task.finance.model.CostCategory
 import com.arturjarosz.task.finance.model.ProjectFinancialData
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
 import com.arturjarosz.task.project.application.ProjectValidator
@@ -270,18 +268,18 @@ class CostApplicationServiceImplTest extends Specification {
     }
 
     private CostDto prepareUpdateCostDto() {
-        def updateCostDto = new CostDto(note: NEW_NOTE, value: NEW_VALUE, date: NEW_DATE, name: NEW_NAME, category: CostCategoryDto.FUEL, hasInvoice: true, paid: false)
+        def updateCostDto = new CostDto(note: NEW_NOTE, value: NEW_VALUE, date: NEW_DATE, name: NEW_NAME, categoryId: 1L, hasInvoice: true, paid: false)
         return updateCostDto
     }
 
     private CostDto prepareCostDto() {
-        def costDto = new CostDto(name: NAME, date: DATE, category: CostCategoryDto.FUEL, value: VALUE, note: NOTE)
+        def costDto = new CostDto(name: NAME, date: DATE, categoryId: 1L, value: VALUE, note: NOTE)
         return costDto
     }
 
     private ProjectFinancialData prepareProjectFinancialDataWithCost(Long projectId) {
         def financialData = new ProjectFinancialData(projectId)
-        def cost = new Cost(NAME, VALUE, CostCategory.FUEL, DATE, NOTE, true, true, true, DATE)
+        def cost = new Cost(NAME, VALUE, 1L, DATE, NOTE, true, true, true, DATE)
         TestUtils.setFieldForObject(cost, "id", COST_ID)
         financialData.addCost(cost)
         return financialData

@@ -42,6 +42,12 @@ class TaskTestIT extends BaseTestIT {
     @Autowired
     private MockMvc mockMvc
 
+
+    def setup() {
+        // ids of the data created by BaseTestIT
+        projectDto.typeId = projectTypeId
+    }
+
     @Transactional
     def "Creating task for not existing project should return code 404 and error message"() {
         given:

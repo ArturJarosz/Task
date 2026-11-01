@@ -44,6 +44,12 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     @Autowired
     private MockMvc mockMvc
 
+
+    def setup() {
+        // ids of the data created by BaseTestIT
+        properProjectDto.typeId = projectTypeId
+    }
+
     @Transactional
     def "Newly created project contract is in OFFER status"() {
         given:

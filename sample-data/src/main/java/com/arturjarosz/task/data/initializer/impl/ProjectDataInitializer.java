@@ -32,6 +32,8 @@ import com.arturjarosz.task.finance.application.ContractorJobApplicationService;
 import com.arturjarosz.task.finance.application.CostApplicationService;
 import com.arturjarosz.task.finance.application.InstallmentApplicationService;
 import com.arturjarosz.task.finance.application.SupplyApplicationService;
+import com.arturjarosz.task.finance.infrastructure.CostCategoryRepository;
+import com.arturjarosz.task.finance.model.CostCategory;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.TaskApplicationService;
@@ -58,12 +60,12 @@ import java.util.stream.Collectors;
 /**
  * Loads sample Projects with Stages, Tasks and financial data. Objects are created through application services, and
  * statuses are reached by regular status transitions, so all validators and status listeners are applied. Has to be
- * run after architects, clients, contractors, suppliers and project types are loaded. Dates that can't be set through
+ * run after architects, clients, contractors, suppliers, project types and cost categories are loaded. Dates that can't be set through
  * application services (passed deadlines, start and end dates of work, creation time) are changed by {@link SampleDateUpdater}.
  */
 @Slf4j
 @Component
-@Order(8)
+@Order(9)
 @RequiredArgsConstructor
 public class ProjectDataInitializer implements DataInitializer {
     private static final String FILE_NAME = "sampleData/projectsSample.json";
@@ -80,6 +82,7 @@ public class ProjectDataInitializer implements DataInitializer {
     private final ContractorRepository contractorRepository;
     private final SupplierRepository supplierRepository;
     private final ProjectTypeRepository projectTypeRepository;
+    private final CostCategoryRepository costCategoryRepository;
     private final ProjectApplicationService projectApplicationService;
     private final StageApplicationService stageApplicationService;
     private final TaskApplicationService taskApplicationService;
@@ -106,7 +109,8 @@ public class ProjectDataInitializer implements DataInitializer {
                         client -> client.getEmail() == null ? null : client.getEmail().getValue()),
                 idsByKey(this.contractorRepository.findAll(), Contractor::getName),
                 idsByKey(this.supplierRepository.findAll(), Supplier::getName),
-                idsByKey(this.projectTypeRepository.findAll(), ProjectType::getName));
+                idsByKey(this.projectTypeRepository.findAll(), ProjectType::getName),
+                idsByKey(this.costCategoryRepository.findAll(), CostCategory::getName));
     }
 
     /**
@@ -138,7 +142,7 @@ public class ProjectDataInitializer implements DataInitializer {
         for (StageSample stageSample : projectSample.getStages()) {
             stageIds.add(this.createStage(projectId, architectId, stageSample, taskIds));
         }
-        projectSample.getCosts().forEach(cost -> this.createCost(projectId, cost));
+        projectSample.getCosts().forEach(cost -> this.createCost(projectId, cost, referencedIds));
         projectSample.getContractorJobs().forEach(job -> this.createContractorJob(projectId, job, referencedIds));
         projectSample.getSupplies().forEach(supply -> this.createSupply(projectId, supply, referencedIds));
 
@@ -224,10 +228,10 @@ public class ProjectDataInitializer implements DataInitializer {
                 .paymentDate(paymentDate(installmentSample.isPaid(), installmentSample.getPaymentDaysAgo()));
     }
 
-    private void createCost(Long projectId, CostSample costSample) {
+    private void createCost(Long projectId, CostSample costSample, ReferencedIds referencedIds) {
         this.costApplicationService.createCost(projectId, new CostDto().name(costSample.getName())
                 .value(costSample.getValue())
-                .category(costSample.getCategory())
+                .categoryId(getId(referencedIds.costCategoryIdsByName(), costSample.getCategory(), "cost category"))
                 .date(daysAgo(costSample.getDateDaysAgo()))
                 .note(costSample.getNote())
                 .hasInvoice(costSample.isHasInvoice())
@@ -380,6 +384,6 @@ public class ProjectDataInitializer implements DataInitializer {
 
     private record ReferencedIds(Map<String, Long> architectIdsByName, Map<String, Long> clientIdsByEmail,
             Map<String, Long> contractorIdsByName, Map<String, Long> supplierIdsByName,
-            Map<String, Long> projectTypeIdsByName) {
+            Map<String, Long> projectTypeIdsByName, Map<String, Long> costCategoryIdsByName) {
     }
 }

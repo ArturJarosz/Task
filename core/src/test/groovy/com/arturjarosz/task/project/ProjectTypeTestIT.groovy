@@ -23,7 +23,7 @@ class ProjectTypeTestIT extends BaseTestIT {
     static final String CONTENT_TYPE = "Content-Type"
     static final String APPLICATION_JSON = "application/json"
     static final long NOT_EXISTING_PROJECT_TYPE_ID = 10000L
-    // inserted by the test changelog and used by the project fixtures
+    // created by BaseTestIT for the project fixtures
     static final String SEEDED_PROJECT_TYPE_NAME = "Interior house"
     static final ObjectMapper MAPPER = new ObjectMapper()
 

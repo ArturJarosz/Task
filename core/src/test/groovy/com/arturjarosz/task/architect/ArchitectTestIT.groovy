@@ -227,6 +227,7 @@ class ArchitectTestIT extends BaseTestIT {
             def projectCreateDto = this.readJson('json/project/properProject.json', ProjectCreateDto)
             projectCreateDto.architectId = architectDto.id
             projectCreateDto.clientId = clientDto.id
+            projectCreateDto.typeId = projectTypeId
             TestsHelper.createProject(projectCreateDto, HOST + ":" + port + PROJECTS_URI, this.mockMvc)
             def rejectedProject = TestsHelper.createProject(projectCreateDto, HOST + ":" + port + PROJECTS_URI, this.mockMvc)
             this.mockMvc.perform(MockMvcRequestBuilders.post(

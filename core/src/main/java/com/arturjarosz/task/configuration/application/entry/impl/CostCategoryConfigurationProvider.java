@@ -3,19 +3,29 @@ package com.arturjarosz.task.configuration.application.entry.impl;
 import com.arturjarosz.task.configuration.application.entry.ConfigurationProvider;
 import com.arturjarosz.task.dto.ApplicationConfigurationDto;
 import com.arturjarosz.task.dto.ConfigurationEntryDto;
-import com.arturjarosz.task.finance.model.CostCategory;
+import com.arturjarosz.task.finance.infrastructure.CostCategoryRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-
+/**
+ * Cost categories are configured by users, so the id of an entry is the id of the CostCategory and the label is its
+ * name.
+ */
 @Component
+@RequiredArgsConstructor
 public class CostCategoryConfigurationProvider implements ConfigurationProvider {
+
+    private final CostCategoryRepository costCategoryRepository;
+
     @Override
     public ApplicationConfigurationDto addConfigurationEntry(ApplicationConfigurationDto configurationDto) {
-        configurationDto.setCostCategories(Arrays.stream(CostCategory.values())
-                .map(category -> new ConfigurationEntryDto().id(category.name())
-                        .label(this.createLabel(category.name())))
-                .toList());
+        configurationDto.setCostCategories(this.costCategoryRepository.findAll(Sort.by("name"))
+                .stream()
+                .map(category -> new ConfigurationEntryDto()
+                        .id(String.valueOf(category.getId()))
+                        .label(category.getName())
+                ).toList());
         return configurationDto;
     }
 
