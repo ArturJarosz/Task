@@ -3,5 +3,10 @@
     "deadline": "2030-10-10",
     "signingDate": "2020-04-10",
     "startDate": "2020-04-11",
-    "status": "SIGNED"
+    "status": "SIGNED",
+    "deposit": {
+        "value": 300.00,
+        "hasInvoice": true,
+        "paid": false
+    }
 }

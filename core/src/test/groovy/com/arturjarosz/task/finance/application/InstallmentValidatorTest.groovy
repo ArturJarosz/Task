@@ -3,6 +3,7 @@ package com.arturjarosz.task.finance.application
 import com.arturjarosz.task.dto.InstallmentDto
 import com.arturjarosz.task.finance.application.validator.InstallmentValidator
 import com.arturjarosz.task.finance.model.Installment
+import com.arturjarosz.task.finance.model.ProjectFinancialData
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
@@ -229,6 +230,107 @@ class InstallmentValidatorTest extends Specification {
         then:
             Exception exception = thrown()
             exception.localizedMessage == "alreadyPaid.installment"
+    }
+
+    def "validateCreateDepositDto should throw an exception when a paid deposit has no payment date"() {
+        given:
+            def installmentDto = new InstallmentDto(value: VALUE, paid: true)
+        when:
+            installmentValidator.validateCreateDepositDto(installmentDto)
+        then:
+            Exception exception = thrown()
+            exception.localizedMessage == "isNull.installment.payDate"
+    }
+
+    def "validateCreateDepositDto should throw an exception when a paid deposit has a future payment date"() {
+        given:
+            def installmentDto = new InstallmentDto(value: VALUE, paid: true, paymentDate: FUTURE_PAY_DATE)
+        when:
+            installmentValidator.validateCreateDepositDto(installmentDto)
+        then:
+            Exception exception = thrown()
+            exception.localizedMessage == "notValid.installment.payDate"
+    }
+
+    def "validateCreateDepositDto should accept an unpaid deposit without payment date and a paid one dated today"() {
+        when:
+            installmentValidator.validateCreateDepositDto(new InstallmentDto(value: VALUE, paid: false))
+            installmentValidator.validateCreateDepositDto(new InstallmentDto(value: VALUE, paid: true, paymentDate: PAY_DATE))
+        then:
+            noExceptionThrown()
+    }
+
+    def "validateCreateDepositDto should throw an exception when the deposit value is 0"() {
+        when:
+            installmentValidator.validateCreateDepositDto(new InstallmentDto(value: BigDecimal.ZERO, paid: false))
+        then:
+            Exception exception = thrown()
+            exception.localizedMessage == "notValid.deposit.value"
+    }
+
+    def "validateDepositForSigning should require a deposit when the project has none"() {
+        when:
+            installmentValidator.validateDepositForSigning(new ProjectFinancialData(PROJECT_ID), null)
+        then:
+            Exception exception = thrown()
+            exception.localizedMessage == "isNull.deposit"
+    }
+
+    def "validateDepositForSigning should accept signing without deposit when the project already has one"() {
+        given:
+            def projectFinancialData = new ProjectFinancialData(PROJECT_ID)
+            projectFinancialData.addInstallment(Installment.deposit(new InstallmentDto(value: VALUE, hasInvoice: true, paid: false)))
+        when:
+            installmentValidator.validateDepositForSigning(projectFinancialData, null)
+        then:
+            noExceptionThrown()
+    }
+
+    def "validateDepositForSigning should refuse a second deposit"() {
+        given:
+            def projectFinancialData = new ProjectFinancialData(PROJECT_ID)
+            projectFinancialData.addInstallment(Installment.deposit(new InstallmentDto(value: VALUE, hasInvoice: true, paid: false)))
+        when:
+            installmentValidator.validateDepositForSigning(projectFinancialData, new InstallmentDto(value: VALUE, paid: false))
+        then:
+            Exception exception = thrown()
+            exception.localizedMessage == "alreadySet.project.deposit"
+    }
+
+    def "validateDepositForSigning should accept a valid deposit for a project without one"() {
+        when:
+            installmentValidator.validateDepositForSigning(new ProjectFinancialData(PROJECT_ID), new InstallmentDto(value: VALUE, paid: false))
+        then:
+            noExceptionThrown()
+    }
+
+    def "validateInstallmentNotDeposit should refuse to remove the deposit"() {
+        when:
+            installmentValidator.validateInstallmentNotDeposit(Installment.deposit(new InstallmentDto(value: VALUE, paid: false)))
+        then:
+            Exception exception = thrown()
+            exception.localizedMessage == "notValid.deposit.remove"
+    }
+
+    def "validateProjectNotHavingDeposit should throw an exception if project already has a deposit"() {
+        given:
+            def projectFinancialData = new ProjectFinancialData(PROJECT_ID)
+            projectFinancialData.addInstallment(Installment.deposit(new InstallmentDto(value: VALUE, hasInvoice: true, paid: false)))
+        when:
+            installmentValidator.validateProjectNotHavingDeposit(projectFinancialData)
+        then:
+            Exception exception = thrown()
+            exception.localizedMessage == "alreadySet.project.deposit"
+    }
+
+    def "validateProjectNotHavingDeposit should not throw any exception if project has only stage installments"() {
+        given:
+            def projectFinancialData = new ProjectFinancialData(PROJECT_ID)
+            projectFinancialData.addInstallment(new Installment(new InstallmentDto(value: VALUE, hasInvoice: true, paid: false), STAGE_ID))
+        when:
+            installmentValidator.validateProjectNotHavingDeposit(projectFinancialData)
+        then:
+            noExceptionThrown()
     }
 
     def "validateInstallmentNotPaid should not throw any exception if installment is not paid"() {

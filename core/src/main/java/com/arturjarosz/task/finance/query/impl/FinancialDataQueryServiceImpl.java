@@ -17,6 +17,7 @@ import com.arturjarosz.task.finance.model.*;
 import com.arturjarosz.task.finance.model.dto.SupervisionRatesDto;
 import com.arturjarosz.task.finance.model.dto.SupervisionVisitFinancialDto;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
+import com.arturjarosz.task.project.model.QProject;
 import com.arturjarosz.task.project.model.QStage;
 import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
@@ -41,6 +42,7 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     private static final QProjectFinancialPartialData PROJECT_FINANCIAL_PARTIAL_DATA = QProjectFinancialPartialData.projectFinancialPartialData;
     private static final QProjectFinancialData PROJECT_FINANCIAL_DATA = QProjectFinancialData.projectFinancialData;
     private static final QStage STAGE = QStage.stage;
+    private static final QProject PROJECT = QProject.project;
 
     private final FinancialDataMapper financialDataMapper;
     private final ProjectFinancialPartialDataMapper projectFinancialPartialDataMapper;
@@ -291,10 +293,11 @@ public class FinancialDataQueryServiceImpl extends AbstractQueryService<QFinanci
     @Override
     public List<Long> getStagesWithoutInstallmentIds(long projectId) {
         return this.query()
-                .from(STAGE)
+                .from(PROJECT)
+                .join(PROJECT.stages, STAGE)
                 .leftJoin(INSTALLMENT)
                 .on(STAGE.id.eq(INSTALLMENT.stageId))
-                .where(INSTALLMENT.isNull())
+                .where(PROJECT.id.eq(projectId).and(INSTALLMENT.isNull()))
                 .select(STAGE.id)
                 .fetch();
     }

@@ -1,7 +1,9 @@
 package com.arturjarosz.task.finance.application.impl
 
 import com.arturjarosz.task.common.mapper.MoneyMapperImpl
+import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator
 import com.arturjarosz.task.dto.InstallmentDto
+import com.arturjarosz.task.dto.InstallmentTypeDto
 import com.arturjarosz.task.finance.application.ProjectFinanceAwareObjectService
 import com.arturjarosz.task.finance.application.dto.FinancialValueDto
 import com.arturjarosz.task.finance.application.mapper.InstallmentMapperImpl
@@ -17,6 +19,7 @@ import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.testhelpers.TestUtils
+import org.springframework.dao.DataIntegrityViolationException
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -31,6 +34,7 @@ class InstallmentApplicationServiceImplTest extends Specification {
     static final NOT_EXISTING_STAGE_ID = 99L
     static final PROJECT_ID = 100L
     static final PROJECT_WITH_INSTALLMENT_ID = 200L
+    static final PROJECT_WITH_UNSIGNED_CONTRACT_ID = 300L
     static final NOT_EXISTING_PROJECT_ID = 999L
     static final VALUE = new BigDecimal("100.00")
     static final NEW_VALUE = new BigDecimal("200.00")
@@ -40,12 +44,13 @@ class InstallmentApplicationServiceImplTest extends Specification {
     def financialDataQueryService = Mock(FinancialDataQueryService)
     def installmentValidator = Mock(InstallmentValidator)
     def projectValidator = Mock(ProjectValidator)
+    def contractWorkflowValidator = Mock(ContractWorkflowValidator)
     def stageValidator = Mock(StageValidator)
     def projectFinanceAwareObjectService = Mock(ProjectFinanceAwareObjectService)
     def installmentMapper = new InstallmentMapperImpl()
     def installmentProjectSummaryMapper = new InstallmentProjectDataMapperImpl()
 
-    def installmentApplicationService = new InstallmentApplicationServiceImpl(projectValidator, stageValidator,
+    def installmentApplicationService = new InstallmentApplicationServiceImpl(projectValidator, contractWorkflowValidator, stageValidator,
             projectFinancialDataRepository, financialDataQueryService, installmentValidator,
             projectFinanceAwareObjectService, installmentMapper, installmentProjectSummaryMapper)
 
@@ -64,6 +69,72 @@ class InstallmentApplicationServiceImplTest extends Specification {
         this.financialDataQueryService.getProjectPartialFinancialDataByType(PROJECT_WITH_INSTALLMENT_ID, PartialFinancialDataType.INSTALLMENT) >> prepareInstallmentData()
         this.financialDataQueryService.getStagesWithoutInstallmentIds(PROJECT_WITH_INSTALLMENT_ID) >> [STAGE_WITHOUT_INSTALLMENT_ID]
         this.financialDataQueryService.getStageNameForInstallment(INSTALLMENT_ID) >> STAGE_NAME
+        this.contractWorkflowValidator.validateContractAllowsDeposit(PROJECT_WITH_UNSIGNED_CONTRACT_ID) >> { throw new IllegalArgumentException() }
+    }
+
+    def "createDeposit should not create deposit if project existence validation fails"() {
+        given:
+            def installmentDto = new InstallmentDto(value: VALUE)
+        when:
+            this.installmentApplicationService.createDeposit(NOT_EXISTING_PROJECT_ID, installmentDto)
+        then:
+            thrown(IllegalArgumentException)
+            0 * this.projectFinancialDataRepository.save(_ as ProjectFinancialData)
+    }
+
+    def "createDeposit should not create deposit if contract is not signed"() {
+        given:
+            def installmentDto = new InstallmentDto(value: VALUE)
+        when:
+            this.installmentApplicationService.createDeposit(PROJECT_WITH_UNSIGNED_CONTRACT_ID, installmentDto)
+        then:
+            thrown(IllegalArgumentException)
+            0 * this.projectFinancialDataRepository.save(_ as ProjectFinancialData)
+    }
+
+    def "createDeposit should not create deposit if project already has one"() {
+        given:
+            def installmentDto = new InstallmentDto(value: VALUE)
+            this.installmentValidator.validateProjectNotHavingDeposit(_ as ProjectFinancialData) >> { throw new IllegalArgumentException() }
+        when:
+            this.installmentApplicationService.createDeposit(PROJECT_ID, installmentDto)
+        then:
+            thrown(IllegalArgumentException)
+            0 * this.projectFinancialDataRepository.save(_ as ProjectFinancialData)
+    }
+
+    def "createDeposit should report an existing deposit when a deposit added at the same time hits the unique index"() {
+        given:
+            def installmentDto = new InstallmentDto(value: VALUE, hasInvoice: true, paid: false)
+            this.projectFinancialDataRepository.saveAndFlush(_ as ProjectFinancialData) >> { throw new DataIntegrityViolationException("UK_INSTALLMENT_DEPOSIT") }
+        when:
+            this.installmentApplicationService.createDeposit(PROJECT_ID, installmentDto)
+        then:
+            def exception = thrown(IllegalArgumentException)
+            exception.message == "alreadySet.project.deposit"
+            0 * this.projectFinanceAwareObjectService.onCreate(_)
+    }
+
+    def "createDeposit should add deposit without stage to projectFinancialData and return it"() {
+        given:
+            def installmentDto = new InstallmentDto(value: VALUE, hasInvoice: true, paid: false, note: "on signing")
+        when:
+            def createdDeposit = this.installmentApplicationService.createDeposit(PROJECT_ID, installmentDto)
+        then:
+            1 * this.projectFinancialDataRepository.saveAndFlush({ ProjectFinancialData projectFinancialData ->
+                projectFinancialData.installments.size() == 1 && projectFinancialData.hasDeposit()
+            }) >> { ProjectFinancialData projectFinancialData ->
+                // The repository gives the saved deposit its id
+                projectFinancialData.installments.each { TestUtils.setFieldForObject(it, "id", INSTALLMENT_ID) }
+                return projectFinancialData
+            }
+            1 * this.projectFinanceAwareObjectService.onCreate(PROJECT_ID)
+        and:
+            createdDeposit.id == INSTALLMENT_ID
+            createdDeposit.type == InstallmentTypeDto.DEPOSIT
+            createdDeposit.stageId == null
+            createdDeposit.value == VALUE
+            createdDeposit.note == "on signing"
     }
 
     def "createInstallment should not create installment if project existence validation fails"() {

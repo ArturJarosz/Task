@@ -3,6 +3,7 @@ package com.arturjarosz.task.finance.application.mapper;
 import com.arturjarosz.task.common.mapper.MoneyMapper;
 import com.arturjarosz.task.dto.InstallmentDto;
 import com.arturjarosz.task.dto.InstallmentProjectDataDto;
+import com.arturjarosz.task.dto.InstallmentTypeDto;
 import com.arturjarosz.task.finance.model.ProjectFinancialPartialData;
 import org.mapstruct.Builder;
 import org.mapstruct.InjectionStrategy;
@@ -22,8 +23,14 @@ public interface InstallmentProjectDataMapper {
     @Mapping(target = "financialData.incomeTax", source = "partialData.incomeTax")
     @Mapping(target = "installments", source = "installmentDtos")
     @Mapping(target = "stagesWithoutInstallment", source = "stagesWithoutInstallmentIds")
+    @Mapping(target = "hasDeposit", source = "installmentDtos", qualifiedByName = "hasDeposit")
     InstallmentProjectDataDto mapToProjectFinancialPartialDataDto(ProjectFinancialPartialData partialData,
             List<InstallmentDto> installmentDtos, List<Long> stagesWithoutInstallmentIds);
+
+    @Named("hasDeposit")
+    default Boolean hasDeposit(final List<InstallmentDto> installmentDtos) {
+        return installmentDtos.stream().anyMatch(installmentDto -> installmentDto.getType() == InstallmentTypeDto.DEPOSIT);
+    }
 
     @Named("numberOfInstallments")
     default Integer numberOfInstallments(final List<InstallmentDto> installmentDtos) {

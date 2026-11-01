@@ -7,6 +7,7 @@ public final class ContractExceptionCodes {
 
     public static final String CONTRACT = "contract";
     public static final String DEADLINE = "deadline";
+    public static final String DEPOSIT = "deposit";
     public static final String END_DATE = "endDate";
     public static final String OFFER = "offer";
     public static final String PROJECT = "project";

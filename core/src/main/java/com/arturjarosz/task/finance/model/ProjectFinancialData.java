@@ -100,6 +100,10 @@ public class ProjectFinancialData extends AbstractAggregateRoot {
         this.installments.add(installment);
     }
 
+    public boolean hasDeposit() {
+        return this.installments != null && this.installments.stream().anyMatch(Installment::isDeposit);
+    }
+
     public Installment getInstallment(Long installmentId) {
         return this.installments.stream()
                 .filter(installment -> installment.getId().equals(installmentId))

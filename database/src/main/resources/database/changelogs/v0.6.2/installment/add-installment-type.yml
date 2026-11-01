@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-installment-type"
+      changes:
+        # Existing installments all pay for a stage
+        - addColumn:
+            tableName: "INSTALLMENT"
+            columns:
+              - column:
+                  name: "TYPE"
+                  type: "VARCHAR2(20 ${char.unit})"
+                  defaultValue: "STAGE"
+                  constraints:
+                    nullable: false
+        # A deposit belongs to the project, not to a stage
+        - dropNotNullConstraint:
+            tableName: "INSTALLMENT"
+            columnName: "STAGE_ID"
+            columnDataType: "${long.type}"
+  - changeSet:
+      author: "liquibase"
+      id: "create-installment-deposit-unique-index"
+      changes:
+        # A project has at most one deposit, as the application checks
+        - sql:
+            dbms: "postgresql"
+            sql: "create unique index UK_INSTALLMENT_DEPOSIT on INSTALLMENT (PROJECT_FINANCIAL_DATA_ID) where TYPE = 'DEPOSIT'"

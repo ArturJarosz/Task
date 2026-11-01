@@ -14,6 +14,10 @@ public interface InstallmentMapper {
         return new Installment(installmentDto, stageId);
     }
 
+    default Installment mapDepositFromDto(InstallmentDto installmentDto) {
+        return Installment.deposit(installmentDto);
+    }
+
     @Mapping(source = "installment.amount", target = "value", qualifiedByName = "moneyToDouble")
     @Mapping(source = "installment.id", target = "id")
     @Mapping(source = "installment.paid", target = "paid")
@@ -22,6 +26,7 @@ public interface InstallmentMapper {
     @Mapping(source = "installment.paymentDate", target = "paymentDate")
     @Mapping(source = "installment.createdDateTime", target = "createdDateTime")
     @Mapping(source = "installment.stageId", target = "stageId")
+    @Mapping(source = "installment.type", target = "type")
     @Mapping(source = "stageName", target = "stageName")
     InstallmentDto mapToDto(Installment installment, String stageName);
 

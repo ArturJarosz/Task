@@ -142,4 +142,9 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     public Long getInstallmentIdForStage(long stageId) {
         return this.query().from(INSTALLMENT).where(INSTALLMENT.stageId.eq(stageId)).select(INSTALLMENT.id).fetchOne();
     }
+
+    @Override
+    public Long getProjectIdForContract(long contractId) {
+        return this.query().from(PROJECT).where(PROJECT.contractId.eq(contractId)).select(PROJECT.id).fetchOne();
+    }
 }
