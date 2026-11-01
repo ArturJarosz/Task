@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "replace-contractor-category-column"
+      changes:
+        - addColumn:
+            tableName: "CONTRACTOR"
+            columns:
+              - column:
+                  name: "CATEGORY_ID"
+                  type: "${long.type}"
+        # Each former category value in use becomes a category named like its label ("PAINT_SHOP" -> "Paint shop"),
+        # so databases with existing rows keep their data
+        - sql:
+            dbms: "postgresql"
+            sql: >
+              insert into CONTRACTOR_CATEGORY (ID, UUID, NAME, CREATED_DATETIME)
+              select nextval('contractor_category_sequence'), gen_random_uuid(),
+                     upper(left(CATEGORY, 1)) || lower(replace(substr(CATEGORY, 2), '_', ' ')), now()
+              from (select distinct CATEGORY from CONTRACTOR) used_categories;
+              update CONTRACTOR set CATEGORY_ID = (select ID from CONTRACTOR_CATEGORY
+                  where NAME = upper(left(CONTRACTOR.CATEGORY, 1)) || lower(replace(substr(CONTRACTOR.CATEGORY, 2), '_', ' ')))
+        - addNotNullConstraint:
+            tableName: "CONTRACTOR"
+            columnName: "CATEGORY_ID"
+            columnDataType: "${long.type}"
+        - addForeignKeyConstraint:
+            baseTableName: "CONTRACTOR"
+            baseColumnNames: "CATEGORY_ID"
+            constraintName: "FK_CONTRACTOR_CONTRACTOR_CATEGORY"
+            referencedTableName: "CONTRACTOR_CATEGORY"
+            referencedColumnNames: "ID"
+        - dropColumn:
+            tableName: "CONTRACTOR"
+            columnName: "CATEGORY"

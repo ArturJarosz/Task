@@ -3,5 +3,5 @@
   "note": "Test note about supplier",
   "email": "test@email.com",
   "telephone": 123456789,
-  "category": "LIGHTING_SHOP"
+  "categoryId": 1
 }

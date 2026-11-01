@@ -10,7 +10,10 @@ import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
 import com.arturjarosz.task.supplier.model.QSupplier;
 import com.arturjarosz.task.supplier.query.SupplierQueryService;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,5 +68,21 @@ public class SupplierQueryServiceImpl extends AbstractQueryService<QSupplier> im
                         supplierIdToCount -> supplierIdToCount.get(SUPPLY.count())));
     }
 
-
+    @Override
+    public Map<Long, Long> getNumberOfSuppliersByCategoryIds(Collection<Long> categoryIds) {
+        Map<Long, Long> countsByCategoryId = new HashMap<>();
+        categoryIds.stream().filter(Objects::nonNull).forEach(id -> countsByCategoryId.put(id, 0L));
+        if (countsByCategoryId.isEmpty()) {
+            return countsByCategoryId;
+        }
+        this.query()
+                .from(SUPPLIER)
+                .where(SUPPLIER.categoryId.in(countsByCategoryId.keySet()))
+                .groupBy(SUPPLIER.categoryId)
+                .select(SUPPLIER.categoryId, SUPPLIER.count())
+                .fetch()
+                .forEach(categoryIdToCount -> countsByCategoryId.put(categoryIdToCount.get(SUPPLIER.categoryId),
+                        categoryIdToCount.get(SUPPLIER.count())));
+        return countsByCategoryId;
+    }
 }

@@ -1,6 +1,6 @@
 {
   "name": "nw test contractor",
-  "category": "PLUMBER",
+  "categoryId": 1,
   "note": "new test note",
   "telephone": "223456789",
   "email": "newtest@test.pl"

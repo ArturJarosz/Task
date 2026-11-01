@@ -9,7 +9,6 @@ import com.arturjarosz.task.supplier.application.SupplierValidator;
 import com.arturjarosz.task.supplier.application.mapper.SupplierMapper;
 import com.arturjarosz.task.supplier.application.mapper.SupplierSuppliesMapper;
 import com.arturjarosz.task.supplier.infrastructure.SupplierRepository;
-import com.arturjarosz.task.supplier.model.SupplierCategory;
 import com.arturjarosz.task.supplier.query.SupplierQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +48,7 @@ public class SupplierApplicationServiceImpl implements SupplierApplicationServic
         this.supplierValidator.validateSupplierExistence(maybeSupplier, supplierId);
         this.supplierValidator.validateUpdateSupplierDto(supplierDto);
         var supplier = maybeSupplier.orElseThrow(ResourceNotFoundException::new);
-        supplier.update(supplierDto.getName(), SupplierCategory.valueOf(supplierDto.getCategory().name()),
+        supplier.update(supplierDto.getName(), supplierDto.getCategoryId(),
                 supplierDto.getEmail(), supplierDto.getTelephone(), supplierDto.getNote());
         supplier = this.supplierRepository.save(supplier);
 

@@ -5,7 +5,6 @@ import com.arturjarosz.task.contractor.application.ContractorValidator;
 import com.arturjarosz.task.contractor.application.mapper.ContractorContractorJobMapper;
 import com.arturjarosz.task.contractor.application.mapper.ContractorMapper;
 import com.arturjarosz.task.contractor.infrastructure.ContractorRepository;
-import com.arturjarosz.task.contractor.model.ContractorCategory;
 import com.arturjarosz.task.contractor.query.ContractorQueryService;
 import com.arturjarosz.task.dto.ContractorContractorJobsDataDto;
 import com.arturjarosz.task.dto.ContractorDto;
@@ -51,7 +50,7 @@ public class ContractorApplicationServiceImpl implements ContractorApplicationSe
         this.contractorValidator.validateContractorExistence(maybeContractor, contractorId);
         this.contractorValidator.validateUpdateContractorDto(contractorDto);
         var contractor = maybeContractor.orElseThrow(ResourceNotFoundException::new);
-        contractor.update(contractorDto.getName(), ContractorCategory.valueOf(contractorDto.getCategory().name()),
+        contractor.update(contractorDto.getName(), contractorDto.getCategoryId(),
                 contractorDto.getEmail(), contractorDto.getTelephone(), contractorDto.getNote());
         this.contractorRepository.save(contractor);
 

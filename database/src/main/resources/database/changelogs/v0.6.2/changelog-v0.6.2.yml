@@ -23,6 +23,12 @@ databaseChangeLog:
   - include:
       file: "installment/installment-tables.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "contractor-category/contractor-category-tables.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "supplier-category/supplier-category-tables.yml"
+      relativeToChangelogFile: true
   - changeSet:
       author: "liquibase"
       id: "tag-version_0.6.2"

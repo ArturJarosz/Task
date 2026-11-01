@@ -10,6 +10,8 @@ import com.arturjarosz.task.finance.model.QProjectFinancialData;
 import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -68,5 +70,22 @@ public class ContractorQueryServiceImpl extends AbstractQueryService<QContractor
                                         .getFinancialData())))
                 .collect(Collectors.toSet());
     }
-}
 
+    @Override
+    public Map<Long, Long> getNumberOfContractorsByCategoryIds(Collection<Long> categoryIds) {
+        Map<Long, Long> countsByCategoryId = new HashMap<>();
+        categoryIds.stream().filter(Objects::nonNull).forEach(id -> countsByCategoryId.put(id, 0L));
+        if (countsByCategoryId.isEmpty()) {
+            return countsByCategoryId;
+        }
+        this.query()
+                .from(CONTRACTOR)
+                .where(CONTRACTOR.categoryId.in(countsByCategoryId.keySet()))
+                .groupBy(CONTRACTOR.categoryId)
+                .select(CONTRACTOR.categoryId, CONTRACTOR.count())
+                .fetch()
+                .forEach(categoryIdToCount -> countsByCategoryId.put(categoryIdToCount.get(CONTRACTOR.categoryId),
+                        categoryIdToCount.get(CONTRACTOR.count())));
+        return countsByCategoryId;
+    }
+}

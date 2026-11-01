@@ -5,8 +5,6 @@ import com.arturjarosz.task.sharedkernel.model.Email;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -24,9 +22,8 @@ public class Supplier extends AbstractAggregateRoot {
     @Column(name = "NAME", nullable = false)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "CATEGORY", nullable = false)
-    private SupplierCategory category;
+    @Column(name = "CATEGORY_ID", nullable = false)
+    private Long categoryId;
 
     @Embedded
     private Email email;
@@ -41,17 +38,17 @@ public class Supplier extends AbstractAggregateRoot {
         // needed by JPA
     }
 
-    public Supplier(String name, SupplierCategory category, String email, String telephone, String note) {
+    public Supplier(String name, Long categoryId, String email, String telephone, String note) {
         this.name = name;
-        this.category = category;
+        this.categoryId = categoryId;
         this.email = new Email(email);
         this.telephone = telephone;
         this.note = note;
     }
 
-    public void update(String name, SupplierCategory category, String email, String telephone, String note) {
+    public void update(String name, Long categoryId, String email, String telephone, String note) {
         this.name = name;
-        this.category = category;
+        this.categoryId = categoryId;
         this.email = new Email(email);
         this.telephone = telephone;
         this.note = note;
@@ -61,8 +58,8 @@ public class Supplier extends AbstractAggregateRoot {
         return this.name;
     }
 
-    public SupplierCategory getCategory() {
-        return this.category;
+    public Long getCategoryId() {
+        return this.categoryId;
     }
 
     public String getEmail() {

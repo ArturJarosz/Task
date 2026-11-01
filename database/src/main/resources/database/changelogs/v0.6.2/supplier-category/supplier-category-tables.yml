@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: "create-supplier-category-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-supplier-category-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "replace-supplier-category-column.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "add-supplier-category-indexes.yml"
+      relativeToChangelogFile: true
