@@ -19,7 +19,7 @@ class StageBuilder extends AbstractBuilder<Stage, StageBuilder> {
     private static final String NAME = "name"
     private static final String NOTE = "note"
     private static final String START_DATE = "startDate"
-    private static final String STAGE_TYPE = "stageType"
+    private static final String STAGE_TYPE = "stageTypeId"
     private static final String STATUS = "status"
     private static final String TASKS = "tasks"
 

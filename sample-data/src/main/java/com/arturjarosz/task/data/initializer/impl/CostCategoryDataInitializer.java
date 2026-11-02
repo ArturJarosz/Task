@@ -32,7 +32,7 @@ public class CostCategoryDataInitializer implements DataInitializer {
         this.prepareCostCategories()
                 .stream()
                 .filter(category -> !this.costCategoryRepository.existsByNameIgnoreCase(category.getName()))
-                .forEach(this.costCategoryApplicationService::createCostCategory);
+                .forEach(this.costCategoryApplicationService::create);
         LOG.info("Cost categories added to the database.");
     }
 

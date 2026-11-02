@@ -1,6 +1,5 @@
 package com.arturjarosz.task.project.model.dto;
 
-import com.arturjarosz.task.project.model.TaskType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +14,7 @@ public class TaskInnerDto implements Serializable {
     private static final long serialVersionUID = -8940317214839882986L;
 
     String name;
-    TaskType taskType;
+    Long taskTypeId;
     LocalDate startDate;
     LocalDate endDate;
     String note;

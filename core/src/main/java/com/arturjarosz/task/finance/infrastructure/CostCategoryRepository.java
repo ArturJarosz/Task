@@ -1,11 +1,7 @@
 package com.arturjarosz.task.finance.infrastructure;
 
 import com.arturjarosz.task.finance.model.CostCategory;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.arturjarosz.task.sharedkernel.namedentry.NamedEntryRepository;
 
-public interface CostCategoryRepository extends JpaRepository<CostCategory, Long> {
-
-    boolean existsByNameIgnoreCase(String name);
-
-    boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
+public interface CostCategoryRepository extends NamedEntryRepository<CostCategory> {
 }

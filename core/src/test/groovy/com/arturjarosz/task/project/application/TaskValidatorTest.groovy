@@ -2,7 +2,6 @@ package com.arturjarosz.task.project.application
 
 import com.arturjarosz.task.architect.application.ArchitectValidator
 import com.arturjarosz.task.dto.TaskDto
-import com.arturjarosz.task.dto.TaskTypeDto
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
 import com.arturjarosz.task.project.query.impl.ProjectQueryServiceImpl
@@ -15,12 +14,13 @@ class TaskValidatorTest extends Specification {
     static final STAGE_ID = 2L
     static final TASK_ID = 1l
     static final String NAME = "name"
-    static final TaskTypeDto TASK_TYPE = TaskTypeDto.RENDER
+    static final Long TASK_TYPE_ID = 3L
 
     def projectQueryService = Mock(ProjectQueryServiceImpl)
     def architectValidator = Mock(ArchitectValidator)
+    def taskTypeValidator = Mock(TaskTypeValidator)
 
-    def taskValidator = new TaskValidator(projectQueryService, architectValidator)
+    def taskValidator = new TaskValidator(projectQueryService, architectValidator, taskTypeValidator)
 
 
     def "when taskDto in null, validateCreateTaskDto should throw an exception with specific error message"() {
@@ -35,7 +35,7 @@ class TaskValidatorTest extends Specification {
 
     def "when taskDto name is null, validateCreateTaskDto should throw an exception with specific error message"() {
         given:
-            def taskDto = new TaskDto(name: null, type: TASK_TYPE)
+            def taskDto = new TaskDto(name: null, typeId: TASK_TYPE_ID)
         when:
             this.taskValidator.validateCreateTaskDto(taskDto)
         then:
@@ -45,7 +45,7 @@ class TaskValidatorTest extends Specification {
 
     def "when taskDto name is empty, validateCreateTaskDto should throw an exception with specific error message"() {
         given:
-            def taskDto = new TaskDto(name: "", type: TASK_TYPE)
+            def taskDto = new TaskDto(name: "", typeId: TASK_TYPE_ID)
         when:
             this.taskValidator.validateCreateTaskDto(taskDto)
         then:
@@ -55,7 +55,7 @@ class TaskValidatorTest extends Specification {
 
     def "when taskDto type is null, validateCreateTaskDto should throw an exception with specific error message"() {
         given:
-            def taskDto = new TaskDto(name: NAME, type: null)
+            def taskDto = new TaskDto(name: NAME, typeId: null)
         when:
             this.taskValidator.validateCreateTaskDto(taskDto)
         then:
@@ -65,7 +65,7 @@ class TaskValidatorTest extends Specification {
 
     def "when taskDto architectId is null, validateCreateTaskDto should throw an exception with specific error message"() {
         given:
-            def taskDto = new TaskDto(name: NAME, type: TASK_TYPE, architectId: null)
+            def taskDto = new TaskDto(name: NAME, typeId: TASK_TYPE_ID, architectId: null)
         when:
             this.taskValidator.validateCreateTaskDto(taskDto)
         then:
@@ -94,7 +94,7 @@ class TaskValidatorTest extends Specification {
 
     def "when taskDto name is null, validateUpdateTaskDto should throw an exception with specific error message"() {
         given:
-            def taskDto = new TaskDto(name: null, type: TASK_TYPE)
+            def taskDto = new TaskDto(name: null, typeId: TASK_TYPE_ID)
         when:
             this.taskValidator.validateUpdateTaskDto(taskDto)
         then:
@@ -104,7 +104,7 @@ class TaskValidatorTest extends Specification {
 
     def "when taskDto name is empty, validateUpdateTaskDto should throw an exception with specific error message"() {
         given:
-            def taskDto = new TaskDto(name: "", type: TASK_TYPE)
+            def taskDto = new TaskDto(name: "", typeId: TASK_TYPE_ID)
         when:
             this.taskValidator.validateUpdateTaskDto(taskDto)
         then:

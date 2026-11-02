@@ -17,11 +17,14 @@ public class TaskValidator {
 
     private final ProjectQueryService projectQueryService;
     private final ArchitectValidator architectValidator;
+    private final TaskTypeValidator taskTypeValidator;
 
     @Autowired
-    public TaskValidator(ProjectQueryService projectQueryService, ArchitectValidator architectValidator) {
+    public TaskValidator(ProjectQueryService projectQueryService, ArchitectValidator architectValidator,
+            TaskTypeValidator taskTypeValidator) {
         this.projectQueryService = projectQueryService;
         this.architectValidator = architectValidator;
+        this.taskTypeValidator = taskTypeValidator;
     }
 
     /**
@@ -30,8 +33,9 @@ public class TaskValidator {
     public void validateCreateTaskDto(TaskDto taskDto) {
         assertNotNull(taskDto, createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK));
         this.validateName(taskDto.getName());
-        assertNotNull(taskDto.getType(),
+        assertNotNull(taskDto.getTypeId(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK, ProjectExceptionCodes.TYPE));
+        this.taskTypeValidator.validateExistence(taskDto.getTypeId());
         assertNotNull(taskDto.getArchitectId(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.TASK, ProjectExceptionCodes.ARCHITECT));
         this.architectValidator.validateArchitectExistence(taskDto.getArchitectId());

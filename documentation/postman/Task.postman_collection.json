@@ -460,7 +460,7 @@
                                 "header": [],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\n    \"name\": \"Etap 01\",\n    \"stageType\": \"VISUALISATIONS\"\n}",
+                                    "raw": "{\n    \"name\": \"Etap 01\",\n    \"typeId\": 100\n}",
                                     "options": {
                                         "raw": {
                                             "language": "json"
@@ -551,7 +551,7 @@
                                 "header": [],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\n    \"name\": \"Etap 01a\",\n    \"stageType\": \"VISUALISATIONS\",\n    \"note\": \"some note about stage\",\n    \"deadline\": \"2021-09-12\"\n}",
+                                    "raw": "{\n    \"name\": \"Etap 01a\",\n    \"typeId\": 100,\n    \"note\": \"some note about stage\",\n    \"deadline\": \"2021-09-12\"\n}",
                                     "options": {
                                         "raw": {
                                             "language": "json"
@@ -818,7 +818,7 @@
                                 "header": [],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\n    \"name\": \"Wizualizacje parteru\",\n    \"type\": \"RENDER\"\n\n}",
+                                    "raw": "{\n    \"name\": \"Wizualizacje parteru\",\n    \"typeId\": 100\n\n}",
                                     "options": {
                                         "raw": {
                                             "language": "json"

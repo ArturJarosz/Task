@@ -3,7 +3,6 @@ package com.arturjarosz.task.project.application.impl
 import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator
 import com.arturjarosz.task.dto.InstallmentDto
 import com.arturjarosz.task.dto.StageDto
-import com.arturjarosz.task.dto.StageTypeDto
 import com.arturjarosz.task.finance.application.InstallmentApplicationService
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
@@ -33,7 +32,7 @@ class StageApplicationServiceImplTest extends Specification {
     static final Long ARCHITECT_ID = 200L
     static final String NEW_STAGE_NAME = "newStageName"
     static final String NEW_STAGE_NOTE = "newStageNote"
-    static final StageTypeDto NEW_STAGE_TYPE = StageTypeDto.FUNCTIONAL_LAYOUT
+    static final Long NEW_STAGE_TYPE_ID = 7L
     static final LocalDate NEW_DEADLINE_DATE = LocalDate.of(2022, 12, 12)
 
     def projectQueryService = Mock(ProjectQueryServiceImpl)
@@ -440,7 +439,7 @@ class StageApplicationServiceImplTest extends Specification {
     }
 
     private StageDto prepareStageDtoForUpdate() {
-        StageDto stageDto = new StageDto(name: NEW_STAGE_NAME, note: NEW_STAGE_NOTE, type: NEW_STAGE_TYPE,
+        StageDto stageDto = new StageDto(name: NEW_STAGE_NAME, note: NEW_STAGE_NOTE, typeId: NEW_STAGE_TYPE_ID,
                 deadline: NEW_DEADLINE_DATE, architectId: ARCHITECT_ID)
         return stageDto
     }

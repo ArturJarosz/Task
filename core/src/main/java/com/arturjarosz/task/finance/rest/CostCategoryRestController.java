@@ -21,7 +21,7 @@ public class CostCategoryRestController implements CostCategoryApi {
 
     @Override
     public ResponseEntity<CostCategoryDto> createCostCategory(CostCategoryDto costCategoryDto) {
-        var costCategory = this.costCategoryApplicationService.createCostCategory(costCategoryDto);
+        var costCategory = this.costCategoryApplicationService.create(costCategoryDto);
         var headers = new HttpHeadersBuilder().withLocation("/cost-categories/{costCategoryId}", costCategory.getId())
                 .build();
         return new ResponseEntity<>(costCategory, headers, HttpStatus.CREATED);
@@ -31,24 +31,24 @@ public class CostCategoryRestController implements CostCategoryApi {
     public ResponseEntity<CostCategoryDto> updateCostCategory(CostCategoryDto costCategoryDto,
             Long costCategoryId) {
         return new ResponseEntity<>(
-                this.costCategoryApplicationService.updateCostCategory(costCategoryId, costCategoryDto),
+                this.costCategoryApplicationService.update(costCategoryId, costCategoryDto),
                 HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> deleteCostCategory(Long costCategoryId) {
-        this.costCategoryApplicationService.deleteCostCategory(costCategoryId);
+        this.costCategoryApplicationService.delete(costCategoryId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<CostCategoryDto> getCostCategory(Long costCategoryId) {
-        return new ResponseEntity<>(this.costCategoryApplicationService.getCostCategory(costCategoryId),
+        return new ResponseEntity<>(this.costCategoryApplicationService.get(costCategoryId),
                 HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<CostCategoryDto>> getCostCategories() {
-        return new ResponseEntity<>(this.costCategoryApplicationService.getCostCategories(), HttpStatus.OK);
+        return new ResponseEntity<>(this.costCategoryApplicationService.getAll(), HttpStatus.OK);
     }
 }

@@ -1,11 +1,7 @@
 package com.arturjarosz.task.supplier.infrastructure;
 
 import com.arturjarosz.task.supplier.model.SupplierCategory;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.arturjarosz.task.sharedkernel.namedentry.NamedEntryRepository;
 
-public interface SupplierCategoryRepository extends JpaRepository<SupplierCategory, Long> {
-
-    boolean existsByNameIgnoreCase(String name);
-
-    boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
+public interface SupplierCategoryRepository extends NamedEntryRepository<SupplierCategory> {
 }

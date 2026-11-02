@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: "create-task-type-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-task-type-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "replace-task-type-column.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "add-task-type-indexes.yml"
+      relativeToChangelogFile: true

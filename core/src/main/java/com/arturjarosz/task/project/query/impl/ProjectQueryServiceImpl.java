@@ -17,6 +17,7 @@ import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.project.status.project.ProjectStatus;
 import com.arturjarosz.task.sharedkernel.annotations.Finder;
 import com.arturjarosz.task.sharedkernel.infrastructure.AbstractQueryService;
+import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -76,9 +77,37 @@ public class ProjectQueryServiceImpl extends AbstractQueryService<QProject> impl
     }
 
     @Override
-    public Map<Long, ProjectCounts> getProjectCountsByProjectTypeIds(Collection<Long> projectTypeIds) {
-        // project types have no active projects of their own, only the number of all projects is used
-        return this.getProjectCountsBy(PROJECT.projectTypeId, projectTypeIds, Set.of());
+    public Map<Long, Long> getNumberOfProjectsByProjectTypeIds(Collection<Long> projectTypeIds) {
+        return this.getCountsBy(PROJECT, PROJECT.projectTypeId, projectTypeIds);
+    }
+
+    @Override
+    public Map<Long, Long> getNumberOfStagesByStageTypeIds(Collection<Long> stageTypeIds) {
+        return this.getCountsBy(STAGE, STAGE.stageTypeId, stageTypeIds);
+    }
+
+    @Override
+    public Map<Long, Long> getNumberOfTasksByTaskTypeIds(Collection<Long> taskTypeIds) {
+        return this.getCountsBy(TASK, TASK.taskTypeId, taskTypeIds);
+    }
+
+    /**
+     * Counts rows of entity grouped by typeId for each of typeIds, types without rows get 0.
+     */
+    private Map<Long, Long> getCountsBy(EntityPath<?> entity, NumberPath<Long> typeId, Collection<Long> typeIds) {
+        Map<Long, Long> countsByTypeId = new HashMap<>();
+        typeIds.stream().filter(Objects::nonNull).forEach(id -> countsByTypeId.put(id, 0L));
+        if (countsByTypeId.isEmpty()) {
+            return countsByTypeId;
+        }
+        this.query()
+                .from(entity)
+                .where(typeId.in(countsByTypeId.keySet()))
+                .groupBy(typeId)
+                .select(typeId, typeId.count())
+                .fetch()
+                .forEach(row -> countsByTypeId.put(row.get(typeId), row.get(1, Long.class)));
+        return countsByTypeId;
     }
 
     private Map<Long, ProjectCounts> getProjectCountsBy(NumberPath<Long> ownerId, Collection<Long> ownerIds,

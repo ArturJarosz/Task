@@ -13,7 +13,7 @@ class TaskBuilder extends AbstractBuilder<Task, TaskBuilder> {
     private static final String NAME = "name"
     private static final String START_DATE = "startDate"
     private static final String STATUS = "status"
-    private static final String TYPE = "type"
+    private static final String TYPE = "taskTypeId"
 
     TaskBuilder() {
         super(Task)

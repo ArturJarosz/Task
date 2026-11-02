@@ -30,9 +30,8 @@ public class Task extends AbstractHistoryAwareEntity implements WorkflowAware<Ta
     /* @Embedded
     private WorkTime workTime;*/
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "TASK_TYPE")
-    private TaskType type;
+    @Column(name = "TASK_TYPE_ID", nullable = false)
+    private Long taskTypeId;
 
     @Column(name = "START_DATE")
     private LocalDate startDate;
@@ -57,9 +56,9 @@ public class Task extends AbstractHistoryAwareEntity implements WorkflowAware<Ta
         // needed by JPA
     }
 
-    public Task(String name, TaskType taskType, TaskWorkflow taskWorkflow, Long architectId) {
+    public Task(String name, Long taskTypeId, TaskWorkflow taskWorkflow, Long architectId) {
         this.name = name;
-        this.type = taskType;
+        this.taskTypeId = taskTypeId;
         this.workflowName = taskWorkflow.getName();
         this.architectId = architectId;
     }
@@ -78,7 +77,7 @@ public class Task extends AbstractHistoryAwareEntity implements WorkflowAware<Ta
 
     public void update(TaskInnerDto taskInnerDto) {
         this.name = taskInnerDto.getName();
-        this.type = taskInnerDto.getTaskType();
+        this.taskTypeId = taskInnerDto.getTaskTypeId();
         this.startDate = taskInnerDto.getStartDate();
         this.endDate = taskInnerDto.getEndDate();
         this.note = taskInnerDto.getNote();
@@ -112,8 +111,8 @@ public class Task extends AbstractHistoryAwareEntity implements WorkflowAware<Ta
         }
     }
 
-    public TaskType getType() {
-        return this.type;
+    public Long getTaskTypeId() {
+        return this.taskTypeId;
     }
 
     public String getNote() {

@@ -46,6 +46,11 @@ class TaskTestIT extends BaseTestIT {
     def setup() {
         // ids of the data created by BaseTestIT
         projectDto.typeId = projectTypeId
+        stageDto.typeId = stageTypeId
+        properTaskDto.typeId = taskTypeId
+        notProperTaskDto.typeId = taskTypeId
+        properTaskUpdateDto.typeId = taskTypeId
+        notProperTaskUpdateDto.typeId = taskTypeId
     }
 
     @Transactional
@@ -118,7 +123,7 @@ class TaskTestIT extends BaseTestIT {
             def createdTaskDto = MAPPER.readValue(taskResponse.contentAsString, TaskDto)
             createdTaskDto.id != null
             createdTaskDto.name == properTaskDto.name
-            createdTaskDto.type == properTaskDto.type
+            createdTaskDto.typeId == properTaskDto.typeId
             createdTaskDto.createdDateTime != null
         and:
             !createdTaskDto.nextStatuses.empty

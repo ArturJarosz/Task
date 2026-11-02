@@ -44,6 +44,10 @@ class StageTestIT extends BaseTestIT {
     def setup() {
         // ids of the data created by BaseTestIT
         projectDto.typeId = projectTypeId
+        properStageDto.typeId = stageTypeId
+        notProperStageDto.typeId = stageTypeId
+        properStageUpdateDto.typeId = stageTypeId
+        notProperStageUpdateDto.typeId = stageTypeId
     }
 
     @Transactional
@@ -87,7 +91,7 @@ class StageTestIT extends BaseTestIT {
         given:
             def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
             def createdProject = this.createProject(architectDto.id)
-            def stageDtoWithoutArchitect = new StageDto(name: "Etap 01", type: StageTypeDto.VISUALISATIONS)
+            def stageDtoWithoutArchitect = new StageDto(name: "Etap 01", typeId: stageTypeId)
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDtoWithoutArchitect)
         when:
             def stageResponse = this.mockMvc.perform(
@@ -107,7 +111,7 @@ class StageTestIT extends BaseTestIT {
         given:
             def architectDto = TestsHelper.createArchitect(this.architect, this.createArchitectUrl(), this.mockMvc)
             def createdProject = this.createProject(architectDto.id)
-            def stageDtoWithWrongArchitect = new StageDto(name: "Etap 01", type: StageTypeDto.VISUALISATIONS,
+            def stageDtoWithWrongArchitect = new StageDto(name: "Etap 01", typeId: stageTypeId,
                     architectId: NOT_EXISTING_ARCHITECT_ID)
             def stageRequestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDtoWithWrongArchitect)
         when:
@@ -307,7 +311,7 @@ class StageTestIT extends BaseTestIT {
             def stageUpdateDto = MAPPER.readValue(stageResponse.contentAsString, StageDto)
             stageUpdateDto.name == properStageUpdateDto.name
             stageUpdateDto.note == properStageUpdateDto.note
-            stageUpdateDto.type == properStageUpdateDto.type
+            stageUpdateDto.typeId == properStageUpdateDto.typeId
             stageUpdateDto.deadline == properStageUpdateDto.deadline
             stageUpdateDto.lastModifiedDateTime != null
         and:

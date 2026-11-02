@@ -38,7 +38,11 @@ import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.TaskApplicationService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectTypeRepository;
+import com.arturjarosz.task.project.infrastructure.repositor.StageTypeRepository;
+import com.arturjarosz.task.project.infrastructure.repositor.TaskTypeRepository;
 import com.arturjarosz.task.project.model.ProjectType;
+import com.arturjarosz.task.project.model.StageType;
+import com.arturjarosz.task.project.model.TaskType;
 import com.arturjarosz.task.sharedkernel.model.AbstractEntity;
 import com.arturjarosz.task.supplier.infrastructure.SupplierRepository;
 import com.arturjarosz.task.supplier.model.Supplier;
@@ -60,12 +64,13 @@ import java.util.stream.Collectors;
 /**
  * Loads sample Projects with Stages, Tasks and financial data. Objects are created through application services, and
  * statuses are reached by regular status transitions, so all validators and status listeners are applied. Has to be
- * run after architects, clients, contractors, suppliers, project types and cost categories are loaded. Dates that can't be set through
+ * run after architects, clients, contractors, suppliers, project types, cost categories, stage types and task types are
+ * loaded. Dates that can't be set through
  * application services (passed deadlines, start and end dates of work, creation time) are changed by {@link SampleDateUpdater}.
  */
 @Slf4j
 @Component
-@Order(9)
+@Order(11)
 @RequiredArgsConstructor
 public class ProjectDataInitializer implements DataInitializer {
     private static final String FILE_NAME = "sampleData/projectsSample.json";
@@ -83,6 +88,8 @@ public class ProjectDataInitializer implements DataInitializer {
     private final SupplierRepository supplierRepository;
     private final ProjectTypeRepository projectTypeRepository;
     private final CostCategoryRepository costCategoryRepository;
+    private final StageTypeRepository stageTypeRepository;
+    private final TaskTypeRepository taskTypeRepository;
     private final ProjectApplicationService projectApplicationService;
     private final StageApplicationService stageApplicationService;
     private final TaskApplicationService taskApplicationService;
@@ -110,7 +117,9 @@ public class ProjectDataInitializer implements DataInitializer {
                 idsByKey(this.contractorRepository.findAll(), Contractor::getName),
                 idsByKey(this.supplierRepository.findAll(), Supplier::getName),
                 idsByKey(this.projectTypeRepository.findAll(), ProjectType::getName),
-                idsByKey(this.costCategoryRepository.findAll(), CostCategory::getName));
+                idsByKey(this.costCategoryRepository.findAll(), CostCategory::getName),
+                idsByKey(this.stageTypeRepository.findAll(), StageType::getName),
+                idsByKey(this.taskTypeRepository.findAll(), TaskType::getName));
     }
 
     /**
@@ -140,7 +149,7 @@ public class ProjectDataInitializer implements DataInitializer {
         var stageIds = new ArrayList<Long>();
         var taskIds = new IdentityHashMap<TaskSample, Long>();
         for (StageSample stageSample : projectSample.getStages()) {
-            stageIds.add(this.createStage(projectId, architectId, stageSample, taskIds));
+            stageIds.add(this.createStage(projectId, architectId, stageSample, taskIds, referencedIds));
         }
         projectSample.getCosts().forEach(cost -> this.createCost(projectId, cost, referencedIds));
         projectSample.getContractorJobs().forEach(job -> this.createContractorJob(projectId, job, referencedIds));
@@ -194,9 +203,9 @@ public class ProjectDataInitializer implements DataInitializer {
     }
 
     private Long createStage(Long projectId, Long architectId, StageSample stageSample,
-            Map<TaskSample, Long> taskIds) {
+            Map<TaskSample, Long> taskIds, ReferencedIds referencedIds) {
         var stageDto = this.stageApplicationService.createStage(projectId, new StageDto().name(stageSample.getName())
-                .type(stageSample.getType())
+                .typeId(getId(referencedIds.stageTypeIdsByName(), stageSample.getType(), "stage type"))
                 .note(stageSample.getNote())
                 .architectId(architectId)
                 .deadline(daysFromNow(stageSample.getDeadlineInDays())));
@@ -205,7 +214,7 @@ public class ProjectDataInitializer implements DataInitializer {
         for (TaskSample taskSample : stageSample.getTasks()) {
             var taskDto = this.taskApplicationService.createTask(projectId, stageId,
                     new TaskDto().name(taskSample.getName())
-                            .type(taskSample.getType())
+                            .typeId(getId(referencedIds.taskTypeIdsByName(), taskSample.getType(), "task type"))
                             .note(taskSample.getNote())
                             .architectId(architectId));
             taskIds.put(taskSample, taskDto.getId());
@@ -384,6 +393,7 @@ public class ProjectDataInitializer implements DataInitializer {
 
     private record ReferencedIds(Map<String, Long> architectIdsByName, Map<String, Long> clientIdsByEmail,
             Map<String, Long> contractorIdsByName, Map<String, Long> supplierIdsByName,
-            Map<String, Long> projectTypeIdsByName, Map<String, Long> costCategoryIdsByName) {
+            Map<String, Long> projectTypeIdsByName, Map<String, Long> costCategoryIdsByName,
+            Map<String, Long> stageTypeIdsByName, Map<String, Long> taskTypeIdsByName) {
     }
 }

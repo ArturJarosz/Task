@@ -32,6 +32,12 @@ databaseChangeLog:
   - include:
       file: "cost-category/cost-category-tables.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "stage-type/stage-type-tables.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "task-type/task-type-tables.yml"
+      relativeToChangelogFile: true
   - changeSet:
       author: "liquibase"
       id: "tag-version_0.6.2"

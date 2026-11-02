@@ -1,11 +1,9 @@
 package com.arturjarosz.task.supplier.model;
 
-import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
-import jakarta.persistence.Column;
+import com.arturjarosz.task.sharedkernel.namedentry.AbstractNamedEntry;
 import jakarta.persistence.Entity;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import lombok.Getter;
 
 import java.io.Serial;
 
@@ -16,25 +14,15 @@ import java.io.Serial;
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "supplier_category_sequence", allocationSize = 1)
 @Table(name = "SUPPLIER_CATEGORY")
-public class SupplierCategory extends AbstractAggregateRoot {
+public class SupplierCategory extends AbstractNamedEntry {
     @Serial
     private static final long serialVersionUID = 5830149274861203755L;
-
-    public static final int NAME_MAX_LENGTH = 100;
-
-    @Getter
-    @Column(name = "NAME", nullable = false, length = NAME_MAX_LENGTH)
-    private String name;
 
     protected SupplierCategory() {
         // needed by JPA
     }
 
     public SupplierCategory(String name) {
-        this.name = name;
-    }
-
-    public void rename(String name) {
-        this.name = name;
+        super(name);
     }
 }

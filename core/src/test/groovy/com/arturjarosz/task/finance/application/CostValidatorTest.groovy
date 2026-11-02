@@ -1,9 +1,11 @@
 package com.arturjarosz.task.finance.application
 
 import com.arturjarosz.task.dto.CostDto
+import com.arturjarosz.task.finance.application.validator.CostCategoryValidator
 import com.arturjarosz.task.finance.application.validator.CostValidator
 import com.arturjarosz.task.finance.infrastructure.CostCategoryRepository
 import com.arturjarosz.task.finance.model.Cost
+import com.arturjarosz.task.finance.model.CostCategory
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
 import spock.lang.Specification
 
@@ -25,10 +27,12 @@ class CostValidatorTest extends Specification {
     def financialDataQueryService = Mock(FinancialDataQueryService)
 
     def costCategoryRepository = Stub(CostCategoryRepository) {
-        existsById(CATEGORY) >> true
+        findLockedById(CATEGORY) >> Optional.of(new CostCategory("Fuel"))
+        findLockedById(_) >> Optional.empty()
     }
 
-    def costValidator = new CostValidator(financialDataQueryService, costCategoryRepository)
+    def costValidator = new CostValidator(financialDataQueryService,
+            new CostCategoryValidator(costCategoryRepository, financialDataQueryService))
 
     def setup() {
         this.financialDataQueryService.doesCostExistByCostId(COST_ID) >> true

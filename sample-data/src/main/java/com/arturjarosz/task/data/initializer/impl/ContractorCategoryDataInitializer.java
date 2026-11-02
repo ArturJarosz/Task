@@ -31,7 +31,7 @@ public class ContractorCategoryDataInitializer implements DataInitializer {
         this.prepareContractorCategories()
                 .stream()
                 .filter(category -> !this.contractorCategoryRepository.existsByNameIgnoreCase(category.getName()))
-                .forEach(this.contractorCategoryApplicationService::createContractorCategory);
+                .forEach(this.contractorCategoryApplicationService::create);
         LOG.info("Contractor categories added to the database.");
     }
 

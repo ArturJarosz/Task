@@ -42,9 +42,19 @@ public interface ProjectQueryService {
     Map<Long, ProjectCounts> getProjectCountsByClientIds(Collection<Long> clientIds, Set<ProjectStatus> activeStatuses);
 
     /**
-     * Count projects of each Project type from projectTypeIds. Types without projects get ProjectCounts.NONE.
+     * Count projects of each Project type from projectTypeIds. Types without projects get 0.
      */
-    Map<Long, ProjectCounts> getProjectCountsByProjectTypeIds(Collection<Long> projectTypeIds);
+    Map<Long, Long> getNumberOfProjectsByProjectTypeIds(Collection<Long> projectTypeIds);
+
+    /**
+     * Count stages of each Stage type from stageTypeIds. Types without stages get 0.
+     */
+    Map<Long, Long> getNumberOfStagesByStageTypeIds(Collection<Long> stageTypeIds);
+
+    /**
+     * Count tasks of each Task type from taskTypeIds. Types without tasks get 0.
+     */
+    Map<Long, Long> getNumberOfTasksByTaskTypeIds(Collection<Long> taskTypeIds);
 
     /**
      * Retrieve Task as TaskDto of given TaskId.

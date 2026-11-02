@@ -3,7 +3,6 @@ package com.arturjarosz.task.project.application.impl
 import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator
 import com.arturjarosz.task.dto.TaskDto
 import com.arturjarosz.task.dto.TaskStatusDto
-import com.arturjarosz.task.dto.TaskTypeDto
 import com.arturjarosz.task.dto.UpdateStatusRequestDto
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
@@ -25,6 +24,7 @@ import spock.lang.Specification
 
 class TaskApplicationServiceImplTest extends Specification {
     static final Long PROJECT_ID = 1L
+    static final Long TASK_TYPE_ID = 3L
     static final Long STAGE_ID = 10L
     static final Long TASK_ID = 20L
     static final String PROJECT_NAME = "projectName"
@@ -346,11 +346,11 @@ class TaskApplicationServiceImplTest extends Specification {
 
 
     private TaskDto prepareNewTaskDto() {
-        new TaskDto(name: TASK_NAME, id: TASK_ID, type: TaskTypeDto.CONCEPT)
+        new TaskDto(name: TASK_NAME, id: TASK_ID, typeId: TASK_TYPE_ID)
     }
 
     private TaskDto prepareUpdateTaskDto() {
-        new TaskDto(name: NEW_TASK_NAME, id: TASK_ID, type: TaskTypeDto.CONCEPT)
+        new TaskDto(name: NEW_TASK_NAME, id: TASK_ID, typeId: TASK_TYPE_ID)
 
     }
 

@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: "create-stage-type-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-stage-type-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "replace-stage-type-column.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "add-stage-type-indexes.yml"
+      relativeToChangelogFile: true

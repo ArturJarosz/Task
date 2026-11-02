@@ -31,7 +31,7 @@ public class SupplierCategoryDataInitializer implements DataInitializer {
         this.prepareSupplierCategories()
                 .stream()
                 .filter(category -> !this.supplierCategoryRepository.existsByNameIgnoreCase(category.getName()))
-                .forEach(this.supplierCategoryApplicationService::createSupplierCategory);
+                .forEach(this.supplierCategoryApplicationService::create);
         LOG.info("Supplier categories added to the database.");
     }
 

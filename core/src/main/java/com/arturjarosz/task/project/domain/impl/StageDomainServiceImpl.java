@@ -5,7 +5,6 @@ import com.arturjarosz.task.project.application.mapper.StageMapper;
 import com.arturjarosz.task.project.domain.StageDomainService;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
-import com.arturjarosz.task.project.model.StageType;
 import com.arturjarosz.task.project.status.stage.StageStatus;
 import com.arturjarosz.task.project.status.stage.StageStatusTransitionService;
 import com.arturjarosz.task.project.status.stage.StageWorkflow;
@@ -38,22 +37,22 @@ public class StageDomainServiceImpl implements StageDomainService {
         this.statusToUpdater = new EnumMap<>(StageStatus.class);
         this.statusToUpdater.put(StageStatus.TO_DO,
                 (stage, stageDto) -> stage.update(stageDto.getName(), stageDto.getNote(),
-                        StageType.valueOf(stageDto.getType().getValue()), stageDto.getDeadline(),
+                        stageDto.getTypeId(), stageDto.getDeadline(),
                         stageDto.getArchitectId()));
         this.statusToUpdater.put(StageStatus.IN_PROGRESS, (stage, stageDto) -> {
-            stage.update(stageDto.getName(), stageDto.getNote(), StageType.valueOf(stageDto.getType().getValue()),
+            stage.update(stageDto.getName(), stageDto.getNote(), stageDto.getTypeId(),
                     stageDto.getDeadline(), stageDto.getArchitectId());
             stage.setStartDate(stageDto.getStartDate());
             stage.setEndDate(null);
         });
         this.statusToUpdater.put(StageStatus.DONE, (stage, stageDto) -> {
-            stage.update(stageDto.getName(), stageDto.getNote(), StageType.valueOf(stageDto.getType().getValue()),
+            stage.update(stageDto.getName(), stageDto.getNote(), stageDto.getTypeId(),
                     stageDto.getDeadline(), stageDto.getArchitectId());
             stage.setStartDate(stageDto.getStartDate());
             stage.setEndDate(stageDto.getEndDate());
         });
         this.statusToUpdater.put(StageStatus.REJECTED, (stage, stageDto) -> {
-            stage.update(stageDto.getName(), stageDto.getNote(), StageType.valueOf(stageDto.getType().getValue()),
+            stage.update(stageDto.getName(), stageDto.getNote(), stageDto.getTypeId(),
                     stageDto.getDeadline(), stageDto.getArchitectId());
             stage.setStartDate(stageDto.getStartDate());
         });

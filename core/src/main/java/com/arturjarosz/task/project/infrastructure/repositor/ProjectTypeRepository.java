@@ -1,11 +1,7 @@
 package com.arturjarosz.task.project.infrastructure.repositor;
 
 import com.arturjarosz.task.project.model.ProjectType;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.arturjarosz.task.sharedkernel.namedentry.NamedEntryRepository;
 
-public interface ProjectTypeRepository extends JpaRepository<ProjectType, Long> {
-
-    boolean existsByNameIgnoreCase(String name);
-
-    boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
+public interface ProjectTypeRepository extends NamedEntryRepository<ProjectType> {
 }

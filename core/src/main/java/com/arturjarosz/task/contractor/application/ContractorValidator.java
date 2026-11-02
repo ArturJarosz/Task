@@ -1,7 +1,6 @@
 package com.arturjarosz.task.contractor.application;
 
 import com.arturjarosz.task.contractor.domain.ContractorExceptionCodes;
-import com.arturjarosz.task.contractor.infrastructure.ContractorCategoryRepository;
 import com.arturjarosz.task.contractor.infrastructure.ContractorRepository;
 import com.arturjarosz.task.contractor.model.Contractor;
 import com.arturjarosz.task.dto.ContractorDto;
@@ -24,7 +23,7 @@ public class ContractorValidator {
     @NonNull
     private final ContractorRepository contractorRepository;
     @NonNull
-    private final ContractorCategoryRepository contractorCategoryRepository;
+    private final ContractorCategoryValidator contractorCategoryValidator;
 
     public void validateCreateContractorDto(ContractorDto contractorDto) {
         assertNotNull(contractorDto, createMessageCode(ExceptionCodes.NULL, ContractorExceptionCodes.CONTRACTOR));
@@ -32,9 +31,7 @@ public class ContractorValidator {
         assertNotNull(contractorDto.getCategoryId(),
                 createMessageCode(ExceptionCodes.NULL, ContractorExceptionCodes.CONTRACTOR,
                         ContractorExceptionCodes.CATEGORY));
-        assertEntityPresent(this.contractorCategoryRepository.existsById(contractorDto.getCategoryId()),
-                createMessageCode(ExceptionCodes.NOT_EXIST, ContractorExceptionCodes.CONTRACTOR_CATEGORY),
-                contractorDto.getCategoryId());
+        this.contractorCategoryValidator.validateExistence(contractorDto.getCategoryId());
     }
 
     public void validateUpdateContractorDto(ContractorDto contractorDto) {

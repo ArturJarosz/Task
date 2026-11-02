@@ -21,7 +21,7 @@ public class SupplierCategoryRestController implements SupplierCategoryApi {
 
     @Override
     public ResponseEntity<SupplierCategoryDto> createSupplierCategory(SupplierCategoryDto supplierCategoryDto) {
-        var supplierCategory = this.supplierCategoryApplicationService.createSupplierCategory(supplierCategoryDto);
+        var supplierCategory = this.supplierCategoryApplicationService.create(supplierCategoryDto);
         var headers = new HttpHeadersBuilder().withLocation("/supplier-categories/{supplierCategoryId}", supplierCategory.getId())
                 .build();
         return new ResponseEntity<>(supplierCategory, headers, HttpStatus.CREATED);
@@ -31,24 +31,24 @@ public class SupplierCategoryRestController implements SupplierCategoryApi {
     public ResponseEntity<SupplierCategoryDto> updateSupplierCategory(SupplierCategoryDto supplierCategoryDto,
             Long supplierCategoryId) {
         return new ResponseEntity<>(
-                this.supplierCategoryApplicationService.updateSupplierCategory(supplierCategoryId, supplierCategoryDto),
+                this.supplierCategoryApplicationService.update(supplierCategoryId, supplierCategoryDto),
                 HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> deleteSupplierCategory(Long supplierCategoryId) {
-        this.supplierCategoryApplicationService.deleteSupplierCategory(supplierCategoryId);
+        this.supplierCategoryApplicationService.delete(supplierCategoryId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<SupplierCategoryDto> getSupplierCategory(Long supplierCategoryId) {
-        return new ResponseEntity<>(this.supplierCategoryApplicationService.getSupplierCategory(supplierCategoryId),
+        return new ResponseEntity<>(this.supplierCategoryApplicationService.get(supplierCategoryId),
                 HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<SupplierCategoryDto>> getSupplierCategories() {
-        return new ResponseEntity<>(this.supplierCategoryApplicationService.getSupplierCategories(), HttpStatus.OK);
+        return new ResponseEntity<>(this.supplierCategoryApplicationService.getAll(), HttpStatus.OK);
     }
 }
