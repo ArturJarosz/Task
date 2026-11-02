@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-ta-587-look"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-585"
+              - column:
+                  name: "TYPE"
+                  value: "IMPROVED"
+              - column:
+                  name: "TITLE"
+                  value: "A cleaner, calmer look across the app"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "Cards now sit closer together with a soft shadow on a lightly tinted background, column headings in lists are easier to read and separated by thin lines, and only names and totals stand out in heavier text, so your data is quicker to scan. Buttons and fields are a little slimmer, the selected option in a toggle looks pressed in, statuses and initials circles have stronger colors so they are easier to spot, and the menu slides smoothly when you collapse or expand it."
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

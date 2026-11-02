@@ -9,3 +9,6 @@ databaseChangeLog:
   - include:
       file: "add-release-note-ta-585.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "add-release-note-ta-587.yml"
+      relativeToChangelogFile: true
