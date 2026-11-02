@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - include:
+      file: "create-release-note-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-release-note-table.yml"
+      relativeToChangelogFile: true
+  # Entries users see in "What's new", one file per story, in the order the stories are merged
+  - include:
+      file: "add-release-note-ta-585.yml"
+      relativeToChangelogFile: true

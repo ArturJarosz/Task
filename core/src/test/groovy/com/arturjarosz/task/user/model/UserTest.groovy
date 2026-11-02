@@ -64,4 +64,39 @@ class UserTest extends Specification {
             ""       | " "
             null     | TOO_LONG_EMAIL
     }
+
+    def "Marking release notes as seen should keep the newest note seen"() {
+        given:
+            def user = new User(USERNAME, EMAIL, AUTH_ID)
+
+        when:
+            seenIds.each { user.markReleaseNotesSeen(it) }
+
+        then:
+            user.lastSeenReleaseNoteId == expectedLastSeenId
+
+        where:
+            seenIds         || expectedLastSeenId
+            []              || null
+            [100L]          || 100L
+            [100L, 105L]    || 105L
+            [105L, 100L]    || 105L
+            [105L, 105L]    || 105L
+    }
+
+    def "A release note not newer than the last one seen should count as seen"() {
+        given:
+            def user = new User(USERNAME, EMAIL, AUTH_ID)
+            seenIds.each { user.markReleaseNotesSeen(it) }
+
+        expect:
+            user.hasSeenReleaseNote(releaseNoteId) == expectedSeen
+
+        where:
+            seenIds || releaseNoteId || expectedSeen
+            []      || 100L          || false
+            [105L]  || 100L          || true
+            [105L]  || 105L          || true
+            [105L]  || 106L          || false
+    }
 }

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-release-note-sequence"
+      changes:
+        - createSequence:
+            sequenceName: "release_note_sequence"
+            startValue: 100
+            cacheSize: 1
+            incrementBy: 1

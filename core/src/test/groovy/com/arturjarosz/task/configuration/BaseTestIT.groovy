@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import spock.lang.Specification
 
 /**
@@ -66,5 +69,11 @@ class BaseTestIT extends Specification {
                 ?: stageTypeRepository.save(new StageType(FIXTURE_STAGE_TYPE_NAME))).id
         taskTypeId = (taskTypeRepository.findAll().find { it.name == FIXTURE_TASK_TYPE_NAME }
                 ?: taskTypeRepository.save(new TaskType(FIXTURE_TASK_TYPE_NAME))).id
+    }
+
+    // The test profile runs without the security filter chain, so the JWT goes straight into the context
+    protected static void authenticate(String authId, Map<String, Object> otherClaims = [:]) {
+        def jwt = new Jwt("token", null, null, ["alg": "RS256"], ["sub": authId] + otherClaims)
+        SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt))
     }
 }

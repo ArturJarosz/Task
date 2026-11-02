@@ -61,6 +61,15 @@ databaseChangeLog:
       name: "uuid.type"
       value: "UUID"
       dbms: "postgresql,h2"
+  # uuid generating function, for values computed in changesets
+  - property:
+      name: "uuid.function"
+      value: "gen_random_uuid()"
+      dbms: "postgresql"
+  - property:
+      name: "uuid.function"
+      value: "RANDOM_UUID()"
+      dbms: "h2"
 
 
 

@@ -1,5 +1,6 @@
 package com.arturjarosz.task.user.application
 
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import com.arturjarosz.task.user.infrastructure.repository.UserRepository
 import com.arturjarosz.task.user.model.User
 import org.springframework.security.core.Authentication
@@ -17,8 +18,9 @@ class CurrentUserProviderTest extends Specification {
 
     def userRepository = Mock(UserRepository)
     def securityContext = Mock(SecurityContext)
+    def userCreationListener = Mock(UserCreationListener)
 
-    def subject = new CurrentUserProvider(userRepository)
+    def subject = new CurrentUserProvider(userRepository, [userCreationListener])
 
     def setup() {
         SecurityContextHolder.setContext(securityContext)
@@ -86,6 +88,8 @@ class CurrentUserProviderTest extends Specification {
             1 * this.userRepository.save({ User u ->
                 u.authId == AUTH_ID && u.username == USERNAME && u.email == EMAIL
             }) >> { User u -> u }
+        then:
+            1 * this.userCreationListener.onUserCreated({ User u -> u.authId == AUTH_ID })
         and:
             result.get().authId == AUTH_ID
     }
@@ -115,6 +119,7 @@ class CurrentUserProviderTest extends Specification {
         then:
             1 * this.userRepository.lockAuthId(AUTH_ID)
             0 * this.userRepository.save(_)
+            0 * this.userCreationListener.onUserCreated(_)
             result.get() == concurrentlyCreatedUser
     }
 
@@ -132,6 +137,19 @@ class CurrentUserProviderTest extends Specification {
             user.email == EMAIL
             0 * this.userRepository.lockAuthId(_)
             0 * this.userRepository.save(_)
+            0 * this.userCreationListener.onUserCreated(_)
+    }
+
+    def "getOrCreateCurrentUser should throw ResourceNotFoundException when token does not belong to a person"() {
+        given:
+            this.securityContext.getAuthentication() >> null
+
+        when:
+            this.subject.getOrCreateCurrentUser()
+
+        then:
+            def exception = thrown(ResourceNotFoundException)
+            exception.message == "notExist.user"
     }
 
     private void authenticate(Jwt jwt) {

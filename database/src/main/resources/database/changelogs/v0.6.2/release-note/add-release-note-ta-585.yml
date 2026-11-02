@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-ta-585"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-585"
+              - column:
+                  name: "TYPE"
+                  value: "NEW"
+              - column:
+                  name: "TITLE"
+                  value: "See what's new after you log in"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "After you log in, you now get a short list of what has changed since your last visit. You can open it again any time from your user menu under What's new."
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

@@ -1,5 +1,8 @@
 package com.arturjarosz.task.user.application;
 
+import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
+import com.arturjarosz.task.user.domain.UserExceptionCodes;
 import com.arturjarosz.task.user.infrastructure.repository.UserRepository;
 import com.arturjarosz.task.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +12,10 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 /**
  * Single place that resolves the local {@link User} wired to the Auth0 user of the current JWT token. Anything acting
@@ -31,6 +37,7 @@ public class CurrentUserProvider {
     public static final String NAME_CLAIM = CLAIMS_NAMESPACE + "name";
 
     private final UserRepository userRepository;
+    private final List<UserCreationListener> userCreationListeners;
 
     /**
      * Returns the local user of the current JWT token without creating it.
@@ -41,9 +48,9 @@ public class CurrentUserProvider {
 
     /**
      * Returns the local user of the current JWT token, creating it on the first login. Username and email are
-     * refreshed from the token claims, so a change made in Auth0 reaches the local user on next login. Returns an
-     * empty optional when the token does not belong to a person. Joins the caller's transaction, so the user it
-     * returns stays managed there.
+     * refreshed from the token claims, so a change made in Auth0 reaches the local user on next login. A new user is
+     * passed to every {@link UserCreationListener}. Returns an empty optional when the token does not belong to a
+     * person. Joins the caller's transaction, so the user it returns stays managed there.
      */
     @Transactional
     public Optional<User> findOrCreateCurrentUser() {
@@ -66,8 +73,19 @@ public class CurrentUserProvider {
         }
 
         var user = this.userRepository.save(new User(tokenUser.name(), tokenUser.email(), tokenUser.authId()));
+        this.userCreationListeners.forEach(listener -> listener.onUserCreated(user));
         LOG.info("Local user created for authId {}.", tokenUser.authId());
         return Optional.of(user);
+    }
+
+    /**
+     * Same as {@link #findOrCreateCurrentUser()}, but throws {@link ResourceNotFoundException} when the token does not
+     * belong to a person.
+     */
+    @Transactional
+    public User getOrCreateCurrentUser() {
+        return this.findOrCreateCurrentUser().orElseThrow(() -> new ResourceNotFoundException(
+                createMessageCode(ExceptionCodes.NOT_EXIST, UserExceptionCodes.USER)));
     }
 
     // Jwt stays out of every method signature (lambda parameters included): sample-data runs this context without
