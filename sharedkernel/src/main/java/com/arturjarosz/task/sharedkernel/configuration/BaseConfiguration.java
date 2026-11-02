@@ -27,6 +27,7 @@ public class BaseConfiguration {
             "classpath:/i18n/project/status",
             "classpath:/i18n/project/supervision",
             "classpath:/i18n/project/supply",
+            "classpath:/i18n/releaseNote/releaseNote",
             "classpath:/i18n/systemParameter/systemParameter",
             "classpath:/i18n/user/user"
     };

@@ -43,6 +43,11 @@ public class User extends AbstractAggregateRoot {
     @Column(name = "AUTH_ID", nullable = false, unique = true)
     private String authId;
 
+    // Newest release note the user has seen; null until the user closes "What's new" for the first time
+    @Getter
+    @Column(name = "LAST_SEEN_RELEASE_NOTE_ID")
+    private Long lastSeenReleaseNoteId;
+
     // Settings the user has defined; one row per setting in USER_CONFIGURATION
     @Getter
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -91,6 +96,23 @@ public class User extends AbstractAggregateRoot {
         var configuration = new UserConfiguration(name, value);
         this.configurations.add(configuration);
         return configuration;
+    }
+
+    /**
+     * Marks release notes up to the one with given id as seen. Never goes back to an older note, so a request sent
+     * from an outdated browser tab cannot show the user notes again.
+     */
+    public void markReleaseNotesSeen(long releaseNoteId) {
+        if (!this.hasSeenReleaseNote(releaseNoteId)) {
+            this.lastSeenReleaseNoteId = releaseNoteId;
+        }
+    }
+
+    /**
+     * Tells whether the release note with given id is not newer than the last one the user has seen.
+     */
+    public boolean hasSeenReleaseNote(long releaseNoteId) {
+        return this.lastSeenReleaseNoteId != null && releaseNoteId <= this.lastSeenReleaseNoteId;
     }
 
     // Counts characters (code points) like the database does, so a character outside the BMP is never cut in half

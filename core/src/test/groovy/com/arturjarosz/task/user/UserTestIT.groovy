@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.jwt.Jwt
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import tools.jackson.core.type.TypeReference
@@ -236,12 +234,6 @@ class UserTestIT extends BaseTestIT {
         def response = this.mockMvc.perform(MockMvcRequestBuilders
                 .get(URI.create(HOST + ":" + port + CONFIGURATIONS_URI))).andReturn().response
         return MAPPER.readValue(response.contentAsString, new TypeReference<List<UserConfigurationDto>>() {})
-    }
-
-    // The test profile runs without the security filter chain, so the JWT goes straight into the context
-    private static void authenticate(String authId, Map<String, Object> otherClaims = [:]) {
-        def jwt = new Jwt("token", null, null, ["alg": "RS256"], ["sub": authId] + otherClaims)
-        SecurityContextHolder.getContext().setAuthentication(new JwtAuthenticationToken(jwt))
     }
 
     // Claims the Auth0 Action adds; a null value leaves the claim out

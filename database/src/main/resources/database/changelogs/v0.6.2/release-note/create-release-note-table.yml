@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-release-note-table"
+      changes:
+        - createTable:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TICKET"
+                  type: "VARCHAR2(20 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TYPE"
+                  type: "VARCHAR2(20 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TITLE"
+                  type: "VARCHAR2(150 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "DESCRIPTION"
+                  type: "VARCHAR2(1000 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "TIMESTAMP"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "TIMESTAMP"
+        - addPrimaryKey:
+            tableName: "RELEASE_NOTE"
+            columnNames: "ID"
+            constraintName: "PK_RELEASE_NOTE"

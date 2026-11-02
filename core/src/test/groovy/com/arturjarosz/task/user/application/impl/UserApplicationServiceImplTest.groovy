@@ -128,7 +128,7 @@ class UserApplicationServiceImplTest extends Specification {
 
     def "updateCurrentUserConfiguration should throw exception when token does not belong to a person"() {
         given:
-            this.currentUserProvider.findOrCreateCurrentUser() >> Optional.empty()
+            this.currentUserProvider.getOrCreateCurrentUser() >> { throw new ResourceNotFoundException("notExist.user") }
             this.userMapper.mapConfigurationName(UserConfigurationNameDto.THEME_MODE) >> UserConfigurationName.THEME_MODE
 
         when:
@@ -140,7 +140,7 @@ class UserApplicationServiceImplTest extends Specification {
     }
 
     private void mockCurrentUser(User user) {
-        this.currentUserProvider.findOrCreateCurrentUser() >> Optional.of(user)
+        this.currentUserProvider.getOrCreateCurrentUser() >> user
         this.userMapper.mapConfigurationName(UserConfigurationNameDto.THEME_MODE) >> UserConfigurationName.THEME_MODE
     }
 }

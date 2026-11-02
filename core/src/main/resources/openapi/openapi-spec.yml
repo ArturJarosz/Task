@@ -34,6 +34,8 @@ tags:
     description: Project data API and models
   - name: projectType
     description: Project type API and models
+  - name: releaseNote
+    description: Release note API and models
   - name: stage
     description: Stage data API and models
   - name: stageType
@@ -3986,6 +3988,69 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
 
+  /release-notes:
+    get:
+      tags:
+        - releaseNote
+      summary: Get all release notes
+      description: Changes of the application described for its users, newest first
+      operationId: getReleaseNotes
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReleaseNotes"
+
+  /release-notes/unseen:
+    get:
+      tags:
+        - releaseNote
+      summary: Get release notes the current user has not seen yet based on JWT token
+      description: >
+        Notes newer than the last one the user has marked as seen, newest first, with the time they are listed since.
+        Notes published before the user was created count as seen. Without notes when the user does not exist.
+      operationId: getUnseenReleaseNotes
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnseenReleaseNotes"
+
+  /release-notes/seen:
+    post:
+      tags:
+        - releaseNote
+      summary: Mark release notes up to the given one as seen by the current user based on JWT token
+      description: Marking an older note than the last one already seen changes nothing.
+      operationId: markReleaseNotesSeen
+      requestBody:
+        description: Newest release note the user has seen
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReleaseNotesSeen"
+      responses:
+        200:
+          description: Successful operation
+          content: { }
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Release note or current user does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
 components:
   schemas:
 
@@ -5170,3 +5235,53 @@ components:
       enum:
         - LIGHT
         - DARK
+
+    ReleaseNote:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        type:
+          $ref: "#/components/schemas/ReleaseNoteType"
+        title:
+          type: string
+        description:
+          type: string
+        createdDateTime:
+          type: string
+          format: time
+          description: When the note was published
+
+    ReleaseNotes:
+      type: array
+      items:
+        $ref: "#/components/schemas/ReleaseNote"
+
+    ReleaseNoteType:
+      type: string
+      description: Kind of change the note describes
+      enum:
+        - NEW
+        - IMPROVED
+        - FIXED
+
+    UnseenReleaseNotes:
+      type: object
+      properties:
+        since:
+          type: string
+          format: time
+          description: >
+            When the newest note the user has seen was published, or when the user was created if that is later or the
+            user has seen none; the notes are the changes published since then. Not set when there are no notes.
+        releaseNotes:
+          $ref: "#/components/schemas/ReleaseNotes"
+
+    ReleaseNotesSeen:
+      type: object
+      properties:
+        lastSeenId:
+          type: integer
+          format: int64
+          description: Id of the newest release note the user has seen

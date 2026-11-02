@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-user-last-seen-release-note-column"
+      comment: "Newest release note the user has seen; notes with a higher id are shown as new"
+      changes:
+        - addColumn:
+            tableName: "LOCAL_USER"
+            columns:
+              - column:
+                  name: "LAST_SEEN_RELEASE_NOTE_ID"
+                  type: "${long.type}"

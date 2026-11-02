@@ -118,6 +118,28 @@ Example: `ProjectWorkflow` defines TO_DO → IN_PROGRESS → DONE flow with vali
   `com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode` and translated with i18n. Translation
   for them is located in `core/src/main/resources/i18n` and split into separate files for each module.
 
+## Release Notes
+
+After logging in, users see a "What's new" popup listing the changes made since their last visit. The entries are rows
+of the `RELEASE_NOTE` table, and each one is added by a Liquibase changeset.
+
+- Every story or bugfix that changes what users see or can do adds one note (two only for clearly separate changes).
+  Work that users don't notice adds none: dependency updates, CI, refactoring, test-only or API-only changes.
+- A story made only in the frontend still adds its note here.
+- Put the note in `database/src/main/resources/database/changelogs/v<version>/release-note/` as
+  `add-release-note-<ticket>.yml` (for example `add-release-note-ta-585.yml`). Include it at the end of that folder's
+  `release-note-tables.yml`. Copy `v0.6.2/release-note/add-release-note-ta-585.yml`, which has the changeset format.
+- Write for the people using the app, not for developers:
+    - Describe what they can now do or what works differently. Never mention endpoints, fields, tables or class names.
+    - Use plain English in the second person ("you"), with sentence case and no exclamation marks.
+    - `TITLE` is at most 80 characters and has no full stop, for example "Create your own project types".
+    - `DESCRIPTION` is one or two sentences, at most 1000 characters, that say where to find the change or what it
+      means for the user.
+    - `TYPE` is `NEW` for something users could not do before, `IMPROVED` for a change to something that already
+      existed, and `FIXED` for a bugfix.
+    - `TICKET` is the story key, for example `TA-585`. It is never shown to users.
+- Never edit a changeset that may already have run. To fix the text of a note, add an `update` changeset.
+
 ## Testing
 
 - Unit tests use **Spock Framework** (Groovy), located in `src/test/groovy`

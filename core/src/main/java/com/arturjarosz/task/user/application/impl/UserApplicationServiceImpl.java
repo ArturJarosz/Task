@@ -4,21 +4,16 @@ import com.arturjarosz.task.dto.UserConfigurationDto;
 import com.arturjarosz.task.dto.UserConfigurationNameDto;
 import com.arturjarosz.task.dto.UserDto;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
-import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
-import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.user.application.CurrentUserProvider;
 import com.arturjarosz.task.user.application.UserApplicationService;
 import com.arturjarosz.task.user.application.mapper.UserMapper;
 import com.arturjarosz.task.user.domain.UserConfigurationValidator;
-import com.arturjarosz.task.user.domain.UserExceptionCodes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-
-import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -64,8 +59,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
         var configurationName = this.userMapper.mapConfigurationName(name);
         UserConfigurationValidator.validateConfiguration(configurationName, userConfigurationDto.getValue());
-        var user = this.currentUserProvider.findOrCreateCurrentUser().orElseThrow(() -> new ResourceNotFoundException(
-                createMessageCode(ExceptionCodes.NOT_EXIST, UserExceptionCodes.USER)));
+        var user = this.currentUserProvider.getOrCreateCurrentUser();
         var configuration = user.setConfiguration(configurationName, userConfigurationDto.getValue());
 
         LOG.info("Configuration {} of current user updated.", name);

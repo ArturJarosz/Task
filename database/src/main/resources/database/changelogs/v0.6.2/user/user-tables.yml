@@ -14,3 +14,6 @@ databaseChangeLog:
   - include:
       file: "modify-user-configuration-value-type.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "add-user-last-seen-release-note-column.yml"
+      relativeToChangelogFile: true
