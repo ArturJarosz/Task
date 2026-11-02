@@ -1,14 +1,10 @@
 name: Redeploy selected environment
 
 on:
-  workflow_call:
-    inputs:
-      chosen_environment:
-        type: string
-        required: true
-      version:
-        type: string
-        required: false
+  # nightly deployment at midnight UTC of the newest images built from develop, scheduled runs have no inputs, so
+  # defaults are used
+  schedule:
+    - cron: "0 0 * * *"
   workflow_dispatch:
     inputs:
       chosen_environment:
@@ -24,14 +20,25 @@ on:
         description: Version of the application to deploy
         default: "0.6.2-SNAPSHOT"
 
+# deployments run one after another, so a manual and the nightly one do not change the server at the same time
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 env:
   JAVA_VERSION: 25
   VERSION: ""
+  # files copied to the server next to the docker images
+  DEPLOYMENT_FILES: "docker/env/hetzner.env, docker/app-up.sh, docker/docker-compose-full.yml, docker/script/utils.sh, docker/task-fe/nginx.conf"
 
 jobs:
   redeploy_environment:
-    environment: ${{ inputs.chosen_environment }}
+    environment: ${{ inputs.chosen_environment || 'test-hetzner' }}
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      # reading runs of the build that publishes images of develop
+      actions: read
     steps:
       - uses: actions/checkout@v7
       - name: Set up JDK version ${{env.JAVA_VERSION}}
@@ -44,7 +51,7 @@ jobs:
         shell: bash
         run: |
           echo "Calculating metadata for deployment"
-          
+
           # setting up application version to deploy
           version="${{ inputs.version }}"
           if [[ -z "$version" ]]; then
@@ -53,11 +60,11 @@ jobs:
             version=$(echo "$version" | sed -r 's/\x1b\[[0-9;]*m?//g')
           fi
           echo "VERSION=$version" >> "$GITHUB_ENV"
-          
+
           echo "========================================================="
           echo "Deployment metadata:"
           echo "Version was set to $version."
-          echo "Chosen environment: ${{ inputs.chosen_environment }}."
+          echo "Chosen environment: ${{ inputs.chosen_environment || 'test-hetzner' }}."
           echo "========================================================="
 
       - name: docker login
@@ -68,7 +75,77 @@ jobs:
           # login to docker hub
           docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
 
+      - name: Checking the latest build of develop
+        if: github.event_name == 'schedule'
+        timeout-minutes: 60
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # images of develop are published by publish.yml, deploying while it runs or after it failed could mix images
+          # of different builds
+          run_id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow publish.yml --branch develop --limit 1 \
+            --json databaseId --jq '.[0].databaseId')
+          # a build that is still running is waited for, so changes merged just before midnight are deployed the same night
+          gh run watch "$run_id" --repo "$GITHUB_REPOSITORY" --interval 60 > /dev/null || true
+          conclusion=$(gh run view "$run_id" --repo "$GITHUB_REPOSITORY" --json conclusion --jq '.conclusion')
+          echo "Latest build of develop: $conclusion"
+          echo "DEVELOP_BUILD=$conclusion" >> "$GITHUB_ENV"
+
+      - name: Calculating deployment fingerprint
+        shell: bash
+        run: |
+          # postgres image is taken from the compose file, so it is the same one that app-up.sh pulls
+          postgres_image=$(grep -m1 -oP 'image:\s*\Kpostgres:\S+' docker/docker-compose-full.yml)
+          echo "POSTGRES_IMAGE=$postgres_image" >> "$GITHUB_ENV"
+          # digests are read from the registry, so images are pulled only when the environment is redeployed
+          image_digests=""
+          for image in azjarosz/task-backend:$VERSION azjarosz/task-fe:$VERSION azjarosz/task-sample-data:$VERSION \
+            azjarosz/task-schema:$VERSION "$postgres_image"; do
+            digest=$(docker buildx imagetools inspect --format '{{.Manifest.Digest}}' "$image")
+            image_digests+="$image $digest"$'\n'
+          done
+          # one hash of the deployed images and files, it changes when any of them changes
+          # the env file is hashed before secrets are filled in, so changed secrets need a manual redeploy
+          file_hashes=$(sha256sum ${DEPLOYMENT_FILES//,/ })
+          fingerprint=$(echo "$image_digests $file_hashes" | sha256sum | cut -d ' ' -f 1)
+          echo "DEPLOYMENT_FINGERPRINT=$fingerprint" >> "$GITHUB_ENV"
+          echo "Images to deploy:"
+          echo -n "$image_digests"
+          echo "Deployment fingerprint: $fingerprint"
+
+      - name: Reading fingerprint of the deployed environment
+        id: deployed_fingerprint
+        if: github.event_name == 'schedule'
+        uses: appleboy/ssh-action@v1.2.1
+        with:
+          host: ${{ vars.SERVER_IP }}
+          username: ${{ vars.SERVER_USER }}
+          key: ${{ secrets.SSH_ENV_ACCESS_KEY }}
+          capture_stdout: true
+          # file is missing before the first deployment and while a deployment runs
+          script: cat /opt/task/deployment-fingerprint 2>/dev/null || true
+
+      - name: Checking if environment should be redeployed
+        shell: bash
+        env:
+          DEPLOYED_FINGERPRINT: ${{ steps.deployed_fingerprint.outputs.stdout }}
+        run: |
+          # only the nightly run can be skipped, the manual one always redeploys
+          if [[ "$GITHUB_EVENT_NAME" != "schedule" ]]; then
+            echo "REDEPLOY=true" >> "$GITHUB_ENV"
+          elif [[ "$DEVELOP_BUILD" != "success" ]]; then
+            echo "::warning::The latest build of develop did not succeed, redeploy is skipped until it does."
+            echo "REDEPLOY=false" >> "$GITHUB_ENV"
+          elif [[ "$DEPLOYED_FINGERPRINT" == *"$DEPLOYMENT_FINGERPRINT"* ]]; then
+            echo "Images and deployment files did not change since the last deployment, redeploy is skipped."
+            echo "REDEPLOY=false" >> "$GITHUB_ENV"
+          else
+            echo "REDEPLOY=true" >> "$GITHUB_ENV"
+          fi
+
       - name: check docker images on the machine
+        if: env.REDEPLOY == 'true'
         shell: bash
         run: |
           cd ./docker
@@ -76,15 +153,13 @@ jobs:
           ./app-up.sh -e hetzner -b pull-images -v $VERSION
 
       - name: pack docker images to tar
+        if: env.REDEPLOY == 'true'
         shell: bash
         run: |
-          # postgres image is taken from the compose file, so it is the same one that was pulled by app-up.sh
-          postgres_image=$(grep -m1 -oP 'image:\s*\Kpostgres:\S+' docker/docker-compose-full.yml)
-          echo "POSTGRES_IMAGE=$postgres_image" >> "$GITHUB_ENV"
           # all images go to one archive, so layers shared between them are uploaded once
           # fast gzip level keeps the packing quick, docker load reads the archive directly
           docker save azjarosz/task-backend:$VERSION azjarosz/task-fe:$VERSION azjarosz/task-sample-data:$VERSION \
-            azjarosz/task-schema:$VERSION "$postgres_image" | gzip -1 > images.tar.gz
+            azjarosz/task-schema:$VERSION "$POSTGRES_IMAGE" | gzip -1 > images.tar.gz
           cd docker/env
           sed -i 's|\$DATABASE_PASSWORD|${{ secrets.DATABASE_PASSWORD }}|g' hetzner.env
           sed -i 's|\$AUTH0_ISSUER|${{ secrets.AUTH0_ISSUER }}|g' hetzner.env
@@ -95,16 +170,18 @@ jobs:
           sed -i 's|\$AUTH0_FE_CLIENT_ID|${{ secrets.AUTH0_FE_CLIENT_ID }}|g' hetzner.env
 
       - name: Copying util files to server
+        if: env.REDEPLOY == 'true'
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ vars.SERVER_IP }}
           username: ${{ vars.SERVER_USER }}
           key: ${{ secrets.SSH_ENV_ACCESS_KEY }}
-          source: "docker/env/hetzner.env, docker/app-up.sh, docker/docker-compose-full.yml, docker/script/utils.sh, docker/task-fe/nginx.conf"
+          source: ${{ env.DEPLOYMENT_FILES }}
           target: "/opt/task"
           strip_components: 1
 
       - name: Copying packed docker images to server
+        if: env.REDEPLOY == 'true'
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ vars.SERVER_IP }}
@@ -114,6 +191,7 @@ jobs:
           target: "/opt/task"
 
       - name: Loading docker images from tars
+        if: env.REDEPLOY == 'true'
         uses: appleboy/ssh-action@v1.2.1
         with:
           host: ${{ vars.SERVER_IP }}
@@ -129,6 +207,7 @@ jobs:
             docker load -i images.tar.gz
 
       - name: Running docker compose
+        if: env.REDEPLOY == 'true'
         uses: appleboy/ssh-action@v1.2.1
         with:
           host: ${{ vars.SERVER_IP }}
@@ -155,4 +234,8 @@ jobs:
             }
             # cleanup runs also when the deployment fails, so old images do not pile up
             trap cleanup EXIT
+            # removed before the running environment is stopped, so a failed deployment is repeated by the next nightly run
+            rm -f deployment-fingerprint
             ./app-up.sh -e hetzner -b full -v $VERSION
+            # saved only after a successful deployment
+            echo "${{ env.DEPLOYMENT_FINGERPRINT }}" > deployment-fingerprint
