@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "replace-stage-type-column"
+      changes:
+        # No data migration: existing stages cannot be linked to a type, so databases with stages have to be reset
+        - dropColumn:
+            tableName: "STAGE"
+            columnName: "STAGE_TYPE"
+        - addColumn:
+            tableName: "STAGE"
+            columns:
+              - column:
+                  name: "STAGE_TYPE_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+                    foreignKeyName: "FK_STAGE_STAGE_TYPE"
+                    referencedTableName: "STAGE_TYPE"
+                    referencedColumnNames: "ID"
+        - dropColumn:
+            tableName: "STAGE_AUD"
+            columnName: "STAGE_TYPE"
+        - addColumn:
+            tableName: "STAGE_AUD"
+            columns:
+              - column:
+                  name: "STAGE_TYPE_ID"
+                  type: "${long.type}"

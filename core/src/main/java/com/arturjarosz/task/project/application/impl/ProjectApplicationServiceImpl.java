@@ -71,7 +71,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectValidator.validateProjectBasicDto(projectCreateDto);
         this.architectValidator.validateArchitectExistence(projectCreateDto.getArchitectId());
         this.clientValidator.validateClientExistence(projectCreateDto.getClientId());
-        this.projectTypeValidator.validateProjectTypeExistence(projectCreateDto.getTypeId());
+        this.projectTypeValidator.validateExistence(projectCreateDto.getTypeId());
 
         var contractDto = this.contractMapper.projectDtoToContractDto(projectCreateDto);
         var contract = this.contractService.createContract(contractDto);
@@ -110,7 +110,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectValidator.validateProjectExistence(maybeProject, projectId);
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.projectValidator.validateUpdateProjectDto(projectDto, project);
-        this.projectTypeValidator.validateProjectTypeExistence(projectDto.getTypeId());
+        this.projectTypeValidator.validateExistence(projectDto.getTypeId());
         project = this.projectDomainService.updateProject(project, projectDto);
         project = this.projectRepository.save(project);
 

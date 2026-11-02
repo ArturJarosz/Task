@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "replace-task-type-column"
+      changes:
+        # No data migration: existing tasks cannot be linked to a type, so databases with tasks have to be reset
+        - dropColumn:
+            tableName: "TASK"
+            columnName: "TASK_TYPE"
+        - addColumn:
+            tableName: "TASK"
+            columns:
+              - column:
+                  name: "TASK_TYPE_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+                    foreignKeyName: "FK_TASK_TASK_TYPE"
+                    referencedTableName: "TASK_TYPE"
+                    referencedColumnNames: "ID"
+        - dropColumn:
+            tableName: "TASK_AUD"
+            columnName: "TASK_TYPE"
+        - addColumn:
+            tableName: "TASK_AUD"
+            columns:
+              - column:
+                  name: "TASK_TYPE_ID"
+                  type: "${long.type}"

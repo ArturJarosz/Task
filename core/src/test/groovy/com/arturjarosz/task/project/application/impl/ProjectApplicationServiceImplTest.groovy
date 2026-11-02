@@ -207,7 +207,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             this.projectApplicationService.createProject(projectCreateDto)
         then:
-            1 * this.projectTypeValidator.validateProjectTypeExistence(projectCreateDto.typeId)
+            1 * this.projectTypeValidator.validateExistence(projectCreateDto.typeId)
     }
 
     def "updateProject should validate that the project type exists"() {
@@ -217,7 +217,7 @@ class ProjectApplicationServiceImplTest extends Specification {
         when:
             this.projectApplicationService.updateProject(EXISTING_PROJECT_ID, projectDto)
         then:
-            1 * this.projectTypeValidator.validateProjectTypeExistence(NEW_PROJECT_TYPE_ID)
+            1 * this.projectTypeValidator.validateExistence(NEW_PROJECT_TYPE_ID)
     }
 
     def "updateProject should call validateUpdateProjectDto on project validator"() {

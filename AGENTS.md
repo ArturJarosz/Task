@@ -109,6 +109,11 @@ Example: `ProjectWorkflow` defines TO_DO → IN_PROGRESS → DONE flow with vali
 - **Application services** are annotated with `@ApplicationService` (custom stereotype)
 - **Domain services** contain pure business logic, no framework dependencies
 - **Repositories** use Spring Data JPA
+- **Lists configured by users that are only a name** (project, stage and task types, contractor, supplier and cost
+  categories) build on `sharedkernel/namedentry`: the entity extends `AbstractNamedEntry`, the repository
+  `NamedEntryRepository`, the validator `NamedEntryValidator` and the application service
+  `AbstractNamedEntryApplicationService`. Check that an item's entry exists with `validateExistence(id)`, which locks the
+  entry until the transaction ends, so it cannot be deleted while the item is being saved.
 - Exception messages codes are created with method
   `com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode` and translated with i18n. Translation
   for them is located in `core/src/main/resources/i18n` and split into separate files for each module.

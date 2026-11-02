@@ -39,6 +39,8 @@ class ProjectStatusWorkflowTestIT extends BaseTestIT {
     def setup() {
         // ids of the data created by BaseTestIT
         properProjectDto.typeId = projectTypeId
+        stageDto.typeId = stageTypeId
+        taskDto.typeId = taskTypeId
     }
 
     @Transactional

@@ -25,14 +25,16 @@ public class StageValidator {
     private final ProjectRepository projectRepository;
     private final ProjectFinancialDataRepository projectFinancialDataRepository;
     private final ArchitectValidator architectValidator;
+    private final StageTypeValidator stageTypeValidator;
 
     @Autowired
     public StageValidator(ProjectRepository projectRepository,
             ProjectFinancialDataRepository projectFinancialDataRepository,
-            ArchitectValidator architectValidator) {
+            ArchitectValidator architectValidator, StageTypeValidator stageTypeValidator) {
         this.projectRepository = projectRepository;
         this.projectFinancialDataRepository = projectFinancialDataRepository;
         this.architectValidator = architectValidator;
+        this.stageTypeValidator = stageTypeValidator;
     }
 
     /**
@@ -73,8 +75,9 @@ public class StageValidator {
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.NAME));
         assertNotEmpty(stageDto.getName(),
                 createMessageCode(ExceptionCodes.EMPTY, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.NAME));
-        assertNotNull(stageDto.getType(),
+        assertNotNull(stageDto.getTypeId(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.TYPE));
+        this.stageTypeValidator.validateExistence(stageDto.getTypeId());
         assertNotNull(stageDto.getArchitectId(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.STAGE, ProjectExceptionCodes.ARCHITECT));
         this.architectValidator.validateArchitectExistence(stageDto.getArchitectId());

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-task-type-sequence"
+      changes:
+        - createSequence:
+            sequenceName: "task_type_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1

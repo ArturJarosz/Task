@@ -1,7 +1,6 @@
 package com.arturjarosz.task.finance.application.validator;
 
 import com.arturjarosz.task.dto.CostDto;
-import com.arturjarosz.task.finance.infrastructure.CostCategoryRepository;
 import com.arturjarosz.task.finance.model.Cost;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
@@ -27,15 +26,14 @@ public class CostValidator {
     @NonNull
     private final FinancialDataQueryService financialDataQueryService;
     @NonNull
-    private final CostCategoryRepository costCategoryRepository;
+    private final CostCategoryValidator costCategoryValidator;
 
     public void validateCostDto(CostDto costDto) {
         assertNotNull(costDto, BaseValidator.createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST));
         assertNotNull(costDto.getCategoryId(),
                 BaseValidator.createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST,
                         ProjectExceptionCodes.CATEGORY));
-        assertEntityPresent(this.costCategoryRepository.existsById(costDto.getCategoryId()),
-                createMessageCode(ExceptionCodes.NOT_EXIST, ProjectExceptionCodes.COST_CATEGORY), costDto.getCategoryId());
+        this.costCategoryValidator.validateExistence(costDto.getCategoryId());
         assertNotNull(costDto.getDate(),
                 createMessageCode(ExceptionCodes.NULL, ProjectExceptionCodes.COST, ProjectExceptionCodes.COST_DATE));
         this.validateCostValue(costDto.getValue());

@@ -21,7 +21,7 @@ public class ContractorCategoryRestController implements ContractorCategoryApi {
 
     @Override
     public ResponseEntity<ContractorCategoryDto> createContractorCategory(ContractorCategoryDto contractorCategoryDto) {
-        var contractorCategory = this.contractorCategoryApplicationService.createContractorCategory(contractorCategoryDto);
+        var contractorCategory = this.contractorCategoryApplicationService.create(contractorCategoryDto);
         var headers = new HttpHeadersBuilder().withLocation("/contractor-categories/{contractorCategoryId}", contractorCategory.getId())
                 .build();
         return new ResponseEntity<>(contractorCategory, headers, HttpStatus.CREATED);
@@ -31,24 +31,24 @@ public class ContractorCategoryRestController implements ContractorCategoryApi {
     public ResponseEntity<ContractorCategoryDto> updateContractorCategory(ContractorCategoryDto contractorCategoryDto,
             Long contractorCategoryId) {
         return new ResponseEntity<>(
-                this.contractorCategoryApplicationService.updateContractorCategory(contractorCategoryId, contractorCategoryDto),
+                this.contractorCategoryApplicationService.update(contractorCategoryId, contractorCategoryDto),
                 HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> deleteContractorCategory(Long contractorCategoryId) {
-        this.contractorCategoryApplicationService.deleteContractorCategory(contractorCategoryId);
+        this.contractorCategoryApplicationService.delete(contractorCategoryId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<ContractorCategoryDto> getContractorCategory(Long contractorCategoryId) {
-        return new ResponseEntity<>(this.contractorCategoryApplicationService.getContractorCategory(contractorCategoryId),
+        return new ResponseEntity<>(this.contractorCategoryApplicationService.get(contractorCategoryId),
                 HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<ContractorCategoryDto>> getContractorCategories() {
-        return new ResponseEntity<>(this.contractorCategoryApplicationService.getContractorCategories(), HttpStatus.OK);
+        return new ResponseEntity<>(this.contractorCategoryApplicationService.getAll(), HttpStatus.OK);
     }
 }

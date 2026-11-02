@@ -3,7 +3,6 @@ package com.arturjarosz.task.project.application.mapper;
 import com.arturjarosz.task.dto.TaskDto;
 import com.arturjarosz.task.dto.TaskStatusDto;
 import com.arturjarosz.task.project.model.Task;
-import com.arturjarosz.task.project.model.TaskType;
 import com.arturjarosz.task.project.model.dto.TaskInnerDto;
 import com.arturjarosz.task.project.status.task.TaskWorkflow;
 import org.mapstruct.Mapper;
@@ -16,11 +15,11 @@ import java.util.List;
 public interface TaskMapper {
 
     default Task createDtoToTask(TaskDto taskDto, TaskWorkflow taskWorkflow) {
-        return new Task(taskDto.getName(), TaskType.valueOf(taskDto.getType().name()), taskWorkflow, taskDto.getArchitectId());
+        return new Task(taskDto.getName(), taskDto.getTypeId(), taskWorkflow, taskDto.getArchitectId());
     }
 
     @Mapping(source = "name", target = "name")
-    @Mapping(source = "type", target = "taskType")
+    @Mapping(source = "typeId", target = "taskTypeId")
     @Mapping(source = "startDate", target = "startDate")
     @Mapping(source = "endDate", target = "endDate")
     @Mapping(source = "note", target = "note")
@@ -28,7 +27,7 @@ public interface TaskMapper {
     TaskInnerDto updateDtoToInnerDto(TaskDto taskDto);
 
     @Mapping(source = "name", target = "name")
-    @Mapping(source = "type", target = "type")
+    @Mapping(source = "taskTypeId", target = "typeId")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "architectId", target = "architectId")
     @Mapping(source = "startDate", target = "startDate")

@@ -1,11 +1,9 @@
 package com.arturjarosz.task.finance.model;
 
-import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
-import jakarta.persistence.Column;
+import com.arturjarosz.task.sharedkernel.namedentry.AbstractNamedEntry;
 import jakarta.persistence.Entity;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import lombok.Getter;
 
 import java.io.Serial;
 
@@ -16,25 +14,15 @@ import java.io.Serial;
 @Entity
 @SequenceGenerator(name = "sequence_generator", sequenceName = "cost_category_sequence", allocationSize = 1)
 @Table(name = "COST_CATEGORY")
-public class CostCategory extends AbstractAggregateRoot {
+public class CostCategory extends AbstractNamedEntry {
     @Serial
     private static final long serialVersionUID = 6203819475523017741L;
-
-    public static final int NAME_MAX_LENGTH = 100;
-
-    @Getter
-    @Column(name = "NAME", nullable = false, length = NAME_MAX_LENGTH)
-    private String name;
 
     protected CostCategory() {
         // needed by JPA
     }
 
     public CostCategory(String name) {
-        this.name = name;
-    }
-
-    public void rename(String name) {
-        this.name = name;
+        super(name);
     }
 }

@@ -31,7 +31,7 @@ public class ProjectTypeDataInitializer implements DataInitializer {
         this.prepareProjectTypes()
                 .stream()
                 .filter(projectType -> !this.projectTypeRepository.existsByNameIgnoreCase(projectType.getName()))
-                .forEach(this.projectTypeApplicationService::createProjectType);
+                .forEach(this.projectTypeApplicationService::create);
         LOG.info("Project types added to the database.");
     }
 

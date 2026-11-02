@@ -220,6 +220,7 @@ class InstallmentTestIT extends BaseTestIT {
     private StageDto createStage(long projectId, long architectId) {
         def stageDto = createObjectFromJson('json/stage/properStage.json', StageDto)
         stageDto.architectId = architectId
+        stageDto.typeId = stageTypeId
         def requestBody = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(stageDto)
         def response = this.mockMvc.perform(MockMvcRequestBuilders.post("$PROJECTS_URI/$projectId/stages")
                 .header(CONTENT_TYPE, APPLICATION_JSON)

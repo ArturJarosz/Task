@@ -2,6 +2,8 @@ package com.arturjarosz.task.contractor.application
 
 import com.arturjarosz.task.contractor.infrastructure.ContractorCategoryRepository
 import com.arturjarosz.task.contractor.infrastructure.ContractorRepository
+import com.arturjarosz.task.contractor.model.ContractorCategory
+import com.arturjarosz.task.contractor.query.ContractorQueryService
 import com.arturjarosz.task.contractor.model.Contractor
 import com.arturjarosz.task.dto.ContractorDto
 import spock.lang.Specification
@@ -21,11 +23,14 @@ class ContractorValidatorTest extends Specification {
 
     def contractorRepository = Mock(ContractorRepository)
     def contractorCategoryRepository = Stub(ContractorCategoryRepository) {
-        existsById(CONTRACTOR_CATEGORY) >> true
+        findLockedById(CONTRACTOR_CATEGORY) >> Optional.of(new ContractorCategory("General"))
+        findLockedById(_) >> Optional.empty()
     }
+    def contractorCategoryValidator = new ContractorCategoryValidator(contractorCategoryRepository,
+            Mock(ContractorQueryService))
 
     @Subject
-    def contractorValidator = new ContractorValidator(contractorRepository, contractorCategoryRepository)
+    def contractorValidator = new ContractorValidator(contractorRepository, contractorCategoryValidator)
 
     @Unroll
     def "validateCreateContractorDto throws exception with proper error message"() {

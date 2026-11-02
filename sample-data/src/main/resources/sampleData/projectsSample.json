@@ -18,7 +18,7 @@
         "stages": [
             {
                 "name": "Układ funkcjonalny",
-                "type": "FUNCTIONAL_LAYOUT",
+                "type": "Functional layout",
                 "note": "Dwa warianty układu, klient wybrał wariant B.",
                 "deadlineInDays": -40,
                 "installment": {
@@ -30,28 +30,28 @@
                 "tasks": [
                     {
                         "name": "Inwentaryzacja mieszkania",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 58,
                         "finishedDaysAgo": 52
                     },
                     {
                         "name": "Układ funkcjonalny - wariant A",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 50,
                         "finishedDaysAgo": 38
                     },
                     {
                         "name": "Układ funkcjonalny - wariant B",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 50,
                         "finishedDaysAgo": 40
                     },
                     {
                         "name": "Układ funkcjonalny - wariant C",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "note": "Klient zrezygnował z trzeciego wariantu.",
                         "status": "REJECTED"
                     }
@@ -59,7 +59,7 @@
             },
             {
                 "name": "Wizualizacje",
-                "type": "VISUALISATIONS",
+                "type": "Visualisations",
                 "deadlineInDays": -10,
                 "installment": {
                     "value": 15000,
@@ -69,26 +69,26 @@
                 "tasks": [
                     {
                         "name": "Wizualizacja salonu",
-                        "type": "RENDER",
+                        "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 30,
                         "finishedDaysAgo": 14
                     },
                     {
                         "name": "Wizualizacja kuchni",
-                        "type": "RENDER",
+                        "type": "Render",
                         "status": "IN_PROGRESS",
                         "startedDaysAgo": 20
                     },
                     {
                         "name": "Wizualizacja łazienki",
-                        "type": "RENDER",
+                        "type": "Render",
                         "status": "IN_PROGRESS",
                         "startedDaysAgo": 12
                     },
                     {
                         "name": "Wizualizacja sypialni",
-                        "type": "RENDER",
+                        "type": "Render",
                         "status": "TO_DO"
                     }
                 ],
@@ -96,7 +96,7 @@
             },
             {
                 "name": "Koncepcja kolorystyki",
-                "type": "VISUALISATIONS",
+                "type": "Visualisations",
                 "deadlineInDays": -30,
                 "installment": {
                     "value": 4000,
@@ -107,7 +107,7 @@
                 "tasks": [
                     {
                         "name": "Moodboard kolorystyczny",
-                        "type": "RENDER",
+                        "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 45,
                         "finishedDaysAgo": 35
@@ -116,7 +116,7 @@
             },
             {
                 "name": "Projekt wykonawczy",
-                "type": "EXECUTIVE_PROJECT",
+                "type": "Executive project",
                 "deadlineInDays": 60,
                 "installment": {
                     "value": 15000,
@@ -128,22 +128,22 @@
                 "tasks": [
                     {
                         "name": "Rysunki zabudów meblowych",
-                        "type": "CONCEPT"
+                        "type": "Concept"
                     },
                     {
                         "name": "Zestawienie materiałów",
-                        "type": "SHOPPING"
+                        "type": "Shopping"
                     }
                 ]
             },
             {
                 "name": "Nadzór autorski",
-                "type": "AUTHORS_SUPERVISION",
+                "type": "Authors supervision",
                 "deadlineInDays": 90,
                 "tasks": [
                     {
                         "name": "Odbiór prac wykończeniowych",
-                        "type": "CONCEPT"
+                        "type": "Concept"
                     }
                 ]
             }
@@ -229,7 +229,7 @@
         "stages": [
             {
                 "name": "Układ biura open space",
-                "type": "FUNCTIONAL_LAYOUT",
+                "type": "Functional layout",
                 "deadlineInDays": 30,
                 "installment": {
                     "value": 20000,
@@ -240,39 +240,39 @@
                 "tasks": [
                     {
                         "name": "Analiza potrzeb pracowników",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 20,
                         "finishedDaysAgo": 10
                     },
                     {
                         "name": "Rozmieszczenie stanowisk",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "IN_PROGRESS",
                         "startedDaysAgo": 8
                     },
                     {
                         "name": "Strefa socjalna",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "TO_DO"
                     }
                 ]
             },
             {
                 "name": "Adaptacja dla najemcy",
-                "type": "TENANT_ALTERATIONS",
+                "type": "Tenant alterations",
                 "note": "Najemca zrezygnował z adaptacji.",
                 "rejected": true,
                 "tasks": [
                     {
                         "name": "Uzgodnienia z zarządcą budynku",
-                        "type": "CONCEPT"
+                        "type": "Concept"
                     }
                 ]
             },
             {
                 "name": "Wizualizacje biura",
-                "type": "VISUALISATIONS",
+                "type": "Visualisations",
                 "deadlineInDays": 60,
                 "installment": {
                     "value": 15000,
@@ -284,13 +284,13 @@
                 "tasks": [
                     {
                         "name": "Wizualizacja recepcji",
-                        "type": "RENDER",
+                        "type": "Render",
                         "status": "IN_PROGRESS",
                         "startedDaysAgo": 6
                     },
                     {
                         "name": "Wizualizacja sali konferencyjnej",
-                        "type": "RENDER"
+                        "type": "Render"
                     }
                 ]
             }
@@ -347,7 +347,7 @@
         "stages": [
             {
                 "name": "Układ funkcjonalny parteru i piętra",
-                "type": "FUNCTIONAL_LAYOUT",
+                "type": "Functional layout",
                 "installment": {
                     "value": 15000,
                     "hasInvoice": true,
@@ -357,14 +357,14 @@
                 "tasks": [
                     {
                         "name": "Układ parteru",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 175,
                         "finishedDaysAgo": 160
                     },
                     {
                         "name": "Układ piętra",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 172,
                         "finishedDaysAgo": 155
@@ -374,7 +374,7 @@
             },
             {
                 "name": "Wizualizacje wnętrz",
-                "type": "VISUALISATIONS",
+                "type": "Visualisations",
                 "installment": {
                     "value": 20000,
                     "hasInvoice": true,
@@ -384,20 +384,20 @@
                 "tasks": [
                     {
                         "name": "Wizualizacja salonu z kuchnią",
-                        "type": "RENDER",
+                        "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 140,
                         "finishedDaysAgo": 110
                     },
                     {
                         "name": "Wizualizacja gabinetu",
-                        "type": "RENDER",
+                        "type": "Render",
                         "note": "Gabinet zamieniony na pokój gościnny.",
                         "status": "REJECTED"
                     },
                     {
                         "name": "Wizualizacja łazienek",
-                        "type": "RENDER",
+                        "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 130,
                         "finishedDaysAgo": 100
@@ -407,7 +407,7 @@
             },
             {
                 "name": "Projekt wykonawczy",
-                "type": "EXECUTIVE_PROJECT",
+                "type": "Executive project",
                 "deadlineInDays": -55,
                 "installment": {
                     "value": 12000,
@@ -418,7 +418,7 @@
                 "tasks": [
                     {
                         "name": "Rysunki wykonawcze",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 100,
                         "finishedDaysAgo": 60
@@ -427,7 +427,7 @@
             },
             {
                 "name": "Nadzór autorski",
-                "type": "AUTHORS_SUPERVISION",
+                "type": "Authors supervision",
                 "installment": {
                     "value": 20000,
                     "hasInvoice": true,
@@ -437,14 +437,14 @@
                 "tasks": [
                     {
                         "name": "Zakupy wyposażenia",
-                        "type": "SHOPPING",
+                        "type": "Shopping",
                         "status": "DONE",
                         "startedDaysAgo": 80,
                         "finishedDaysAgo": 40
                     },
                     {
                         "name": "Odbiór prac wykończeniowych",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "IN_PROGRESS",
                         "startedDaysAgo": 35
                     }
@@ -517,16 +517,16 @@
         "stages": [
             {
                 "name": "Koncepcja bryły",
-                "type": "FUNCTIONAL_LAYOUT",
+                "type": "Functional layout",
                 "deadlineInDays": 30,
                 "tasks": [
                     {
                         "name": "Szkice bryły",
-                        "type": "CONCEPT"
+                        "type": "Concept"
                     },
                     {
                         "name": "Moodboard",
-                        "type": "CONCEPT"
+                        "type": "Concept"
                     }
                 ]
             }
@@ -556,17 +556,17 @@
         "stages": [
             {
                 "name": "Koncepcja architektoniczna",
-                "type": "FUNCTIONAL_LAYOUT",
+                "type": "Functional layout",
                 "tasks": [
                     {
                         "name": "Analiza warunków zabudowy",
-                        "type": "CONCEPT"
+                        "type": "Concept"
                     }
                 ]
             },
             {
                 "name": "Projekt budowlany",
-                "type": "EXECUTIVE_PROJECT",
+                "type": "Executive project",
                 "tasks": []
             }
         ]
@@ -591,7 +591,7 @@
         "stages": [
             {
                 "name": "Układ funkcjonalny",
-                "type": "FUNCTIONAL_LAYOUT",
+                "type": "Functional layout",
                 "deadlineInDays": -360,
                 "installment": {
                     "value": 10000,
@@ -602,14 +602,14 @@
                 "tasks": [
                     {
                         "name": "Inwentaryzacja",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 398,
                         "finishedDaysAgo": 392
                     },
                     {
                         "name": "Układ funkcjonalny",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 390,
                         "finishedDaysAgo": 365
@@ -618,7 +618,7 @@
             },
             {
                 "name": "Wizualizacje",
-                "type": "VISUALISATIONS",
+                "type": "Visualisations",
                 "deadlineInDays": -280,
                 "installment": {
                     "value": 14000,
@@ -629,14 +629,14 @@
                 "tasks": [
                     {
                         "name": "Wizualizacja salonu z aneksem",
-                        "type": "RENDER",
+                        "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 350,
                         "finishedDaysAgo": 310
                     },
                     {
                         "name": "Wizualizacja sypialni",
-                        "type": "RENDER",
+                        "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 330,
                         "finishedDaysAgo": 290
@@ -645,7 +645,7 @@
             },
             {
                 "name": "Projekt wykonawczy",
-                "type": "EXECUTIVE_PROJECT",
+                "type": "Executive project",
                 "deadlineInDays": -180,
                 "installment": {
                     "value": 14000,
@@ -656,14 +656,14 @@
                 "tasks": [
                     {
                         "name": "Rysunki wykonawcze",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 280,
                         "finishedDaysAgo": 200
                     },
                     {
                         "name": "Zestawienie wyposażenia",
-                        "type": "SHOPPING",
+                        "type": "Shopping",
                         "status": "DONE",
                         "startedDaysAgo": 220,
                         "finishedDaysAgo": 125
@@ -672,7 +672,7 @@
             },
             {
                 "name": "Projekt oświetlenia",
-                "type": "EXECUTIVE_PROJECT",
+                "type": "Executive project",
                 "deadlineInDays": -210,
                 "installment": {
                     "value": 5000,
@@ -683,7 +683,7 @@
                 "tasks": [
                     {
                         "name": "Projekt oświetlenia",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 260,
                         "finishedDaysAgo": 215
@@ -692,7 +692,7 @@
             },
             {
                 "name": "Nadzór autorski",
-                "type": "AUTHORS_SUPERVISION",
+                "type": "Authors supervision",
                 "deadlineInDays": -130,
                 "installment": {
                     "value": 6000,
@@ -703,7 +703,7 @@
                 "tasks": [
                     {
                         "name": "Odbiór prac wykończeniowych",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 200,
                         "finishedDaysAgo": 126
@@ -766,7 +766,7 @@
         "stages": [
             {
                 "name": "Układ lokalu",
-                "type": "FUNCTIONAL_LAYOUT",
+                "type": "Functional layout",
                 "deadlineInDays": -120,
                 "installment": {
                     "value": 8000,
@@ -777,7 +777,7 @@
                 "tasks": [
                     {
                         "name": "Układ sali sprzedaży",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 148,
                         "finishedDaysAgo": 125
@@ -786,7 +786,7 @@
             },
             {
                 "name": "Wizualizacje lokalu",
-                "type": "VISUALISATIONS",
+                "type": "Visualisations",
                 "note": "Umowa rozwiązana w trakcie etapu, rata nieopłacona.",
                 "deadlineInDays": -80,
                 "installment": {
@@ -797,19 +797,19 @@
                 "tasks": [
                     {
                         "name": "Wizualizacja witryny",
-                        "type": "RENDER",
+                        "type": "Render",
                         "status": "IN_PROGRESS",
                         "startedDaysAgo": 100
                     },
                     {
                         "name": "Wizualizacja zaplecza",
-                        "type": "RENDER"
+                        "type": "Render"
                     }
                 ]
             },
             {
                 "name": "Projekt wykonawczy lokalu",
-                "type": "EXECUTIVE_PROJECT",
+                "type": "Executive project",
                 "deadlineInDays": -40,
                 "installment": {
                     "value": 6000,
@@ -821,7 +821,7 @@
                 "tasks": [
                     {
                         "name": "Rysunki wykonawcze",
-                        "type": "CONCEPT"
+                        "type": "Concept"
                     }
                 ]
             }
@@ -857,7 +857,7 @@
         "stages": [
             {
                 "name": "Koncepcja architektoniczna",
-                "type": "FUNCTIONAL_LAYOUT",
+                "type": "Functional layout",
                 "deadlineInDays": -220,
                 "installment": {
                     "value": 30000,
@@ -868,14 +868,14 @@
                 "tasks": [
                     {
                         "name": "Analiza warunków zabudowy",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 278,
                         "finishedDaysAgo": 260
                     },
                     {
                         "name": "Koncepcja bryły",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 260,
                         "finishedDaysAgo": 225
@@ -884,7 +884,7 @@
             },
             {
                 "name": "Wizualizacje bryły",
-                "type": "VISUALISATIONS",
+                "type": "Visualisations",
                 "deadlineInDays": -190,
                 "installment": {
                     "value": 10000,
@@ -895,7 +895,7 @@
                 "tasks": [
                     {
                         "name": "Wizualizacja elewacji",
-                        "type": "RENDER",
+                        "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 240,
                         "finishedDaysAgo": 200
@@ -904,7 +904,7 @@
             },
             {
                 "name": "Projekt budowlany",
-                "type": "EXECUTIVE_PROJECT",
+                "type": "Executive project",
                 "note": "Opóźnienie przez uzgodnienia z gminą.",
                 "deadlineInDays": -90,
                 "installment": {
@@ -916,14 +916,14 @@
                 "tasks": [
                     {
                         "name": "Rysunki konstrukcyjne",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 210,
                         "finishedDaysAgo": 150
                     },
                     {
                         "name": "Projekt instalacji",
-                        "type": "CONCEPT",
+                        "type": "Concept",
                         "status": "IN_PROGRESS",
                         "startedDaysAgo": 140
                     }
@@ -931,7 +931,7 @@
             },
             {
                 "name": "Projekt wykonawczy",
-                "type": "EXECUTIVE_PROJECT",
+                "type": "Executive project",
                 "deadlineInDays": -20,
                 "installment": {
                     "value": 40000,
@@ -943,18 +943,18 @@
                 "tasks": [
                     {
                         "name": "Detale wykonawcze",
-                        "type": "CONCEPT"
+                        "type": "Concept"
                     }
                 ]
             },
             {
                 "name": "Nadzór autorski",
-                "type": "AUTHORS_SUPERVISION",
+                "type": "Authors supervision",
                 "deadlineInDays": 60,
                 "tasks": [
                     {
                         "name": "Nadzór nad budową stanu surowego",
-                        "type": "CONCEPT"
+                        "type": "Concept"
                     }
                 ]
             }
@@ -993,7 +993,7 @@
         "stages": [
             {
                 "name": "Układ funkcjonalny",
-                "type": "FUNCTIONAL_LAYOUT",
+                "type": "Functional layout",
                 "deadlineInDays": 14,
                 "installment": {
                     "value": 4000,
@@ -1003,17 +1003,17 @@
                 "tasks": [
                     {
                         "name": "Inwentaryzacja",
-                        "type": "CONCEPT"
+                        "type": "Concept"
                     },
                     {
                         "name": "Układ funkcjonalny",
-                        "type": "CONCEPT"
+                        "type": "Concept"
                     }
                 ]
             },
             {
                 "name": "Wizualizacje",
-                "type": "VISUALISATIONS",
+                "type": "Visualisations",
                 "deadlineInDays": 30,
                 "installment": {
                     "value": 4000,
@@ -1025,7 +1025,7 @@
                 "tasks": [
                     {
                         "name": "Wizualizacja pokoju dziennego",
-                        "type": "RENDER"
+                        "type": "Render"
                     }
                 ]
             }

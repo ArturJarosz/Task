@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-task-type-name-unique-index"
+      changes:
+        # Names are unique regardless of letter case, as the application checks them
+        - sql:
+            dbms: "postgresql"
+            sql: "create unique index UK_TASK_TYPE_NAME on TASK_TYPE (lower(NAME))"
+  - changeSet:
+      author: "liquibase"
+      id: "create-task-task-type-index"
+      changes:
+        - createIndex:
+            tableName: "TASK"
+            indexName: "IDX_TASK_TASK_TYPE_ID"
+            columns:
+              - column:
+                  name: "TASK_TYPE_ID"

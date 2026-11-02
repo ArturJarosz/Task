@@ -1,6 +1,5 @@
 package com.arturjarosz.task.data.model;
 
-import com.arturjarosz.task.dto.StageTypeDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +10,8 @@ import java.util.List;
 @Setter
 public class StageSample {
     private String name;
-    private StageTypeDto type;
+    // name of the Stage type
+    private String type;
     private String note;
     private Integer deadlineInDays;
     private boolean rejected;

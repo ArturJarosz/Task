@@ -4,7 +4,11 @@ import com.arturjarosz.task.DatabaseMain
 import com.arturjarosz.task.contractor.infrastructure.ContractorCategoryRepository
 import com.arturjarosz.task.contractor.model.ContractorCategory
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectTypeRepository
+import com.arturjarosz.task.project.infrastructure.repositor.StageTypeRepository
+import com.arturjarosz.task.project.infrastructure.repositor.TaskTypeRepository
 import com.arturjarosz.task.project.model.ProjectType
+import com.arturjarosz.task.project.model.StageType
+import com.arturjarosz.task.project.model.TaskType
 import com.arturjarosz.task.supplier.infrastructure.SupplierCategoryRepository
 import com.arturjarosz.task.supplier.model.SupplierCategory
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,8 +19,8 @@ import spock.lang.Specification
 
 /**
  * PostgreSQL is started by Testcontainers from the jdbc:tc: datasource url in the test application.yaml. The database
- * has only the production migrations; data that the json fixtures need (a project type, a contractor and a supplier
- * category) is created here, and tests put its ids into the fixtures.
+ * has only the production migrations; data that the json fixtures need (a project, stage and task type, a contractor
+ * and a supplier category) is created here, and tests put its ids into the fixtures.
  */
 @SpringBootTest(classes = DatabaseMain.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
@@ -25,6 +29,8 @@ class BaseTestIT extends Specification {
     protected static final String FIXTURE_PROJECT_TYPE_NAME = "Interior house"
     protected static final String FIXTURE_CONTRACTOR_CATEGORY_NAME = "General"
     protected static final String FIXTURE_SUPPLIER_CATEGORY_NAME = "Flooring shop"
+    protected static final String FIXTURE_STAGE_TYPE_NAME = "Visualisations"
+    protected static final String FIXTURE_TASK_TYPE_NAME = "Render"
     protected static String baseUrl;
 
     @Value('${server.port}')
@@ -36,10 +42,16 @@ class BaseTestIT extends Specification {
     private ContractorCategoryRepository contractorCategoryRepository
     @Autowired
     private SupplierCategoryRepository supplierCategoryRepository
+    @Autowired
+    private StageTypeRepository stageTypeRepository
+    @Autowired
+    private TaskTypeRepository taskTypeRepository
 
     protected Long projectTypeId
     protected Long contractorCategoryId
     protected Long supplierCategoryId
+    protected Long stageTypeId
+    protected Long taskTypeId
 
     def setup() {
         baseUrl = "$HOST:$port"
@@ -50,5 +62,9 @@ class BaseTestIT extends Specification {
                 ?: contractorCategoryRepository.save(new ContractorCategory(FIXTURE_CONTRACTOR_CATEGORY_NAME))).id
         supplierCategoryId = (supplierCategoryRepository.findAll().find { it.name == FIXTURE_SUPPLIER_CATEGORY_NAME }
                 ?: supplierCategoryRepository.save(new SupplierCategory(FIXTURE_SUPPLIER_CATEGORY_NAME))).id
+        stageTypeId = (stageTypeRepository.findAll().find { it.name == FIXTURE_STAGE_TYPE_NAME }
+                ?: stageTypeRepository.save(new StageType(FIXTURE_STAGE_TYPE_NAME))).id
+        taskTypeId = (taskTypeRepository.findAll().find { it.name == FIXTURE_TASK_TYPE_NAME }
+                ?: taskTypeRepository.save(new TaskType(FIXTURE_TASK_TYPE_NAME))).id
     }
 }

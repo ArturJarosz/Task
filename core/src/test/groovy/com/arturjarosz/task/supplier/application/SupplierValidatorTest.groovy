@@ -4,6 +4,8 @@ import com.arturjarosz.task.dto.SupplierDto
 import com.arturjarosz.task.supplier.infrastructure.SupplierCategoryRepository
 import com.arturjarosz.task.supplier.infrastructure.SupplierRepository
 import com.arturjarosz.task.supplier.model.Supplier
+import com.arturjarosz.task.supplier.model.SupplierCategory
+import com.arturjarosz.task.supplier.query.SupplierQueryService
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -19,11 +21,14 @@ class SupplierValidatorTest extends Specification {
 
     def supplierRepository = Mock(SupplierRepository)
     def supplierCategoryRepository = Stub(SupplierCategoryRepository) {
-        existsById(SUPPLIER_CATEGORY) >> true
+        findLockedById(SUPPLIER_CATEGORY) >> Optional.of(new SupplierCategory("Flooring shop"))
+        findLockedById(_) >> Optional.empty()
     }
+    def supplierCategoryValidator = new SupplierCategoryValidator(supplierCategoryRepository,
+            Mock(SupplierQueryService))
 
     @Subject
-    def supplierValidator = new SupplierValidator(supplierRepository, supplierCategoryRepository)
+    def supplierValidator = new SupplierValidator(supplierRepository, supplierCategoryValidator)
 
     def "validateCreateSupplierDto throws exception with proper error message"() {
         given: "SupplierDto"

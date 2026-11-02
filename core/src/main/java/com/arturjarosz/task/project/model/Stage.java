@@ -57,9 +57,8 @@ public class Stage extends AbstractHistoryAwareEntity implements WorkflowAware<S
     private Long architectId;
 
     @Getter
-    @Enumerated(EnumType.STRING)
-    @Column(name = "STAGE_TYPE", nullable = false)
-    private StageType stageType;
+    @Column(name = "STAGE_TYPE_ID", nullable = false)
+    private Long stageTypeId;
 
     @Setter
     @Column(name = "STATUS", nullable = false)
@@ -73,16 +72,16 @@ public class Stage extends AbstractHistoryAwareEntity implements WorkflowAware<S
         // needed by JPA
     }
 
-    public Stage(String name, StageType stageType, StageWorkflow stageWorkflow) {
+    public Stage(String name, Long stageTypeId, StageWorkflow stageWorkflow) {
         this.name = name;
-        this.stageType = stageType;
+        this.stageTypeId = stageTypeId;
         this.workflowName = stageWorkflow.getName();
     }
 
-    public void update(String name, String note, StageType stageType, LocalDate deadline, Long architectId) {
+    public void update(String name, String note, Long stageTypeId, LocalDate deadline, Long architectId) {
         this.name = name;
         this.note = note;
-        this.stageType = stageType;
+        this.stageTypeId = stageTypeId;
         this.deadline = deadline;
         this.architectId = architectId;
     }

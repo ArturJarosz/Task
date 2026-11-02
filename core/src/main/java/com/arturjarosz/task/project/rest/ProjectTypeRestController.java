@@ -21,7 +21,7 @@ public class ProjectTypeRestController implements ProjectTypeApi {
 
     @Override
     public ResponseEntity<ProjectTypeDto> createProjectType(ProjectTypeDto projectTypeDto) {
-        var projectType = this.projectTypeApplicationService.createProjectType(projectTypeDto);
+        var projectType = this.projectTypeApplicationService.create(projectTypeDto);
         var headers = new HttpHeadersBuilder().withLocation("/project-types/{projectTypeId}", projectType.getId())
                 .build();
         return new ResponseEntity<>(projectType, headers, HttpStatus.CREATED);
@@ -29,23 +29,23 @@ public class ProjectTypeRestController implements ProjectTypeApi {
 
     @Override
     public ResponseEntity<ProjectTypeDto> updateProjectType(ProjectTypeDto projectTypeDto, Long projectTypeId) {
-        return new ResponseEntity<>(this.projectTypeApplicationService.updateProjectType(projectTypeId, projectTypeDto),
+        return new ResponseEntity<>(this.projectTypeApplicationService.update(projectTypeId, projectTypeDto),
                 HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> deleteProjectType(Long projectTypeId) {
-        this.projectTypeApplicationService.deleteProjectType(projectTypeId);
+        this.projectTypeApplicationService.delete(projectTypeId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<ProjectTypeDto> getProjectType(Long projectTypeId) {
-        return new ResponseEntity<>(this.projectTypeApplicationService.getProjectType(projectTypeId), HttpStatus.OK);
+        return new ResponseEntity<>(this.projectTypeApplicationService.get(projectTypeId), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<ProjectTypeDto>> getProjectTypes() {
-        return new ResponseEntity<>(this.projectTypeApplicationService.getProjectTypes(), HttpStatus.OK);
+        return new ResponseEntity<>(this.projectTypeApplicationService.getAll(), HttpStatus.OK);
     }
 }
