@@ -1,7 +1,8 @@
-name: Build test publish redeploy environment
+name: Build test publish
 
 # Workflow should run on pushes/merged to develop and release branches.
 # These two cases should allow to build release and SNAPSHOT artifacts
+# The environment is not redeployed here, redeploy-environment.yml deploys the newest images every night
 on:
   push:
     branches:
@@ -108,27 +109,3 @@ jobs:
     with:
       latest: true
       chosen-module: "task-backend"
-
-  check-current-branch:
-    runs-on: ubuntu-22.04
-    outputs:
-      BRANCH: ${{ steps.check_branch.outputs.BRANCH }}
-    steps:
-      - name: check branch
-        id: check_branch
-        shell: bash
-        run: |
-          echo "Setting up branch name"
-          echo "BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> "$GITHUB_OUTPUT"
-
-  redeploy-environments:
-    if: needs.check-current-branch.outputs.BRANCH == 'develop'
-    needs:
-      - build-and-publish-docker-task-task-backend
-      - build-and-publish-docker-task-sample-data
-      - build-and-publish-docker-task-schema
-      - check-current-branch
-    uses: arturjarosz/Task/.github/workflows/redeploy-environment.yml@develop
-    with:
-      chosen_environment: "test-hetzner"
-    secrets: inherit
