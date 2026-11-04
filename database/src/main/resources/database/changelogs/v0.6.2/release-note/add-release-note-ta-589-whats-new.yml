@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-ta-589-whats-new"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-589"
+              - column:
+                  name: "TYPE"
+                  value: "IMPROVED"
+              - column:
+                  name: "TITLE"
+                  value: "A shorter What's new list"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "What's new now groups changes by application version and lists the title of each one. Select a title to read its full description."
+              - column:
+                  name: "APPLICATION_VERSION"
+                  value: "0.6.2"
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

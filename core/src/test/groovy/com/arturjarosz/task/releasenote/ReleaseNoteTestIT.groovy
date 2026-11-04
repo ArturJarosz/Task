@@ -28,6 +28,7 @@ class ReleaseNoteTestIT extends BaseTestIT {
     static final String M2M_AUTH_ID = "release-note-test-client@clients"
     // Notes added by the tests, told apart from the ones Liquibase adds
     static final String TEST_TICKET = "TA-TEST"
+    static final String TEST_VERSION = "9.9.9"
     // Note Liquibase adds for the story that introduced release notes
     static final String FIRST_NOTE_TITLE = "See what's new after you log in"
     static final ObjectMapper MAPPER = new ObjectMapper()
@@ -62,8 +63,11 @@ class ReleaseNoteTestIT extends BaseTestIT {
             notes[0].type == ReleaseNoteTypeDto.NEW
             notes[0].description == "Description of Newer note"
             notes[0].createdDateTime != null
+            notes[0].applicationVersion == TEST_VERSION
             notes*.id == notes*.id.sort(false).reverse()
             notes*.title.contains(FIRST_NOTE_TITLE)
+        and: "Notes published before versions were recorded belong to the version they came with"
+            notes.find { it.title == FIRST_NOTE_TITLE }.applicationVersion == "0.6.2"
     }
 
     def "Getting unseen release notes of a user who has seen none should return all notes, listed since the user was created"() {
@@ -205,9 +209,9 @@ class ReleaseNoteTestIT extends BaseTestIT {
 
     private Long insertNote(String title, ReleaseNoteTypeDto type, LocalDateTime published) {
         return this.jdbcTemplate.queryForObject("""
-                INSERT INTO RELEASE_NOTE (ID, UUID, TICKET, TYPE, TITLE, DESCRIPTION, CREATED_DATETIME)
-                VALUES (nextval('release_note_sequence'), gen_random_uuid(), ?, ?, ?, ?, ?) RETURNING ID""", Long,
-                TEST_TICKET, type.name(), title, "Description of " + title, published)
+                INSERT INTO RELEASE_NOTE (ID, UUID, TICKET, TYPE, TITLE, DESCRIPTION, APPLICATION_VERSION, CREATED_DATETIME)
+                VALUES (nextval('release_note_sequence'), gen_random_uuid(), ?, ?, ?, ?, ?, ?) RETURNING ID""", Long,
+                TEST_TICKET, type.name(), title, "Description of " + title, TEST_VERSION, published)
     }
 
     private Long lastSeenReleaseNoteId() {

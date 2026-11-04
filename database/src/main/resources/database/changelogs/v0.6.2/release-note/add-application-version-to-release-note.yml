@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-application-version-to-release-note"
+      changes:
+        - addColumn:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "APPLICATION_VERSION"
+                  type: "VARCHAR2(20 ${char.unit})"
+        # Every note so far came with this version
+        - update:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "APPLICATION_VERSION"
+                  value: "0.6.2"
+        - addNotNullConstraint:
+            tableName: "RELEASE_NOTE"
+            columnName: "APPLICATION_VERSION"

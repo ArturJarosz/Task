@@ -128,7 +128,7 @@ of the `RELEASE_NOTE` table, and each one is added by a Liquibase changeset.
 - A story made only in the frontend still adds its note here.
 - Put the note in `database/src/main/resources/database/changelogs/v<version>/release-note/` as
   `add-release-note-<ticket>.yml` (for example `add-release-note-ta-585.yml`). Include it at the end of that folder's
-  `release-note-tables.yml`. Copy `v0.6.2/release-note/add-release-note-ta-585.yml`, which has the changeset format.
+  `release-note-tables.yml`. Copy `v0.6.2/release-note/add-release-note-ta-589-whats-new.yml`, which has the changeset format.
 - Write for the people using the app, not for developers:
     - Describe what they can now do or what works differently. Never mention endpoints, fields, tables or class names.
     - Use plain English in the second person ("you"), with sentence case and no exclamation marks.
@@ -138,6 +138,8 @@ of the `RELEASE_NOTE` table, and each one is added by a Liquibase changeset.
     - `TYPE` is `NEW` for something users could not do before, `IMPROVED` for a change to something that already
       existed, and `FIXED` for a bugfix.
     - `TICKET` is the story key, for example `TA-585`. It is never shown to users.
+    - `APPLICATION_VERSION` is the version the change is released with, without `-SNAPSHOT`, matching the `v<version>`
+      folder, for example `0.6.2`. "What's new" groups the notes by it.
 - Never edit a changeset that may already have run. To fix the text of a note, add an `update` changeset.
 
 ## Testing
