@@ -3,6 +3,7 @@ package com.arturjarosz.task.user.rest;
 import com.arturjarosz.task.dto.UserConfigurationDto;
 import com.arturjarosz.task.dto.UserConfigurationNameDto;
 import com.arturjarosz.task.dto.UserDto;
+import com.arturjarosz.task.dto.UserSummaryDto;
 import com.arturjarosz.task.rest.UserApi;
 import com.arturjarosz.task.user.application.UserApplicationService;
 import lombok.NonNull;
@@ -22,6 +23,11 @@ public class UserRestController implements UserApi {
     @Override
     public ResponseEntity<UserDto> getCurrentUser() {
         return new ResponseEntity<>(this.userApplicationService.getCurrentUser(), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<UserSummaryDto>> getUsers() {
+        return new ResponseEntity<>(this.userApplicationService.getUsers(), HttpStatus.OK);
     }
 
     @Override

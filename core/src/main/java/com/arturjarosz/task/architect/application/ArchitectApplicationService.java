@@ -2,6 +2,7 @@ package com.arturjarosz.task.architect.application;
 
 import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.dto.ArchitectDto;
+import com.arturjarosz.task.dto.ArchitectUserLinkDto;
 import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
 
 import java.util.Collection;
@@ -28,11 +29,16 @@ public interface ArchitectApplicationService {
     void removeArchitect(Long architectId);
 
     /**
-     * Loads all architect data by given id.
+     * Loads all architect data by given id, without the linked user, so it can be embedded in other responses.
      * If entity with given architectId does not exist then
      * {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is thrown.
      */
     ArchitectDto getArchitect(Long architectId);
+
+    /**
+     * Same as {@link #getArchitect(Long)}, with the user linked with the architect.
+     */
+    ArchitectDto getArchitectWithLinkedUser(Long architectId);
 
     /**
      * Loads basic data (without projects counts and value) of {@link Architect}s with given architectIds in one
@@ -48,9 +54,25 @@ public interface ArchitectApplicationService {
     ArchitectDto updateArchitect(Long architectId, ArchitectDto architectDto);
 
     /**
-     * Loads list of basic architect data or all existing architects.
+     * Loads list of basic architect data or all existing architects, sorted by id.
      */
     List<ArchitectDto> getArchitects();
 
     EntityProjectsSummaryDto getProjectsSummary(Long architectId);
+
+    /**
+     * Links {@link Architect} of given architectId with the user from given {@link ArchitectUserLinkDto}, replacing
+     * the user linked so far. If the architect or the user does not exist then
+     * {@link com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException} is thrown. If the user is linked
+     * with another architect then {@link com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException} is
+     * thrown.
+     */
+    ArchitectDto linkUser(Long architectId, ArchitectUserLinkDto architectUserLinkDto);
+
+    /**
+     * Removes the link between {@link Architect} of given architectId and its user. The architect and everything
+     * assigned to it stay. If the architect does not exist then
+     * {@link com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException} is thrown.
+     */
+    ArchitectDto unlinkUser(Long architectId);
 }

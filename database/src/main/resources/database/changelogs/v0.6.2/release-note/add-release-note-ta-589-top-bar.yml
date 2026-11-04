@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-ta-589-top-bar"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-589"
+              - column:
+                  name: "TYPE"
+                  value: "IMPROVED"
+              - column:
+                  name: "TITLE"
+                  value: "A simpler top bar"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "The top bar now shows only your avatar. Select it to see your name and email and to log out."
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

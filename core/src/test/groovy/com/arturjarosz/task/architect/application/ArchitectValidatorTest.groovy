@@ -14,6 +14,7 @@ class ArchitectValidatorTest extends Specification {
     static final String LAST_NAME = "last"
     static final Long EXISTING_ID = 1L
     static final Long NON_EXISTING_ID = 999L
+    static final Long USER_ID = 300L
     static final Long ARCHITECT_WITH_PROJECTS = 10L
     static final Long ARCHITECT_WITHOUT_PROJECTS = 888L
 
@@ -81,6 +82,25 @@ class ArchitectValidatorTest extends Specification {
         then:
             Exception exception = thrown()
             exception.message == "isEmpty.architect.lastName"
+    }
+
+    def "validateUserNotLinkedToOtherArchitect should throw an exception when another architect has the user"() {
+        given:
+            this.architectRepository.existsByUserIdAndIdNot(USER_ID, EXISTING_ID) >> true
+        when:
+            this.architectValidator.validateUserNotLinkedToOtherArchitect(USER_ID, EXISTING_ID)
+        then:
+            Exception exception = thrown()
+            exception.message == "alreadySet.architect.user"
+    }
+
+    def "validateUserNotLinkedToOtherArchitect should not throw any exception when no other architect has the user"() {
+        given:
+            this.architectRepository.existsByUserIdAndIdNot(USER_ID, EXISTING_ID) >> false
+        when:
+            this.architectValidator.validateUserNotLinkedToOtherArchitect(USER_ID, EXISTING_ID)
+        then:
+            noExceptionThrown()
     }
 
     def "when passing proper data architectDtoValidator should not throw any exception"() {

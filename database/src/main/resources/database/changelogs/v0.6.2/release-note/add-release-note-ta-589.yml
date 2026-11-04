@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-ta-589"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-589"
+              - column:
+                  name: "TYPE"
+                  value: "NEW"
+              - column:
+                  name: "TITLE"
+                  value: "Link architects to their accounts"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "You can now link an architect to the account they log in with. You'll find this in Settings under Architect accounts."
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

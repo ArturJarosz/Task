@@ -3,8 +3,11 @@ package com.arturjarosz.task.user.application;
 import com.arturjarosz.task.dto.UserConfigurationDto;
 import com.arturjarosz.task.dto.UserConfigurationNameDto;
 import com.arturjarosz.task.dto.UserDto;
+import com.arturjarosz.task.dto.UserSummaryDto;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface UserApplicationService {
 
@@ -14,6 +17,16 @@ public interface UserApplicationService {
      * to a person.
      */
     UserDto getCurrentUser();
+
+    /**
+     * Returns everyone who has logged in at least once, sorted by id.
+     */
+    List<UserSummaryDto> getUsers();
+
+    /**
+     * Returns users with given ids by user id. Ids of not existing users are skipped.
+     */
+    Map<Long, UserSummaryDto> getUserSummaries(Collection<Long> userIds);
 
     /**
      * Returns configurations the {@link com.arturjarosz.task.user.model.User} matching the current JWT token has

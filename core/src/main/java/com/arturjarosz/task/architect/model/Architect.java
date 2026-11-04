@@ -27,6 +27,10 @@ public class Architect extends AbstractAggregateRoot {
     @AttributeOverride(name = "value", column = @Column(name = "PROJECTS_VALUE"))
     private Money projectsValue;
 
+    // Account the architect logs in with; empty for an architect without one, such as a former employee
+    @Column(name = "USER_ID")
+    private Long userId;
+
     protected Architect() {
         // needed by JPA
     }
@@ -54,5 +58,17 @@ public class Architect extends AbstractAggregateRoot {
 
     public void setProjectsValue(Money projectsValue) {
         this.projectsValue = projectsValue;
+    }
+
+    public Long getUserId() {
+        return this.userId;
+    }
+
+    public void linkUser(Long userId) {
+        this.userId = userId;
+    }
+
+    public void unlinkUser() {
+        this.userId = null;
     }
 }
