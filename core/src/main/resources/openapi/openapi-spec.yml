@@ -5362,6 +5362,9 @@ components:
           type: string
           format: time
           description: When the note was published
+        applicationVersion:
+          type: string
+          description: Release of the application the change came with, such as 0.6.2
 
     ReleaseNotes:
       type: array

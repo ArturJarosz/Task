@@ -34,6 +34,10 @@ public class ReleaseNote extends AbstractAggregateRoot {
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;
 
+    // Release the change came with, such as 0.6.2; "What's new" groups the notes by it
+    @Column(name = "APPLICATION_VERSION", nullable = false)
+    private String applicationVersion;
+
     protected ReleaseNote() {
         // needed by JPA
     }
