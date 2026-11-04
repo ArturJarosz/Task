@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArchitectRepository extends JpaRepository<Architect, Long> {
+
+    boolean existsByUserIdAndIdNot(Long userId, Long architectId);
 }

@@ -4,8 +4,10 @@ import com.arturjarosz.task.architect.application.ArchitectApplicationService;
 import com.arturjarosz.task.architect.application.ArchitectValidator;
 import com.arturjarosz.task.architect.application.mapper.ArchitectMapper;
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository;
+import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.contract.query.ContractQueryService;
 import com.arturjarosz.task.dto.ArchitectDto;
+import com.arturjarosz.task.dto.ArchitectUserLinkDto;
 import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
 import com.arturjarosz.task.project.application.mapper.ProjectsToEntityProjectsSummaryDtoMapper;
 import com.arturjarosz.task.project.model.Project;
@@ -13,9 +15,13 @@ import com.arturjarosz.task.project.query.ProjectCounts;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.properties.ProjectProperties;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
+import com.arturjarosz.task.user.application.UserApplicationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -28,6 +34,8 @@ import java.util.stream.Collectors;
 
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectDto;
 import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectExistence;
+import static com.arturjarosz.task.architect.application.ArchitectValidator.validateArchitectUserLinkDto;
+import static com.arturjarosz.task.architect.application.ArchitectValidator.validateUserExistence;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,6 +49,7 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     private final ContractQueryService contractQueryService;
     private final ProjectsToEntityProjectsSummaryDtoMapper projectsToEntityProjectsSummaryDtoMapper;
     private final ProjectProperties projectProperties;
+    private final UserApplicationService userApplicationService;
 
     @Transactional
     @Override
@@ -76,6 +85,16 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     }
 
     @Override
+    public ArchitectDto getArchitectWithLinkedUser(Long architectId) {
+        var maybeArchitect = this.architectRepository.findById(architectId);
+        validateArchitectExistence(maybeArchitect, architectId);
+
+        LOG.info("architect with id {} and its user loaded", architectId);
+        return this.withProjectsData(this.mapWithLinkedUsers(
+                List.of(maybeArchitect.orElseThrow(ResourceNotFoundException::new)))).get(0);
+    }
+
+    @Override
     public Map<Long, ArchitectDto> getArchitectsBasicData(Collection<Long> architectIds) {
         LOG.info("Getting basic data for {} architects.", architectIds.size());
         var existingIds = architectIds.stream().filter(Objects::nonNull).toList();
@@ -101,16 +120,13 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
 
         LOG.info("architect with id {} updated", architectId);
 
-        return this.architectMapper.mapToDto(architect);
+        return this.mapWithLinkedUsers(List.of(architect)).get(0);
     }
 
     @Override
     public List<ArchitectDto> getArchitects() {
         LOG.info("Getting all architects.");
-        return this.withProjectsData(this.architectRepository.findAll()
-                .stream()
-                .map(this.architectMapper::mapToDto)
-                .toList());
+        return this.withProjectsData(this.mapWithLinkedUsers(this.architectRepository.findAll(Sort.by("id"))));
     }
 
     @Override
@@ -122,6 +138,65 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
         var contractValueByProjectId = this.contractQueryService.getContractValuesForProjects(projects.stream().map(
                 Project::getId).toList());
         return this.projectsToEntityProjectsSummaryDtoMapper.mapToProjectSummaryDto(projects, contractValueByProjectId);
+    }
+
+    @Transactional
+    @Override
+    public ArchitectDto linkUser(Long architectId, ArchitectUserLinkDto architectUserLinkDto) {
+        LOG.info("Linking user with architect with id {}.", architectId);
+
+        var maybeArchitect = this.architectRepository.findById(architectId);
+        validateArchitectExistence(maybeArchitect, architectId);
+        validateArchitectUserLinkDto(architectUserLinkDto);
+        var userId = architectUserLinkDto.getUserId();
+        validateUserExistence(this.userApplicationService.getUserSummaries(List.of(userId)).containsKey(userId),
+                userId);
+        this.architectValidator.validateUserNotLinkedToOtherArchitect(userId, architectId);
+        var architect = maybeArchitect.orElseThrow(ResourceNotFoundException::new);
+        architect.linkUser(userId);
+        architect = this.saveWithUniqueUser(architect, userId);
+
+        LOG.info("User with id {} linked with architect with id {}.", userId, architectId);
+        return this.withProjectsData(this.mapWithLinkedUsers(List.of(architect))).get(0);
+    }
+
+    @Transactional
+    @Override
+    public ArchitectDto unlinkUser(Long architectId) {
+        LOG.info("Unlinking user from architect with id {}.", architectId);
+
+        var maybeArchitect = this.architectRepository.findById(architectId);
+        validateArchitectExistence(maybeArchitect, architectId);
+        var architect = maybeArchitect.orElseThrow(ResourceNotFoundException::new);
+        architect.unlinkUser();
+        architect = this.architectRepository.save(architect);
+
+        LOG.info("User unlinked from architect with id {}.", architectId);
+        return this.withProjectsData(this.mapWithLinkedUsers(List.of(architect))).get(0);
+    }
+
+    /**
+     * Saves and flushes, so a user linked with another architect in the meantime (after the validator checked it) fails
+     * with the same message as the validator.
+     */
+    private Architect saveWithUniqueUser(Architect architect, Long userId) {
+        try {
+            return this.architectRepository.saveAndFlush(architect);
+        } catch (DataIntegrityViolationException exception) {
+            throw new IllegalArgumentException(ArchitectValidator.getUserAlreadyLinkedMessageCode(), exception, userId);
+        }
+    }
+
+    private List<ArchitectDto> mapWithLinkedUsers(List<Architect> architects) {
+        var usersById = this.userApplicationService.getUserSummaries(
+                architects.stream().map(Architect::getUserId).filter(Objects::nonNull).toList());
+        return architects.stream().map(architect -> {
+            var architectDto = this.architectMapper.mapToDto(architect);
+            if (architect.getUserId() != null) {
+                architectDto.setLinkedUser(usersById.get(architect.getUserId()));
+            }
+            return architectDto;
+        }).toList();
     }
 
     private List<ArchitectDto> withProjectsData(List<ArchitectDto> architectDtos) {

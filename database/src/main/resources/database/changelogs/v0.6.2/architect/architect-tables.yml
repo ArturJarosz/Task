@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: "add-user-to-architect.yml"
+      relativeToChangelogFile: true

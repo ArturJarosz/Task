@@ -4,6 +4,7 @@ import com.arturjarosz.task.architect.domain.ArchitectExceptionCodes;
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository;
 import com.arturjarosz.task.architect.model.Architect;
 import com.arturjarosz.task.dto.ArchitectDto;
+import com.arturjarosz.task.dto.ArchitectUserLinkDto;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertEntityPresent;
+import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsFalse;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertIsTrue;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.assertNotEmpty;
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -60,6 +62,27 @@ public class ArchitectValidator {
         assertIsTrue(projectList.isEmpty(),
                 createMessageCode(ExceptionCodes.NOT_VALID, ArchitectExceptionCodes.ARCHITECT,
                         ArchitectExceptionCodes.PROJECTS));
+    }
+
+    public static void validateArchitectUserLinkDto(ArchitectUserLinkDto architectUserLinkDto) {
+        assertIsTrue(architectUserLinkDto != null && architectUserLinkDto.getUserId() != null,
+                createMessageCode(ExceptionCodes.NULL, ArchitectExceptionCodes.ARCHITECT,
+                        ArchitectExceptionCodes.USER));
+    }
+
+    public static void validateUserExistence(boolean userExists, Long userId) {
+        assertEntityPresent(userExists, createMessageCode(ExceptionCodes.NOT_EXIST, ArchitectExceptionCodes.ARCHITECT,
+                ArchitectExceptionCodes.USER), userId);
+    }
+
+    public static String getUserAlreadyLinkedMessageCode() {
+        return createMessageCode(ExceptionCodes.ALREADY_SET, ArchitectExceptionCodes.ARCHITECT,
+                ArchitectExceptionCodes.USER);
+    }
+
+    public void validateUserNotLinkedToOtherArchitect(Long userId, Long architectId) {
+        assertIsFalse(this.architectRepository.existsByUserIdAndIdNot(userId, architectId),
+                getUserAlreadyLinkedMessageCode(), userId);
     }
 
 }

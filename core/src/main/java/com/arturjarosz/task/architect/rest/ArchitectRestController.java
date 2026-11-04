@@ -2,6 +2,7 @@ package com.arturjarosz.task.architect.rest;
 
 import com.arturjarosz.task.architect.application.ArchitectApplicationService;
 import com.arturjarosz.task.dto.ArchitectDto;
+import com.arturjarosz.task.dto.ArchitectUserLinkDto;
 import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
 import com.arturjarosz.task.rest.ArchitectApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
@@ -36,7 +37,7 @@ public class ArchitectRestController implements ArchitectApi {
 
     @Override
     public ResponseEntity<ArchitectDto> getArchitect(Long architectId) {
-        return new ResponseEntity<>(this.architectApplicationService.getArchitect(architectId), HttpStatus.OK);
+        return new ResponseEntity<>(this.architectApplicationService.getArchitectWithLinkedUser(architectId), HttpStatus.OK);
     }
 
     @Override
@@ -53,5 +54,16 @@ public class ArchitectRestController implements ArchitectApi {
     @Override
     public ResponseEntity<EntityProjectsSummaryDto> getArchitectProjectsSummary(Long architectId) {
         return new ResponseEntity<>(this.architectApplicationService.getProjectsSummary(architectId), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ArchitectDto> linkArchitectUser(ArchitectUserLinkDto architectUserLinkDto, Long architectId) {
+        return new ResponseEntity<>(this.architectApplicationService.linkUser(architectId, architectUserLinkDto),
+                HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ArchitectDto> unlinkArchitectUser(Long architectId) {
+        return new ResponseEntity<>(this.architectApplicationService.unlinkUser(architectId), HttpStatus.OK);
     }
 }

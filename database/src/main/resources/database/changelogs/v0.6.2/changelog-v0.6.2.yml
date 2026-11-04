@@ -39,6 +39,9 @@ databaseChangeLog:
       file: "task-type/task-type-tables.yml"
       relativeToChangelogFile: true
   - include:
+      file: "architect/architect-tables.yml"
+      relativeToChangelogFile: true
+  - include:
       file: "release-note/release-note-tables.yml"
       relativeToChangelogFile: true
   - changeSet:

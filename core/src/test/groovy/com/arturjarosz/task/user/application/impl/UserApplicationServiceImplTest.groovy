@@ -3,13 +3,16 @@ package com.arturjarosz.task.user.application.impl
 import com.arturjarosz.task.dto.UserConfigurationDto
 import com.arturjarosz.task.dto.UserConfigurationNameDto
 import com.arturjarosz.task.dto.UserDto
+import com.arturjarosz.task.dto.UserSummaryDto
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import com.arturjarosz.task.user.application.CurrentUserProvider
 import com.arturjarosz.task.user.application.mapper.UserMapper
+import com.arturjarosz.task.user.infrastructure.repository.UserRepository
 import com.arturjarosz.task.user.model.User
 import com.arturjarosz.task.user.model.UserConfiguration
 import com.arturjarosz.task.user.model.UserConfigurationName
+import org.springframework.data.domain.Sort
 import spock.lang.Specification
 
 class UserApplicationServiceImplTest extends Specification {
@@ -21,7 +24,9 @@ class UserApplicationServiceImplTest extends Specification {
     def currentUserProvider = Mock(CurrentUserProvider)
     def userMapper = Mock(UserMapper)
 
-    def subject = new UserApplicationServiceImpl(currentUserProvider, userMapper)
+    def userRepository = Mock(UserRepository)
+
+    def subject = new UserApplicationServiceImpl(currentUserProvider, userMapper, userRepository)
 
     def "getCurrentUser should return current user, creating it when needed"() {
         given:
@@ -49,6 +54,33 @@ class UserApplicationServiceImplTest extends Specification {
             result.id == null
             result.username == null
             result.email == null
+    }
+
+    def "getUsers should ask for users sorted by id and return them in that order"() {
+        given:
+            this.userRepository.findAll(Sort.by("id")) >> [new User("zoe", "zoe@example.com", "auth0|1"),
+                                                           new User("Adam", "adam@example.com", "auth0|2")]
+            this.userMapper.mapToSummaryDto(_ as User) >> { User user -> new UserSummaryDto(username: user.username) }
+
+        when:
+            def result = this.subject.getUsers()
+
+        then:
+            result*.username == ["zoe", "Adam"]
+    }
+
+    def "getUserSummaries should return found users by id"() {
+        given:
+            def user = new User(USERNAME, EMAIL, AUTH_ID)
+            def userSummaryDto = new UserSummaryDto(id: USER_ID, username: USERNAME, email: EMAIL)
+            this.userRepository.findAllById([USER_ID, 2L]) >> [user]
+            this.userMapper.mapToSummaryDto(user) >> userSummaryDto
+
+        when:
+            def result = this.subject.getUserSummaries([USER_ID, 2L])
+
+        then:
+            result == [(USER_ID): userSummaryDto]
     }
 
     def "getCurrentUserConfigurations should return configurations of current user"() {

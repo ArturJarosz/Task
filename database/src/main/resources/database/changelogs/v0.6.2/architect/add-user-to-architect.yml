@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-user-id-to-architect"
+      changes:
+        - addColumn:
+            tableName: "ARCHITECT"
+            columns:
+              - column:
+                  name: "USER_ID"
+                  type: "${long.type}"
+        - addForeignKeyConstraint:
+            baseTableName: "ARCHITECT"
+            baseColumnNames: "USER_ID"
+            referencedTableName: "LOCAL_USER"
+            referencedColumnNames: "ID"
+            constraintName: "ARCHITECT_USER_FK"
+            onDelete: "SET NULL"
+        - addUniqueConstraint:
+            tableName: "ARCHITECT"
+            columnNames: "USER_ID"
+            constraintName: "UNIQ_ARCHITECT_USER"

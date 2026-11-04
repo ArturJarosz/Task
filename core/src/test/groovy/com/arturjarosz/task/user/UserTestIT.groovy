@@ -4,6 +4,7 @@ import com.arturjarosz.task.configuration.BaseTestIT
 import com.arturjarosz.task.dto.UserConfigurationDto
 import com.arturjarosz.task.dto.UserConfigurationNameDto
 import com.arturjarosz.task.dto.UserDto
+import com.arturjarosz.task.dto.UserSummaryDto
 import com.arturjarosz.task.user.application.CurrentUserProvider
 import com.arturjarosz.task.user.infrastructure.repository.UserRepository
 import com.arturjarosz.task.user.model.User
@@ -13,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.transaction.annotation.Transactional
 import tools.jackson.core.type.TypeReference
 import tools.jackson.databind.ObjectMapper
 
@@ -42,6 +44,25 @@ class UserTestIT extends BaseTestIT {
     def cleanup() {
         SecurityContextHolder.clearContext()
         this.userRepository.findByAuthId(AUTH_ID).ifPresent { this.userRepository.delete(it) }
+    }
+
+    @Transactional
+    def "Getting users should return them sorted by id, without their Auth0 ids"() {
+        given:
+            def first = this.userRepository.save(new User("Zofia list test", "zofia@example.com", "auth0|list-test-2"))
+            def second = this.userRepository.save(new User("anna list test", "anna@example.com", "auth0|list-test-1"))
+        when:
+            def response = this.mockMvc.perform(MockMvcRequestBuilders.get(URI.create(HOST + ":" + port + "/users")))
+                    .andReturn().response
+        then:
+            response.status == HttpStatus.OK.value()
+            !response.contentAsString.contains("auth0|list-test")
+        and:
+            List<UserSummaryDto> users = MAPPER.readValue(response.contentAsString,
+                    new TypeReference<List<UserSummaryDto>>() {})
+            users.findAll { it.username.endsWith("list test") } == [
+                    new UserSummaryDto(id: first.id, username: "Zofia list test", email: "zofia@example.com"),
+                    new UserSummaryDto(id: second.id, username: "anna list test", email: "anna@example.com")]
     }
 
     def "Saving theme mode should store it as user configuration and return it with configurations of current user"() {
