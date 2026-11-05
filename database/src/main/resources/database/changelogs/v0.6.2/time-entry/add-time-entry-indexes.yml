@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-time-entry-indexes"
+      changes:
+        - createIndex:
+            tableName: "TIME_ENTRY"
+            indexName: "IDX_TIME_ENTRY_TASK_ID"
+            columns:
+              - column:
+                  name: "TASK_ID"

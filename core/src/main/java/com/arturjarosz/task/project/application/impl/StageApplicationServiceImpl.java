@@ -6,9 +6,11 @@ import com.arturjarosz.task.finance.application.InstallmentApplicationService;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.StageValidator;
+import com.arturjarosz.task.project.application.TimeSpentAssembler;
 import com.arturjarosz.task.project.application.mapper.StageMapper;
 import com.arturjarosz.task.project.domain.StageDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
+import com.arturjarosz.task.project.infrastructure.repositor.TimeEntryRepository;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.query.ProjectQueryService;
@@ -33,6 +35,8 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     private final ContractWorkflowValidator contractWorkflowValidator;
     private final InstallmentApplicationService installmentApplicationService;
     private final StageMapper stageMapper;
+    private final TimeEntryRepository timeEntryRepository;
+    private final TimeSpentAssembler timeSpentAssembler;
 
     @Transactional
     @Override
@@ -57,7 +61,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         }
 
         LOG.info("Stage for Project with id {} created.", projectId);
-        return newlyCreatedStageDto;
+        return this.timeSpentAssembler.setTimeSpent(newlyCreatedStageDto);
     }
 
     @Transactional
@@ -70,6 +74,8 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
 
+        // the entries reference the stage's tasks, so they go first
+        this.timeEntryRepository.deleteByStageId(stageId);
         project.removeStage(stageId);
 
         var installmentId = this.projectQueryService.getInstallmentIdForStage(stageId);
@@ -95,7 +101,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.projectRepository.save(project);
 
         LOG.info("Stage updated.");
-        return this.stageMapper.mapToDto(stage);
+        return this.timeSpentAssembler.setTimeSpent(this.stageMapper.mapToDto(stage));
     }
 
     @Transactional
@@ -108,14 +114,16 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         var stage = this.projectQueryService.getStageById(stageId);
 
         LOG.info("Stage loaded.");
-        return this.stageMapper.mapToDto(stage);
+        return this.timeSpentAssembler.setTimeSpent(this.stageMapper.mapToDto(stage));
     }
 
     @Override
     public List<StageDto> getStageListForProject(Long projectId) {
         LOG.info("Loading list of Stages for Project with id {}.", projectId);
         this.projectValidator.validateProjectExistence(projectId);
-        return this.projectQueryService.getStagesForProjectById(projectId);
+        var stageDtos = this.projectQueryService.getStagesForProjectById(projectId);
+        this.timeSpentAssembler.setTimeSpentOnStages(stageDtos);
+        return stageDtos;
     }
 
     @Transactional
@@ -130,7 +138,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.stageDomainService.rejectStage(project, stageId);
         this.projectRepository.save(project);
 
-        return this.stageMapper.mapToDto(this.getStageById(project, stageId));
+        return this.timeSpentAssembler.setTimeSpent(this.stageMapper.mapToDto(this.getStageById(project, stageId)));
     }
 
     @Transactional
@@ -143,7 +151,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.stageDomainService.reopenStage(project, stageId);
         this.projectRepository.save(project);
-        return this.stageMapper.mapToDto(this.getStageById(project, stageId));
+        return this.timeSpentAssembler.setTimeSpent(this.stageMapper.mapToDto(this.getStageById(project, stageId)));
     }
 
     private Stage getCreatedStageWithId(Project project, Stage stage) {

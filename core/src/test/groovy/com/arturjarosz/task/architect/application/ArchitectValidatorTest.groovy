@@ -1,5 +1,6 @@
 package com.arturjarosz.task.architect.application
 
+import com.arturjarosz.task.project.query.TimeEntryQueryService
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository
 import com.arturjarosz.task.architect.model.Architect
 import com.arturjarosz.task.dto.ArchitectDto
@@ -32,7 +33,12 @@ class ArchitectValidatorTest extends Specification {
         getProjectsForArchitect(ARCHITECT_WITHOUT_PROJECTS) >> { Collections.emptyList() }
     }
 
-    def architectValidator = new ArchitectValidator(architectRepository, projectQueryService)
+    def timeEntryQueryService = Mock(TimeEntryQueryService) {
+        architectHasTimeEntries(ARCHITECT_WITH_PROJECTS) >> true
+        architectHasTimeEntries(ARCHITECT_WITHOUT_PROJECTS) >> false
+    }
+
+    def architectValidator = new ArchitectValidator(architectRepository, projectQueryService, timeEntryQueryService)
 
     def "when passing null architectDtoValidator should throw an exception with specific error message"() {
         given:
@@ -144,5 +150,20 @@ class ArchitectValidatorTest extends Specification {
         then:
             Exception ex = thrown()
             ex.message == "notValid.architect.projects"
+    }
+
+    def "when passing architect id with no time entries validate should not throw an exception"() {
+        when:
+            this.architectValidator.validateArchitectHasNoTimeEntries(ARCHITECT_WITHOUT_PROJECTS)
+        then:
+            noExceptionThrown()
+    }
+
+    def "when passing architect id with time entries validate should throw an exception"() {
+        when:
+            this.architectValidator.validateArchitectHasNoTimeEntries(ARCHITECT_WITH_PROJECTS)
+        then:
+            Exception ex = thrown()
+            ex.message == "notValid.architect.timeEntries"
     }
 }

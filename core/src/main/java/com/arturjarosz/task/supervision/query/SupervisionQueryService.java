@@ -20,4 +20,9 @@ public interface SupervisionQueryService {
     boolean supervisionOnProjectExistence(Long projectId);
 
     Supervision getSupervisionByProjectId(long projectId);
+
+    /**
+     * Returns the hours of all visits of the project's supervision, payable or not; 0 without a supervision.
+     */
+    long getVisitHoursForProject(long projectId);
 }

@@ -8,6 +8,7 @@ import com.arturjarosz.task.supervision.model.QSupervision;
 import com.arturjarosz.task.supervision.model.QSupervisionVisit;
 import com.arturjarosz.task.supervision.model.Supervision;
 import com.arturjarosz.task.supervision.query.SupervisionQueryService;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 
 import java.util.List;
@@ -87,5 +88,19 @@ public class SupervisionQueryServiceImpl extends AbstractQueryService<QSupervisi
                 .where(SUPERVISION.projectId.eq(projectId))
                 .select(SUPERVISION)
                 .fetchOne();
+    }
+
+    @Override
+    public long getVisitHoursForProject(long projectId) {
+        Tuple row = this.query()
+                .from(SUPERVISION)
+                .join(SUPERVISION.supervisionVisits, SUPERVISION_VISIT)
+                .where(SUPERVISION.projectId.eq(projectId))
+                .groupBy(SUPERVISION.projectId)
+                .select(SUPERVISION.projectId, SUPERVISION_VISIT.hoursCount.sum())
+                .fetchOne();
+        // JPQL sums integers as Long, while QueryDSL types the sum as Integer, so it is read as a Number
+        Number hours = row == null ? null : row.get(1, Number.class);
+        return hours == null ? 0L : hours.longValue();
     }
 }

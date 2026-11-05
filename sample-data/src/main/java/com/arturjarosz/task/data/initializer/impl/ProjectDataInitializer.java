@@ -16,6 +16,7 @@ import com.arturjarosz.task.data.model.ProjectSample;
 import com.arturjarosz.task.data.model.StageSample;
 import com.arturjarosz.task.data.model.SupplySample;
 import com.arturjarosz.task.data.model.TaskSample;
+import com.arturjarosz.task.data.model.TimeEntrySample;
 import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.dto.ContractStatusDto;
 import com.arturjarosz.task.dto.ContractorJobDto;
@@ -26,6 +27,7 @@ import com.arturjarosz.task.dto.StageDto;
 import com.arturjarosz.task.dto.SupplyDto;
 import com.arturjarosz.task.dto.TaskDto;
 import com.arturjarosz.task.dto.TaskStatusDto;
+import com.arturjarosz.task.dto.TimeEntryDto;
 import com.arturjarosz.task.dto.UpdateStatusRequestDto;
 import com.arturjarosz.task.exception.SampleDataInitializingException;
 import com.arturjarosz.task.finance.application.ContractorJobApplicationService;
@@ -37,6 +39,7 @@ import com.arturjarosz.task.finance.model.CostCategory;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.TaskApplicationService;
+import com.arturjarosz.task.project.application.TimeEntryApplicationService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectTypeRepository;
 import com.arturjarosz.task.project.infrastructure.repositor.StageTypeRepository;
 import com.arturjarosz.task.project.infrastructure.repositor.TaskTypeRepository;
@@ -93,6 +96,7 @@ public class ProjectDataInitializer implements DataInitializer {
     private final ProjectApplicationService projectApplicationService;
     private final StageApplicationService stageApplicationService;
     private final TaskApplicationService taskApplicationService;
+    private final TimeEntryApplicationService timeEntryApplicationService;
     private final ContractService contractService;
     private final InstallmentApplicationService installmentApplicationService;
     private final CostApplicationService costApplicationService;
@@ -218,6 +222,13 @@ public class ProjectDataInitializer implements DataInitializer {
                             .note(taskSample.getNote())
                             .architectId(architectId));
             taskIds.put(taskSample, taskDto.getId());
+            for (TimeEntrySample timeEntrySample : taskSample.getTimeEntries()) {
+                this.timeEntryApplicationService.createTimeEntry(projectId, stageId, taskDto.getId(),
+                        new TimeEntryDto().workDate(daysAgo(timeEntrySample.getWorkedDaysAgo()))
+                                .durationMinutes(timeEntrySample.getMinutes())
+                                .architectId(architectId)
+                                .note(timeEntrySample.getNote()));
+            }
         }
         if (stageSample.getInstallment() != null) {
             this.createInstallment(projectId, stageId, stageSample.getInstallment());

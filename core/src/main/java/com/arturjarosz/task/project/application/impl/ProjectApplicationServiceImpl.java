@@ -9,15 +9,20 @@ import com.arturjarosz.task.contract.application.mapper.ContractMapper;
 import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
+import com.arturjarosz.task.dto.ProjectTimeSummaryDto;
 import com.arturjarosz.task.finance.application.CostApplicationService;
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.ProjectTypeValidator;
 import com.arturjarosz.task.project.application.ProjectValidator;
+import com.arturjarosz.task.project.application.TimeSpentAssembler;
 import com.arturjarosz.task.project.application.mapper.ProjectMapper;
+import com.arturjarosz.task.project.domain.HourlyRateCalculator;
 import com.arturjarosz.task.project.domain.ProjectDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
+import com.arturjarosz.task.project.infrastructure.repositor.TimeEntryRepository;
 import com.arturjarosz.task.project.model.Project;
+import com.arturjarosz.task.project.query.TimeEntryQueryService;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.supervision.application.SupervisionApplicationService;
@@ -26,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,6 +68,12 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final CostApplicationService costApplicationService;
     @NonNull
     private final SupervisionApplicationService supervisionApplicationService;
+    @NonNull
+    private final TimeEntryQueryService timeEntryQueryService;
+    @NonNull
+    private final TimeEntryRepository timeEntryRepository;
+    @NonNull
+    private final TimeSpentAssembler timeSpentAssembler;
 
     @Transactional
     @Override
@@ -98,7 +110,39 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         var supervisionDto = this.supervisionApplicationService.getProjectSupervision(projectId);
 
         LOG.info("Project with id {} loaded.", projectId);
-        return this.projectMapper.mapToDto(clientDto, architectDto, project, contractDto, projectCosts, supervisionDto);
+        return this.timeSpentAssembler.setTimeSpent(
+                this.projectMapper.mapToDto(clientDto, architectDto, project, contractDto, projectCosts,
+                        supervisionDto));
+    }
+
+    @Transactional
+    @Override
+    public ProjectTimeSummaryDto getProjectTimeSummary(Long projectId) {
+        LOG.info("Loading time summary of Project with id {}.", projectId);
+
+        var maybeProject = this.projectRepository.findById(projectId);
+        this.projectValidator.validateProjectExistence(maybeProject, projectId);
+        var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
+
+        long tasksMinutes = this.timeEntryQueryService.getMinutesForProject(projectId);
+        long supervisionMinutes = this.timeSpentAssembler.getSupervisionMinutes(projectId);
+        long totalMinutes = tasksMinutes + supervisionMinutes;
+
+        var netValue = toBigDecimal(
+                this.projectFinancialDataService.getTotalProjectFinancialData(projectId).getNetValue());
+        var contractValue = toBigDecimal(
+                this.contractService.getContractForProject(project.getContractId()).getOfferValue());
+
+        LOG.info("Time summary of Project with id {} loaded.", projectId);
+        return ProjectTimeSummaryDto.builder()
+                .totalMinutes(totalMinutes)
+                .tasksMinutes(tasksMinutes)
+                .supervisionMinutes(supervisionMinutes)
+                .netValue(netValue.doubleValue())
+                .contractValue(contractValue.doubleValue())
+                .netValuePerHour(toDouble(HourlyRateCalculator.ratePerHour(netValue, totalMinutes)))
+                .contractValuePerHour(toDouble(HourlyRateCalculator.ratePerHour(contractValue, totalMinutes)))
+                .build();
     }
 
     @Transactional
@@ -125,6 +169,8 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
         this.projectValidator.validateProjectExistence(projectId);
         this.projectFinancialDataService.removeFinancialDataForProject(projectId);
+        // the entries reference the project's tasks, so they go first
+        this.timeEntryRepository.deleteByProjectId(projectId);
         this.projectRepository.deleteById(projectId);
 
         LOG.info("Project with id {} removed.", projectId);
@@ -195,5 +241,13 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.projectRepository.save(project);
 
         return this.projectMapper.mapToDto(project);
+    }
+
+    private static BigDecimal toBigDecimal(Double value) {
+        return value == null ? BigDecimal.ZERO : BigDecimal.valueOf(value);
+    }
+
+    private static Double toDouble(BigDecimal value) {
+        return value == null ? null : value.doubleValue();
     }
 }

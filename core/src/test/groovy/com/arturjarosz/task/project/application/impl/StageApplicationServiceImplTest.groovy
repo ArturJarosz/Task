@@ -6,9 +6,11 @@ import com.arturjarosz.task.dto.StageDto
 import com.arturjarosz.task.finance.application.InstallmentApplicationService
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
+import com.arturjarosz.task.project.application.TimeSpentAssembler
 import com.arturjarosz.task.project.application.mapper.StageMapper
 import com.arturjarosz.task.project.domain.StageDomainService
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
+import com.arturjarosz.task.project.infrastructure.repositor.TimeEntryRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
@@ -43,9 +45,15 @@ class StageApplicationServiceImplTest extends Specification {
     def contractWorkflowValidator = Mock(ContractWorkflowValidator)
     def installmentApplicationService = Mock(InstallmentApplicationService)
     def stageMapper = Mock(StageMapper)
+    def timeEntryRepository = Mock(TimeEntryRepository)
+    // returns the DTO it gets, as the time spent itself is covered by TimeEntryTestIT
+    def timeSpentAssembler = Mock(TimeSpentAssembler) {
+        setTimeSpent(_) >> { arguments -> arguments[0] }
+    }
 
     def subject = new StageApplicationServiceImpl(projectQueryService, projectValidator,
-            projectRepository, stageDomainService, stageValidator, contractWorkflowValidator, installmentApplicationService, stageMapper)
+            projectRepository, stageDomainService, stageValidator, contractWorkflowValidator, installmentApplicationService, stageMapper,
+            timeEntryRepository, timeSpentAssembler)
 
     def "createStage should call validateProjectExistence on projectValidator"() {
         given:
