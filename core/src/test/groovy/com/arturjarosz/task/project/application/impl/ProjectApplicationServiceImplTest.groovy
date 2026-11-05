@@ -13,10 +13,13 @@ import com.arturjarosz.task.finance.application.CostApplicationService
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService
 import com.arturjarosz.task.project.application.ProjectTypeValidator
 import com.arturjarosz.task.project.application.ProjectValidator
+import com.arturjarosz.task.project.application.TimeSpentAssembler
 import com.arturjarosz.task.project.application.mapper.ProjectMapperImpl
 import com.arturjarosz.task.project.domain.impl.ProjectDomainServiceImpl
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
+import com.arturjarosz.task.project.infrastructure.repositor.TimeEntryRepository
 import com.arturjarosz.task.project.model.Project
+import com.arturjarosz.task.project.query.TimeEntryQueryService
 import com.arturjarosz.task.project.status.project.ProjectStatus
 import com.arturjarosz.task.supervision.application.SupervisionApplicationService
 import com.arturjarosz.task.utils.ProjectBuilder
@@ -60,11 +63,18 @@ class ProjectApplicationServiceImplTest extends Specification {
     def projectMapper = new ProjectMapperImpl()
     def costApplicationService = Mock(CostApplicationService)
     def supervisionApplicationService = Mock(SupervisionApplicationService)
+    def timeEntryQueryService = Mock(TimeEntryQueryService)
+    def timeEntryRepository = Mock(TimeEntryRepository)
+    // returns the DTO it gets, as the time spent itself is covered by TimeEntryTestIT
+    def timeSpentAssembler = Mock(TimeSpentAssembler) {
+        setTimeSpent(_) >> { arguments -> arguments[0] }
+    }
 
     def projectApplicationService = new ProjectApplicationServiceImpl(clientApplicationService, clientValidator,
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator,
             projectTypeValidator, projectFinancialDataService, contractService, contractMapper, projectMapper,
-            costApplicationService, supervisionApplicationService)
+            costApplicationService, supervisionApplicationService, timeEntryQueryService, timeEntryRepository,
+            timeSpentAssembler)
 
     def "createProject should call validateProjectBasicDto on projectValidator"() {
         given:

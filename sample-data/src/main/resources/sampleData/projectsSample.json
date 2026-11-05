@@ -33,21 +33,68 @@
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 58,
-                        "finishedDaysAgo": 52
+                        "finishedDaysAgo": 52,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 58,
+                                "minutes": 180,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 55,
+                                "minutes": 240
+                            },
+                            {
+                                "workedDaysAgo": 52,
+                                "minutes": 150,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     },
                     {
                         "name": "Układ funkcjonalny - wariant A",
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 50,
-                        "finishedDaysAgo": 38
+                        "finishedDaysAgo": 38,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 50,
+                                "minutes": 300
+                            },
+                            {
+                                "workedDaysAgo": 44,
+                                "minutes": 90,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 38,
+                                "minutes": 210
+                            }
+                        ]
                     },
                     {
                         "name": "Układ funkcjonalny - wariant B",
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 50,
-                        "finishedDaysAgo": 40
+                        "finishedDaysAgo": 40,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 50,
+                                "minutes": 120,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 45,
+                                "minutes": 270
+                            },
+                            {
+                                "workedDaysAgo": 40,
+                                "minutes": 60,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     },
                     {
                         "name": "Układ funkcjonalny - wariant C",
@@ -72,19 +119,65 @@
                         "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 30,
-                        "finishedDaysAgo": 14
+                        "finishedDaysAgo": 14,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 30,
+                                "minutes": 195
+                            },
+                            {
+                                "workedDaysAgo": 22,
+                                "minutes": 180,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 14,
+                                "minutes": 240
+                            }
+                        ]
                     },
                     {
                         "name": "Wizualizacja kuchni",
                         "type": "Render",
                         "status": "IN_PROGRESS",
-                        "startedDaysAgo": 20
+                        "startedDaysAgo": 20,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 20,
+                                "minutes": 150,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 10,
+                                "minutes": 300
+                            },
+                            {
+                                "workedDaysAgo": 0,
+                                "minutes": 90,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     },
                     {
                         "name": "Wizualizacja łazienki",
                         "type": "Render",
                         "status": "IN_PROGRESS",
-                        "startedDaysAgo": 12
+                        "startedDaysAgo": 12,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 12,
+                                "minutes": 210
+                            },
+                            {
+                                "workedDaysAgo": 6,
+                                "minutes": 120,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 0,
+                                "minutes": 270
+                            }
+                        ]
                     },
                     {
                         "name": "Wizualizacja sypialni",
@@ -110,7 +203,23 @@
                         "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 45,
-                        "finishedDaysAgo": 35
+                        "finishedDaysAgo": 35,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 45,
+                                "minutes": 60,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 40,
+                                "minutes": 195
+                            },
+                            {
+                                "workedDaysAgo": 35,
+                                "minutes": 180,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     }
                 ]
             },
@@ -243,13 +352,44 @@
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 20,
-                        "finishedDaysAgo": 10
+                        "finishedDaysAgo": 10,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 20,
+                                "minutes": 240
+                            },
+                            {
+                                "workedDaysAgo": 15,
+                                "minutes": 150,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 10,
+                                "minutes": 300
+                            }
+                        ]
                     },
                     {
                         "name": "Rozmieszczenie stanowisk",
                         "type": "Concept",
                         "status": "IN_PROGRESS",
-                        "startedDaysAgo": 8
+                        "startedDaysAgo": 8,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 8,
+                                "minutes": 90,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 4,
+                                "minutes": 210
+                            },
+                            {
+                                "workedDaysAgo": 0,
+                                "minutes": 120,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     },
                     {
                         "name": "Strefa socjalna",
@@ -286,7 +426,22 @@
                         "name": "Wizualizacja recepcji",
                         "type": "Render",
                         "status": "IN_PROGRESS",
-                        "startedDaysAgo": 6
+                        "startedDaysAgo": 6,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 6,
+                                "minutes": 270
+                            },
+                            {
+                                "workedDaysAgo": 3,
+                                "minutes": 60,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 0,
+                                "minutes": 195
+                            }
+                        ]
                     },
                     {
                         "name": "Wizualizacja sali konferencyjnej",
@@ -360,14 +515,45 @@
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 175,
-                        "finishedDaysAgo": 160
+                        "finishedDaysAgo": 160,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 175,
+                                "minutes": 180,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 167,
+                                "minutes": 240
+                            },
+                            {
+                                "workedDaysAgo": 160,
+                                "minutes": 150,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     },
                     {
                         "name": "Układ piętra",
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 172,
-                        "finishedDaysAgo": 155
+                        "finishedDaysAgo": 155,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 172,
+                                "minutes": 300
+                            },
+                            {
+                                "workedDaysAgo": 163,
+                                "minutes": 90,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 155,
+                                "minutes": 210
+                            }
+                        ]
                     }
                 ],
                 "deadlineInDays": -150
@@ -387,7 +573,23 @@
                         "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 140,
-                        "finishedDaysAgo": 110
+                        "finishedDaysAgo": 110,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 140,
+                                "minutes": 120,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 125,
+                                "minutes": 270
+                            },
+                            {
+                                "workedDaysAgo": 110,
+                                "minutes": 60,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     },
                     {
                         "name": "Wizualizacja gabinetu",
@@ -400,7 +602,22 @@
                         "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 130,
-                        "finishedDaysAgo": 100
+                        "finishedDaysAgo": 100,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 130,
+                                "minutes": 195
+                            },
+                            {
+                                "workedDaysAgo": 115,
+                                "minutes": 180,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 100,
+                                "minutes": 240
+                            }
+                        ]
                     }
                 ],
                 "deadlineInDays": -90
@@ -421,7 +638,23 @@
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 100,
-                        "finishedDaysAgo": 60
+                        "finishedDaysAgo": 60,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 100,
+                                "minutes": 150,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 80,
+                                "minutes": 300
+                            },
+                            {
+                                "workedDaysAgo": 60,
+                                "minutes": 90,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     }
                 ]
             },
@@ -440,13 +673,44 @@
                         "type": "Shopping",
                         "status": "DONE",
                         "startedDaysAgo": 80,
-                        "finishedDaysAgo": 40
+                        "finishedDaysAgo": 40,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 80,
+                                "minutes": 210
+                            },
+                            {
+                                "workedDaysAgo": 60,
+                                "minutes": 120,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 40,
+                                "minutes": 270
+                            }
+                        ]
                     },
                     {
                         "name": "Odbiór prac wykończeniowych",
                         "type": "Concept",
                         "status": "IN_PROGRESS",
-                        "startedDaysAgo": 35
+                        "startedDaysAgo": 35,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 35,
+                                "minutes": 60,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 17,
+                                "minutes": 195
+                            },
+                            {
+                                "workedDaysAgo": 0,
+                                "minutes": 180,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     }
                 ],
                 "deadlineInDays": -30
@@ -605,14 +869,45 @@
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 398,
-                        "finishedDaysAgo": 392
+                        "finishedDaysAgo": 392,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 398,
+                                "minutes": 240
+                            },
+                            {
+                                "workedDaysAgo": 395,
+                                "minutes": 150,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 392,
+                                "minutes": 300
+                            }
+                        ]
                     },
                     {
                         "name": "Układ funkcjonalny",
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 390,
-                        "finishedDaysAgo": 365
+                        "finishedDaysAgo": 365,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 390,
+                                "minutes": 90,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 377,
+                                "minutes": 210
+                            },
+                            {
+                                "workedDaysAgo": 365,
+                                "minutes": 120,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     }
                 ]
             },
@@ -632,14 +927,45 @@
                         "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 350,
-                        "finishedDaysAgo": 310
+                        "finishedDaysAgo": 310,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 350,
+                                "minutes": 270
+                            },
+                            {
+                                "workedDaysAgo": 330,
+                                "minutes": 60,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 310,
+                                "minutes": 195
+                            }
+                        ]
                     },
                     {
                         "name": "Wizualizacja sypialni",
                         "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 330,
-                        "finishedDaysAgo": 290
+                        "finishedDaysAgo": 290,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 330,
+                                "minutes": 180,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 310,
+                                "minutes": 240
+                            },
+                            {
+                                "workedDaysAgo": 290,
+                                "minutes": 150,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     }
                 ]
             },
@@ -659,14 +985,45 @@
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 280,
-                        "finishedDaysAgo": 200
+                        "finishedDaysAgo": 200,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 280,
+                                "minutes": 300
+                            },
+                            {
+                                "workedDaysAgo": 240,
+                                "minutes": 90,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 200,
+                                "minutes": 210
+                            }
+                        ]
                     },
                     {
                         "name": "Zestawienie wyposażenia",
                         "type": "Shopping",
                         "status": "DONE",
                         "startedDaysAgo": 220,
-                        "finishedDaysAgo": 125
+                        "finishedDaysAgo": 125,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 220,
+                                "minutes": 120,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 172,
+                                "minutes": 270
+                            },
+                            {
+                                "workedDaysAgo": 125,
+                                "minutes": 60,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     }
                 ]
             },
@@ -686,7 +1043,22 @@
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 260,
-                        "finishedDaysAgo": 215
+                        "finishedDaysAgo": 215,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 260,
+                                "minutes": 195
+                            },
+                            {
+                                "workedDaysAgo": 237,
+                                "minutes": 180,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 215,
+                                "minutes": 240
+                            }
+                        ]
                     }
                 ]
             },
@@ -706,7 +1078,23 @@
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 200,
-                        "finishedDaysAgo": 126
+                        "finishedDaysAgo": 126,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 200,
+                                "minutes": 150,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 163,
+                                "minutes": 300
+                            },
+                            {
+                                "workedDaysAgo": 126,
+                                "minutes": 90,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     }
                 ]
             }
@@ -780,7 +1168,22 @@
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 148,
-                        "finishedDaysAgo": 125
+                        "finishedDaysAgo": 125,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 148,
+                                "minutes": 210
+                            },
+                            {
+                                "workedDaysAgo": 136,
+                                "minutes": 120,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 125,
+                                "minutes": 270
+                            }
+                        ]
                     }
                 ]
             },
@@ -799,7 +1202,23 @@
                         "name": "Wizualizacja witryny",
                         "type": "Render",
                         "status": "IN_PROGRESS",
-                        "startedDaysAgo": 100
+                        "startedDaysAgo": 100,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 100,
+                                "minutes": 60,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 50,
+                                "minutes": 195
+                            },
+                            {
+                                "workedDaysAgo": 0,
+                                "minutes": 180,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     },
                     {
                         "name": "Wizualizacja zaplecza",
@@ -871,14 +1290,45 @@
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 278,
-                        "finishedDaysAgo": 260
+                        "finishedDaysAgo": 260,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 278,
+                                "minutes": 240
+                            },
+                            {
+                                "workedDaysAgo": 269,
+                                "minutes": 150,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 260,
+                                "minutes": 300
+                            }
+                        ]
                     },
                     {
                         "name": "Koncepcja bryły",
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 260,
-                        "finishedDaysAgo": 225
+                        "finishedDaysAgo": 225,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 260,
+                                "minutes": 90,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 242,
+                                "minutes": 210
+                            },
+                            {
+                                "workedDaysAgo": 225,
+                                "minutes": 120,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     }
                 ]
             },
@@ -898,7 +1348,22 @@
                         "type": "Render",
                         "status": "DONE",
                         "startedDaysAgo": 240,
-                        "finishedDaysAgo": 200
+                        "finishedDaysAgo": 200,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 240,
+                                "minutes": 270
+                            },
+                            {
+                                "workedDaysAgo": 220,
+                                "minutes": 60,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 200,
+                                "minutes": 195
+                            }
+                        ]
                     }
                 ]
             },
@@ -919,13 +1384,44 @@
                         "type": "Concept",
                         "status": "DONE",
                         "startedDaysAgo": 210,
-                        "finishedDaysAgo": 150
+                        "finishedDaysAgo": 150,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 210,
+                                "minutes": 180,
+                                "note": "Pierwsza wersja"
+                            },
+                            {
+                                "workedDaysAgo": 180,
+                                "minutes": 240
+                            },
+                            {
+                                "workedDaysAgo": 150,
+                                "minutes": 150,
+                                "note": "Poprawki po uwagach klienta"
+                            }
+                        ]
                     },
                     {
                         "name": "Projekt instalacji",
                         "type": "Concept",
                         "status": "IN_PROGRESS",
-                        "startedDaysAgo": 140
+                        "startedDaysAgo": 140,
+                        "timeEntries": [
+                            {
+                                "workedDaysAgo": 140,
+                                "minutes": 300
+                            },
+                            {
+                                "workedDaysAgo": 70,
+                                "minutes": 90,
+                                "note": "Spotkanie z klientem"
+                            },
+                            {
+                                "workedDaysAgo": 0,
+                                "minutes": 210
+                            }
+                        ]
                     }
                 ]
             },

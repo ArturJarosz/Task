@@ -26,10 +26,6 @@ databaseChangeLog:
                   type: "VARCHAR2(30 ${char.unit})"
                   constraints:
                     nullable: false
-              # TODO: implement with TA-62 and TA-95
-              #  <column name="WORK_TIME" type="${long.type}" defaultValueNumeric="0">
-              #               <constraints nullable="false"/>
-              #           </column>-->
               - column:
                   name: "START_DATE"
                   type: "${date.type}"

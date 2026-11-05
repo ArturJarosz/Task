@@ -1,5 +1,6 @@
 package com.arturjarosz.task.architect.application
 
+import com.arturjarosz.task.project.query.TimeEntryQueryService
 import com.arturjarosz.task.architect.application.impl.ArchitectApplicationServiceImpl
 import com.arturjarosz.task.architect.application.mapper.ArchitectMapperImpl
 import com.arturjarosz.task.architect.infrastructure.repository.ArchitectRepository
@@ -75,7 +76,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
     def projectQueryService = Mock(ProjectQueryServiceImpl) {
         getProjectCountsByArchitectIds(_, _) >> [:]
     }
-    def architectValidator = new ArchitectValidator(architectRepository, projectQueryService)
+    def architectValidator = new ArchitectValidator(architectRepository, projectQueryService, Mock(TimeEntryQueryService))
     def architectMapper = new ArchitectMapperImpl()
     def contractQueryService = Mock(ContractQueryService) {
         getProjectsValueByArchitectIds(_) >> [:]

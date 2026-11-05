@@ -7,9 +7,11 @@ import com.arturjarosz.task.dto.UpdateStatusRequestDto
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.TaskValidator
+import com.arturjarosz.task.project.application.TimeSpentAssembler
 import com.arturjarosz.task.project.application.mapper.TaskMapperImpl
 import com.arturjarosz.task.project.domain.TaskDomainService
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository
+import com.arturjarosz.task.project.infrastructure.repositor.TimeEntryRepository
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.model.Stage
 import com.arturjarosz.task.project.model.Task
@@ -40,11 +42,17 @@ class TaskApplicationServiceImplTest extends Specification {
     def taskDomainService = Mock(TaskDomainService)
     def taskValidator = Mock(TaskValidator)
     def contractWorkflowValidator = Mock(ContractWorkflowValidator)
+    def timeEntryRepository = Mock(TimeEntryRepository)
+    // returns the DTO it gets, as the time spent itself is covered by TimeEntryTestIT
+    def timeSpentAssembler = Mock(TimeSpentAssembler) {
+        setTimeSpent(_) >> { arguments -> arguments[0] }
+    }
 
     def taskMapper = new TaskMapperImpl()
 
     def taskApplicationService = new TaskApplicationServiceImpl(projectQueryService, projectRepository,
-            projectValidator, stageValidator, taskDomainService, taskValidator, contractWorkflowValidator, taskMapper)
+            projectValidator, stageValidator, taskDomainService, taskValidator, contractWorkflowValidator, taskMapper,
+            timeEntryRepository, timeSpentAssembler)
 
     def "createTask should call validateProjectExistence on ProjectValidator"() {
         given:

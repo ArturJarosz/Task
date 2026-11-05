@@ -2,6 +2,7 @@ package com.arturjarosz.task.project.application;
 
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
+import com.arturjarosz.task.dto.ProjectTimeSummaryDto;
 
 import java.util.List;
 
@@ -20,6 +21,12 @@ public interface ProjectApplicationService {
      * is thrown.
      */
     ProjectDto getProject(Long projectId);
+
+    /**
+     * Returns the time spent on the project with given projectId, per stage and on supervision visits, and what the
+     * project earned per hour of it. When the project does not exist, an exception is thrown.
+     */
+    ProjectTimeSummaryDto getProjectTimeSummary(Long projectId);
 
     /**
      * Updates {@link com.arturjarosz.task.project.model.Project} of given projectId by ProjectDto data.

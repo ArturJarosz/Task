@@ -2,6 +2,7 @@ package com.arturjarosz.task.project.rest;
 
 import com.arturjarosz.task.dto.ProjectCreateDto;
 import com.arturjarosz.task.dto.ProjectDto;
+import com.arturjarosz.task.dto.ProjectTimeSummaryDto;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.rest.ProjectApi;
 import com.arturjarosz.task.sharedkernel.testhelpers.HttpHeadersBuilder;
@@ -32,6 +33,11 @@ public class ProjectRestController implements ProjectApi {
     @Override
     public ResponseEntity<ProjectDto> getProject(Long projectId) {
         return new ResponseEntity<>(this.projectApplicationService.getProject(projectId), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ProjectTimeSummaryDto> getProjectTimeSummary(Long projectId) {
+        return new ResponseEntity<>(this.projectApplicationService.getProjectTimeSummary(projectId), HttpStatus.OK);
     }
 
     @Override

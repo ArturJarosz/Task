@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: "create-time-entry-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-time-entry-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "add-time-entry-indexes.yml"
+      relativeToChangelogFile: true

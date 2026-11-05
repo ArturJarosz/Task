@@ -8,6 +8,7 @@ public final class ArchitectExceptionCodes {
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
     public static final String PROJECTS = "projects";
+    public static final String TIME_ENTRIES = "timeEntries";
     public static final String USER = "user";
 
     private ArchitectExceptionCodes() {

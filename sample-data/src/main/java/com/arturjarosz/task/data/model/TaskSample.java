@@ -4,6 +4,9 @@ import com.arturjarosz.task.dto.TaskStatusDto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 public class TaskSample {
@@ -15,4 +18,6 @@ public class TaskSample {
     // used only when the status sets start or end date, today when not provided; stage and project dates follow them
     private Integer startedDaysAgo;
     private Integer finishedDaysAgo;
+    // time logged on the task by the project's architect
+    private List<TimeEntrySample> timeEntries = new ArrayList<>();
 }

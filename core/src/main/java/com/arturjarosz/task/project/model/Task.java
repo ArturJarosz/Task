@@ -26,10 +26,6 @@ public class Task extends AbstractHistoryAwareEntity implements WorkflowAware<Ta
     @Column(name = "NAME", nullable = false)
     private String name;
 
-    //TODO: TA-95
-    /* @Embedded
-    private WorkTime workTime;*/
-
     @Column(name = "TASK_TYPE_ID", nullable = false)
     private Long taskTypeId;
 

@@ -7,9 +7,11 @@ import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageValidator;
 import com.arturjarosz.task.project.application.TaskApplicationService;
 import com.arturjarosz.task.project.application.TaskValidator;
+import com.arturjarosz.task.project.application.TimeSpentAssembler;
 import com.arturjarosz.task.project.application.mapper.TaskMapper;
 import com.arturjarosz.task.project.domain.TaskDomainService;
 import com.arturjarosz.task.project.infrastructure.repositor.ProjectRepository;
+import com.arturjarosz.task.project.infrastructure.repositor.TimeEntryRepository;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.model.Stage;
 import com.arturjarosz.task.project.model.Task;
@@ -37,6 +39,8 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     private final TaskValidator taskValidator;
     private final ContractWorkflowValidator contractWorkflowValidator;
     private final TaskMapper taskMapper;
+    private final TimeEntryRepository timeEntryRepository;
+    private final TimeSpentAssembler timeSpentAssembler;
 
     @Transactional
     @Override
@@ -53,7 +57,8 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         project = this.projectRepository.save(project);
         LOG.info("Task created.");
 
-        return this.taskMapper.taskToTaskDto(this.getNewTaskWithId(project, stageId, task));
+        return this.timeSpentAssembler.setTimeSpent(
+                this.taskMapper.taskToTaskDto(this.getNewTaskWithId(project, stageId, task)));
     }
 
     @Transactional
@@ -66,6 +71,8 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
+        // the entries reference the task, so they go first
+        this.timeEntryRepository.deleteByTaskId(taskId);
         project.removeTaskFromStage(stageId, taskId);
         this.projectRepository.save(project);
 
@@ -87,7 +94,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         var task = this.taskDomainService.updateTask(project, stageId, taskId, taskInnerDto);
         this.projectRepository.save(project);
         LOG.info("Task updated.");
-        return this.taskMapper.taskToTaskDto(task);
+        return this.timeSpentAssembler.setTimeSpent(this.taskMapper.taskToTaskDto(task));
     }
 
     @Transactional
@@ -107,7 +114,8 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.projectRepository.save(project);
 
         LOG.info("Task status updated.");
-        return this.taskMapper.taskToTaskDto(this.getTaskById(project, stageId, taskId));
+        return this.timeSpentAssembler.setTimeSpent(
+                this.taskMapper.taskToTaskDto(this.getTaskById(project, stageId, taskId)));
     }
 
     @Transactional
@@ -117,9 +125,10 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.projectValidator.validateProjectExistence(projectId);
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         this.taskValidator.validateExistenceOfTaskInStage(stageId, taskId);
-        return this.projectQueryService.getTaskByTaskId(taskId);
+        return this.timeSpentAssembler.setTimeSpent(this.projectQueryService.getTaskByTaskId(taskId));
     }
 
+    @Transactional
     @Override
     public List<TaskDto> getTaskList(Long projectId, Long stageId) {
         LOG.info("Loading list of Tasks for Stage with id {} on Project with id {}", stageId, projectId);
@@ -129,13 +138,14 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.stageValidator.validateExistenceOfStageInProject(projectId, stageId);
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
 
-        return project.getStages()
+        var taskDtos = project.getStages()
                 .stream()
                 .filter(stageOnProject -> stageOnProject.getId().equals(stageId))
                 .flatMap(stageOnProject -> stageOnProject.getTasks().stream())
                 .map(this.taskMapper::taskToTaskDto)
                 .toList();
-
+        this.timeSpentAssembler.setTimeSpentOnTasks(taskDtos);
+        return taskDtos;
     }
 
     private Task getNewTaskWithId(Project project, Long stageId, Task task) {

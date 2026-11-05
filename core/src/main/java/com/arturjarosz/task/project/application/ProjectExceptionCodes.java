@@ -19,6 +19,7 @@ public final class ProjectExceptionCodes {
     public static final String STAGE_TYPE = "stageType";
     public static final String TASK = "task";
     public static final String TASK_TYPE = "taskType";
+    public static final String TIME_ENTRY = "timeEntry";
     public static final String WORKFLOW = "workflow";
 
     //Fields
@@ -27,9 +28,11 @@ public final class ProjectExceptionCodes {
     public static final String COSTS = "costs";
     public static final String COST_DATE = "costDate";
     public static final String DEADLINE = "deadline";
+    public static final String DURATION = "duration";
     public static final String END_DATE = "endDate";
     public static final String PAID = "paid";
     public static final String NAME = "name";
+    public static final String NOTE = "note";
     public static final String PAY_DATE = "payDate";
     public static final String PROJECTS = "projects";
     public static final String SIGNING_DATE = "signingDate";
@@ -39,6 +42,7 @@ public final class ProjectExceptionCodes {
     public static final String TASKS = "tasks";
     public static final String TYPE = "type";
     public static final String VALUE = "value";
+    public static final String WORK_DATE = "workDate";
 
     public static final String NEGATIVE = "negative";
     public static final String TOO_LONG = "tooLong";

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-time-entry-sequence"
+      changes:
+        - createSequence:
+            sequenceName: "time_entry_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1

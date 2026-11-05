@@ -7,6 +7,7 @@ import com.arturjarosz.task.dto.ArchitectDto;
 import com.arturjarosz.task.dto.ArchitectUserLinkDto;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.query.ProjectQueryService;
+import com.arturjarosz.task.project.query.TimeEntryQueryService;
 import com.arturjarosz.task.sharedkernel.exceptions.BaseValidator;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import lombok.NonNull;
@@ -32,6 +33,8 @@ public class ArchitectValidator {
     private final ArchitectRepository architectRepository;
     @NonNull
     private final ProjectQueryService projectQueryService;
+    @NonNull
+    private final TimeEntryQueryService timeEntryQueryService;
 
     public static void validateArchitectDto(ArchitectDto architectDto) {
         assertIsTrue(architectDto != null, createMessageCode(ExceptionCodes.NULL, ArchitectExceptionCodes.ARCHITECT));
@@ -62,6 +65,12 @@ public class ArchitectValidator {
         assertIsTrue(projectList.isEmpty(),
                 createMessageCode(ExceptionCodes.NOT_VALID, ArchitectExceptionCodes.ARCHITECT,
                         ArchitectExceptionCodes.PROJECTS));
+    }
+
+    public void validateArchitectHasNoTimeEntries(Long architectId) {
+        assertIsFalse(this.timeEntryQueryService.architectHasTimeEntries(architectId),
+                createMessageCode(ExceptionCodes.NOT_VALID, ArchitectExceptionCodes.ARCHITECT,
+                        ArchitectExceptionCodes.TIME_ENTRIES));
     }
 
     public static void validateArchitectUserLinkDto(ArchitectUserLinkDto architectUserLinkDto) {

@@ -69,6 +69,7 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
 
         this.architectValidator.validateArchitectExistence(architectId);
         this.architectValidator.validateArchitectHasNoProjects(architectId);
+        this.architectValidator.validateArchitectHasNoTimeEntries(architectId);
         this.architectRepository.deleteById(architectId);
 
         LOG.info("architect with id {} removed", architectId);
