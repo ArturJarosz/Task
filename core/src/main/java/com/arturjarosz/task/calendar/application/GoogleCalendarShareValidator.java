@@ -51,12 +51,6 @@ public final class GoogleCalendarShareValidator {
                         CalendarExceptionCodes.SYNC));
     }
 
-    public static void validateCalendarExistence(Optional<String> maybeGoogleCalendarId) {
-        assertIsTrue(maybeGoogleCalendarId.isPresent(),
-                createMessageCode(ExceptionCodes.NOT_EXIST, CalendarExceptionCodes.CALENDAR_SHARE,
-                        CalendarExceptionCodes.GOOGLE_CALENDAR));
-    }
-
     public static void validateNotShared(List<CalendarShareDto> shares, String email) {
         assertIsFalse(isShared(shares, email),
                 createMessageCode(ExceptionCodes.ALREADY_SET, CalendarExceptionCodes.CALENDAR_SHARE,

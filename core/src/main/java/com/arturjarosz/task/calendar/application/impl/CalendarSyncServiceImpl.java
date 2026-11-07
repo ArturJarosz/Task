@@ -14,9 +14,11 @@ import com.arturjarosz.task.calendar.model.dto.GoogleEventsSyncDto;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.systemparameter.application.GoogleCalendarSettingsProvider;
 import com.arturjarosz.task.systemparameter.application.dto.GoogleCalendarSettings;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +27,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-@RequiredArgsConstructor
 @ApplicationService
 public class CalendarSyncServiceImpl implements CalendarSyncService {
 
@@ -33,6 +34,19 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
     private final CalendarSyncStateRepository calendarSyncStateRepository;
     private final GoogleCalendarService googleCalendarService;
     private final GoogleCalendarSettingsProvider googleCalendarSettingsProvider;
+    private final TransactionTemplate calendarConnectionTransaction;
+
+    public CalendarSyncServiceImpl(CalendarEventRepository calendarEventRepository,
+            CalendarSyncStateRepository calendarSyncStateRepository, GoogleCalendarService googleCalendarService,
+            GoogleCalendarSettingsProvider googleCalendarSettingsProvider,
+            PlatformTransactionManager transactionManager) {
+        this.calendarEventRepository = calendarEventRepository;
+        this.calendarSyncStateRepository = calendarSyncStateRepository;
+        this.googleCalendarService = googleCalendarService;
+        this.googleCalendarSettingsProvider = googleCalendarSettingsProvider;
+        this.calendarConnectionTransaction = new TransactionTemplate(transactionManager);
+        this.calendarConnectionTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+    }
 
     @Override
     public CalendarEvent pushEvent(CalendarEvent calendarEvent) {
@@ -166,6 +180,11 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
         return this.calendarSyncStateRepository.findFirstByOrderByIdAsc().map(CalendarSyncState::getGoogleCalendarId);
     }
 
+    @Override
+    public String getOrCreateGoogleCalendarId(GoogleCalendarSettings settings) {
+        return this.getSyncStateWithCalendar(settings).getGoogleCalendarId();
+    }
+
     private void resetSynchronization(CalendarSyncState syncState) {
         syncState.setGoogleCalendarId(null);
         syncState.setSyncToken(null);
@@ -182,7 +201,15 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
         LOG.info("Synchronization with Google Calendar reset, all events will be pushed to a new calendar.");
     }
 
-    private CalendarSyncState getSyncStateWithCalendar(GoogleCalendarSettings settings) {
+    /**
+     * Every path to the calendar goes through here. The connection is committed before the lock is released, whatever
+     * transaction the caller is in, so concurrent requests and jobs see it and don't create a second calendar.
+     */
+    private synchronized CalendarSyncState getSyncStateWithCalendar(GoogleCalendarSettings settings) {
+        return this.calendarConnectionTransaction.execute(status -> this.connectCalendar(settings));
+    }
+
+    private CalendarSyncState connectCalendar(GoogleCalendarSettings settings) {
         var syncState = this.calendarSyncStateRepository.findFirstByOrderByIdAsc()
                 .orElseGet(() -> this.calendarSyncStateRepository.save(new CalendarSyncState()));
         if (syncState.getGoogleCalendarId() == null) {

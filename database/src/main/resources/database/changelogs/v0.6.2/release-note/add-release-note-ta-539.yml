@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-ta-539-connected-events"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-539"
+              - column:
+                  name: "TYPE"
+                  value: "NEW"
+              - column:
+                  name: "TITLE"
+                  value: "Connect calendar events with clients and projects"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "You can now connect an event with a client, a project or both. See and manage those events in the new Events tab of a project and the Events card of a client."
+              - column:
+                  name: "APPLICATION_VERSION"
+                  value: "0.6.2"
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-ta-539-calendar"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-539"
+              - column:
+                  name: "TYPE"
+                  value: "IMPROVED"
+              - column:
+                  name: "TITLE"
+                  value: "A clearer calendar"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "Hover over an event to see its details, and overlapping events now sit side by side. The calendar now takes the full page, with upcoming and past events in one card below it, and you can set how many events lists show in Settings."
+              - column:
+                  name: "APPLICATION_VERSION"
+                  value: "0.6.2"
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

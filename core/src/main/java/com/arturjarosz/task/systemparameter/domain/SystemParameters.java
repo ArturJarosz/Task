@@ -6,6 +6,9 @@ public final class SystemParameters {
     public static final String VAT_TAX = "Vat tax";
     public static final String INCOME_TAX = "Income tax";
     public static final String THEME_COLOR = "Theme color";
+    // how many events the event lists show
+    public static final String UPCOMING_EVENTS_SHOWN = "Upcoming events shown";
+    public static final String PAST_EVENTS_SHOWN = "Past events shown";
     public static final String GOOGLE_CALENDAR_SYNC = "Google calendar sync";
     public static final String GOOGLE_CALENDAR_NAME = "Google calendar name";
     public static final String GOOGLE_CALENDAR_APPLICATION_NAME = "Google calendar application name";

@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-calendar-event-client-and-project"
+      comment: "An event outlives the client or project it is connected with, it only loses the connection"
+      changes:
+        - addColumn:
+            tableName: "CALENDAR_EVENT"
+            columns:
+              - column:
+                  name: "CLIENT_ID"
+                  type: "${long.type}"
+              - column:
+                  name: "PROJECT_ID"
+                  type: "${long.type}"
+        - addForeignKeyConstraint:
+            baseTableName: "CALENDAR_EVENT"
+            baseColumnNames: "CLIENT_ID"
+            constraintName: "FK_CALENDAR_EVENT_CLIENT"
+            referencedTableName: "CLIENT"
+            referencedColumnNames: "ID"
+            onDelete: "SET NULL"
+        - addForeignKeyConstraint:
+            baseTableName: "CALENDAR_EVENT"
+            baseColumnNames: "PROJECT_ID"
+            constraintName: "FK_CALENDAR_EVENT_PROJECT"
+            referencedTableName: "PROJECT"
+            referencedColumnNames: "ID"
+            onDelete: "SET NULL"

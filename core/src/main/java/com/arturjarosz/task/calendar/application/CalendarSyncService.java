@@ -1,6 +1,7 @@
 package com.arturjarosz.task.calendar.application;
 
 import com.arturjarosz.task.calendar.model.CalendarEvent;
+import com.arturjarosz.task.systemparameter.application.dto.GoogleCalendarSettings;
 
 import java.util.Optional;
 
@@ -42,4 +43,10 @@ public interface CalendarSyncService {
      * Returns id of the Google Calendar used for synchronization, empty until it is created.
      */
     Optional<String> getGoogleCalendarId();
+
+    /**
+     * Returns id of the Google Calendar used for synchronization. When none is connected yet, connects the calendar
+     * with the configured name, creating it in Google if it does not exist.
+     */
+    String getOrCreateGoogleCalendarId(GoogleCalendarSettings settings);
 }

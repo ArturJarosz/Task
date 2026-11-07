@@ -46,7 +46,8 @@ task:
     active-statuses:
       - TO_DO
       - IN_PROGRESS
-  # Initial values only: copied into system parameters on the first start, then edited in Settings > Google Calendar
+  # Initial values: copied into system parameters on the first start, then edited in Settings > Google Calendar.
+  # The calendar and application names also update the default shown there on every start, never the saved value
   google-calendar:
     enabled: ${GOOGLE_CALENDAR_ENABLED:true}
     credentials-path: ${GOOGLE_SA_KEY_PATH:}

@@ -42,6 +42,14 @@ public class CalendarEvent extends AbstractAggregateRoot {
     private boolean allDay;
 
     @Getter
+    @Column(name = "CLIENT_ID")
+    private Long clientId;
+
+    @Getter
+    @Column(name = "PROJECT_ID")
+    private Long projectId;
+
+    @Getter
     @Column(name = "GOOGLE_EVENT_ID", unique = true)
     private String googleEventId;
 
@@ -79,6 +87,15 @@ public class CalendarEvent extends AbstractAggregateRoot {
         this.endDateTime = endDateTime;
         this.allDay = allDay != null && allDay;
         this.syncStatus = CalendarEventSyncStatus.PENDING;
+    }
+
+    /**
+     * Connects the event with given client and project, either of them can be empty. It is local data, Google Calendar
+     * does not know about it, so changes received from Google keep it.
+     */
+    public void connect(Long clientId, Long projectId) {
+        this.clientId = clientId;
+        this.projectId = projectId;
     }
 
     /**

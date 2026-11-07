@@ -71,8 +71,10 @@ public class CalendarRestController implements CalendarApi {
     }
 
     @Override
-    public ResponseEntity<List<CalendarEventDto>> getCalendarEvents(LocalDate startDate, LocalDate endDate) {
-        return new ResponseEntity<>(this.calendarEventApplicationService.getCalendarEvents(startDate, endDate),
+    public ResponseEntity<List<CalendarEventDto>> getCalendarEvents(LocalDate startDate, LocalDate endDate,
+            Long clientId, Long projectId) {
+        return new ResponseEntity<>(
+                this.calendarEventApplicationService.getCalendarEvents(startDate, endDate, clientId, projectId),
                 HttpStatus.OK);
     }
 

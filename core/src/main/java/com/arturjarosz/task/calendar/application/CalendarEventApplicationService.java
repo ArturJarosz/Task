@@ -32,7 +32,8 @@ public interface CalendarEventApplicationService {
 
     /**
      * Returns events overlapping given date range. When no range is provided, all events are returned. Events
-     * waiting for removal from the Google Calendar are not returned.
+     * waiting for removal from the Google Calendar are not returned. Given client limits them to events connected
+     * with the client or one of its projects, given project to events connected with the project.
      */
-    List<CalendarEventDto> getCalendarEvents(LocalDate startDate, LocalDate endDate);
+    List<CalendarEventDto> getCalendarEvents(LocalDate startDate, LocalDate endDate, Long clientId, Long projectId);
 }

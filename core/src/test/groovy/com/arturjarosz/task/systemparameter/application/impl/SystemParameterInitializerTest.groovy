@@ -23,11 +23,12 @@ class SystemParameterInitializerTest extends Specification {
     def "run should save default parameters when they are not in the database"() {
         given:
             this.systemParameterRepository.existsByName(_ as String) >> false
+            this.systemParameterRepository.findByName(_ as String) >> Optional.empty()
             List<SystemParameter> saved = []
         when:
             this.systemParameterInitializer.run(null)
         then:
-            9 * this.systemParameterRepository.save(_ as SystemParameter) >> { SystemParameter parameter ->
+            11 * this.systemParameterRepository.save(_ as SystemParameter) >> { SystemParameter parameter ->
                 saved << parameter
                 parameter
             }
@@ -36,6 +37,8 @@ class SystemParameterInitializerTest extends Specification {
                     [(SystemParameters.VAT_TAX)                         : "0.23",
                      (SystemParameters.INCOME_TAX)                      : "0.18",
                      (SystemParameters.THEME_COLOR)                     : "#415cc8",
+                     (SystemParameters.UPCOMING_EVENTS_SHOWN)           : "10",
+                     (SystemParameters.PAST_EVENTS_SHOWN)               : "10",
                      (SystemParameters.GOOGLE_CALENDAR_CREDENTIALS)     : "",
                      (SystemParameters.GOOGLE_CALENDAR_NAME)            : "Office",
                      (SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME): "Task app",
@@ -46,6 +49,8 @@ class SystemParameterInitializerTest extends Specification {
                     [(SystemParameters.VAT_TAX)                         : SystemParameterType.DECIMAL_NUMBER,
                      (SystemParameters.INCOME_TAX)                      : SystemParameterType.DECIMAL_NUMBER,
                      (SystemParameters.THEME_COLOR)                     : SystemParameterType.TEXT,
+                     (SystemParameters.UPCOMING_EVENTS_SHOWN)           : SystemParameterType.NUMBER,
+                     (SystemParameters.PAST_EVENTS_SHOWN)               : SystemParameterType.NUMBER,
                      (SystemParameters.GOOGLE_CALENDAR_CREDENTIALS)     : SystemParameterType.SECRET,
                      (SystemParameters.GOOGLE_CALENDAR_NAME)            : SystemParameterType.TEXT,
                      (SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME): SystemParameterType.TEXT,
@@ -63,6 +68,7 @@ class SystemParameterInitializerTest extends Specification {
             this.systemParameterRepository.existsByName(SystemParameters.INCOME_TAX) >> false
             this.systemParameterRepository.existsByName(SystemParameters.THEME_COLOR) >> true
             this.systemParameterRepository.existsByName(_ as String) >> true
+            this.systemParameterRepository.findByName(_ as String) >> Optional.empty()
         when:
             this.systemParameterInitializer.run(null)
         then:
@@ -72,6 +78,56 @@ class SystemParameterInitializerTest extends Specification {
             0 * this.systemParameterRepository.save({ SystemParameter parameter ->
                 parameter.name == SystemParameters.VAT_TAX
             })
+    }
+
+    def "run should refresh default values of Google Calendar names from configuration and keep their values"() {
+        given:
+            def calendarName = new SystemParameter(SystemParameters.GOOGLE_CALENDAR_NAME, "Custom", "Old",
+                    SystemParameterType.TEXT, true)
+            def applicationName = new SystemParameter(SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME, "Custom app",
+                    "Old app", SystemParameterType.TEXT, true)
+            this.systemParameterRepository.existsByName(_ as String) >> true
+            this.systemParameterRepository.findByName(SystemParameters.GOOGLE_CALENDAR_NAME) >> Optional.of(calendarName)
+            this.systemParameterRepository.findByName(SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME) >>
+                    Optional.of(applicationName)
+        when:
+            this.systemParameterInitializer.run(null)
+        then:
+            1 * this.systemParameterRepository.save(calendarName)
+            1 * this.systemParameterRepository.save(applicationName)
+            calendarName.defaultValue == "Office"
+            calendarName.value == "Custom"
+            applicationName.defaultValue == "Task app"
+            applicationName.value == "Custom app"
+    }
+
+    def "run should not save Google Calendar names whose default value matches configuration"() {
+        given:
+            def calendarName = new SystemParameter(SystemParameters.GOOGLE_CALENDAR_NAME, "Custom", "Office",
+                    SystemParameterType.TEXT, true)
+            this.systemParameterRepository.existsByName(_ as String) >> true
+            this.systemParameterRepository.findByName(SystemParameters.GOOGLE_CALENDAR_NAME) >> Optional.of(calendarName)
+            this.systemParameterRepository.findByName(_ as String) >> Optional.empty()
+        when:
+            this.systemParameterInitializer.run(null)
+        then:
+            0 * this.systemParameterRepository.save(_)
+    }
+
+    def "run should keep the stored default value and start when the configured name is not valid"() {
+        given:
+            def calendarName = new SystemParameter(SystemParameters.GOOGLE_CALENDAR_NAME, "Custom", "Old",
+                    SystemParameterType.TEXT, true)
+            this.systemParameterRepository.existsByName(_ as String) >> true
+            this.systemParameterRepository.findByName(SystemParameters.GOOGLE_CALENDAR_NAME) >> Optional.of(calendarName)
+            this.systemParameterRepository.findByName(_ as String) >> Optional.empty()
+            this.systemParameterValidatorService.validateOnUpdate(_) >> { throw new IllegalArgumentException("") }
+        when:
+            this.systemParameterInitializer.run(null)
+        then:
+            noExceptionThrown()
+            calendarName.defaultValue == "Old"
+            0 * this.systemParameterRepository.save(_)
     }
 
     def "run should validate default value before saving it"() {
@@ -93,6 +149,7 @@ class SystemParameterInitializerTest extends Specification {
                     this.systemParameterValidatorService, this.userProperties,
                     new GoogleCalendarProperties(true, keyFile.absolutePath, "Task", "Task", null, null))
             this.systemParameterRepository.existsByName(_ as String) >> false
+            this.systemParameterRepository.findByName(_ as String) >> Optional.empty()
             List<SystemParameter> saved = []
             this.systemParameterRepository.save(_ as SystemParameter) >> { SystemParameter parameter ->
                 saved << parameter
@@ -117,6 +174,7 @@ class SystemParameterInitializerTest extends Specification {
                     this.systemParameterValidatorService, this.userProperties,
                     new GoogleCalendarProperties(true, keyFile.absolutePath, "Task", "Task", null, null))
             this.systemParameterRepository.existsByName(_ as String) >> false
+            this.systemParameterRepository.findByName(_ as String) >> Optional.empty()
             this.systemParameterValidatorService.validateOnUpdate({ it.value == "not a key" }) >> {
                 throw new IllegalArgumentException("")
             }

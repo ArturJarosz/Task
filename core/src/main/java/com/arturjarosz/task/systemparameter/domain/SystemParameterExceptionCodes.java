@@ -19,6 +19,8 @@ public final class SystemParameterExceptionCodes {
     public static final String GOOGLE_CALENDAR_SYNC = "googleCalendarSync";
     public static final String INCOME_TAX = "incomeTax";
     public static final String THEME_COLOR = "themeColor";
+    public static final String UPCOMING_EVENTS_SHOWN = "upcomingEventsShown";
+    public static final String PAST_EVENTS_SHOWN = "pastEventsShown";
     public static final String VAT_TAX = "vatTax";
 
     private SystemParameterExceptionCodes() {
