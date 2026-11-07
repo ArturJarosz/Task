@@ -26,14 +26,13 @@ public class GoogleCalendarShareApplicationServiceImpl implements GoogleCalendar
     @Override
     public List<CalendarShareDto> getShares() {
         var settings = this.getActiveSettings();
-        return this.getPeopleShares(this.getGoogleCalendarId(), settings);
+        return this.getPeopleShares(this.calendarSyncService.getOrCreateGoogleCalendarId(settings), settings);
     }
 
     @Override
     public CalendarShareDto addShare(CalendarShareDto calendarShareDto) {
         GoogleCalendarShareValidator.validateCalendarShareDto(calendarShareDto);
-        this.getActiveSettings();
-        var googleCalendarId = this.getGoogleCalendarId();
+        var googleCalendarId = this.calendarSyncService.getOrCreateGoogleCalendarId(this.getActiveSettings());
         var email = normalizeEmail(calendarShareDto.getEmail());
         // checked against all shares, so the service account and the calendar's own address cannot lose their access
         GoogleCalendarShareValidator.validateNotShared(this.googleCalendarService.listShares(googleCalendarId), email);
@@ -46,10 +45,13 @@ public class GoogleCalendarShareApplicationServiceImpl implements GoogleCalendar
     public void removeShare(String email) {
         GoogleCalendarShareValidator.validateEmailNotEmpty(email);
         var settings = this.getActiveSettings();
-        var googleCalendarId = this.getGoogleCalendarId();
         var normalizedEmail = normalizeEmail(email);
-        GoogleCalendarShareValidator.validateShared(this.getPeopleShares(googleCalendarId, settings), normalizedEmail);
-        this.googleCalendarService.revokeShare(googleCalendarId, normalizedEmail);
+        // Without a calendar nobody has access, and revoking must not create one
+        var maybeGoogleCalendarId = this.calendarSyncService.getGoogleCalendarId();
+        var shares = maybeGoogleCalendarId.map(calendarId -> this.getPeopleShares(calendarId, settings))
+                .orElseGet(List::of);
+        GoogleCalendarShareValidator.validateShared(shares, normalizedEmail);
+        this.googleCalendarService.revokeShare(maybeGoogleCalendarId.orElseThrow(), normalizedEmail);
         LOG.info("Access to Google Calendar revoked.");
     }
 
@@ -62,12 +64,6 @@ public class GoogleCalendarShareApplicationServiceImpl implements GoogleCalendar
         var maybeSettings = this.googleCalendarSettingsProvider.getActiveSettings();
         GoogleCalendarShareValidator.validateSyncActive(maybeSettings);
         return maybeSettings.get();
-    }
-
-    private String getGoogleCalendarId() {
-        var maybeGoogleCalendarId = this.calendarSyncService.getGoogleCalendarId();
-        GoogleCalendarShareValidator.validateCalendarExistence(maybeGoogleCalendarId);
-        return maybeGoogleCalendarId.get();
     }
 
     // The service account owns the calendar and keeps it synchronized, and Google lists the calendar's own address

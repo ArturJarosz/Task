@@ -5,6 +5,7 @@ import com.arturjarosz.task.dto.GoogleCalendarConnectionDto
 import com.arturjarosz.task.dto.GoogleCalendarConnectionStatusDto
 import com.arturjarosz.task.dto.SystemParameterDto
 import com.arturjarosz.task.systemparameter.domain.SystemParameters
+import com.arturjarosz.task.systemparameter.infrastructure.repository.SystemParameterRepository
 import com.arturjarosz.task.systemparameter.query.SystemParameterQueryService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -26,6 +27,24 @@ class GoogleCalendarSystemParameterTestIT extends BaseTestIT {
 
     @Autowired
     SystemParameterQueryService systemParameterQueryService
+
+    @Autowired
+    SystemParameterRepository systemParameterRepository
+
+    def "Default value of a Google Calendar name should accept the longest valid name"() {
+        given:
+            def parameter = this.systemParameterRepository.findByName(SystemParameters.GOOGLE_CALENDAR_NAME).orElseThrow()
+            def previous = parameter.defaultValue
+        when:
+            parameter.updateDefaultValue("a" * 255)
+            this.systemParameterRepository.saveAndFlush(parameter)
+        then:
+            this.systemParameterRepository.findByName(SystemParameters.GOOGLE_CALENDAR_NAME).orElseThrow()
+                    .defaultValue.length() == 255
+        cleanup:
+            parameter.updateDefaultValue(previous)
+            this.systemParameterRepository.saveAndFlush(parameter)
+    }
 
     def "Google Calendar parameters should be created on application start with sync turned off"() {
         when:

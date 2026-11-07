@@ -4005,6 +4005,20 @@ paths:
           schema:
             type: string
             format: date
+        - name: clientId
+          in: query
+          description: "Only events connected with this client or one of its projects"
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: projectId
+          in: query
+          description: "Only events connected with this project"
+          required: false
+          schema:
+            type: integer
+            format: int64
       responses:
         200:
           description: Successful operation
@@ -4447,6 +4461,12 @@ components:
           format: time
         allDay:
           type: boolean
+        clientId:
+          type: integer
+          format: int64
+        projectId:
+          type: integer
+          format: int64
         googleEventId:
           type: string
         syncStatus:

@@ -53,6 +53,10 @@ public class SystemParameter extends AbstractAggregateRoot {
         this.value = systemParameterDto.getValue();
     }
 
+    public void updateDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
     public String getName() {
         return this.name;
     }

@@ -9,6 +9,7 @@ public final class CalendarExceptionCodes {
     public static final String START_DATETIME = "startDateTime";
     public static final String END_DATETIME = "endDateTime";
     public static final String DATES = "dates";
+    public static final String PROJECT = "project";
     public static final String CALENDAR_SHARE = "calendarShare";
     public static final String EMAIL = "email";
     public static final String ROLE = "role";

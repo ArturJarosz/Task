@@ -13,6 +13,7 @@ import com.arturjarosz.task.calendar.model.dto.GoogleEventDataDto
 import com.arturjarosz.task.calendar.model.dto.GoogleEventsSyncDto
 import com.arturjarosz.task.systemparameter.application.GoogleCalendarSettingsProvider
 import com.arturjarosz.task.systemparameter.application.dto.GoogleCalendarSettings
+import org.springframework.transaction.PlatformTransactionManager
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -35,7 +36,7 @@ class CalendarSyncServiceImplTest extends Specification {
     def googleCalendarSettings = new GoogleCalendarSettings(true, "{}", "Task", "Task")
 
     def subject = new CalendarSyncServiceImpl(calendarEventRepository, calendarSyncStateRepository,
-            googleCalendarService, googleCalendarSettingsProvider)
+            googleCalendarService, googleCalendarSettingsProvider, Mock(PlatformTransactionManager))
 
     def "pushEvent should leave event untouched when Google Calendar integration is not available"() {
         given:
@@ -103,6 +104,74 @@ class CalendarSyncServiceImplTest extends Specification {
         then:
             noExceptionThrown()
             result.syncStatus == CalendarEventSyncStatus.PENDING
+    }
+
+    def "getOrCreateGoogleCalendarId should return the connected calendar without looking for it in Google"() {
+        given:
+            def syncState = new CalendarSyncState(googleCalendarId: GOOGLE_CALENDAR_ID, calendarName: "Task")
+            this.calendarSyncStateRepository.findFirstByOrderByIdAsc() >> Optional.of(syncState)
+        when:
+            def result = this.subject.getOrCreateGoogleCalendarId(this.googleCalendarSettings)
+        then:
+            result == GOOGLE_CALENDAR_ID
+            0 * this.googleCalendarService.findCalendarByName(_)
+            0 * this.googleCalendarService.createCalendar(_)
+    }
+
+    def "getOrCreateGoogleCalendarId should connect the existing calendar with the configured name"() {
+        given:
+            def syncState = new CalendarSyncState()
+            this.calendarSyncStateRepository.findFirstByOrderByIdAsc() >> Optional.empty()
+            this.googleCalendarService.findCalendarByName("Task") >> Optional.of(GOOGLE_CALENDAR_ID)
+            this.googleCalendarService.readServiceAccountEmail("{}") >> Optional.of(NEW_ACCOUNT)
+        when:
+            def result = this.subject.getOrCreateGoogleCalendarId(this.googleCalendarSettings)
+        then:
+            result == GOOGLE_CALENDAR_ID
+            0 * this.googleCalendarService.createCalendar(_)
+            2 * this.calendarSyncStateRepository.save(_ as CalendarSyncState) >> { CalendarSyncState state ->
+                syncState = state
+                state
+            }
+            syncState.googleCalendarId == GOOGLE_CALENDAR_ID
+            syncState.calendarName == "Task"
+            syncState.googleAccount == NEW_ACCOUNT
+    }
+
+    def "getOrCreateGoogleCalendarId should create one calendar when called from many threads at once"() {
+        given:
+            def subject = new CalendarSyncServiceImpl(this.calendarEventRepository, this.calendarSyncStateRepository,
+                    this.googleCalendarService, this.googleCalendarSettingsProvider, Mock(PlatformTransactionManager))
+            def syncState = new CalendarSyncState()
+            this.calendarSyncStateRepository.findFirstByOrderByIdAsc() >> Optional.of(syncState)
+            this.calendarSyncStateRepository.save(syncState) >> syncState
+            this.googleCalendarService.findCalendarByName("Task") >> Optional.empty()
+            this.googleCalendarService.readServiceAccountEmail("{}") >> Optional.of(NEW_ACCOUNT)
+            def created = new java.util.concurrent.atomic.AtomicInteger()
+            this.googleCalendarService.createCalendar("Task") >> {
+                created.incrementAndGet()
+                Thread.sleep(20)
+                GOOGLE_CALENDAR_ID
+            }
+        when:
+            def threads = (1..4).collect { Thread.start { subject.getOrCreateGoogleCalendarId(this.googleCalendarSettings) } }
+            threads*.join()
+        then:
+            created.get() == 1
+    }
+
+    def "getOrCreateGoogleCalendarId should create the calendar when Google has none with the configured name"() {
+        given:
+            def syncState = new CalendarSyncState()
+            this.calendarSyncStateRepository.findFirstByOrderByIdAsc() >> Optional.of(syncState)
+            this.calendarSyncStateRepository.save(syncState) >> syncState
+            this.googleCalendarService.findCalendarByName("Task") >> Optional.empty()
+            this.googleCalendarService.readServiceAccountEmail("{}") >> Optional.of(NEW_ACCOUNT)
+        when:
+            def result = this.subject.getOrCreateGoogleCalendarId(this.googleCalendarSettings)
+        then:
+            1 * this.googleCalendarService.createCalendar("Task") >> GOOGLE_CALENDAR_ID
+            result == GOOGLE_CALENDAR_ID
     }
 
     def "pushEvent should create dedicated Google Calendar when it does not exist yet"() {

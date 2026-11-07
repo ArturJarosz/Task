@@ -36,6 +36,11 @@ public final class CalendarEventValidator {
                         CalendarExceptionCodes.DATES));
     }
 
+    public static void validateProjectBelongsToClient(boolean projectBelongsToClient) {
+        assertIsTrue(projectBelongsToClient, createMessageCode(ExceptionCodes.NOT_VALID,
+                CalendarExceptionCodes.CALENDAR_EVENT, CalendarExceptionCodes.PROJECT));
+    }
+
     public static void validateCalendarEventExistence(Optional<CalendarEvent> maybeCalendarEvent, Long eventId) {
         assertEntityPresent(maybeCalendarEvent.isPresent(),
                 createMessageCode(ExceptionCodes.NOT_EXIST, CalendarExceptionCodes.CALENDAR_EVENT), eventId);

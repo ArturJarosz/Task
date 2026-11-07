@@ -25,8 +25,8 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * Stores default values of system parameters from configuration in the database on application start. Parameters
- * already present in the database are not overridden.
+ * Stores default values of system parameters from configuration in the database on application start. Values of
+ * parameters already present in the database are not overridden.
  */
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -56,7 +56,8 @@ public class SystemParameterInitializer implements ApplicationRunner {
 
     /**
      * Google Calendar parameters start from application properties, so installations configured with a credentials
-     * file keep working. The sync starts turned on only when the key from that file is valid.
+     * file keep working. The sync starts turned on only when the key from that file is valid. Default values of the
+     * calendar and application names follow the properties on every start.
      */
     private void initializeGoogleCalendarParameters() {
         var credentialsCreated = this.createSecretIfMissing(SystemParameters.GOOGLE_CALENDAR_CREDENTIALS,
@@ -65,6 +66,9 @@ public class SystemParameterInitializer implements ApplicationRunner {
                 this.googleCalendarProperties.calendarName(), SystemParameterType.TEXT));
         this.createIfMissing(new DefaultParameter(SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME,
                 this.googleCalendarProperties.applicationName(), SystemParameterType.TEXT));
+        this.refreshDefaultValue(SystemParameters.GOOGLE_CALENDAR_NAME, this.googleCalendarProperties.calendarName());
+        this.refreshDefaultValue(SystemParameters.GOOGLE_CALENDAR_APPLICATION_NAME,
+                this.googleCalendarProperties.applicationName());
         this.createIfMissing(new DefaultParameter(SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL,
                 String.valueOf(this.googleCalendarProperties.pollInterval()), SystemParameterType.NUMBER));
         this.createIfMissing(new DefaultParameter(SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL,
@@ -78,6 +82,30 @@ public class SystemParameterInitializer implements ApplicationRunner {
                 String.valueOf(syncEnabled), String.valueOf(false), SystemParameterType.BOOLEAN, true));
         LOG.info("System parameter '{}' initialized with value {}.", SystemParameters.GOOGLE_CALENDAR_SYNC,
                 syncEnabled);
+    }
+
+    /**
+     * Keeps the default value of a parameter that already exists equal to the configuration, its value stays as it is.
+     * A configured default that is not valid is skipped, so it does not stop the application from starting.
+     */
+    private void refreshDefaultValue(String name, String defaultValue) {
+        var systemParameter = this.systemParameterRepository.findByName(name)
+                .filter(parameter -> !defaultValue.equals(parameter.getDefaultValue()));
+        if (systemParameter.isEmpty()) {
+            return;
+        }
+        var systemParameterDto = new SystemParameterDto();
+        systemParameterDto.setName(name);
+        systemParameterDto.setValue(defaultValue);
+        try {
+            this.systemParameterValidatorService.validateOnUpdate(systemParameterDto);
+        } catch (IllegalArgumentException e) {
+            LOG.warn("Default value of system parameter '{}' from configuration is not valid, it is not updated.", name);
+            return;
+        }
+        systemParameter.get().updateDefaultValue(defaultValue);
+        this.systemParameterRepository.save(systemParameter.get());
+        LOG.info("Default value of system parameter '{}' updated to {}.", name, defaultValue);
     }
 
     /**
@@ -126,7 +154,11 @@ public class SystemParameterInitializer implements ApplicationRunner {
                 new DefaultParameter(SystemParameters.INCOME_TAX, toDecimalText(this.userProperties.getIncomeTax()),
                         SystemParameterType.DECIMAL_NUMBER),
                 new DefaultParameter(SystemParameters.THEME_COLOR, this.userProperties.getThemeColor(),
-                        SystemParameterType.TEXT));
+                        SystemParameterType.TEXT),
+                new DefaultParameter(SystemParameters.UPCOMING_EVENTS_SHOWN,
+                        String.valueOf(this.userProperties.getUpcomingEventsShown()), SystemParameterType.NUMBER),
+                new DefaultParameter(SystemParameters.PAST_EVENTS_SHOWN,
+                        String.valueOf(this.userProperties.getPastEventsShown()), SystemParameterType.NUMBER));
     }
 
     private static String toDecimalText(Double value) {

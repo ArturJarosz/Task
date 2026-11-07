@@ -5,7 +5,11 @@ import com.arturjarosz.task.calendar.application.mapper.CalendarEventMapper
 import com.arturjarosz.task.calendar.infrastructure.repository.CalendarEventRepository
 import com.arturjarosz.task.calendar.model.CalendarEvent
 import com.arturjarosz.task.calendar.model.CalendarEventSyncStatus
+import com.arturjarosz.task.client.application.ClientValidator
 import com.arturjarosz.task.dto.CalendarEventDto
+import com.arturjarosz.task.project.application.ProjectValidator
+import com.arturjarosz.task.project.model.Project
+import com.arturjarosz.task.project.query.ProjectQueryService
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import spock.lang.Specification
@@ -15,6 +19,8 @@ import java.time.LocalDateTime
 
 class CalendarEventApplicationServiceImplTest extends Specification {
     static final EVENT_ID = 1L
+    static final CLIENT_ID = 2L
+    static final PROJECT_ID = 3L
     static final NAME = "Meeting with client"
     static final DESCRIPTION = "Discussing project"
     static final START_DATETIME = LocalDateTime.of(2026, 7, 20, 10, 0)
@@ -25,8 +31,12 @@ class CalendarEventApplicationServiceImplTest extends Specification {
     def calendarEventMapper = Mock(CalendarEventMapper)
     def calendarSyncService = Mock(CalendarSyncService)
 
+    def clientValidator = Mock(ClientValidator)
+    def projectValidator = Mock(ProjectValidator)
+    def projectQueryService = Mock(ProjectQueryService)
+
     def subject = new CalendarEventApplicationServiceImpl(calendarEventRepository, calendarEventMapper,
-            calendarSyncService)
+            calendarSyncService, clientValidator, projectValidator, projectQueryService)
 
     def "createCalendarEvent should save event and push it to Google Calendar"() {
         given:
@@ -45,6 +55,80 @@ class CalendarEventApplicationServiceImplTest extends Specification {
         and:
             result != null
             result.id == EVENT_ID
+    }
+
+    def "createCalendarEvent should connect event with client and project of that client"() {
+        given:
+            def calendarEventDto = prepareCalendarEventDto()
+            calendarEventDto.clientId = CLIENT_ID
+            calendarEventDto.projectId = PROJECT_ID
+            def project = Mock(Project) { getId() >> PROJECT_ID }
+            this.projectQueryService.getProjectsForClientId(CLIENT_ID) >> [project]
+
+        when:
+            this.subject.createCalendarEvent(calendarEventDto)
+
+        then:
+            1 * this.clientValidator.validateClientExistence(CLIENT_ID)
+            1 * this.projectValidator.validateProjectExistence(PROJECT_ID)
+            1 * this.calendarEventRepository.save({ CalendarEvent event ->
+                event.clientId == CLIENT_ID && event.projectId == PROJECT_ID
+            }) >> { CalendarEvent event -> event }
+            1 * this.calendarSyncService.pushEvent(_ as CalendarEvent) >> { CalendarEvent event -> event }
+    }
+
+    def "createCalendarEvent should connect event with #description only"() {
+        given:
+            def calendarEventDto = prepareCalendarEventDto()
+            calendarEventDto.clientId = clientId
+            calendarEventDto.projectId = projectId
+
+        when:
+            this.subject.createCalendarEvent(calendarEventDto)
+
+        then:
+            0 * this.projectQueryService.getProjectsForClientId(_)
+            1 * this.calendarEventRepository.save({ CalendarEvent event ->
+                event.clientId == clientId && event.projectId == projectId
+            }) >> { CalendarEvent event -> event }
+            1 * this.calendarSyncService.pushEvent(_ as CalendarEvent) >> { CalendarEvent event -> event }
+
+        where:
+            description | clientId  | projectId
+            "client"    | CLIENT_ID | null
+            "project"   | null      | PROJECT_ID
+    }
+
+    def "createCalendarEvent should not accept project of another client"() {
+        given:
+            def calendarEventDto = prepareCalendarEventDto()
+            calendarEventDto.clientId = CLIENT_ID
+            calendarEventDto.projectId = PROJECT_ID
+            this.projectQueryService.getProjectsForClientId(CLIENT_ID) >> []
+
+        when:
+            this.subject.createCalendarEvent(calendarEventDto)
+
+        then:
+            def exception = thrown(IllegalArgumentException)
+            exception.message == "notValid.calendarEvent.project"
+            0 * this.calendarEventRepository.save(_)
+    }
+
+    def "updateCalendarEvent should replace connections of the event"() {
+        given:
+            def calendarEvent = new CalendarEvent(NAME, null, START_DATETIME, END_DATETIME, false)
+            calendarEvent.connect(CLIENT_ID, PROJECT_ID)
+            this.calendarEventRepository.findById(EVENT_ID) >> Optional.of(calendarEvent)
+
+        when:
+            this.subject.updateCalendarEvent(EVENT_ID, prepareCalendarEventDto())
+
+        then:
+            1 * this.calendarEventRepository.save(calendarEvent) >> calendarEvent
+            1 * this.calendarSyncService.pushEvent(calendarEvent) >> calendarEvent
+            calendarEvent.clientId == null
+            calendarEvent.projectId == null
     }
 
     def "createCalendarEvent should not accept dto without name"() {
@@ -155,11 +239,39 @@ class CalendarEventApplicationServiceImplTest extends Specification {
             this.calendarEventMapper.mapToDto(calendarEvent) >> new CalendarEventDto(id: EVENT_ID)
 
         when:
-            def result = this.subject.getCalendarEvents(null, null)
+            def result = this.subject.getCalendarEvents(null, null, null, null)
 
         then:
             result.size() == 1
             result[0].id == EVENT_ID
+    }
+
+    def "getCalendarEvents for #description should return only events connected with it"() {
+        given:
+            def forClient = new CalendarEvent("Client", null, START_DATETIME, END_DATETIME, false)
+            forClient.connect(CLIENT_ID, null)
+            def forClientProject = new CalendarEvent("Client project", null, START_DATETIME, END_DATETIME, false)
+            forClientProject.connect(null, PROJECT_ID)
+            def forOther = new CalendarEvent("Other", null, START_DATETIME, END_DATETIME, false)
+            forOther.connect(CLIENT_ID + 100, PROJECT_ID + 100)
+            def notConnected = new CalendarEvent("Not connected", null, START_DATETIME, END_DATETIME, false)
+            this.calendarEventRepository.findBySyncStatusNot(CalendarEventSyncStatus.DELETE_PENDING) >>
+                    [forClient, forClientProject, forOther, notConnected]
+            this.projectQueryService.getProjectsForClientId(CLIENT_ID) >> [Mock(Project) { getId() >> PROJECT_ID }]
+            this.calendarEventMapper.mapToDto(_ as CalendarEvent) >> { CalendarEvent event ->
+                new CalendarEventDto(name: event.name)
+            }
+
+        when:
+            def result = this.subject.getCalendarEvents(null, null, clientId, projectId)
+
+        then:
+            result*.name == names
+
+        where:
+            description | clientId  | projectId  || names
+            "a client"  | CLIENT_ID | null       || ["Client", "Client project"]
+            "a project" | null      | PROJECT_ID || ["Client project"]
     }
 
     def "getCalendarEvents with date range should return events overlapping the range"() {
@@ -173,7 +285,7 @@ class CalendarEventApplicationServiceImplTest extends Specification {
             this.calendarEventMapper.mapToDto(calendarEvent) >> new CalendarEventDto(id: EVENT_ID)
 
         when:
-            def result = this.subject.getCalendarEvents(startDate, endDate)
+            def result = this.subject.getCalendarEvents(startDate, endDate, null, null)
 
         then:
             result.size() == 1

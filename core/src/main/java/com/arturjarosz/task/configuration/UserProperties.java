@@ -12,5 +12,7 @@ public class UserProperties {
     Double vatTax = 0.23;
     Double incomeTax = 0.18;
     String themeColor = "#415cc8";
+    Integer upcomingEventsShown = 10;
+    Integer pastEventsShown = 10;
 
 }

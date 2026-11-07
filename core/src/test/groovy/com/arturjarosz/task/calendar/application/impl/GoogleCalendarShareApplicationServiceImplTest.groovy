@@ -52,15 +52,15 @@ class GoogleCalendarShareApplicationServiceImplTest extends Specification {
             0 * this.googleCalendarService.listShares(_)
     }
 
-    def "getShares should throw an exception when the calendar is not created yet"() {
+    def "getShares should read shares of the calendar connected with active settings"() {
         given:
             this.googleCalendarSettingsProvider.getActiveSettings() >> Optional.of(SETTINGS)
-            this.calendarSyncService.getGoogleCalendarId() >> Optional.empty()
         when:
-            this.subject.getShares()
+            def result = this.subject.getShares()
         then:
-            def exception = thrown(IllegalArgumentException)
-            exception.message == "notExist.calendarShare.googleCalendar"
+            1 * this.calendarSyncService.getOrCreateGoogleCalendarId(SETTINGS) >> GOOGLE_CALENDAR_ID
+            1 * this.googleCalendarService.listShares(GOOGLE_CALENDAR_ID) >> [share(EMAIL, CalendarShareRoleDto.READER)]
+            result*.email == [EMAIL]
     }
 
     def "addShare should share the calendar with trimmed lower case email"() {
@@ -138,6 +138,19 @@ class GoogleCalendarShareApplicationServiceImplTest extends Specification {
             "free busy role"  | share(EMAIL, CalendarShareRoleDto.FREE_BUSY_READER)   || "notValid.calendarShare.role"
     }
 
+    def "removeShare should not create a calendar when none is connected"() {
+        given:
+            this.googleCalendarSettingsProvider.getActiveSettings() >> Optional.of(SETTINGS)
+            this.calendarSyncService.getGoogleCalendarId() >> Optional.empty()
+        when:
+            this.subject.removeShare(EMAIL)
+        then:
+            def exception = thrown(ResourceNotFoundException)
+            exception.message == "notExist.calendarShare.email"
+            0 * this.calendarSyncService.getOrCreateGoogleCalendarId(_)
+            0 * this.googleCalendarService.revokeShare(_, _)
+    }
+
     def "removeShare should revoke access of a person the calendar is shared with"() {
         given:
             this.mockActiveCalendar()
@@ -176,6 +189,7 @@ class GoogleCalendarShareApplicationServiceImplTest extends Specification {
 
     private void mockActiveCalendar() {
         this.googleCalendarSettingsProvider.getActiveSettings() >> Optional.of(SETTINGS)
+        this.calendarSyncService.getOrCreateGoogleCalendarId(SETTINGS) >> GOOGLE_CALENDAR_ID
         this.calendarSyncService.getGoogleCalendarId() >> Optional.of(GOOGLE_CALENDAR_ID)
     }
 
