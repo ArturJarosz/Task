@@ -1,0 +1,99 @@
+[
+    {
+        "name": "Salary – junior designer",
+        "category": "Salaries",
+        "kind": "RECURRING",
+        "repeats": "MONTHLY",
+        "startMonthsAgo": 14,
+        "chargeDay": 10,
+        "netValue": 6500.00,
+        "amounts": [
+            {
+                "fromMonthsAgo": 4,
+                "netValue": 7200.00
+            }
+        ],
+        "hasInvoice": false,
+        "note": "Umowa o pracę, pełny etat. Podwyżka po okresie próbnym."
+    },
+    {
+        "name": "Office rent",
+        "category": "Office",
+        "kind": "RECURRING",
+        "repeats": "MONTHLY",
+        "startMonthsAgo": 24,
+        "chargeDay": 5,
+        "netValue": 3200.00,
+        "hasInvoice": true,
+        "paymentDelayDays": 2,
+        "unpaidCharges": 1,
+        "note": "Biuro przy ul. Długiej, faktura do 1. dnia miesiąca."
+    },
+    {
+        "name": "Adobe Creative Cloud",
+        "category": "Software",
+        "kind": "RECURRING",
+        "repeats": "MONTHLY",
+        "startMonthsAgo": 20,
+        "chargeDay": 15,
+        "netValue": 289.00,
+        "amounts": [
+            {
+                "fromMonthsAgo": 6,
+                "netValue": 319.00
+            }
+        ],
+        "hasInvoice": true
+    },
+    {
+        "name": "Accounting office",
+        "category": "Accounting",
+        "kind": "RECURRING",
+        "repeats": "QUARTERLY",
+        "startMonthsAgo": 22,
+        "chargeDay": 20,
+        "netValue": 900.00,
+        "hasInvoice": true,
+        "paymentDelayDays": 3
+    },
+    {
+        "name": "Office cleaning",
+        "category": "Office",
+        "kind": "RECURRING",
+        "repeats": "MONTHLY",
+        "startMonthsAgo": 18,
+        "endMonthsAgo": 6,
+        "chargeDay": 28,
+        "netValue": 450.00,
+        "hasInvoice": true,
+        "note": "Zrezygnowaliśmy, sprzątamy we własnym zakresie."
+    },
+    {
+        "name": "Liability insurance",
+        "category": "Insurance",
+        "kind": "RECURRING",
+        "repeats": "YEARLY",
+        "startMonthsAgo": 10,
+        "chargeDay": 1,
+        "netValue": 1800.00,
+        "hasInvoice": true
+    },
+    {
+        "name": "Laptop",
+        "category": "Equipment",
+        "kind": "ONE_TIME",
+        "dateDaysAgo": 40,
+        "paymentDaysAgo": 38,
+        "netValue": 7999.00,
+        "hasInvoice": true,
+        "note": "MacBook Pro dla nowej osoby w zespole."
+    },
+    {
+        "name": "Plotter service",
+        "category": "Equipment",
+        "kind": "ONE_TIME",
+        "dateDaysAgo": 12,
+        "netValue": 650.00,
+        "hasInvoice": true
+    }
+]

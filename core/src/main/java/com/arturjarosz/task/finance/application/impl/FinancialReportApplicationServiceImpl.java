@@ -1,5 +1,6 @@
 package com.arturjarosz.task.finance.application.impl;
 
+import com.arturjarosz.task.companycost.query.CompanyCostQueryService;
 import com.arturjarosz.task.dto.FinancialPartialDataDto;
 import com.arturjarosz.task.dto.FinancialReportCategoryGroupDto;
 import com.arturjarosz.task.dto.FinancialReportDto;
@@ -36,6 +37,8 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
     private final TaxRatesProvider taxRatesProvider;
     @NonNull
     private final FinancialReportValidator financialReportValidator;
+    @NonNull
+    private final CompanyCostQueryService companyCostQueryService;
 
     @Override
     public FinancialReportDto getFinancialReport(LocalDate startDate, LocalDate endDate, PeriodTypeDto periodType) {
@@ -47,6 +50,7 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
         var supervisionIncomeItems = this.financialDataQueryService.getSupervisionIncomeItems(startDate, endDate);
         var supplyIncomeItems = this.financialDataQueryService.getSupplyIncomeItems(startDate, endDate);
         var contractorJobIncomeItems = this.financialDataQueryService.getContractorJobIncomeItems(startDate, endDate);
+        var companyCostExpenseItems = this.companyCostQueryService.getPaymentReportItems(startDate, endDate);
 
         var periods = PeriodCalculator.calculatePeriods(startDate, endDate, periodType);
         var taxRates = this.taxRatesProvider.getTaxRates();
@@ -67,6 +71,8 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
             this.accumulateItems(filterByPeriod(reimbursedCostIncomeItems, period), periodIncome.cost, taxRates);
 
             this.accumulateItems(filterByPeriod(costExpenseItems, period), periodExpense.cost, taxRates);
+            this.accumulateItems(filterByPeriod(companyCostExpenseItems, period), periodExpense.companyCost,
+                    taxRates);
             this.accumulateItems(filterByPeriod(supplyIncomeItems, period), periodIncome.supply, taxRates);
             this.accumulateItems(filterByPeriod(contractorJobIncomeItems, period), periodIncome.contractorJob,
                     taxRates);
@@ -136,7 +142,7 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
         var total = new FinancialValueDto();
         int count = 0;
         for (CategoryValue cv : List.of(accumulator.installment, accumulator.supervision,
-                accumulator.cost, accumulator.supply, accumulator.contractorJob)) {
+                accumulator.cost, accumulator.supply, accumulator.contractorJob, accumulator.companyCost)) {
             total.addValues(cv.financialValue);
             count += cv.count;
         }
@@ -151,6 +157,7 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
                 .cost(toPartialDataDto(accumulator.cost))
                 .supply(toPartialDataDto(accumulator.supply))
                 .contractorJob(toPartialDataDto(accumulator.contractorJob))
+                .companyCost(toPartialDataDto(accumulator.companyCost))
                 .total(toPartialDataDto(total.financialValue, total.count))
                 .build();
     }
@@ -180,6 +187,8 @@ public class FinancialReportApplicationServiceImpl implements FinancialReportApp
         CategoryValue cost = new CategoryValue();
         CategoryValue supply = new CategoryValue();
         CategoryValue contractorJob = new CategoryValue();
+        // expenses only: paid company costs, by payment date
+        CategoryValue companyCost = new CategoryValue();
     }
 
     private record AccumulatorTotal(FinancialValueDto financialValue, int count) {

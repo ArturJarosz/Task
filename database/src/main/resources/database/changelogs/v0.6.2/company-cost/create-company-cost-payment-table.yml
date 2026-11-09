@@ -1,0 +1,57 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-company-cost-payment-table"
+      changes:
+        - createTable:
+            tableName: "COMPANY_COST_PAYMENT"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "${uuid.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "COMPANY_COST_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+                    foreignKeyName: "FK_COMPANY_COST_PAYMENT_COMPANY_COST"
+                    referencedTableName: "COMPANY_COST"
+                    referencedColumnNames: "ID"
+              # First day of the month of the paid charge; keyed by month, so changing the charge day keeps it matched
+              - column:
+                  name: "CHARGE_MONTH"
+                  type: "${date.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "PAYMENT_DATE"
+                  type: "${date.type}"
+                  constraints:
+                    nullable: false
+              # The scheduled amount when it was paid, so later amount changes don't change paid charges
+              - column:
+                  name: "NET_VALUE"
+                  type: "${big_decimal.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "TIMESTAMP"
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "TIMESTAMP"
+        - addPrimaryKey:
+            tableName: "COMPANY_COST_PAYMENT"
+            columnNames: "ID"
+            constraintName: "PK_COMPANY_COST_PAYMENT"
+        - addUniqueConstraint:
+            tableName: "COMPANY_COST_PAYMENT"
+            columnNames: "COMPANY_COST_ID, CHARGE_MONTH"
+            constraintName: "UK_COMPANY_COST_PAYMENT_CHARGE_MONTH"

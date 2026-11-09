@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-company-cost-category-name-unique-index"
+      changes:
+        # Names are unique regardless of letter case, as the application checks them
+        - sql:
+            dbms: "postgresql"
+            sql: "create unique index UK_COMPANY_COST_CATEGORY_NAME on COMPANY_COST_CATEGORY (lower(NAME))"
+  - changeSet:
+      author: "liquibase"
+      id: "create-company-cost-indexes"
+      changes:
+        - createIndex:
+            tableName: "COMPANY_COST"
+            indexName: "IDX_COMPANY_COST_CATEGORY_ID"
+            columns:
+              - column:
+                  name: "CATEGORY_ID"
+        # The financial report reads payments by payment date
+        - createIndex:
+            tableName: "COMPANY_COST_PAYMENT"
+            indexName: "IDX_COMPANY_COST_PAYMENT_PAYMENT_DATE"
+            columns:
+              - column:
+                  name: "PAYMENT_DATE"
