@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-company-cost-amount-table"
+      changes:
+        - createTable:
+            tableName: "COMPANY_COST_AMOUNT"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "${uuid.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "COMPANY_COST_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+                    foreignKeyName: "FK_COMPANY_COST_AMOUNT_COMPANY_COST"
+                    referencedTableName: "COMPANY_COST"
+                    referencedColumnNames: "ID"
+              # First day of the month the amount applies from
+              - column:
+                  name: "VALID_FROM"
+                  type: "${date.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NET_VALUE"
+                  type: "${big_decimal.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "TIMESTAMP"
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "TIMESTAMP"
+        - addPrimaryKey:
+            tableName: "COMPANY_COST_AMOUNT"
+            columnNames: "ID"
+            constraintName: "PK_COMPANY_COST_AMOUNT"
+        - addUniqueConstraint:
+            tableName: "COMPANY_COST_AMOUNT"
+            columnNames: "COMPANY_COST_ID, VALID_FROM"
+            constraintName: "UK_COMPANY_COST_AMOUNT_VALID_FROM"

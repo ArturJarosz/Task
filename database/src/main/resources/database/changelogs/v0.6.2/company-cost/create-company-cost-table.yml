@@ -1,0 +1,74 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-company-cost-table"
+      changes:
+        - createTable:
+            tableName: "COMPANY_COST"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "${uuid.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NAME"
+                  type: "VARCHAR2(255 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CATEGORY_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+                    foreignKeyName: "FK_COMPANY_COST_CATEGORY"
+                    referencedTableName: "COMPANY_COST_CATEGORY"
+                    referencedColumnNames: "ID"
+              # ONE_TIME or RECURRING
+              - column:
+                  name: "KIND"
+                  type: "VARCHAR2(20 ${char.unit})"
+                  constraints:
+                    nullable: false
+              # Recurring costs only: MONTHLY, QUARTERLY or YEARLY
+              - column:
+                  name: "REPEATS"
+                  type: "VARCHAR2(20 ${char.unit})"
+              # Recurring costs only: first days of the first and the last month; the end may be empty
+              - column:
+                  name: "START_MONTH"
+                  type: "${date.type}"
+              - column:
+                  name: "END_MONTH"
+                  type: "${date.type}"
+              # Recurring costs only: 1-31, the last day of shorter months
+              - column:
+                  name: "CHARGE_DAY"
+                  type: "${integer.type}"
+              # One-time costs only: the day the charge is due
+              - column:
+                  name: "DATE"
+                  type: "${date.type}"
+              - column:
+                  name: "HAS_INVOICE"
+                  type: "${boolean.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "NOTE"
+                  type: "VARCHAR2(255 ${char.unit})"
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "TIMESTAMP"
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "TIMESTAMP"
+        - addPrimaryKey:
+            tableName: "COMPANY_COST"
+            columnNames: "ID"
+            constraintName: "PK_COMPANY_COST"

@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - include:
+      file: "create-company-cost-sequences.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-company-cost-category-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-company-cost-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-company-cost-amount-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-company-cost-payment-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "add-company-cost-indexes.yml"
+      relativeToChangelogFile: true

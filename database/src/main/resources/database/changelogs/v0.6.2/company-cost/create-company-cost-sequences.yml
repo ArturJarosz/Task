@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-company-cost-sequences"
+      changes:
+        - createSequence:
+            sequenceName: "company_cost_category_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1
+        - createSequence:
+            sequenceName: "company_cost_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1
+        - createSequence:
+            sequenceName: "company_cost_amount_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1
+        - createSequence:
+            sequenceName: "company_cost_payment_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1

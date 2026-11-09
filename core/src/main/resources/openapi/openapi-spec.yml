@@ -14,6 +14,10 @@ tags:
     description: Client API and models
   - name: configuration
     description: Configuration of the application
+  - name: companyCost
+    description: Company cost API and models
+  - name: companyCostCategory
+    description: Company cost category API and models
   - name: contract
     description: Contract API and models
   - name: contractor
@@ -1893,6 +1897,619 @@ paths:
                 $ref: "#/components/schemas/Supply"
         400:
           description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /company-cost-categories:
+    post:
+      tags:
+        - companyCostCategory
+      summary: Create a new company cost category
+      operationId: createCompanyCostCategory
+      requestBody:
+        description: New company cost category data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyCostCategory"
+      responses:
+        201:
+          description: Company cost category successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCostCategory"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - companyCostCategory
+      summary: Get list of company cost categories with the number of company costs of each category
+      operationId: getCompanyCostCategories
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCostCategories"
+
+  /company-cost-categories/{companyCostCategoryId}:
+    get:
+      tags:
+        - companyCostCategory
+      summary: Get a company cost category with given companyCostCategoryId
+      operationId: getCompanyCostCategory
+      parameters:
+        - name: companyCostCategoryId
+          in: path
+          description: "A unique identifier of the company cost category"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCostCategory"
+        404:
+          description: Company cost category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - companyCostCategory
+      summary: Update (rename) a company cost category with given companyCostCategoryId
+      operationId: updateCompanyCostCategory
+      parameters:
+        - name: companyCostCategoryId
+          in: path
+          description: "A unique identifier of the company cost category"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of updated company cost category
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyCostCategory"
+      responses:
+        200:
+          description: Company cost category successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCostCategory"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Company cost category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - companyCostCategory
+      summary: Remove a company cost category with given companyCostCategoryId
+      description: A category used by any company cost cannot be removed
+      operationId: deleteCompanyCostCategory
+      parameters:
+        - name: companyCostCategoryId
+          in: path
+          description: "A unique identifier of the company cost category"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Company cost category successfully removed
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Company cost category does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /company-costs:
+    post:
+      tags:
+        - companyCost
+      summary: Create a new company cost
+      description: >
+        A one-time cost gets one charge on its date and is paid at once when paid is true. A recurring cost gets a
+        charge in every period from its start month; with markPastChargesAsPaid, every charge before today is paid on
+        its charge date.
+      operationId: createCompanyCost
+      requestBody:
+        description: New company cost data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyCost"
+      responses:
+        201:
+          description: Company cost successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCost"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - companyCost
+      summary: Get all company costs, by name
+      description: >
+        With startDate and endDate (both or neither), only the costs with a charge due in that period or a payment made
+        in it, each with its period figures.
+      operationId: getCompanyCosts
+      parameters:
+        - name: startDate
+          in: query
+          description: "First day of the period"
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: "Last day of the period"
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCosts"
+
+  /company-costs/{companyCostId}:
+    get:
+      tags:
+        - companyCost
+      summary: Get a company cost with given companyCostId
+      operationId: getCompanyCost
+      parameters:
+        - name: companyCostId
+          in: path
+          description: "A unique identifier of the company cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCost"
+        404:
+          description: Company cost does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - companyCost
+      summary: Update a company cost with given companyCostId
+      description: >
+        The kind cannot be changed. A change that would leave a paid charge outside the cost's charges is refused, and
+        amounts that start after a new end month are removed. The net value is only taken for one-time costs; recurring
+        costs change it through their amounts.
+      operationId: updateCompanyCost
+      parameters:
+        - name: companyCostId
+          in: path
+          description: "A unique identifier of the company cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of updated company cost
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyCost"
+      responses:
+        200:
+          description: Company cost successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCost"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Company cost does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - companyCost
+      summary: Remove a company cost with given companyCostId, with its amounts and payments
+      operationId: deleteCompanyCost
+      parameters:
+        - name: companyCostId
+          in: path
+          description: "A unique identifier of the company cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Company cost successfully removed
+        404:
+          description: Company cost does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /company-costs/{companyCostId}/charges:
+    get:
+      tags:
+        - companyCost
+      summary: Get the charges of a company cost due in given year, newest first, paid or not
+      operationId: getCompanyCostCharges
+      parameters:
+        - name: companyCostId
+          in: path
+          description: "A unique identifier of the company cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: year
+          in: query
+          description: "Year of the charge dates"
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCostCharges"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Company cost does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /company-costs/{companyCostId}/amounts:
+    post:
+      tags:
+        - companyCost
+      summary: Change the amount of a recurring company cost from given month
+      description: An amount already starting in that month is replaced. Paid charges keep the amount they were paid at.
+      operationId: createCompanyCostAmount
+      parameters:
+        - name: companyCostId
+          in: path
+          description: "A unique identifier of the company cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: New amount
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyCostAmount"
+      responses:
+        201:
+          description: Amount successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCost"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Company cost does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /company-costs/{companyCostId}/amounts/{amountId}:
+    put:
+      tags:
+        - companyCost
+      summary: Update an amount of a recurring company cost
+      description: The first amount always starts with the cost, so only its net value can change
+      operationId: updateCompanyCostAmount
+      parameters:
+        - name: companyCostId
+          in: path
+          description: "A unique identifier of the company cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: amountId
+          in: path
+          description: "A unique identifier of the amount"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of updated amount
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyCostAmount"
+      responses:
+        200:
+          description: Amount successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCost"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Company cost or amount does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - companyCost
+      summary: Remove an amount of a recurring company cost; the amount before it applies instead
+      description: The first amount cannot be removed
+      operationId: deleteCompanyCostAmount
+      parameters:
+        - name: companyCostId
+          in: path
+          description: "A unique identifier of the company cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: amountId
+          in: path
+          description: "A unique identifier of the amount"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Amount successfully removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCost"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Company cost or amount does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /company-costs/{companyCostId}/payments:
+    post:
+      tags:
+        - companyCost
+      summary: Mark a charge of a company cost as paid
+      description: The payment always has the scheduled amount of the charge
+      operationId: createCompanyCostPayment
+      parameters:
+        - name: companyCostId
+          in: path
+          description: "A unique identifier of the company cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: The paid charge and its payment date
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyCostPayment"
+      responses:
+        201:
+          description: Payment successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCostPayment"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Company cost does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /company-costs/{companyCostId}/payments/{paymentId}:
+    put:
+      tags:
+        - companyCost
+      summary: Change the payment date of a paid charge
+      operationId: updateCompanyCostPayment
+      parameters:
+        - name: companyCostId
+          in: path
+          description: "A unique identifier of the company cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: paymentId
+          in: path
+          description: "A unique identifier of the payment"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of updated payment
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyCostPayment"
+      responses:
+        200:
+          description: Payment successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyCostPayment"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Company cost or payment does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - companyCost
+      summary: Mark a paid charge as not paid
+      operationId: deleteCompanyCostPayment
+      parameters:
+        - name: companyCostId
+          in: path
+          description: "A unique identifier of the company cost"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: paymentId
+          in: path
+          description: "A unique identifier of the payment"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Payment successfully removed
+        404:
+          description: Company cost or payment does not exist
           content:
             application/json:
               schema:
@@ -4816,6 +5433,206 @@ components:
       items:
         $ref: "#/components/schemas/CostCategory"
 
+    CompanyCostKind:
+      type: string
+      enum: [ONE_TIME, RECURRING]
+
+    CompanyCostRepeats:
+      type: string
+      enum: [MONTHLY, QUARTERLY, YEARLY]
+
+    CompanyCost:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        categoryId:
+          type: integer
+          format: int64
+        kind:
+          $ref: "#/components/schemas/CompanyCostKind"
+        repeats:
+          $ref: "#/components/schemas/CompanyCostRepeats"
+        startMonth:
+          type: string
+          format: date
+          description: Recurring costs only; any day of the month, stored as its first day
+        endMonth:
+          type: string
+          format: date
+          description: Recurring costs only, optional; any day of the month, stored as its first day
+        chargeDay:
+          type: integer
+          description: Recurring costs only, 1-31; in shorter months the charge is on their last day
+        date:
+          type: string
+          format: date
+          description: One-time costs only, the day the charge is due
+        hasInvoice:
+          type: boolean
+        note:
+          type: string
+        netValue:
+          type: number
+          description: >
+            In requests: the value of a one-time cost, or the first amount of a new recurring cost. In responses: the
+            amount of the next charge (of the last one when every charge is paid)
+        paid:
+          type: boolean
+          description: Creating a one-time cost only; the cost is paid at once on paymentDate
+        paymentDate:
+          type: string
+          format: date
+          description: Creating a one-time cost only, with paid
+        markPastChargesAsPaid:
+          type: boolean
+          description: Creating a recurring cost only; every charge before today is paid on its charge date
+        amounts:
+          type: array
+          readOnly: true
+          description: Amount history of a recurring cost, newest first
+          items:
+            $ref: "#/components/schemas/CompanyCostAmount"
+        # The oldest charge that is not paid; missing when every charge is paid
+        nextCharge:
+          $ref: "#/components/schemas/CompanyCostCharge"
+        overdueCharges:
+          type: integer
+          readOnly: true
+          description: Number of charges due before today that are not paid
+        overdueNetValue:
+          type: number
+          readOnly: true
+        paidThisYear:
+          type: number
+          readOnly: true
+          description: Net value of payments with a payment date in the current year
+        paidToDate:
+          type: number
+          readOnly: true
+          description: Net value of all payments
+        periodCharges:
+          type: integer
+          readOnly: true
+          description: With a period only, number of charges due in it, paid or not
+        periodChargesNetValue:
+          type: number
+          readOnly: true
+          description: With a period only, net value of the charges due in it (the paid amount for paid ones)
+        periodPaidNetValue:
+          type: number
+          readOnly: true
+          description: With a period only, net value of the payments with a payment date in it, as the report counts them
+        periodOverdueCharges:
+          type: integer
+          readOnly: true
+          description: With a period only, number of its charges due before today that are not paid
+        periodOverdueNetValue:
+          type: number
+          readOnly: true
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
+
+    CompanyCosts:
+      type: array
+      items:
+        $ref: "#/components/schemas/CompanyCost"
+
+    CompanyCostAmount:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        validFrom:
+          type: string
+          format: date
+          description: Any day of the month the amount applies from, stored as its first day
+        netValue:
+          type: number
+
+    CompanyCostCharge:
+      type: object
+      properties:
+        chargeMonth:
+          type: string
+          format: date
+          description: First day of the month of the charge, which identifies it
+        chargeDate:
+          type: string
+          format: date
+        netValue:
+          type: number
+          description: The paid amount for a paid charge, the scheduled one otherwise
+        paid:
+          type: boolean
+        overdue:
+          type: boolean
+          description: Not paid and due before today
+        paymentId:
+          type: integer
+          format: int64
+        paymentDate:
+          type: string
+          format: date
+
+    CompanyCostCharges:
+      type: array
+      items:
+        $ref: "#/components/schemas/CompanyCostCharge"
+
+    CompanyCostPayment:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        chargeMonth:
+          type: string
+          format: date
+          description: Any day of the month of the paid charge; only read when creating a payment
+        chargeDate:
+          type: string
+          format: date
+          readOnly: true
+        paymentDate:
+          type: string
+          format: date
+        netValue:
+          type: number
+          readOnly: true
+
+    CompanyCostCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        numberOfCompanyCosts:
+          type: integer
+          format: int64
+          description: Number of company costs of this category; a category with company costs cannot be deleted
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
+
+    CompanyCostCategories:
+      type: array
+      items:
+        $ref: "#/components/schemas/CompanyCostCategory"
+
     Installment:
       type: object
       properties:
@@ -5569,6 +6386,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ConfigurationEntry"
+        companyCostCategories:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigurationEntry"
 
     PeriodType:
       type: string
@@ -5586,6 +6407,9 @@ components:
         supply:
           $ref: "#/components/schemas/FinancialPartialData"
         contractorJob:
+          $ref: "#/components/schemas/FinancialPartialData"
+        # Expenses only: paid company costs, by payment date
+        companyCost:
           $ref: "#/components/schemas/FinancialPartialData"
         total:
           $ref: "#/components/schemas/FinancialPartialData"

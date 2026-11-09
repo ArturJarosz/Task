@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-ta-592"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-592"
+              - column:
+                  name: "TYPE"
+                  value: "NEW"
+              - column:
+                  name: "TITLE"
+                  value: "Keep track of company costs outside your projects"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "Add salaries, subscriptions, rent and other costs under Finance, Company costs, as one-time costs or ones that repeat every month, quarter or year, and mark each charge as paid. Paid company costs count as expenses in the financial report and on the dashboard."
+              - column:
+                  name: "APPLICATION_VERSION"
+                  value: "0.6.2"
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

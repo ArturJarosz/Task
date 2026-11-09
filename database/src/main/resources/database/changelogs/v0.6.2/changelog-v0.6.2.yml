@@ -47,6 +47,9 @@ databaseChangeLog:
   - include:
       file: "time-entry/time-entry-tables.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "company-cost/company-cost-tables.yml"
+      relativeToChangelogFile: true
   - changeSet:
       author: "liquibase"
       id: "tag-version_0.6.2"
