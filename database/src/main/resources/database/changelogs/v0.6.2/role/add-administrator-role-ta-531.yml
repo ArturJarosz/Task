@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-administrator-role-ta-531"
+      comment: "The administrator role has every permission, so it stores none; other roles are created by users"
+      # Databases made before the ticket was known have it from the changeset of the old id
+      preConditions:
+        - onFail: "MARK_RAN"
+        - not:
+            - changeSetExecuted:
+                id: "add-administrator-role-ta-xxx"
+                author: "liquibase"
+                changeLogFile: "database/changelogs/v0.6.2/role/add-administrator-role-ta-xxx.yml"
+      changes:
+        - insert:
+            tableName: "ROLE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "role_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "NAME"
+                  value: "Administrator"
+              - column:
+                  name: "ADMINISTRATOR"
+                  valueBoolean: true
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

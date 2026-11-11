@@ -1,9 +1,20 @@
 package com.arturjarosz.task.user.application.impl
 
+import com.arturjarosz.task.dto.PermissionActionDto
+import com.arturjarosz.task.dto.PermissionDto
+import com.arturjarosz.task.dto.PermissionResourceDto
 import com.arturjarosz.task.dto.UserConfigurationDto
 import com.arturjarosz.task.dto.UserConfigurationNameDto
 import com.arturjarosz.task.dto.UserDto
+import com.arturjarosz.task.dto.UserRolesDto
 import com.arturjarosz.task.dto.UserSummaryDto
+import com.arturjarosz.task.role.application.RoleValidator
+import com.arturjarosz.task.role.application.mapper.PermissionMapper
+import com.arturjarosz.task.security.permission.Action
+import com.arturjarosz.task.security.permission.AuthenticatedPrincipal
+import com.arturjarosz.task.security.permission.Permission
+import com.arturjarosz.task.security.permission.PermissionProvider
+import com.arturjarosz.task.security.permission.Resource
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException
 import com.arturjarosz.task.user.application.CurrentUserProvider
@@ -25,14 +36,20 @@ class UserApplicationServiceImplTest extends Specification {
     def userMapper = Mock(UserMapper)
 
     def userRepository = Mock(UserRepository)
+    def permissionProvider = Mock(PermissionProvider)
+    def roleValidator = Mock(RoleValidator)
+    // a real one, as it only maps names
+    def permissionMapper = new PermissionMapper() {}
 
-    def subject = new UserApplicationServiceImpl(currentUserProvider, userMapper, userRepository)
+    def subject = new UserApplicationServiceImpl(currentUserProvider, userMapper, userRepository, permissionProvider,
+            roleValidator, permissionMapper)
 
     def "getCurrentUser should return current user, creating it when needed"() {
         given:
             def user = new User(USERNAME, EMAIL, AUTH_ID)
             def userDto = new UserDto(id: USER_ID, username: USERNAME, email: EMAIL, authId: AUTH_ID)
             this.currentUserProvider.findOrCreateCurrentUser() >> Optional.of(user)
+            this.currentUserProvider.findCurrentPrincipal() >> Optional.empty()
             this.userMapper.mapToDto(user) >> userDto
 
         when:
@@ -40,6 +57,26 @@ class UserApplicationServiceImplTest extends Specification {
 
         then:
             result == userDto
+    }
+
+    def "getCurrentUser should return permissions the permission provider gives the current principal"() {
+        given:
+            def user = new User(USERNAME, EMAIL, AUTH_ID)
+            def principal = new AuthenticatedPrincipal(AUTH_ID, [sub: AUTH_ID])
+            def permissions = [new Permission(Resource.PROJECT, Action.READ),
+                               new Permission(Resource.PROJECT, Action.EDIT)] as Set
+            this.currentUserProvider.findOrCreateCurrentUser() >> Optional.of(user)
+            this.currentUserProvider.findCurrentPrincipal() >> Optional.of(principal)
+            this.userMapper.mapToDto(user) >> new UserDto(id: USER_ID)
+            this.permissionProvider.getPermissions(principal) >> permissions
+
+        when:
+            def result = this.subject.getCurrentUser()
+
+        then:
+            result.permissions == [
+                    new PermissionDto(resource: PermissionResourceDto.PROJECT, action: PermissionActionDto.READ),
+                    new PermissionDto(resource: PermissionResourceDto.PROJECT, action: PermissionActionDto.EDIT)]
     }
 
     def "getCurrentUser should return empty UserDto when token does not belong to a person"() {
@@ -169,6 +206,51 @@ class UserApplicationServiceImplTest extends Specification {
 
         then:
             thrown(ResourceNotFoundException)
+    }
+
+    def "updateUserRoles should replace roles of the user after checking that each role exists"() {
+        given:
+            def user = new User(USERNAME, EMAIL, AUTH_ID)
+            user.assignRoles([1L])
+            def summary = new UserSummaryDto(id: USER_ID)
+            this.userRepository.findById(USER_ID) >> Optional.of(user)
+            this.userRepository.saveAndFlush(user) >> user
+            this.userMapper.mapToSummaryDto(user) >> summary
+
+        when:
+            def result = this.subject.updateUserRoles(USER_ID, new UserRolesDto(roleIds: [2L, 3L]))
+
+        then:
+            1 * this.roleValidator.validateExistence(2L)
+            1 * this.roleValidator.validateExistence(3L)
+            result == summary
+            user.roleIds == [2L, 3L] as Set
+    }
+
+    def "updateUserRoles should throw exception without changing any user when roles are not given"() {
+        when:
+            this.subject.updateUserRoles(USER_ID, userRolesDto)
+
+        then:
+            def exception = thrown(IllegalArgumentException)
+            exception.message == "isNull.user.roles"
+            0 * this.userRepository.saveAndFlush(_)
+
+        where:
+            userRolesDto << [null, new UserRolesDto(roleIds: null), new UserRolesDto(roleIds: [1L, null])]
+    }
+
+    def "updateUserRoles should throw ResourceNotFoundException when user does not exist"() {
+        given:
+            this.userRepository.findById(USER_ID) >> Optional.empty()
+
+        when:
+            this.subject.updateUserRoles(USER_ID, new UserRolesDto(roleIds: [1L]))
+
+        then:
+            def exception = thrown(ResourceNotFoundException)
+            exception.message == "notExist.user.id"
+            0 * this.userRepository.saveAndFlush(_)
     }
 
     private void mockCurrentUser(User user) {

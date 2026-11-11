@@ -42,6 +42,8 @@ task:
     allowed-origins:
       - ${ALLOWED_ORIGIN_HTTP}
       - ${ALLOWED_ORIGIN_HTTPS}
+    # Where permissions of users come from (PermissionProvider); "database" takes them from the roles of the users
+    permission-source: database
   project:
     active-statuses:
       - TO_DO

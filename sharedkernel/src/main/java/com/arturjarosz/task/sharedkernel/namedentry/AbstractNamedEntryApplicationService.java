@@ -33,13 +33,38 @@ public abstract class AbstractNamedEntryApplicationService<T extends AbstractNam
 
     protected abstract D toDto(T entry, Long numberOfUsages);
 
+    /**
+     * Validates what the dto carries besides the name; entries that are only a name have nothing more.
+     */
+    protected void validateDto(D dto) {
+        // only a name
+    }
+
+    /**
+     * Validates that the existing entry may be changed or removed; any entry may by default.
+     */
+    protected void validateChangeable(T entry) {
+        // any entry
+    }
+
+    /**
+     * Sets on the new or renamed entry what the dto carries besides the name; entries that are only a name have
+     * nothing more.
+     */
+    protected void applyChanges(T entry, D dto) {
+        // only a name
+    }
+
     @Transactional
     @Override
     public D create(D dto) {
         LOG.info("Creating {}.", this.entryLabel);
 
         this.validator.validateCreateDto(dto, this::nameOf);
-        var entry = this.saveWithUniqueName(this.createEntry(this.nameOf(dto).strip()));
+        this.validateDto(dto);
+        var entry = this.createEntry(this.nameOf(dto).strip());
+        this.applyChanges(entry, dto);
+        entry = this.saveWithUniqueName(entry);
 
         LOG.info("{} with id {} created.", this.entryLabel, entry.getId());
         return this.toDto(entry, 0L);
@@ -52,9 +77,12 @@ public abstract class AbstractNamedEntryApplicationService<T extends AbstractNam
 
         var maybeEntry = this.repository.findById(entryId);
         this.validator.validateExistence(maybeEntry, entryId);
-        this.validator.validateUpdateDto(dto, this::nameOf, entryId);
         var entry = maybeEntry.orElseThrow(ResourceNotFoundException::new);
+        this.validateChangeable(entry);
+        this.validator.validateUpdateDto(dto, this::nameOf, entryId);
+        this.validateDto(dto);
         entry.rename(this.nameOf(dto).strip());
+        this.applyChanges(entry, dto);
         entry = this.saveWithUniqueName(entry);
 
         LOG.info("{} with id {} updated.", this.entryLabel, entryId);
@@ -66,7 +94,10 @@ public abstract class AbstractNamedEntryApplicationService<T extends AbstractNam
     public void delete(Long entryId) {
         LOG.info("Deleting {} with id {}.", this.entryLabel, entryId);
 
-        this.validator.validateExistence(entryId);
+        // locked, as validateExistence(entryId) does
+        var maybeEntry = this.repository.findLockedById(entryId);
+        this.validator.validateExistence(maybeEntry, entryId);
+        this.validateChangeable(maybeEntry.orElseThrow(ResourceNotFoundException::new));
         this.validator.validateHasNoUsages(entryId);
         try {
             this.repository.deleteById(entryId);

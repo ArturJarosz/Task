@@ -140,6 +140,33 @@ class CurrentUserProviderTest extends Specification {
             0 * this.userCreationListener.onUserCreated(_)
     }
 
+    def "findCurrentPrincipal should return authId and all claims of the token"() {
+        given:
+            this.authenticate(createJwt(AUTH_ID, PROFILE_CLAIMS))
+
+        when:
+            def result = this.subject.findCurrentPrincipal()
+
+        then:
+            result.get().authId() == AUTH_ID
+            result.get().claims() == ["sub": AUTH_ID] + PROFILE_CLAIMS
+    }
+
+    def "findCurrentPrincipal should return empty optional when token does not belong to a person"() {
+        given:
+            this.securityContext.getAuthentication() >> authentication
+
+        expect:
+            this.subject.findCurrentPrincipal().isEmpty()
+
+        where:
+            authentication << [
+                    null,
+                    Mock(Authentication),
+                    new JwtAuthenticationToken(createJwt("client-id@clients", ["gty": "client-credentials"]))
+            ]
+    }
+
     def "getOrCreateCurrentUser should throw ResourceNotFoundException when token does not belong to a person"() {
         given:
             this.securityContext.getAuthentication() >> null

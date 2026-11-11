@@ -33,3 +33,6 @@ databaseChangeLog:
   - include:
       file: "add-release-note-ta-592.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "add-release-note-ta-531.yml"
+      relativeToChangelogFile: true

@@ -105,7 +105,7 @@ Example: `ProjectWorkflow` defines TO_DO → IN_PROGRESS → DONE flow with vali
 ### Key Patterns
 
 - **Validators** extend `BaseValidator` and use static assertion methods (`assertNotNull`, `assertIsTrue`, etc.).
-- **Mappers** use MapStruct with Spring component model (configured in `pom.xml`)
+- **Mappers** use MapStruct with Spring component model (configured in `pom.xml`).
 - **Application services** are annotated with `@ApplicationService` (custom stereotype)
 - **Domain services** contain pure business logic, no framework dependencies
 - **Repositories** use Spring Data JPA
@@ -114,9 +114,174 @@ Example: `ProjectWorkflow` defines TO_DO → IN_PROGRESS → DONE flow with vali
   `NamedEntryRepository`, the validator `NamedEntryValidator` and the application service
   `AbstractNamedEntryApplicationService`. Check that an item's entry exists with `validateExistence(id)`, which locks the
   entry until the transaction ends, so it cannot be deleted while the item is being saved.
+- **Roles and permissions**: what a user may do is a set of `Permission`s (`security/permission`), each an `Action`
+  (read, create, edit, delete) on a `Resource` (client, project...). Money is kept apart: `PROJECT` is the work on a
+  project, `PROJECT_FINANCE` its money and `FINANCIAL_REPORT` the company-wide report. A resource lists the actions
+  available for it and the resource it is part of; any other action needs Read, and a part needs Read of the whole
+  (`Permission.getRequiredPermissions`). A new resource or action also goes into the `PermissionResource` or
+  `PermissionAction` enum of the OpenAPI spec (`PermissionMapperTest` fails until it does) and needs a label in the
+  frontend. They are read only through the `PermissionProvider` interface. The default `DatabasePermissionProvider` takes them from the roles of the local
+  user (`Role`, a named entry with permissions; `User.roleIds`); another source can be plugged in with the
+  `task.security.permission-source` property. Administrator is the only predefined role and always has every
+  permission, so a new `Permission` reaches it without a migration; other roles are created by users in Settings.
+  The current user's permissions are returned by `GET /users/current`; endpoints do not check them yet.
 - Exception messages codes are created with method
   `com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode` and translated with i18n. Translation
   for them is located in `core/src/main/resources/i18n` and split into separate files for each module.
+- **No `@Value` for config** — use `@ConfigurationProperties` records (ArchUnit-enforced).
+- **No reactive or async.** The app is synchronous.
+- **Do not commit by default** — only when explicitly asked.
+- **YAGNI / KISS / prefer existing libraries.** If a nice-to-have turns out hard to get right, question it or remove it.
+  Get user approval before adding a new
+  dependency.
+- **Run a quick self-review against these rules after any change.**
+- **Act like a senior dev: surface assumptions, stay surgical, verify.**
+- **Fix problems at their source, and build new things the way their neighbours are built.**
+- **Comments must be true, explain why, and survive the cover test.**
+- **Follow "Effective Java" (Joshua Bloch).**
+- **Consistency over novelty.** When in doubt, match the surrounding code. Before adding something new of a common
+  kind — a table, an endpoint's permissions, an
+  enum, a config key, error handling — look at the two closest examples in the repo and do it their way, or say in the
+  commit message why their way does not
+  fit.
+- **`Optional`:**
+    - Don't use `Optional.ofNullable()` for simple null checks — use an explicit null check.
+    - `isPresent()` + `get()` is an antipattern — use `map` / `orElse` / `ifPresent` / etc.
+    - For default-if-null, prefer `MoreObjects.firstNonNull()` (Guava) or `Objects.requireNonNullElse()` (JDK).
+    - For a list, set, collection or map that may be null, use Commons Collections' `emptyIfNull`, statically imported
+      from `ListUtils`, `SetUtils`,
+      `CollectionUtils` or `MapUtils`, not `requireNonNullElse(list, List.of())`.
+- **Return results, don't mutate parameters.** A method that fills a caller-supplied collection hides its output; build
+  and return the collection instead.
+  Mutating a parameter is the contract only where accumulation is the method's stated purpose, and then the name must
+  say so.
+- **Modern Java idioms:**
+    - Use records, sealed types, pattern matching, switch expressions, and streams where they improve readability —
+      don't force them.
+    - Prefer `SequencedCollection` methods (`getFirst()`, `getLast()`, `addFirst()`, `addLast()`, `removeFirst()`,
+      `removeLast()`, `reversed()`) over
+      index-based equivalents.
+    - Prefer `IO.println` over `System.out.println`.
+    - Use `_` for unused lambda parameters (`(_, v) -> process(v)`) and unused catch parameters (`catch (Exception _)`).
+    - Prefer switch expressions over switch statements; prefer switch expressions with pattern matching over long `if`/
+      `else if` chains with `instanceof`.
+    - Use the compact `main` method syntax where applicable (instance `main`, no `String[] args`, no `static`).
+    - Prefer factory methods: `Locale.of(...)` over `new Locale(...)`, `Integer.valueOf(...)` over `new Integer(...)`,
+      etc.
+    - Prefer less verbose API overloads (e.g., `new FileOutputStream("file.txt")` over
+      `new FileOutputStream(new File("file.txt"))`).
+    - Prefer `Reader.of(string)` over `new StringReader(string)`.
+    - Omit trailing `;` on enum constants when the enum has no constructors, fields, or methods.
+- **Loop bodies stay simple.** Long `continue`/`if` ladders inside a loop usually mean the per-element logic should be
+  extracted to a method, expressed as a
+  `stream().filter(...).forEach(...)` pipeline, or replaced with a `switch` expression. A single `break` or an
+  occasional guard `continue` is fine — the target
+  is branching complexity, not the keywords.
+
+#### Naming
+
+- Packages: lowercase, `^[a-z]+(\.[a-z][a-z0-9]*)*$`.
+- Lambda parameters: camelCase starting lowercase (or `_` if unused).
+- Type parameters: single uppercase letter or uppercase word ending with `T`.
+- **The test for every name:** a reader who sees only the name and the signature should be able to guess what the code
+  does. If reading the body surprises them,
+  the name is wrong. Names that are read without the body — methods, fields, parameters, record components — must be
+  exact. A local that lives for a few lines
+  may be short (`i` in a small loop is fine), but even a short name must never say something false. The common mistakes:
+    - **Name what the thing is now, not what happens to it later.** A pair built while planning, before anything ran, is
+      an `OperationAssignment`, not an
+      `AnsweredOperation` — nothing is answered yet. A flag meaning "must still be computed" is `needsCompute`, not
+      `computed`.
+    - **A word that names a type in this module means that type.** If `plan` is an `ExecutionPlan`
+      here, don't call a variable of another type `plan` — the reader resolves the word to the type. Plain words with no
+      type behind them (`measure`, `value`,
+      `result`) are free to reuse. Related smell: an access chain that reads like `entry.entry()` — one of the two names
+      says nothing; name the component by
+      what it holds (→ `entry.request()`).
+    - **A rename is finished when the old word is gone.** After renaming a type or concept, rename the locals,
+      parameters and lambda variables still carrying
+      the old word — they now claim the old meaning.
+    - **Methods sharing a verb must mean the same thing by it.** If every `supports*` method means
+      "this class can handle X", don't use it for something else: `supportsEmptyResult` meant
+      "the result is built empty, no call needed" → `producesEmptyResult`. If `serve*` methods do the work, a method
+      that only checks must not be called
+      `serves`. And when siblings split a topic between them, a bare `supports` sounds like it covers all of it — name
+      the part this one actually answers for.
+    - **Name what the method does for its caller, not an inside detail.** A method that adds each group's weights into a
+      shared map and reports an instrument
+      found in two groups is
+      `mergeGroupWeights` — not `duplicateKeyError`, which named the error text it happens to build.
+    - **`xToY` names a conversion**, an X in and a Y out. A method that returns an X for some purpose is named after the
+      X:
+      `requestedPortfolio(request)`, not `portfolioToHedge(request)`.
+    - **A method that does work is named for the work, with a verb**, even when it returns the outcome: `runWithHedge`,
+      not `variant`. A noun (`requestedPortfolio`) says that the method only builds or looks something up. So a name
+      that starts with a verb must do that verb: a method
+      that returns the permissions a configuration key needs is `permissionsRequiredToEdit(key)`, not
+      `editPermissions(key)`, which reads as if it
+      edited them.
+    - **A word from the ticket's prose is not a name.** A builder of a `HedgeEffectivenessScenarioResult` is
+      `scenarioResult`, not `figures`. Domain
+      vocabulary that names a type stays.
+    - **Avoid vague describing words.** `shaped`, `involved`, `proper` — if you cannot say which fact makes the word
+      true, use the fact as the name:
+      `involvedGroups` → `groupsToCall`.
+    - **Don't hide extra checks.** If a boolean method checks more than its name says — exactly one element, a specific
+      type, false for an empty list — work it
+      into the name. Where that would make the name unreadable, the javadoc's first sentence must state it: a condition
+      the name cannot carry is the method's
+      contract, not the repeated *what* that **Comments & Javadoc**
+      rules out.
+    - **If the javadoc explains the name in better words, make those words the name.** A method documented as "the
+      deviation of actual from target" but named
+      `relativeValue` is
+      `relativeDeviation`.
+
+### Agent Behavior
+
+Operate like an experienced senior engineer on this codebase: pragmatic, skeptical of unnecessary work, biased toward
+the simplest change that provably solves
+the problem. Prefer asking over guessing, and verifying over declaring done.
+
+- **Surface assumptions.** If the request is ambiguous or has multiple reasonable interpretations, list them and ask —
+  don't silently pick one. If a simpler
+  approach exists, say so and push back when warranted.
+- **Stay surgical.** Every changed line must trace to the request. No drive-by refactors, reformatting, or "while I'm
+  here" cleanups. Match existing style even
+  if you'd do it differently. Remove only orphans your own change created; mention unrelated dead code instead of
+  deleting it.
+- **Verify, don't declare.** Turn tasks into verifiable goals: bugs → reproduce with a failing test first; features →
+  define the success check before coding;
+  multi-step tasks → brief plan with a verify step per item. Strong success criteria let you finish without a second
+  round-trip.
+- **Senior-dev gut check.** Before submitting, ask: *"Would an experienced engineer on this team call this
+  overengineered, out-of-scope, or inconsistent with
+  the codebase?"* If yes, trim or rework.
+
+> These behaviors bias toward caution over speed. For trivial tasks, use judgment.
+
+### Architecture Principles
+
+#### Configuration Properties
+
+- Define config as Java `record`s annotated with `@ConfigurationProperties`.
+- Do not use `@Value`.
+
+#### Dependency Injection
+
+- **Constructor injection is the standard**: Lombok `@RequiredArgsConstructor` + `private final` fields.
+- **No field `@Autowired` in production code** (tests may use field injection).
+
+## Liquibase Changesets
+
+- Never use raw SQL (a `sql` change or a `sqlCheck` precondition) when a Liquibase change or precondition can do the
+  same, e.g. `createIndex` with a `computed: true` column for `lower(NAME)`, or `changeSetExecuted` to check whether
+  another changeset ran. Older changesets that use raw SQL are no reason to copy it.
+- A change only PostgreSQL supports (an index on an expression) gets `dbms: "postgresql"` on its changeset instead of
+  raw SQL: the CI `liquibase_test` job runs the changelog on H2, with the tables in `TASK_SCHEMA`.
+- Check a new changeset on H2 the way CI does with `cd database && mvn spring-boot:run -Dspring-boot.run.profiles=test`,
+  and remove the `taskdb.*` files it leaves.
+- Never edit a changeset that may already have run; add a new one.
 
 ## Release Notes
 

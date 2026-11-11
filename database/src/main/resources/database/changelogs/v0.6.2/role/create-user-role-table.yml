@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-user-role-table"
+      changes:
+        - createTable:
+            tableName: "USER_ROLE"
+            columns:
+              - column:
+                  name: "USER_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "ROLE_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "USER_ROLE"
+            columnNames: "USER_ID, ROLE_ID"
+            constraintName: "PK_USER_ROLE"
+        - addForeignKeyConstraint:
+            baseTableName: "USER_ROLE"
+            baseColumnNames: "USER_ID"
+            referencedTableName: "LOCAL_USER"
+            referencedColumnNames: "ID"
+            constraintName: "FK_USER_ROLE_USER"
+            onDelete: "CASCADE"
+        # No cascade: a role given to users cannot be removed
+        - addForeignKeyConstraint:
+            baseTableName: "USER_ROLE"
+            baseColumnNames: "ROLE_ID"
+            referencedTableName: "ROLE"
+            referencedColumnNames: "ID"
+            constraintName: "FK_USER_ROLE_ROLE"
+        # Counting users of a role reads by role
+        - createIndex:
+            tableName: "USER_ROLE"
+            indexName: "IDX_USER_ROLE_ROLE_ID"
+            columns:
+              - column:
+                  name: "ROLE_ID"
