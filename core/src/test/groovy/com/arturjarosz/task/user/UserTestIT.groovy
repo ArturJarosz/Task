@@ -1,10 +1,20 @@
 package com.arturjarosz.task.user
 
 import com.arturjarosz.task.configuration.BaseTestIT
+import com.arturjarosz.task.dto.PermissionActionDto
+import com.arturjarosz.task.dto.PermissionDto
+import com.arturjarosz.task.dto.PermissionResourceDto
 import com.arturjarosz.task.dto.UserConfigurationDto
 import com.arturjarosz.task.dto.UserConfigurationNameDto
 import com.arturjarosz.task.dto.UserDto
+import com.arturjarosz.task.dto.UserRolesDto
 import com.arturjarosz.task.dto.UserSummaryDto
+import com.arturjarosz.task.role.infrastructure.repository.RoleRepository
+import com.arturjarosz.task.role.model.Role
+import com.arturjarosz.task.security.permission.Action
+import com.arturjarosz.task.security.permission.Permission
+import com.arturjarosz.task.security.permission.Resource
+import com.arturjarosz.task.sharedkernel.exceptions.ErrorMessage
 import com.arturjarosz.task.user.application.CurrentUserProvider
 import com.arturjarosz.task.user.infrastructure.repository.UserRepository
 import com.arturjarosz.task.user.model.User
@@ -40,6 +50,9 @@ class UserTestIT extends BaseTestIT {
 
     @Autowired
     JdbcTemplate jdbcTemplate
+
+    @Autowired
+    RoleRepository roleRepository
 
     def cleanup() {
         SecurityContextHolder.clearContext()
@@ -230,6 +243,120 @@ class UserTestIT extends BaseTestIT {
         expect:
             this.getConfigurations().isEmpty()
             this.userRepository.findByAuthId(AUTH_ID).isEmpty()
+    }
+
+    @Transactional
+    def "Updating roles of user should replace them and return the user with new roles"() {
+        given:
+            def user = new User("Roles user", "roles@example.com", AUTH_ID)
+            user.assignRoles([this.roleId("Administrator")])
+            user = this.userRepository.saveAndFlush(user)
+            def roleIds = [this.roleId("Architect"), this.roleId("Read only")]
+        when:
+            def response = this.putUserRoles(user.id, new UserRolesDto(roleIds: roleIds))
+        then:
+            response.status == HttpStatus.OK.value()
+            (MAPPER.readValue(response.contentAsString, UserSummaryDto).roleIds as Set) == roleIds as Set
+        and:
+            this.jdbcTemplate.queryForList("SELECT ROLE_ID FROM USER_ROLE WHERE USER_ID = ?", Long, user.id) as Set ==
+                    roleIds as Set
+        and:
+            def users = MAPPER.readValue(this.mockMvc.perform(MockMvcRequestBuilders
+                    .get(URI.create(HOST + ":" + port + "/users"))).andReturn().response.contentAsString,
+                    new TypeReference<List<UserSummaryDto>>() {})
+            (users.find { it.id == user.id }.roleIds as Set) == roleIds as Set
+    }
+
+    // not transactional, so the roles are saved and taken away in separate sessions, like in two requests
+    def "Updating roles of user with empty list should take all roles away"() {
+        given:
+            def user = new User("Roles user", "roles@example.com", AUTH_ID)
+            user.assignRoles([this.roleId("Architect")])
+            user = this.userRepository.saveAndFlush(user)
+        when:
+            def response = this.putUserRoles(user.id, new UserRolesDto(roleIds: []))
+        then:
+            response.status == HttpStatus.OK.value()
+            this.jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USER_ROLE WHERE USER_ID = ?", Integer, user.id) == 0
+    }
+
+    @Transactional
+    def "Updating roles of user with not existing role should return 404 and keep the roles"() {
+        given:
+            def user = new User("Roles user", "roles@example.com", AUTH_ID)
+            user.assignRoles([this.roleId("Architect")])
+            user = this.userRepository.saveAndFlush(user)
+        when:
+            def response = this.putUserRoles(user.id, new UserRolesDto(roleIds: [this.roleId("Read only"), 10000L]))
+        then:
+            response.status == HttpStatus.NOT_FOUND.value()
+            MAPPER.readValue(response.contentAsString, ErrorMessage).message == "Role with id 10,000 does not exist."
+            this.jdbcTemplate.queryForList("SELECT ROLE_ID FROM USER_ROLE WHERE USER_ID = ?", Long, user.id) ==
+                    [this.roleId("Architect")]
+    }
+
+    @Transactional
+    def "Updating roles of not existing user should return 404"() {
+        when:
+            def response = this.putUserRoles(10000L, new UserRolesDto(roleIds: [this.roleId("Architect")]))
+        then:
+            response.status == HttpStatus.NOT_FOUND.value()
+            MAPPER.readValue(response.contentAsString, ErrorMessage).message == "User with id 10,000 does not exist."
+    }
+
+    @Transactional
+    def "Updating roles of user without role list should return 400"() {
+        given:
+            def user = this.userRepository.saveAndFlush(new User("Roles user", "roles@example.com", AUTH_ID))
+        when:
+            def response = this.putUserRoles(user.id, new UserRolesDto(roleIds: null))
+        then:
+            response.status == HttpStatus.BAD_REQUEST.value()
+            MAPPER.readValue(response.contentAsString, ErrorMessage).message == "Roles of the user have to be provided."
+    }
+
+    @Transactional
+    def "Current user should have the permissions of all their roles"() {
+        given:
+            def user = new User("Roles user", "roles@example.com", AUTH_ID)
+            user.assignRoles(roleNames.collect { this.roleId(it) })
+            this.userRepository.saveAndFlush(user)
+            this.authenticate(AUTH_ID)
+        when:
+            def currentUser = this.getCurrentUser()
+        then:
+            (currentUser.roleIds as Set) == roleNames.collect { this.roleId(it) } as Set
+            currentUser.permissions == permissions(roleNames)
+        where:
+            roleNames << [[], ["Read only"], ["Read only", "Architect"], ["Administrator"]]
+    }
+
+    // Administrator is predefined; the other roles are created on first use and kept, like the BaseTestIT fixtures
+    private static final Map<String, List<Permission>> TEST_ROLES = [
+            "Architect": [Resource.CLIENT, Resource.PROJECT, Resource.TIME_ENTRY, Resource.CALENDAR]
+                    .collectMany { resource -> resource.actions.collect { new Permission(resource, it) } },
+            "Read only": [Resource.PROJECT, Resource.CLIENT, Resource.ARCHITECT, Resource.CALENDAR]
+                    .collect { new Permission(it, Action.READ) }]
+
+    // All permissions of the roles with given names, as the current user gets them: in order, without repeats
+    private static List<PermissionDto> permissions(List<String> roleNames) {
+        def permissions = roleNames.contains("Administrator") ? Permission.all()
+                : roleNames.collectMany { TEST_ROLES[it] }.toSet()
+        return permissions.toSorted(Permission.ORDER).collect {
+            new PermissionDto(resource: PermissionResourceDto.valueOf(it.resource().name()),
+                    action: PermissionActionDto.valueOf(it.action().name()))
+        }
+    }
+
+    private Long roleId(String name) {
+        return (this.roleRepository.findAll().find { it.name == name }
+                ?: this.roleRepository.saveAndFlush(new Role(name, TEST_ROLES[name]))).id
+    }
+
+    private def putUserRoles(Long userId, UserRolesDto userRolesDto) {
+        return this.mockMvc.perform(MockMvcRequestBuilders.put(URI.create(HOST + ":" + port + "/users/$userId/roles"))
+                .header("Content-Type", "application/json")
+                .content(MAPPER.writeValueAsString(userRolesDto))).andReturn().response
     }
 
     private def putThemeMode(String value) {

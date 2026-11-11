@@ -8,10 +8,13 @@ import com.arturjarosz.task.user.model.UserConfiguration;
 import com.arturjarosz.task.user.model.UserConfigurationName;
 import com.arturjarosz.task.user.model.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper
 public interface UserMapper {
 
+    // permissions do not come from the user, they are resolved by the PermissionProvider
+    @Mapping(target = "permissions", ignore = true)
     UserDto mapToDto(User user);
 
     UserSummaryDto mapToSummaryDto(User user);

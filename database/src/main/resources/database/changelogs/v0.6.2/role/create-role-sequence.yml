@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-role-sequence"
+      changes:
+        - createSequence:
+            sequenceName: "role_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1

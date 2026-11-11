@@ -3,6 +3,8 @@ package com.arturjarosz.task.user.model;
 import com.arturjarosz.task.sharedkernel.model.AbstractAggregateRoot;
 import jakarta.persistence.Column;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -11,8 +13,11 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.BatchSize;
 
 import java.io.Serial;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -54,6 +59,14 @@ public class User extends AbstractAggregateRoot {
     @JoinColumn(name = "USER_ID", nullable = false)
     private Set<UserConfiguration> configurations = new HashSet<>();
 
+    // Ids of the roles of the user; what they allow is resolved by the PermissionProvider. Loaded in batches, as user
+    // summaries listing several users carry them
+    @ElementCollection
+    @CollectionTable(name = "USER_ROLE", joinColumns = @JoinColumn(name = "USER_ID"))
+    @Column(name = "ROLE_ID", nullable = false)
+    @BatchSize(size = 50)
+    private Set<Long> roleIds = new HashSet<>();
+
     protected User() {
         // needed by JPA
     }
@@ -78,6 +91,18 @@ public class User extends AbstractAggregateRoot {
         if (StringUtils.isNotBlank(email) && email.codePointCount(0, email.length()) <= EMAIL_MAX_LENGTH) {
             this.email = email;
         }
+    }
+
+    public Set<Long> getRoleIds() {
+        return Collections.unmodifiableSet(this.roleIds);
+    }
+
+    /**
+     * Replaces the roles of the user with given ones.
+     */
+    public void assignRoles(Collection<Long> roleIds) {
+        this.roleIds.clear();
+        this.roleIds.addAll(roleIds);
     }
 
     public Optional<UserConfiguration> getConfiguration(UserConfigurationName name) {

@@ -25,7 +25,8 @@ import spock.lang.Specification
  * has only the production migrations; data that the json fixtures need (a project, stage and task type, a contractor
  * and a supplier category) is created here, and tests put its ids into the fixtures.
  */
-@SpringBootTest(classes = DatabaseMain.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+// Requests go through MockMvc, so no server is started; MockMvc ignores the host and port of request URLs
+@SpringBootTest(classes = DatabaseMain.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 class BaseTestIT extends Specification {
     protected static final String HOST = "http://localhost"

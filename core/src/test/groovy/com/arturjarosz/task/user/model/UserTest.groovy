@@ -65,6 +65,18 @@ class UserTest extends Specification {
             null     | TOO_LONG_EMAIL
     }
 
+    def "Assigning roles should replace the roles the user had"() {
+        given:
+            def user = new User("Anna", "anna@example.com", "auth0|roles")
+            user.assignRoles([1L, 2L])
+
+        when:
+            user.assignRoles([2L, 3L])
+
+        then:
+            user.roleIds == [2L, 3L] as Set
+    }
+
     def "Marking release notes as seen should keep the newest note seen"() {
         given:
             def user = new User(USERNAME, EMAIL, AUTH_ID)

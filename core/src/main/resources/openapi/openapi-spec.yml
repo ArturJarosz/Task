@@ -40,6 +40,8 @@ tags:
     description: Project type API and models
   - name: releaseNote
     description: Release note API and models
+  - name: role
+    description: Role API and models
   - name: stage
     description: Stage data API and models
   - name: stageType
@@ -4870,6 +4872,162 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
 
+  /roles:
+    post:
+      tags:
+        - role
+      summary: Create a new role
+      operationId: createRole
+      requestBody:
+        description: New role data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Role"
+      responses:
+        201:
+          description: Role successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    get:
+      tags:
+        - role
+      summary: Get list of roles sorted by name, with the number of users of each role
+      operationId: getRoles
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Roles"
+
+  /permissions:
+    get:
+      tags:
+        - role
+      summary: Get every resource with the actions a role can allow on it
+      operationId: getAvailablePermissions
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourcePermissionsList"
+
+  /roles/{roleId}:
+    get:
+      tags:
+        - role
+      summary: Get a role with given roleId
+      operationId: getRole
+      parameters:
+        - name: roleId
+          in: path
+          description: "A unique identifier of the role"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+        404:
+          description: Role does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    put:
+      tags:
+        - role
+      summary: Update name and permissions of a role with given roleId
+      description: The administrator role cannot be changed
+      operationId: updateRole
+      parameters:
+        - name: roleId
+          in: path
+          description: "A unique identifier of the role"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Data of updated role
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Role"
+      responses:
+        200:
+          description: Role successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Role does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+    delete:
+      tags:
+        - role
+      summary: Remove a role with given roleId
+      description: The administrator role and a role given to any user cannot be removed
+      operationId: deleteRole
+      parameters:
+        - name: roleId
+          in: path
+          description: "A unique identifier of the role"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Role successfully removed
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: Role does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
   /users:
     get:
       tags:
@@ -4948,6 +5106,49 @@ paths:
                 $ref: "#/components/schemas/ValidatorError"
         404:
           description: Current user does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
+  /users/{userId}/roles:
+    put:
+      tags:
+        - user
+      summary: Replace the roles of the user with given userId
+      operationId: updateUserRoles
+      parameters:
+        - name: userId
+          in: path
+          description: "A unique identifier of the user"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Roles the user should have
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRoles"
+      responses:
+        200:
+          description: Roles successfully saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserSummary"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+        404:
+          description: User or role does not exist
           content:
             application/json:
               schema:
@@ -6464,6 +6665,16 @@ components:
           type: string
         authId:
           type: string
+        roleIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+        permissions:
+          type: array
+          description: What the user is allowed to do, coming from the roles of the user
+          items:
+            $ref: "#/components/schemas/Permission"
 
     UserSummary:
       type: object
@@ -6475,6 +6686,115 @@ components:
           type: string
         email:
           type: string
+        roleIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+
+    UserRoles:
+      type: object
+      properties:
+        roleIds:
+          type: array
+          description: Ids of all roles the user should have; an empty list takes all roles away
+          items:
+            type: integer
+            format: int64
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        administrator:
+          type: boolean
+          readOnly: true
+          description: The administrator role has every permission and cannot be changed or removed
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Permission"
+        numberOfUsers:
+          type: integer
+          format: int64
+          readOnly: true
+          description: Number of users having this role; a role given to any user cannot be removed
+        createdDateTime:
+          type: string
+          format: time
+        lastModifiedDateTime:
+          type: string
+          format: time
+
+    Roles:
+      type: array
+      items:
+        $ref: "#/components/schemas/Role"
+
+    Permission:
+      type: object
+      description: Allows a user to take an action on a resource, such as editing clients
+      properties:
+        resource:
+          $ref: "#/components/schemas/PermissionResource"
+        action:
+          $ref: "#/components/schemas/PermissionAction"
+
+    PermissionResource:
+      type: string
+      description: >
+        What a permission is about. PROJECT covers stages and tasks without any money; PROJECT_FINANCE the money of a
+        project (costs, installments, supplies, contractor jobs, supervision, financial summary); FINANCIAL_REPORT
+        the financial report of all projects and company costs, read only; SETTINGS types, categories, system
+        parameters and sharing of the Google calendar
+      enum:
+        - PROJECT
+        - CONTRACT
+        - TIME_ENTRY
+        - CLIENT
+        - ARCHITECT
+        - CONTRACTOR
+        - SUPPLIER
+        - CALENDAR
+        - PROJECT_FINANCE
+        - COMPANY_COST
+        - FINANCIAL_REPORT
+        - SETTINGS
+        - USER
+        - ROLE
+
+    PermissionAction:
+      type: string
+      enum:
+        - READ
+        - CREATE
+        - EDIT
+        - DELETE
+
+    ResourcePermissions:
+      type: object
+      description: >
+        A resource with the actions a permission can allow on it. A role giving any action other than READ must also
+        give READ on the same resource, when the resource has it. requiredResource is the resource this one is part
+        of, set only for such resources: a role giving any action on this resource must also give READ on that one
+      properties:
+        resource:
+          $ref: "#/components/schemas/PermissionResource"
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/PermissionAction"
+        requiredResource:
+          $ref: "#/components/schemas/PermissionResource"
+
+    ResourcePermissionsList:
+      type: array
+      items:
+        $ref: "#/components/schemas/ResourcePermissions"
 
     UserSummaries:
       type: array

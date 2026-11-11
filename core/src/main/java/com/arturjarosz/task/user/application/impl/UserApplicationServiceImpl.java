@@ -3,8 +3,13 @@ package com.arturjarosz.task.user.application.impl;
 import com.arturjarosz.task.dto.UserConfigurationDto;
 import com.arturjarosz.task.dto.UserConfigurationNameDto;
 import com.arturjarosz.task.dto.UserDto;
+import com.arturjarosz.task.dto.UserRolesDto;
 import com.arturjarosz.task.dto.UserSummaryDto;
+import com.arturjarosz.task.role.application.RoleValidator;
+import com.arturjarosz.task.role.application.mapper.PermissionMapper;
+import com.arturjarosz.task.security.permission.PermissionProvider;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
+import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.user.application.CurrentUserProvider;
 import com.arturjarosz.task.user.application.UserApplicationService;
 import com.arturjarosz.task.user.application.mapper.UserMapper;
@@ -19,8 +24,12 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.arturjarosz.task.user.application.UserValidator.validateUserExistence;
+import static com.arturjarosz.task.user.application.UserValidator.validateUserRolesDto;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,6 +39,9 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     private final CurrentUserProvider currentUserProvider;
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final PermissionProvider permissionProvider;
+    private final RoleValidator roleValidator;
+    private final PermissionMapper permissionMapper;
 
     @Transactional
     @Override
@@ -39,7 +51,12 @@ public class UserApplicationServiceImpl implements UserApplicationService {
         var maybeUser = this.currentUserProvider.findOrCreateCurrentUser();
         if (maybeUser.isPresent()) {
             LOG.info("Returning user for authId {}.", maybeUser.get().getAuthId());
-            return this.userMapper.mapToDto(maybeUser.get());
+            var userDto = this.userMapper.mapToDto(maybeUser.get());
+            var permissions = this.currentUserProvider.findCurrentPrincipal()
+                    .map(this.permissionProvider::getPermissions)
+                    .orElse(Set.of());
+            userDto.setPermissions(this.permissionMapper.mapToDtos(permissions));
+            return userDto;
         }
 
         LOG.info("No user for current authentication.");
@@ -92,5 +109,23 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
         LOG.info("Configuration {} of current user updated.", name);
         return this.userMapper.mapToDto(configuration);
+    }
+
+    @Transactional
+    @Override
+    public UserSummaryDto updateUserRoles(Long userId, UserRolesDto userRolesDto) {
+        LOG.info("Updating roles of user with id {}.", userId);
+
+        validateUserRolesDto(userRolesDto);
+        var maybeUser = this.userRepository.findById(userId);
+        validateUserExistence(maybeUser, userId);
+        // locks the roles, so none of them can be removed before the user is saved with it
+        userRolesDto.getRoleIds().forEach(this.roleValidator::validateExistence);
+        var user = maybeUser.orElseThrow(ResourceNotFoundException::new);
+        user.assignRoles(userRolesDto.getRoleIds());
+        user = this.userRepository.saveAndFlush(user);
+
+        LOG.info("Roles of user with id {} updated.", userId);
+        return this.userMapper.mapToSummaryDto(user);
     }
 }

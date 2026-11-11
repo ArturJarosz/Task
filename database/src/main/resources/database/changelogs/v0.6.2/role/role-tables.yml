@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - include:
+      file: "create-role-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-role-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-role-permission-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-user-role-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "add-administrator-role-ta-531.yml"
+      relativeToChangelogFile: true

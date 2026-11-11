@@ -1,5 +1,6 @@
 package com.arturjarosz.task.user.application;
 
+import com.arturjarosz.task.security.permission.AuthenticatedPrincipal;
 import com.arturjarosz.task.sharedkernel.exceptions.ExceptionCodes;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import com.arturjarosz.task.user.domain.UserExceptionCodes;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.arturjarosz.task.sharedkernel.exceptions.BaseValidator.createMessageCode;
@@ -30,6 +32,7 @@ public class CurrentUserProvider {
     // Auth0 sets it on tokens issued to machine-to-machine applications, which are not people
     private static final String GRANT_TYPE_CLAIM = "gty";
     private static final String CLIENT_CREDENTIALS_GRANT = "client-credentials";
+    private static final String SUBJECT_CLAIM = "sub";
     // Auth0 access tokens carry only the subject; the Post-Login Action adding user claims adds these
     // (see documentation/auth0/add-user-claims.js)
     private static final String CLAIMS_NAMESPACE = "https://task.arturjarosz.com/";
@@ -38,6 +41,15 @@ public class CurrentUserProvider {
 
     private final UserRepository userRepository;
     private final List<UserCreationListener> userCreationListeners;
+
+    /**
+     * Returns the person behind the current JWT token, to resolve permissions for; empty when the token does not belong
+     * to a person.
+     */
+    public Optional<AuthenticatedPrincipal> findCurrentPrincipal() {
+        return this.currentPersonClaims().map(claims -> new AuthenticatedPrincipal(
+                (String) claims.get(SUBJECT_CLAIM), claims));
+    }
 
     /**
      * Returns the local user of the current JWT token without creating it.
@@ -88,18 +100,28 @@ public class CurrentUserProvider {
                 createMessageCode(ExceptionCodes.NOT_EXIST, UserExceptionCodes.USER)));
     }
 
+    private Optional<TokenUser> currentTokenUser() {
+        return this.currentPersonClaims().map(claims -> new TokenUser((String) claims.get(SUBJECT_CLAIM),
+                claimAsString(claims, NAME_CLAIM), claimAsString(claims, EMAIL_CLAIM)));
+    }
+
     // Jwt stays out of every method signature (lambda parameters included): sample-data runs this context without
     // the OAuth2 resource server on the classpath, and Spring reads the declared methods when creating the bean
-    private Optional<TokenUser> currentTokenUser() {
+    private Optional<Map<String, Object>> currentPersonClaims() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof JwtAuthenticationToken jwtAuth) {
             var jwt = jwtAuth.getToken();
             if (jwt.getSubject() != null && !CLIENT_CREDENTIALS_GRANT.equals(jwt.getClaimAsString(GRANT_TYPE_CLAIM))) {
-                return Optional.of(new TokenUser(jwt.getSubject(), jwt.getClaimAsString(NAME_CLAIM),
-                        jwt.getClaimAsString(EMAIL_CLAIM)));
+                return Optional.of(jwt.getClaims());
             }
         }
         return Optional.empty();
+    }
+
+    // Same as Jwt.getClaimAsString
+    private static String claimAsString(Map<String, Object> claims, String name) {
+        var value = claims.get(name);
+        return value == null ? null : value.toString();
     }
 
     // Person behind the current token, as the claims say; name and email are null when the claim is missing

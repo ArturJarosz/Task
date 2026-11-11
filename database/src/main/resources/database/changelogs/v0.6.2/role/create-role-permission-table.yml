@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-role-permission-table"
+      changes:
+        - createTable:
+            tableName: "ROLE_PERMISSION"
+            columns:
+              - column:
+                  name: "ROLE_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              # Names of the Resource and Action enums
+              - column:
+                  name: "RESOURCE"
+                  type: "VARCHAR2(60 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "ACTION"
+                  type: "VARCHAR2(20 ${char.unit})"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "ROLE_PERMISSION"
+            columnNames: "ROLE_ID, RESOURCE, ACTION"
+            constraintName: "PK_ROLE_PERMISSION"
+        - addForeignKeyConstraint:
+            baseTableName: "ROLE_PERMISSION"
+            baseColumnNames: "ROLE_ID"
+            referencedTableName: "ROLE"
+            referencedColumnNames: "ID"
+            constraintName: "FK_ROLE_PERMISSION_ROLE"
+            onDelete: "CASCADE"

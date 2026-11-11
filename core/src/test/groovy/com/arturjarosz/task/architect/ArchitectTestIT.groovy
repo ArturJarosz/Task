@@ -17,9 +17,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.transaction.annotation.Transactional
 import tools.jackson.databind.ObjectMapper
 
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 
 class ArchitectTestIT extends BaseTestIT {
     static final String FIRST_NAME = "First Name"
@@ -212,15 +209,12 @@ class ArchitectTestIT extends BaseTestIT {
 
     @Transactional
     def "Calling get on /architects should return all architects basic dto"() {
-        given:
-            HttpClient httpClient = HttpClient.newHttpClient()
-            HttpRequest request = HttpRequest.newBuilder(URI.create(HOST + ":" + port + ARCHITECTS_URI)).GET()
-                    .build()
         when:
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+            def response = this.mockMvc.perform(MockMvcRequestBuilders.get(URI.create(HOST + ":" + port + ARCHITECTS_URI)))
+                    .andReturn().response
         then:
-            response.statusCode() == HttpStatus.OK.value()
-            List<ArchitectDto> architects = MAPPER.readValue(response.body(), List<ArchitectDto>)
+            response.status == HttpStatus.OK.value()
+            List<ArchitectDto> architects = MAPPER.readValue(response.contentAsString, List<ArchitectDto>)
             architects.isEmpty()
     }
 

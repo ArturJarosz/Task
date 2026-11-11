@@ -3,6 +3,7 @@ package com.arturjarosz.task.user.application;
 import com.arturjarosz.task.dto.UserConfigurationDto;
 import com.arturjarosz.task.dto.UserConfigurationNameDto;
 import com.arturjarosz.task.dto.UserDto;
+import com.arturjarosz.task.dto.UserRolesDto;
 import com.arturjarosz.task.dto.UserSummaryDto;
 
 import java.util.Collection;
@@ -13,8 +14,8 @@ public interface UserApplicationService {
 
     /**
      * Returns the {@link com.arturjarosz.task.user.model.User} matching the subject of the current JWT token, creating
-     * it from the token claims on the first login. An empty {@link UserDto} is returned when the token does not belong
-     * to a person.
+     * it from the token claims on the first login, with the permissions the user has. An empty {@link UserDto} is
+     * returned when the token does not belong to a person.
      */
     UserDto getCurrentUser();
 
@@ -42,4 +43,9 @@ public interface UserApplicationService {
      */
     UserConfigurationDto updateCurrentUserConfiguration(UserConfigurationNameDto name,
             UserConfigurationDto userConfigurationDto);
+
+    /**
+     * Replaces the roles of the user with given id with the roles listed in userRolesDto.
+     */
+    UserSummaryDto updateUserRoles(Long userId, UserRolesDto userRolesDto);
 }

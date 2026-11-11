@@ -214,6 +214,8 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/openapi/openapi-spec.yml</inputSpec>
+                            <!-- rewritten sources make the compiler recompile the whole module on every build -->
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
                             <generatorName>spring</generatorName>
                             <generateModels>true</generateModels>
                             <generateModelDocumentation>false</generateModelDocumentation>

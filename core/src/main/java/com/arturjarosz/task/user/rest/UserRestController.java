@@ -3,6 +3,7 @@ package com.arturjarosz.task.user.rest;
 import com.arturjarosz.task.dto.UserConfigurationDto;
 import com.arturjarosz.task.dto.UserConfigurationNameDto;
 import com.arturjarosz.task.dto.UserDto;
+import com.arturjarosz.task.dto.UserRolesDto;
 import com.arturjarosz.task.dto.UserSummaryDto;
 import com.arturjarosz.task.rest.UserApi;
 import com.arturjarosz.task.user.application.UserApplicationService;
@@ -40,5 +41,10 @@ public class UserRestController implements UserApi {
             UserConfigurationDto userConfigurationDto, UserConfigurationNameDto name) {
         return new ResponseEntity<>(this.userApplicationService.updateCurrentUserConfiguration(name,
                 userConfigurationDto), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<UserSummaryDto> updateUserRoles(UserRolesDto userRolesDto, Long userId) {
+        return new ResponseEntity<>(this.userApplicationService.updateUserRoles(userId, userRolesDto), HttpStatus.OK);
     }
 }
