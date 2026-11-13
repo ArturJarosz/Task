@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-author-auth-id-to-revinfo"
+      changes:
+        - addColumn:
+            tableName: "REVINFO"
+            columns:
+              - column:
+                  name: "AUTHOR_AUTH_ID"
+                  type: "VARCHAR2(255 ${char.unit})"

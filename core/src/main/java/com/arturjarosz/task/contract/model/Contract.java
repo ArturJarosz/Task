@@ -15,12 +15,15 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.io.Serial;
 import java.time.LocalDate;
 
 @SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
+@Audited
 @SequenceGenerator(name = "sequence_generator", sequenceName = "contract_sequence", allocationSize = 1)
 @DiscriminatorValue(value = "CONTRACT")
 public class Contract extends AbstractAggregateRoot implements WorkflowAware<ContractStatus> {
@@ -52,6 +55,8 @@ public class Contract extends AbstractAggregateRoot implements WorkflowAware<Con
     @Enumerated(value = EnumType.STRING)
     private ContractStatus status;
 
+    // the workflow of a record never changes, so its history leaves it out
+    @NotAudited
     @Column(name = "WORKFLOW_NAME", nullable = false)
     private String workflowName;
 

@@ -8,6 +8,7 @@ import com.arturjarosz.task.contractor.model.Contractor;
 import com.arturjarosz.task.data.initializer.DataInitializer;
 import com.arturjarosz.task.data.initializer.SampleDataFileReader;
 import com.arturjarosz.task.data.initializer.SampleDateUpdater;
+import com.arturjarosz.task.data.initializer.SampleHistoryUpdater;
 import com.arturjarosz.task.data.model.ContractorJobSample;
 import com.arturjarosz.task.data.model.CostSample;
 import com.arturjarosz.task.data.model.FinanceItemSample;
@@ -17,6 +18,7 @@ import com.arturjarosz.task.data.model.StageSample;
 import com.arturjarosz.task.data.model.SupplySample;
 import com.arturjarosz.task.data.model.TaskSample;
 import com.arturjarosz.task.data.model.TimeEntrySample;
+import com.arturjarosz.task.data.model.UserSample;
 import com.arturjarosz.task.dto.ContractDto;
 import com.arturjarosz.task.dto.ContractStatusDto;
 import com.arturjarosz.task.dto.ContractorJobDto;
@@ -56,6 +58,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -70,6 +73,8 @@ import java.util.stream.Collectors;
  * run after architects, clients, contractors, suppliers, project types, cost categories, stage types and task types are
  * loaded. Dates that can't be set through
  * application services (passed deadlines, start and end dates of work, creation time) are changed by {@link SampleDateUpdater}.
+ * Each change commits on its own, task statuses change in the order of their dates, and {@link SampleHistoryUpdater}
+ * moves the history to the days the changes happened. Has to be run after users are loaded, as they are the authors of the changes.
  */
 @Slf4j
 @Component
@@ -103,12 +108,14 @@ public class ProjectDataInitializer implements DataInitializer {
     private final ContractorJobApplicationService contractorJobApplicationService;
     private final SupplyApplicationService supplyApplicationService;
     private final SampleDateUpdater sampleDateUpdater;
+    private final SampleHistoryUpdater sampleHistoryUpdater;
 
     @Override
     public void initializeData() {
         LOG.info("Starting importing projects.");
         var referencedIds = this.loadReferencedIds();
-        this.prepareProjects().forEach(projectSample -> this.importProject(projectSample, referencedIds));
+        var users = UserDataInitializer.readUsers();
+        this.prepareProjects().forEach(projectSample -> this.importProject(projectSample, referencedIds, users));
         LOG.info("Projects added to the database.");
     }
 
@@ -137,14 +144,14 @@ public class ProjectDataInitializer implements DataInitializer {
                 .collect(Collectors.toMap(keyMapper, AbstractEntity::getId, Math::min));
     }
 
-    private void importProject(ProjectSample projectSample, ReferencedIds referencedIds) {
+    private void importProject(ProjectSample projectSample, ReferencedIds referencedIds, List<UserSample> users) {
         LOG.info("Importing project {}.", projectSample.getName());
         var architectId = getId(referencedIds.architectIdsByName(), projectSample.getArchitect(), "architect");
         var projectCreateDto = new ProjectCreateDto().name(projectSample.getName())
                 .typeId(getId(referencedIds.projectTypeIdsByName(), projectSample.getType(), "project type"))
                 .architectId(architectId)
                 .clientId(getId(referencedIds.clientIdsByEmail(), projectSample.getClientEmail(), "client"))
-                .offerValue(projectSample.getOfferValue())
+                .offerValue(firstOfferValue(projectSample))
                 .deadline(validContractDeadline(projectSample));
         var projectDto = this.projectApplicationService.createProject(projectCreateDto);
         var projectId = projectDto.getId();
@@ -158,23 +165,87 @@ public class ProjectDataInitializer implements DataInitializer {
         projectSample.getCosts().forEach(cost -> this.createCost(projectId, cost, referencedIds));
         projectSample.getContractorJobs().forEach(job -> this.createContractorJob(projectId, job, referencedIds));
         projectSample.getSupplies().forEach(supply -> this.createSupply(projectId, supply, referencedIds));
+        this.moveStageDeadlines(projectId, architectId, projectSample.getStages(), stageIds, referencedIds);
 
         // Contract has to allow working before work statuses are changed, final contract statuses are set after that.
         var contractId = projectDto.getContract().getId();
         this.moveContractToWorkingStatus(contractId, projectSample);
         this.changeWorkStatuses(projectId, projectSample.getStages(), stageIds, taskIds);
+        this.removeTasks(projectId, projectSample.getStages(), stageIds, taskIds);
         this.moveContractToFinalStatus(contractId, projectSample);
         if (projectSample.isRejected()) {
             this.projectApplicationService.rejectProject(projectId);
         }
         this.changeDates(projectId, contractId, projectSample, taskIds);
+        this.sampleHistoryUpdater.spreadHistory(projectId, contractId, projectSample.getCreatedDaysAgo(),
+                authorAuthIds(projectSample, users));
+    }
+
+    /**
+     * The contract is signed with the offer value, so an earlier offer is possible only for a contract to be signed.
+     */
+    private static Double firstOfferValue(ProjectSample projectSample) {
+        if (projectSample.getFirstOfferValue() == null) {
+            return projectSample.getOfferValue();
+        }
+        if (!SIGNED_CONTRACT_STATUSES.contains(projectSample.getContractStatus())) {
+            throw new SampleDataInitializingException(
+                    String.format("First offer value of project '%1$s' requires a signed contract in %2$s",
+                            projectSample.getName(), FILE_NAME), null);
+        }
+        return projectSample.getFirstOfferValue();
+    }
+
+    /**
+     * The architect of the project makes three changes in four when they are a user, the first other user makes the
+     * rest.
+     */
+    private static List<String> authorAuthIds(ProjectSample projectSample, List<UserSample> users) {
+        var otherUser = users.stream()
+                .filter(user -> !user.getUsername().equals(projectSample.getArchitect()))
+                .findFirst()
+                .orElseThrow(() -> new SampleDataInitializingException(
+                        String.format("Project '%1$s' requires a user other than its architect in %2$s",
+                                projectSample.getName(), UserDataInitializer.FILE_NAME), null));
+        var architectUser = users.stream()
+                .filter(user -> user.getUsername().equals(projectSample.getArchitect()))
+                .findFirst()
+                .orElse(otherUser);
+        return List.of(architectUser.getAuthId(), architectUser.getAuthId(), architectUser.getAuthId(),
+                otherUser.getAuthId());
+    }
+
+    private void moveStageDeadlines(Long projectId, Long architectId, List<StageSample> stageSamples,
+            List<Long> stageIds, ReferencedIds referencedIds) {
+        for (int i = 0; i < stageSamples.size(); i++) {
+            var stageSample = stageSamples.get(i);
+            if (stageSample.getFirstDeadlineInDays() != null) {
+                this.stageApplicationService.updateStage(projectId, stageIds.get(i),
+                        this.stageDto(architectId, stageSample, referencedIds)
+                                .deadline(daysFromNow(stageSample.getDeadlineInDays())));
+            }
+        }
+    }
+
+    private void removeTasks(Long projectId, List<StageSample> stageSamples, List<Long> stageIds,
+            Map<TaskSample, Long> taskIds) {
+        for (int i = 0; i < stageSamples.size(); i++) {
+            var stageId = stageIds.get(i);
+            stageSamples.get(i).getTasks().stream()
+                    .filter(TaskSample::isRemoved)
+                    .forEach(taskSample -> this.taskApplicationService.deleteTask(projectId, stageId,
+                            taskIds.get(taskSample)));
+        }
     }
 
     private void changeDates(Long projectId, Long contractId, ProjectSample projectSample,
             Map<TaskSample, Long> taskIds) {
         var startDateByTaskId = new HashMap<Long, LocalDate>();
         var endDateByTaskId = new HashMap<Long, LocalDate>();
-        taskIds.forEach((taskSample, taskId) -> {
+        // a removed task has no dates
+        taskIds.entrySet().stream().filter(sampleTask -> !sampleTask.getKey().isRemoved()).forEach(sampleTask -> {
+            var taskSample = sampleTask.getKey();
+            var taskId = sampleTask.getValue();
             var startDate = daysAgo(taskSample.getStartedDaysAgo());
             var endDate = daysAgo(taskSample.getFinishedDaysAgo());
             if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
@@ -208,14 +279,20 @@ public class ProjectDataInitializer implements DataInitializer {
 
     private Long createStage(Long projectId, Long architectId, StageSample stageSample,
             Map<TaskSample, Long> taskIds, ReferencedIds referencedIds) {
-        var stageDto = this.stageApplicationService.createStage(projectId, new StageDto().name(stageSample.getName())
-                .typeId(getId(referencedIds.stageTypeIdsByName(), stageSample.getType(), "stage type"))
-                .note(stageSample.getNote())
-                .architectId(architectId)
-                .deadline(daysFromNow(stageSample.getDeadlineInDays())));
+        var firstDeadlineInDays = stageSample.getFirstDeadlineInDays() == null
+                ? stageSample.getDeadlineInDays()
+                : stageSample.getFirstDeadlineInDays();
+        var stageDto = this.stageApplicationService.createStage(projectId,
+                this.stageDto(architectId, stageSample, referencedIds).deadline(daysFromNow(firstDeadlineInDays)));
         var stageId = stageDto.getId();
 
         for (TaskSample taskSample : stageSample.getTasks()) {
+            if (taskSample.isRemoved() && (!statusPath(taskSample).isEmpty() || !taskSample.getTimeEntries()
+                    .isEmpty())) {
+                throw new SampleDataInitializingException(
+                        String.format("Removed task '%1$s' cannot have a status or time entries in %2$s",
+                                taskSample.getName(), FILE_NAME), null);
+            }
             var taskDto = this.taskApplicationService.createTask(projectId, stageId,
                     new TaskDto().name(taskSample.getName())
                             .typeId(getId(referencedIds.taskTypeIdsByName(), taskSample.getType(), "task type"))
@@ -234,6 +311,13 @@ public class ProjectDataInitializer implements DataInitializer {
             this.createInstallment(projectId, stageId, stageSample.getInstallment());
         }
         return stageId;
+    }
+
+    private StageDto stageDto(Long architectId, StageSample stageSample, ReferencedIds referencedIds) {
+        return new StageDto().name(stageSample.getName())
+                .typeId(getId(referencedIds.stageTypeIdsByName(), stageSample.getType(), "stage type"))
+                .note(stageSample.getNote())
+                .architectId(architectId);
     }
 
     private void createInstallment(Long projectId, Long stageId, InstallmentSample installmentSample) {
@@ -358,6 +442,9 @@ public class ProjectDataInitializer implements DataInitializer {
             }
             this.stageApplicationService.rejectStage(projectId, stageIds.get(i));
         }
+        // in the order of the days they happened, so the history shows them in that order; rejections have no day and
+        // go first, so a stage is finished by its last finished task, on that task's day
+        var statusChanges = new ArrayList<TaskStatusChange>();
         for (int i = 0; i < stageSamples.size(); i++) {
             var stageSample = stageSamples.get(i);
             if (stageSample.isRejected()) {
@@ -365,11 +452,28 @@ public class ProjectDataInitializer implements DataInitializer {
             }
             for (TaskSample taskSample : stageSample.getTasks()) {
                 for (TaskStatusDto status : statusPath(taskSample)) {
-                    this.taskApplicationService.updateTaskStatus(projectId, stageIds.get(i), taskIds.get(taskSample),
-                            new UpdateStatusRequestDto().status(status));
+                    statusChanges.add(new TaskStatusChange(stageIds.get(i), taskIds.get(taskSample), status,
+                            statusChangedDaysAgo(taskSample, status)));
                 }
             }
         }
+        statusChanges.stream()
+                .sorted(Comparator.comparing(TaskStatusChange::daysAgo,
+                        Comparator.nullsFirst(Comparator.reverseOrder())))
+                .forEach(statusChange -> this.taskApplicationService.updateTaskStatus(projectId,
+                        statusChange.stageId(), statusChange.taskId(),
+                        new UpdateStatusRequestDto().status(statusChange.status())));
+    }
+
+    /**
+     * A rejected task has no date of its rejection.
+     */
+    private static Integer statusChangedDaysAgo(TaskSample taskSample, TaskStatusDto status) {
+        return switch (status) {
+            case IN_PROGRESS -> taskSample.getStartedDaysAgo();
+            case DONE -> taskSample.getFinishedDaysAgo();
+            default -> null;
+        };
     }
 
     private List<ProjectSample> prepareProjects() {
@@ -406,5 +510,8 @@ public class ProjectDataInitializer implements DataInitializer {
             Map<String, Long> contractorIdsByName, Map<String, Long> supplierIdsByName,
             Map<String, Long> projectTypeIdsByName, Map<String, Long> costCategoryIdsByName,
             Map<String, Long> stageTypeIdsByName, Map<String, Long> taskTypeIdsByName) {
+    }
+
+    private record TaskStatusChange(Long stageId, Long taskId, TaskStatusDto status, Integer daysAgo) {
     }
 }

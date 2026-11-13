@@ -3,9 +3,9 @@ package com.arturjarosz.task.data.initializer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
  * Changes dates of already loaded sample Project directly in the database. Dates set by status transitions are always
  * today, and validators do not allow passed contract deadlines, so such dates can't be set through application
  * services. Persistence context is flushed before and cleared after changes, so loaded entities do not override them.
+ * Dates kept in the history are changed too, so the history shows the same dates as the objects.
  */
 @Component
 @RequiredArgsConstructor
@@ -26,22 +27,26 @@ public class SampleDateUpdater {
             "supply");
 
     private final JdbcTemplate jdbcTemplate;
+    private final SampleSchemaProperties sampleSchemaProperties;
     @PersistenceContext
     private EntityManager entityManager;
-    @Value("${spring.jpa.properties.hibernate.default_schema}")
-    private String schema;
 
     /**
      * Sets start and end dates of Tasks, and aligns dates of Stages with their Tasks and of Project with its Stages.
      * Only dates already set by status transitions are changed.
      */
+    @Transactional
     public void setWorkDates(Long projectId, Map<Long, LocalDate> startDateByTaskId,
             Map<Long, LocalDate> endDateByTaskId) {
         this.entityManager.flush();
-        startDateByTaskId.forEach((taskId, date) -> this.update(
-                "update %1$s.task set start_date = ? where id = ? and start_date is not null", date, taskId));
-        endDateByTaskId.forEach((taskId, date) -> this.update(
-                "update %1$s.task set end_date = ? where id = ? and end_date is not null", date, taskId));
+        for (String table : List.of("task", "task_aud")) {
+            startDateByTaskId.forEach((taskId, date) -> this.update(
+                    "update %1$s." + table + " set start_date = ? where id = ? and start_date is not null", date,
+                    taskId));
+            endDateByTaskId.forEach((taskId, date) -> this.update(
+                    "update %1$s." + table + " set end_date = ? where id = ? and end_date is not null", date,
+                    taskId));
+        }
         this.update("""
                 update %1$s.stage s set start_date = coalesce(t.start_date, s.start_date),
                     end_date = case when s.end_date is null then null else coalesce(t.end_date, s.end_date) end
@@ -54,9 +59,19 @@ public class SampleDateUpdater {
                 from (select project_id, min(start_date) start_date, max(end_date) end_date from %1$s.stage
                     group by project_id) s
                 where p.id = s.project_id and p.id = ? and p.start_date is not null""", projectId);
+        // every date set in the history becomes the date set above, which is the one the history ends with
+        this.update("""
+                update %1$s.stage_aud a set start_date = case when a.start_date is null then null else s.start_date end,
+                    end_date = case when a.end_date is null then null else s.end_date end
+                from %1$s.stage s where a.id = s.id and s.project_id = ?""", projectId);
+        this.update("""
+                update %1$s.project_aud a set start_date = case when a.start_date is null then null else p.start_date end,
+                    end_date = case when a.end_date is null then null else p.end_date end
+                from %1$s.project p where a.id = p.id and p.id = ?""", projectId);
         this.entityManager.clear();
     }
 
+    @Transactional
     public void setContractDeadline(Long contractId, LocalDate deadline) {
         this.entityManager.flush();
         this.update("update %1$s.contract set deadline = ? where id = ?", deadline, contractId);
@@ -69,6 +84,7 @@ public class SampleDateUpdater {
      * Moves creation and modification time of the Project, its Contract, Stages, Tasks and financial objects back by
      * given number of days.
      */
+    @Transactional
     public void moveCreationTime(Long projectId, Long contractId, int days) {
         if (days == 0) {
             return;
@@ -99,6 +115,6 @@ public class SampleDateUpdater {
     }
 
     private void update(String sql, Object... params) {
-        this.jdbcTemplate.update(String.format(sql, this.schema), params);
+        this.jdbcTemplate.update(String.format(sql, this.sampleSchemaProperties.defaultSchema()), params);
     }
 }
