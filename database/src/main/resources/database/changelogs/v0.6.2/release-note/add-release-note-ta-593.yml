@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-ta-593"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-593"
+              - column:
+                  name: "TYPE"
+                  value: "IMPROVED"
+              - column:
+                  name: "TITLE"
+                  value: "See why events don't reach Google Calendar"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "When Google Calendar isn't set up, is turned off or can't be reached, the Calendar page, event lists, the dashboard and the event dialog now say so and what to do. Events that haven't reached Google yet are marked \"Waiting to sync\"."
+              - column:
+                  name: "APPLICATION_VERSION"
+                  value: "0.6.2"
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"
