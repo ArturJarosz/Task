@@ -39,3 +39,6 @@ databaseChangeLog:
   - include:
       file: "add-release-note-ta-98-history.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "add-release-note-ta-593.yml"
+      relativeToChangelogFile: true
