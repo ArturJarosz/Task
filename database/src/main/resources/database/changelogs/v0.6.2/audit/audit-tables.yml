@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: "add-author-to-revision.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-project-stage-audit-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-stage-task-audit-table.yml"
+      relativeToChangelogFile: true

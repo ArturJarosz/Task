@@ -22,6 +22,8 @@ public class ProjectSample {
     private String clientEmail;
     private String architect;
     private Double offerValue;
+    // offer made before the one the contract is signed with, shown in the history; only for a signed contract
+    private Double firstOfferValue;
     private Integer deadlineInDays;
     private ContractStatusDto contractStatus;
     private Integer signedDaysAgo;

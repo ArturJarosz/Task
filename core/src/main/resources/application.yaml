@@ -16,6 +16,11 @@ spring:
         integration:
           envers:
             enabled: ${ENABLE_HISTORY}
+      org:
+        hibernate:
+          envers:
+            # keeps the values of a removed record, so its history can still name it
+            store_data_at_delete: true
   main:
     log-startup-info: false
   jackson:

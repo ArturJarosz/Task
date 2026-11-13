@@ -8,6 +8,9 @@ import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.io.Serial;
 import java.time.LocalDate;
@@ -17,6 +20,7 @@ import java.util.Objects;
 
 @SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
+@Audited
 @SequenceGenerator(name = "sequence_generator", sequenceName = "stage_sequence", allocationSize = 1)
 @Table(name = "STAGE")
 public class Stage extends AbstractHistoryAwareEntity implements WorkflowAware<StageStatus> {
@@ -27,8 +31,10 @@ public class Stage extends AbstractHistoryAwareEntity implements WorkflowAware<S
     @Column(name = "NAME")
     private String name;
 
+    // audited so that the history of a project finds the tasks of its stages, removed ones too
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "STAGE_ID", nullable = false)
+    @AuditJoinTable(name = "STAGE_TASK_AUD", inverseJoinColumns = @JoinColumn(name = "TASK_ID"))
     private List<Task> tasks;
 
     @Getter
@@ -65,6 +71,8 @@ public class Stage extends AbstractHistoryAwareEntity implements WorkflowAware<S
     @Enumerated(value = EnumType.STRING)
     private StageStatus status;
 
+    // the workflow of a record never changes, so its history leaves it out
+    @NotAudited
     @Column(name = "WORKFLOW_NAME", nullable = false)
     private String workflowName;
 

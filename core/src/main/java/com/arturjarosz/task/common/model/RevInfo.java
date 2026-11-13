@@ -15,7 +15,7 @@ import org.hibernate.envers.RevisionTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@RevisionEntity
+@RevisionEntity(AuthorRevisionListener.class)
 @SequenceGenerator(name = "sequence_generator", sequenceName = "revinfo_seqence", allocationSize = 1)
 @Table(name = "REVINFO")
 @Data
@@ -29,4 +29,8 @@ public class RevInfo {
     @RevisionTimestamp
     @Column(name = "REVTSTMP")
     private LocalDateTime revtstmp;
+
+    // Auth0 id of the person who made the changes; not set for changes made without a person, such as sample data
+    @Column(name = "AUTHOR_AUTH_ID")
+    private String authorAuthId;
 }

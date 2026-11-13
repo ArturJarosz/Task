@@ -10,6 +10,12 @@ spring:
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      org:
+        hibernate:
+          envers:
+            # keeps the values of a removed record, so its history can still name it
+            store_data_at_delete: true
   liquibase:
     enabled: true
     change-log: database/test-changelogs/changelog-test.yml

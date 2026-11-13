@@ -3606,6 +3606,52 @@ paths:
               schema:
                 $ref: "#/components/schemas/ValidatorError"
 
+  /projects/{projectId}/history:
+    get:
+      tags:
+        - project
+      summary: Get changes made to the project, its contract, stages and tasks, latest first
+      operationId: getProjectHistory
+      parameters:
+        - name: projectId
+          in: path
+          description: "A unique identifier of the project"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int64
+        - name: stageId
+          in: query
+          description: "Only the changes made to this stage and its tasks"
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: taskId
+          in: query
+          description: "Only the changes made to this task"
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HistoryEntry"
+        400:
+          description: Validator error message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidatorError"
+
   /supervisions:
     post:
       tags:
@@ -6329,6 +6375,80 @@ components:
           type: number
           format: double
           description: Contract value divided by the hours spent; not set when no time is logged
+
+    HistoryEntry:
+      type: object
+      description: Changes made to one record at once
+      properties:
+        dateTime:
+          type: string
+          format: time
+        author:
+          $ref: "#/components/schemas/UserSummary"
+        recordType:
+          $ref: "#/components/schemas/HistoryRecordType"
+        recordId:
+          type: integer
+          format: int64
+        recordName:
+          type: string
+          description: Name of the record after the change; not set for the contract
+        stageId:
+          type: integer
+          format: int64
+          description: Stage of the task; set for tasks only
+        stageName:
+          type: string
+          description: Latest name of the stage of the task; set for tasks only
+        action:
+          $ref: "#/components/schemas/HistoryAction"
+        changes:
+          type: array
+          description: Fields that changed; empty when the record was created or removed
+          items:
+            $ref: "#/components/schemas/HistoryChange"
+
+    HistoryChange:
+      type: object
+      description: >-
+        Values are dates as yyyy-mm-dd, money as a plain number, statuses as their enum value, and the names of an
+        architect or a type; not set when the field was empty
+      properties:
+        field:
+          $ref: "#/components/schemas/HistoryField"
+        oldValue:
+          type: string
+        newValue:
+          type: string
+
+    HistoryRecordType:
+      type: string
+      enum:
+        - PROJECT
+        - CONTRACT
+        - STAGE
+        - TASK
+
+    HistoryAction:
+      type: string
+      enum:
+        - CREATED
+        - CHANGED
+        - REMOVED
+
+    HistoryField:
+      type: string
+      enum:
+        - NAME
+        - TYPE
+        - ARCHITECT
+        - STATUS
+        - START_DATE
+        - END_DATE
+        - DEADLINE
+        - SIGNING_DATE
+        - OFFER_VALUE
+        - NOTE
 
     TaskType:
       type: object

@@ -9,6 +9,9 @@ import com.arturjarosz.task.sharedkernel.status.WorkflowAware;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.io.Serial;
 import java.time.LocalDate;
@@ -17,6 +20,7 @@ import java.util.Set;
 
 @SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
+@Audited
 @SequenceGenerator(name = "sequence_generator", sequenceName = "project_sequence", allocationSize = 1)
 @Table(name = "PROJECT")
 public class Project extends AbstractAggregateRoot implements WorkflowAware<ProjectStatus> {
@@ -51,8 +55,10 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @Column(name = "NOTE")
     private String note;
 
+    // audited so that the history of a project finds its stages, removed ones too
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROJECT_ID", nullable = false)
+    @AuditJoinTable(name = "PROJECT_STAGE_AUD", inverseJoinColumns = @JoinColumn(name = "STAGE_ID"))
     private Set<Stage> stages;
 
     @Getter
@@ -60,6 +66,8 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @Column(name = "PROJECT_TYPE_ID", nullable = false)
     private Long projectTypeId;
 
+    // never changes, so its audit table has no column for it
+    @NotAudited
     @Column(name = "CONTRACT_ID", nullable = false)
     private long contractId;
 
@@ -67,6 +75,8 @@ public class Project extends AbstractAggregateRoot implements WorkflowAware<Proj
     @Enumerated(value = EnumType.STRING)
     private ProjectStatus status;
 
+    // the workflow of a record never changes, so its history leaves it out
+    @NotAudited
     @Column(name = "WORKFLOW_NAME", nullable = false)
     private String workflowName;
 

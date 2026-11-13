@@ -11,12 +11,15 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.io.Serial;
 import java.time.LocalDate;
 
 @SuppressWarnings("java:S2160") // equality is tested on uuid value, no need to override with same code
 @Entity
+@Audited
 @SequenceGenerator(name = "sequence_generator", sequenceName = "task_sequence", allocationSize = 1)
 @Table(name = "TASK")
 public class Task extends AbstractHistoryAwareEntity implements WorkflowAware<TaskStatus> {
@@ -42,6 +45,8 @@ public class Task extends AbstractHistoryAwareEntity implements WorkflowAware<Ta
     @Enumerated(value = EnumType.STRING)
     private TaskStatus status;
 
+    // the workflow of a record never changes, so its history leaves it out
+    @NotAudited
     @Column(name = "WORKFLOW_NAME", nullable = false)
     private String workflowName;
 

@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-project-stage-audit-table"
+      changes:
+        - createTable:
+            tableName: "PROJECT_STAGE_AUD"
+            columns:
+              - column:
+                  name: "REV"
+                  type: "${integer.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "REVTYPE"
+                  type: "${integer.type}"
+              - column:
+                  name: "PROJECT_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "STAGE_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "PROJECT_STAGE_AUD"
+            columnNames: "REV, PROJECT_ID, STAGE_ID"
+            constraintName: "PK_PROJECT_STAGE_AUD"
+        - addForeignKeyConstraint:
+            baseTableName: "PROJECT_STAGE_AUD"
+            baseColumnNames: "REV"
+            referencedTableName: "REVINFO"
+            referencedColumnNames: "REV"
+            constraintName: "PROJECT_STAGE_AUD_REV_FK"

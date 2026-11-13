@@ -14,6 +14,8 @@ public class StageSample {
     private String type;
     private String note;
     private Integer deadlineInDays;
+    // deadline the stage is created with before it is moved to deadlineInDays, shown in the history
+    private Integer firstDeadlineInDays;
     private boolean rejected;
     private InstallmentSample installment;
     private List<TaskSample> tasks = new ArrayList<>();

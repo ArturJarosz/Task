@@ -20,4 +20,6 @@ public class TaskSample {
     private Integer finishedDaysAgo;
     // time logged on the task by the project's architect
     private List<TimeEntrySample> timeEntries = new ArrayList<>();
+    // created and removed again after work started, shown in the history; can have no status and no time entries
+    private boolean removed;
 }

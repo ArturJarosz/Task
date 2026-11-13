@@ -4,7 +4,6 @@ import com.arturjarosz.task.data.initializer.DataInitializer;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,7 +19,8 @@ public class ProxyDataLoaderImpl implements ProxyDataLoader {
         this.dataInitializers = dataInitializers;
     }
 
-    @Transactional()
+    // Without a transaction around all of them, each change commits on its own, as each request does in the app, so
+    // the history of sample data gets a revision for each change
     @Override
     public void loadData() {
         for (DataInitializer dataInitializer : this.dataInitializers) {

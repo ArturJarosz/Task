@@ -5,6 +5,7 @@
         "clientEmail": "czerwinski@gmail.com",
         "architect": "Oskar Ciuryła",
         "offerValue": 42000.0,
+        "firstOfferValue": 38000.0,
         "createdDaysAgo": 75,
         "deadlineInDays": 90,
         "contractStatus": "SIGNED",
@@ -183,6 +184,12 @@
                         "name": "Wizualizacja sypialni",
                         "type": "Render",
                         "status": "TO_DO"
+                    },
+                    {
+                        "name": "Wizualizacja balkonu",
+                        "type": "Render",
+                        "note": "Klient zrezygnował z zabudowy balkonu.",
+                        "removed": true
                     }
                 ],
                 "note": "Termin etapu minął, rata nieopłacona."
@@ -227,6 +234,7 @@
                 "name": "Projekt wykonawczy",
                 "type": "Executive project",
                 "deadlineInDays": 60,
+                "firstDeadlineInDays": 45,
                 "installment": {
                     "value": 15000,
                     "hasInvoice": true,
@@ -620,7 +628,8 @@
                         ]
                     }
                 ],
-                "deadlineInDays": -90
+                "deadlineInDays": -90,
+                "firstDeadlineInDays": -110
             },
             {
                 "name": "Projekt wykonawczy",
@@ -655,6 +664,11 @@
                                 "note": "Poprawki po uwagach klienta"
                             }
                         ]
+                    },
+                    {
+                        "name": "Projekt kominka",
+                        "type": "Concept",
+                        "removed": true
                     }
                 ]
             },

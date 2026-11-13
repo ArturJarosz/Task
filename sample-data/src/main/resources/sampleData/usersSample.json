@@ -1,0 +1,22 @@
+[
+    {
+        "username": "Oskar Ciuryła",
+        "email": "oskar.ciuryla@example.com",
+        "authId": "sample|oskar.ciuryla"
+    },
+    {
+        "username": "Alicja Ciuryła",
+        "email": "alicja.ciuryla@example.com",
+        "authId": "sample|alicja.ciuryla"
+    },
+    {
+        "username": "Karolina Flis",
+        "email": "karolina.flis@example.com",
+        "authId": "sample|karolina.flis"
+    },
+    {
+        "username": "Rajesh Koothrappali",
+        "email": "rajesh.koothrappali@example.com",
+        "authId": "sample|rajesh.koothrappali"
+    }
+]

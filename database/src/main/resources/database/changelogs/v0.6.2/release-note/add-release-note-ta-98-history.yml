@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-ta-98-history"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-98"
+              - column:
+                  name: "TYPE"
+                  value: "NEW"
+              - column:
+                  name: "TITLE"
+                  value: "See who changed a project and when"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "Choose History in the actions menu of a project, stage or task to see who changed it, when, and what the values were before and after. The history of a project also covers its contract, stages and tasks."
+              - column:
+                  name: "APPLICATION_VERSION"
+                  value: "0.6.2"
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

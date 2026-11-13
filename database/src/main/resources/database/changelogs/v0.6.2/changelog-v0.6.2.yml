@@ -53,6 +53,9 @@ databaseChangeLog:
   - include:
       file: "role/role-tables.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "audit/audit-tables.yml"
+      relativeToChangelogFile: true
   - changeSet:
       author: "liquibase"
       id: "tag-version_0.6.2"
