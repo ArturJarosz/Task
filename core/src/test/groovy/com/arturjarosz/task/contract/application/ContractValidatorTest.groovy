@@ -1,8 +1,10 @@
 package com.arturjarosz.task.contract.application
 
 import com.arturjarosz.task.contract.model.Contract
+import com.arturjarosz.task.contract.status.ContractStatus
 import com.arturjarosz.task.utils.ContractBuilder
 import com.arturjarosz.task.dto.ContractDto
+import com.arturjarosz.task.dto.ContractStatusDto
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -106,6 +108,30 @@ class ContractValidatorTest extends Specification {
             new ContractDto()                    || "isNull.contract.endDate"
             new ContractDto(endDate: FUTURE_DATE) || "notValid.contract.endDate"
             new ContractDto(endDate: PAST_DATE_2) || "notValid.contract.endDate.startDate"
+    }
+
+    def "validateUpdateKeepsStatus should throw an exception when the dto is for another status"() {
+        given:
+            def contract = new ContractBuilder().withStatus(ContractStatus.SIGNED).build()
+        when:
+            this.contractValidator.validateUpdateKeepsStatus(givenContractDto, contract)
+        then:
+            Exception exception = thrown()
+            exception.message == exceptionMessage
+        where:
+            givenContractDto                                  || exceptionMessage
+            null                                              || "isNull.project.contract"
+            new ContractDto()                                 || "isNull.contract.status"
+            new ContractDto(status: ContractStatusDto.OFFER) || "notValid.contract.status.change"
+    }
+
+    def "validateUpdateKeepsStatus should not throw any exception when the dto keeps the status"() {
+        given:
+            def contract = new ContractBuilder().withStatus(ContractStatus.SIGNED).build()
+        when:
+            this.contractValidator.validateUpdateKeepsStatus(new ContractDto(status: ContractStatusDto.SIGNED), contract)
+        then:
+            noExceptionThrown()
     }
 
     def "validateTerminateContractDto should not throw any exception on proper contractDto"() {
