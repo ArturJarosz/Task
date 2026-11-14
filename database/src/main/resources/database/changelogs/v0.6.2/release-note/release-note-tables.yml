@@ -42,3 +42,6 @@ databaseChangeLog:
   - include:
       file: "add-release-note-ta-593.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "add-release-note-ta-594-saving-fixes.yml"
+      relativeToChangelogFile: true

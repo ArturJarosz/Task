@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-ta-594-saving-fixes"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-98"
+              - column:
+                  name: "TYPE"
+                  value: "FIXED"
+              - column:
+                  name: "TITLE"
+                  value: "Saving project details and contract dates works again"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "Started projects save again, and you can change a contract's dates without changing its status. Edit contract shows only the dates that fit the chosen status, and both forms stay open with your changes when something can't be saved."
+              - column:
+                  name: "APPLICATION_VERSION"
+                  value: "0.6.2"
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

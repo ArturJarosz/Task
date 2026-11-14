@@ -141,6 +141,7 @@ public class ContractServiceImpl implements ContractService {
         var maybeContract = this.contractRepository.findById(contractId);
         this.contractValidator.validateContractExistence(maybeContract, contractId);
         var contract = maybeContract.orElseThrow(ResourceNotFoundException::new);
+        this.contractValidator.validateUpdateKeepsStatus(contractDto, contract);
         Optional.ofNullable(this.statusToValidator.get(contract.getStatus()))
                 .ifPresent(statusValidator -> statusValidator.accept(contract, contractDto));
 
