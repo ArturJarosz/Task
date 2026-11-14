@@ -22,7 +22,7 @@ public class ContractRestController implements ContractApi {
 
     @Override
     public ResponseEntity<ContractDto> updateContract(ContractDto contractDto, Long contractId) {
-        return null;
+        return new ResponseEntity<>(this.contractService.updateContract(contractId, contractDto), HttpStatus.OK);
     }
 
 }

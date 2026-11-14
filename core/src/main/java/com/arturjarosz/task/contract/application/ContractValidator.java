@@ -20,8 +20,17 @@ public class ContractValidator {
     public void validateBaseContractDto(ContractDto contractDto) {
         assertNotNull(contractDto, createMessageCode(ExceptionCodes.NULL, ContractExceptionCodes.PROJECT,
                 ContractExceptionCodes.CONTRACT));
-        assertNotNull(contractDto.getStatus(), ExceptionCodes.NULL, ContractExceptionCodes.CONTRACT,
-                ContractExceptionCodes.STATUS);
+        assertNotNull(contractDto.getStatus(), createMessageCode(ExceptionCodes.NULL, ContractExceptionCodes.CONTRACT,
+                ContractExceptionCodes.STATUS));
+    }
+
+    // An update keeps the status and saves the fields of the stored one, so values sent for another status (a page
+    // loaded before someone changed it) are refused instead of overwriting newer ones
+    public void validateUpdateKeepsStatus(ContractDto contractDto, Contract contract) {
+        this.validateBaseContractDto(contractDto);
+        assertIsTrue(contractDto.getStatus().name().equals(contract.getStatus().name()),
+                createMessageCode(ExceptionCodes.NOT_VALID, ContractExceptionCodes.CONTRACT,
+                        ContractExceptionCodes.STATUS, ContractExceptionCodes.CHANGE), contract.getStatus());
     }
 
     public void validateOffer(ContractDto contractDto) {

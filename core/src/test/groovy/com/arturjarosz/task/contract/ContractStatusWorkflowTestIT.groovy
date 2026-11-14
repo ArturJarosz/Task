@@ -263,6 +263,48 @@ class ContractStatusWorkflowTestIT extends BaseTestIT {
     }
 
     @Transactional
+    def "Updating contract in status OFFER keeps its status and changes offer value and deadline"() {
+        given:
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
+            def updateContractDto = new ContractDto(status: ContractStatusDto.OFFER, offerValue: NEW_OFFER,
+                    deadline: DEADLINE)
+            def requestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateContractDto)
+        when:
+            def updateContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
+                    .put(this.createContractUri(projectDto.contract.id))
+                    .header("Content-Type", "application/json")
+                    .content(requestText)).andReturn().response
+        then:
+            updateContractResponse.status == HttpStatus.OK.value()
+            def contractDto = MAPPER.readValue(updateContractResponse.contentAsString, ContractDto)
+            contractDto.status == ContractStatusDto.OFFER
+            contractDto.offerValue == NEW_OFFER
+            contractDto.deadline == DEADLINE
+    }
+
+    @Transactional
+    def "Updating contract with a status other than its own is refused, as the request is out of date"() {
+        given:
+            def architectDto =
+                    TestsHelper.createArchitect(this.architect, this.createBasicArchitectUri(), this.mockMvc)
+            def projectDto = this.createProject(architectDto.id)
+            def updateContractDto = new ContractDto(status: ContractStatusDto.SIGNED, offerValue: NEW_OFFER,
+                    signingDate: SIGNING_DATE, startDate: START_DATE, deadline: DEADLINE)
+            def requestText = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(updateContractDto)
+        when:
+            def updateContractResponse = this.mockMvc.perform(MockMvcRequestBuilders
+                    .put(this.createContractUri(projectDto.contract.id))
+                    .header("Content-Type", "application/json")
+                    .content(requestText)).andReturn().response
+        then:
+            updateContractResponse.status == HttpStatus.BAD_REQUEST.value()
+            def message = MAPPER.readValue(updateContractResponse.contentAsString, ErrorMessage)
+            message.message == "Contract status has changed to OFFER in the meantime. Reload the page and try again."
+    }
+
+    @Transactional
     def "Making new offer from contract in status OFFER is not possible and returns error message"() {
         given:
             def architectDto =
