@@ -18,17 +18,22 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.function.Supplier;
 
 /**
  * Scheduled jobs keeping local calendar events and the Google Calendar in sync. They do nothing while the Google
  * Calendar integration is disabled in the application settings. Their intervals are system parameters, read again
- * before every run, and a changed interval applies right away instead of after the wait already scheduled.
+ * before every run, and a changed interval applies right away instead of after the wait already scheduled. A changed
+ * connection synchronizes events both ways right away.
  */
 @Slf4j
 @Component
 public class CalendarSyncJobs implements SystemParameterChangeListener {
+    private static final Set<String> RESCHEDULING_PARAMETERS = Set.of(SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL,
+            SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL, SystemParameters.GOOGLE_CALENDAR_SYNC,
+            SystemParameters.GOOGLE_CALENDAR_CREDENTIALS);
 
     private final CalendarSyncService calendarSyncService;
     private final GoogleCalendarSettingsProvider googleCalendarSettingsProvider;
@@ -57,12 +62,10 @@ public class CalendarSyncJobs implements SystemParameterChangeListener {
 
     @Override
     public void onSystemParameterChanged(String name, String previousValue, String newValue) {
-        if (!SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL.equals(name)
-                && !SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL.equals(name)
-                || Objects.equals(previousValue, newValue)) {
+        if (!RESCHEDULING_PARAMETERS.contains(name) || Objects.equals(previousValue, newValue)) {
             return;
         }
-        // the jobs read the interval from the database, so they are rescheduled once the change is committed
+        // the jobs read the settings from the database, so they are rescheduled once the change is committed
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                 @Override
@@ -76,15 +79,26 @@ public class CalendarSyncJobs implements SystemParameterChangeListener {
     }
 
     private void reschedule(String name) {
-        if (SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL.equals(name)) {
-            var interval = this.googleCalendarSettingsProvider.getPollInterval();
-            LOG.info("Fetching changes from Google Calendar rescheduled to every {} minutes.", interval.toMinutes());
-            this.schedulePollJob(interval);
-        } else {
-            var interval = this.googleCalendarSettingsProvider.getPushRetryInterval();
-            LOG.info("Retrying events not sent to Google Calendar rescheduled to every {} minutes.",
-                    interval.toMinutes());
-            this.schedulePushJob(interval);
+        switch (name) {
+            case SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL -> {
+                var interval = this.googleCalendarSettingsProvider.getPollInterval();
+                LOG.info("Fetching changes from Google Calendar rescheduled to every {} minutes.",
+                        interval.toMinutes());
+                this.schedulePollJob(interval);
+            }
+            case SystemParameters.GOOGLE_CALENDAR_PUSH_RETRY_INTERVAL -> {
+                var interval = this.googleCalendarSettingsProvider.getPushRetryInterval();
+                LOG.info("Retrying events not sent to Google Calendar rescheduled to every {} minutes.",
+                        interval.toMinutes());
+                this.schedulePushJob(interval);
+            }
+            // a newly connected calendar may already hold events and local events may wait for it, so both are
+            // synchronized now instead of after the interval
+            default -> {
+                LOG.info("Google Calendar connection changed, synchronizing events.");
+                this.schedulePushJob(Duration.ZERO);
+                this.schedulePollJob(Duration.ZERO);
+            }
         }
     }
 

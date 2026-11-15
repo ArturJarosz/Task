@@ -27,3 +27,7 @@ task:
   security:
     allowed-origins:
       - ""
+  # Same names as in core: sample data creates the system parameters of a new database, so these become their values
+  google-calendar:
+    application-name: Task-test
+    calendar-name: ${GOOGLE_CALENDAR_NAME:Task}
