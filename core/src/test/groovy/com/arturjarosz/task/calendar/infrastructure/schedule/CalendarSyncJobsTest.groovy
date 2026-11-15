@@ -69,6 +69,30 @@ class CalendarSyncJobsTest extends Specification {
             0 * pushJob.cancel(_)
     }
 
+    def "changed connection should synchronize events with Google Calendar both ways right away"() {
+        given:
+            def pushJob = Mock(ScheduledFuture)
+            def pollJob = Mock(ScheduledFuture)
+            this.taskScheduler.schedule(_ as Runnable, _ as Trigger) >>> [pushJob, pollJob]
+            this.subject.start()
+            def triggers = []
+        when:
+            this.subject.onSystemParameterChanged(parameter, previousValue, newValue)
+        then:
+            1 * pushJob.cancel(false)
+            1 * pollJob.cancel(false)
+            2 * this.taskScheduler.schedule(_ as Runnable, _ as Trigger) >> { _, Trigger trigger ->
+                triggers << trigger
+                return Mock(ScheduledFuture)
+            }
+        and:
+            triggers.every { Trigger trigger -> !trigger.nextExecution(context(null)).isAfter(Instant.now()) }
+        where:
+            parameter                                    | previousValue | newValue
+            SystemParameters.GOOGLE_CALENDAR_SYNC        | "false"       | "true"
+            SystemParameters.GOOGLE_CALENDAR_CREDENTIALS | null          | "{}"
+    }
+
     def "saving unchanged interval should not reschedule the jobs"() {
         when:
             this.subject.onSystemParameterChanged(SystemParameters.GOOGLE_CALENDAR_POLL_INTERVAL, "15", "15")
