@@ -4,6 +4,7 @@ import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator
 import com.arturjarosz.task.dto.InstallmentDto
 import com.arturjarosz.task.dto.StageDto
 import com.arturjarosz.task.finance.application.InstallmentApplicationService
+import com.arturjarosz.task.notification.application.NotificationSynchronizer
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.TimeSpentAssembler
@@ -53,7 +54,7 @@ class StageApplicationServiceImplTest extends Specification {
 
     def subject = new StageApplicationServiceImpl(projectQueryService, projectValidator,
             projectRepository, stageDomainService, stageValidator, contractWorkflowValidator, installmentApplicationService, stageMapper,
-            timeEntryRepository, timeSpentAssembler)
+            timeEntryRepository, timeSpentAssembler, Mock(NotificationSynchronizer))
 
     def "createStage should call validateProjectExistence on projectValidator"() {
         given:

@@ -51,3 +51,6 @@ databaseChangeLog:
   - include:
       file: "add-release-note-ta-595-dark-theme.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "add-release-note-notifications.yml"
+      relativeToChangelogFile: true

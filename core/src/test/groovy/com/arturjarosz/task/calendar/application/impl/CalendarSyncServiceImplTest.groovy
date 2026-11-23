@@ -11,6 +11,7 @@ import com.arturjarosz.task.calendar.model.CalendarSyncState
 import com.arturjarosz.task.calendar.model.dto.GoogleEventChangeDto
 import com.arturjarosz.task.calendar.model.dto.GoogleEventDataDto
 import com.arturjarosz.task.calendar.model.dto.GoogleEventsSyncDto
+import com.arturjarosz.task.notification.application.NotificationSynchronizer
 import com.arturjarosz.task.systemparameter.application.GoogleCalendarSettingsProvider
 import com.arturjarosz.task.systemparameter.application.dto.GoogleCalendarSettings
 import org.springframework.transaction.PlatformTransactionManager
@@ -36,7 +37,8 @@ class CalendarSyncServiceImplTest extends Specification {
     def googleCalendarSettings = new GoogleCalendarSettings(true, "{}", "Task", "Task")
 
     def subject = new CalendarSyncServiceImpl(calendarEventRepository, calendarSyncStateRepository,
-            googleCalendarService, googleCalendarSettingsProvider, Mock(PlatformTransactionManager))
+            googleCalendarService, googleCalendarSettingsProvider, Mock(PlatformTransactionManager),
+            Mock(NotificationSynchronizer))
 
     def "pushEvent should leave event untouched when Google Calendar integration is not available"() {
         given:
@@ -141,7 +143,8 @@ class CalendarSyncServiceImplTest extends Specification {
     def "getOrCreateGoogleCalendarId should create one calendar when called from many threads at once"() {
         given:
             def subject = new CalendarSyncServiceImpl(this.calendarEventRepository, this.calendarSyncStateRepository,
-                    this.googleCalendarService, this.googleCalendarSettingsProvider, Mock(PlatformTransactionManager))
+                    this.googleCalendarService, this.googleCalendarSettingsProvider, Mock(PlatformTransactionManager),
+                    Mock(NotificationSynchronizer))
             def syncState = new CalendarSyncState()
             this.calendarSyncStateRepository.findFirstByOrderByIdAsc() >> Optional.of(syncState)
             this.calendarSyncStateRepository.save(syncState) >> syncState

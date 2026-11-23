@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import tools.jackson.databind.ObjectMapper
 
 /**
- * Connections of calendar events with clients and projects.
+ * Connections of calendar events with clients, projects and architects.
  */
 class CalendarEventTestIT extends BaseTestIT {
     static final String ARCHITECTS_URI = "/architects"
@@ -105,6 +105,28 @@ class CalendarEventTestIT extends BaseTestIT {
             updated.projectId == null
     }
 
+    def "Saving an event #description should #outcome its architect"() {
+        when:
+            def dto = eventDto(null, withProject ? projectId : null)
+            dto.architectId = architectId
+            def event = this.read(this.saveEvent(dto))
+        then:
+            this.getEvent(event.id).architectId == (withProject ? null : architectId)
+        where:
+            description         | withProject | outcome
+            "without a project" | false       | "keep"
+            "with a project"    | true        | "clear"
+    }
+
+    def "Creating an event without a project and with a not existing architect should return code 404"() {
+        when:
+            def dto = eventDto(null, null)
+            dto.architectId = NOT_EXISTING_ID
+            def response = this.saveEvent(dto)
+        then:
+            response.status == HttpStatus.NOT_FOUND.value()
+    }
+
     def "Getting events of a client or project should return only events connected with it"() {
         given:
             def clientEvent = this.read(this.saveEvent(clientId, null))
@@ -154,8 +176,12 @@ class CalendarEventTestIT extends BaseTestIT {
     }
 
     private MockHttpServletResponse saveEvent(Long clientId, Long projectId) {
+        return this.saveEvent(eventDto(clientId, projectId))
+    }
+
+    private MockHttpServletResponse saveEvent(CalendarEventDto dto) {
         def response = this.mockMvc.perform(MockMvcRequestBuilders.post("$HOST:$port$EVENTS_URI")
-                .contentType("application/json").content(MAPPER.writeValueAsString(eventDto(clientId, projectId))))
+                .contentType("application/json").content(MAPPER.writeValueAsString(dto)))
                 .andReturn().response
         if (response.status == HttpStatus.CREATED.value()) {
             eventIds << MAPPER.readValue(response.contentAsString, CalendarEventDto).id

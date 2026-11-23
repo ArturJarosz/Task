@@ -17,3 +17,6 @@ databaseChangeLog:
   - include:
       file: "add-calendar-event-client-and-project.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "add-calendar-event-architect.yml"
+      relativeToChangelogFile: true

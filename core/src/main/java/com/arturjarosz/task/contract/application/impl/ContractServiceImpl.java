@@ -1,6 +1,8 @@
 package com.arturjarosz.task.contract.application.impl;
 
 import com.arturjarosz.task.finance.application.InstallmentApplicationService;
+import com.arturjarosz.task.notification.application.NotificationSynchronizer;
+import com.arturjarosz.task.notification.model.NotificationItemType;
 import com.arturjarosz.task.project.query.ProjectQueryService;
 import com.arturjarosz.task.contract.application.ContractService;
 import com.arturjarosz.task.contract.application.ContractValidator;
@@ -39,6 +41,8 @@ public class ContractServiceImpl implements ContractService {
     private final ProjectQueryService projectQueryService;
     @NonNull
     private final InstallmentApplicationService installmentApplicationService;
+    @NonNull
+    private final NotificationSynchronizer notificationSynchronizer;
 
     private Map<ContractStatus, BiConsumer<Contract, ContractDto>> statusToValidator;
 
@@ -46,13 +50,15 @@ public class ContractServiceImpl implements ContractService {
             @NonNull ContractRepository contractRepository,
             @NonNull ContractMapper contractMapper, @NonNull ContractDomainService contractDomainService,
             @NonNull ProjectQueryService projectQueryService,
-            @NonNull InstallmentApplicationService installmentApplicationService) {
+            @NonNull InstallmentApplicationService installmentApplicationService,
+            @NonNull NotificationSynchronizer notificationSynchronizer) {
         this.contractValidator = contractValidator;
         this.contractRepository = contractRepository;
         this.contractMapper = contractMapper;
         this.contractDomainService = contractDomainService;
         this.projectQueryService = projectQueryService;
         this.installmentApplicationService = installmentApplicationService;
+        this.notificationSynchronizer = notificationSynchronizer;
         this.prepareContractValidators();
     }
 
@@ -107,6 +113,7 @@ public class ContractServiceImpl implements ContractService {
         if (signing && contractDto.getDeposit() != null) {
             this.installmentApplicationService.createDeposit(projectId, contractDto.getDeposit());
         }
+        this.notificationSynchronizer.synchronize(NotificationItemType.CONTRACT, contractId);
         LOG.info("Contract status for contract with id {} was updated.", contractId);
 
         return this.contractMapper.mapToDto(updatedContract);
@@ -147,6 +154,7 @@ public class ContractServiceImpl implements ContractService {
 
         var updatedContract = this.contractDomainService.updateContract(contract, contractDto);
         this.contractRepository.save(updatedContract);
+        this.notificationSynchronizer.synchronize(NotificationItemType.CONTRACT, contractId);
 
         LOG.info("Contract data for contract with id {} was updated.", contractId);
 

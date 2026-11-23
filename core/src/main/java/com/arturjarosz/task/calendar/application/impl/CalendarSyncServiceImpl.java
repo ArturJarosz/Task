@@ -11,6 +11,8 @@ import com.arturjarosz.task.calendar.model.CalendarEventSyncStatus;
 import com.arturjarosz.task.calendar.model.CalendarSyncState;
 import com.arturjarosz.task.calendar.model.dto.GoogleEventChangeDto;
 import com.arturjarosz.task.calendar.model.dto.GoogleEventsSyncDto;
+import com.arturjarosz.task.notification.application.NotificationSynchronizer;
+import com.arturjarosz.task.notification.model.NotificationItemType;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.systemparameter.application.GoogleCalendarSettingsProvider;
 import com.arturjarosz.task.systemparameter.application.dto.GoogleCalendarSettings;
@@ -20,6 +22,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,17 +38,19 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
     private final GoogleCalendarService googleCalendarService;
     private final GoogleCalendarSettingsProvider googleCalendarSettingsProvider;
     private final TransactionTemplate calendarConnectionTransaction;
+    private final NotificationSynchronizer notificationSynchronizer;
 
     public CalendarSyncServiceImpl(CalendarEventRepository calendarEventRepository,
             CalendarSyncStateRepository calendarSyncStateRepository, GoogleCalendarService googleCalendarService,
             GoogleCalendarSettingsProvider googleCalendarSettingsProvider,
-            PlatformTransactionManager transactionManager) {
+            PlatformTransactionManager transactionManager, NotificationSynchronizer notificationSynchronizer) {
         this.calendarEventRepository = calendarEventRepository;
         this.calendarSyncStateRepository = calendarSyncStateRepository;
         this.googleCalendarService = googleCalendarService;
         this.googleCalendarSettingsProvider = googleCalendarSettingsProvider;
         this.calendarConnectionTransaction = new TransactionTemplate(transactionManager);
         this.calendarConnectionTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        this.notificationSynchronizer = notificationSynchronizer;
     }
 
     @Override
@@ -111,19 +116,26 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
             fullSync = true;
             sync = this.googleCalendarService.listEvents(syncState.getGoogleCalendarId(), null);
         }
-        this.applyChanges(sync.events());
+        var changedEventIds = this.applyChanges(sync.events());
         if (fullSync) {
-            this.removeLocalEventsMissingInGoogle(sync.events());
+            changedEventIds.addAll(this.removeLocalEventsMissingInGoogle(sync.events()));
         }
+        // A meeting moved or removed in Google Calendar changes what users are notified about
+        changedEventIds.forEach(eventId -> this.notificationSynchronizer.synchronize(
+                NotificationItemType.CALENDAR_EVENT, eventId));
         syncState.setSyncToken(sync.nextSyncToken());
         this.calendarSyncStateRepository.save(syncState);
     }
 
-    private void applyChanges(List<GoogleEventChangeDto> changes) {
+    private Set<Long> applyChanges(List<GoogleEventChangeDto> changes) {
+        var changedEventIds = new HashSet<Long>();
         for (var change : changes) {
             var maybeEvent = this.calendarEventRepository.findByGoogleEventId(change.googleEventId());
             if (change.cancelled()) {
-                maybeEvent.ifPresent(this.calendarEventRepository::delete);
+                maybeEvent.ifPresent(event -> {
+                    changedEventIds.add(event.getId());
+                    this.calendarEventRepository.delete(event);
+                });
                 continue;
             }
             if (maybeEvent.isEmpty()) {
@@ -131,6 +143,7 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
                         change.endDateTime(), change.allDay());
                 event.markSynced(change.googleEventId(), change.googleEtag());
                 this.calendarEventRepository.save(event);
+                changedEventIds.add(event.getId());
                 continue;
             }
             var event = maybeEvent.get();
@@ -142,20 +155,24 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
                 event.updateFromGoogle(change.name(), change.description(), change.startDateTime(),
                         change.endDateTime(), change.allDay(), change.googleEtag());
                 this.calendarEventRepository.save(event);
+                changedEventIds.add(event.getId());
             }
         }
+        return changedEventIds;
     }
 
-    private void removeLocalEventsMissingInGoogle(List<GoogleEventChangeDto> changes) {
+    private Set<Long> removeLocalEventsMissingInGoogle(List<GoogleEventChangeDto> changes) {
         Set<String> googleEventIds = changes.stream()
                 .filter(change -> !change.cancelled())
                 .map(GoogleEventChangeDto::googleEventId)
                 .collect(Collectors.toSet());
-        this.calendarEventRepository.findBySyncStatus(CalendarEventSyncStatus.SYNCED)
+        var missingEvents = this.calendarEventRepository.findBySyncStatus(CalendarEventSyncStatus.SYNCED)
                 .stream()
                 .filter(event -> event.getGoogleEventId() != null && !googleEventIds.contains(
                         event.getGoogleEventId()))
-                .forEach(this.calendarEventRepository::delete);
+                .toList();
+        missingEvents.forEach(this.calendarEventRepository::delete);
+        return missingEvents.stream().map(CalendarEvent::getId).collect(Collectors.toSet());
     }
 
     @Transactional

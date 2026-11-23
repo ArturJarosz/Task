@@ -50,6 +50,10 @@ public class CalendarEvent extends AbstractAggregateRoot {
     private Long projectId;
 
     @Getter
+    @Column(name = "ARCHITECT_ID")
+    private Long architectId;
+
+    @Getter
     @Column(name = "GOOGLE_EVENT_ID", unique = true)
     private String googleEventId;
 
@@ -90,12 +94,14 @@ public class CalendarEvent extends AbstractAggregateRoot {
     }
 
     /**
-     * Connects the event with given client and project, either of them can be empty. It is local data, Google Calendar
-     * does not know about it, so changes received from Google keep it.
+     * Connects the event with given client, project and architect, any of them can be empty. It is local data, Google
+     * Calendar does not know about it, so changes received from Google keep it. A meeting with a project is for the
+     * project's architect, so the architect is kept only for a meeting without one.
      */
-    public void connect(Long clientId, Long projectId) {
+    public void connect(Long clientId, Long projectId, Long architectId) {
         this.clientId = clientId;
         this.projectId = projectId;
+        this.architectId = projectId == null ? architectId : null;
     }
 
     /**

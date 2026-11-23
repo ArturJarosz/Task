@@ -7,6 +7,7 @@ import com.arturjarosz.task.contract.intrastructure.ContractRepository
 import com.arturjarosz.task.contract.model.Contract
 import com.arturjarosz.task.contract.status.ContractStatus
 import com.arturjarosz.task.contract.status.ContractStatusWorkflow
+import com.arturjarosz.task.notification.application.NotificationSynchronizer
 import com.arturjarosz.task.utils.ContractBuilder
 import com.arturjarosz.task.dto.ContractDto
 import com.arturjarosz.task.dto.ContractStatusDto
@@ -44,7 +45,7 @@ class ContractServiceImplTest extends Specification {
     def installmentApplicationService = Mock(InstallmentApplicationService)
 
     def subject = new ContractServiceImpl(contractValidator, contractRepository, contractMapper, contractDomainService,
-            projectQueryService, installmentApplicationService)
+            projectQueryService, installmentApplicationService, Mock(NotificationSynchronizer))
 
     def setup() {
         var newContract = new Contract(OFFER_VALUE, DEADLINE, CONTRACT_STATUS_WORKFLOW)

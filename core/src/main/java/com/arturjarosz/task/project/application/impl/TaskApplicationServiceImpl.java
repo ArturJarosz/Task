@@ -3,6 +3,8 @@ package com.arturjarosz.task.project.application.impl;
 import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator;
 import com.arturjarosz.task.dto.TaskDto;
 import com.arturjarosz.task.dto.UpdateStatusRequestDto;
+import com.arturjarosz.task.notification.application.NotificationSynchronizer;
+import com.arturjarosz.task.notification.model.NotificationItemType;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageValidator;
 import com.arturjarosz.task.project.application.TaskApplicationService;
@@ -41,6 +43,7 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
     private final TaskMapper taskMapper;
     private final TimeEntryRepository timeEntryRepository;
     private final TimeSpentAssembler timeSpentAssembler;
+    private final NotificationSynchronizer notificationSynchronizer;
 
     @Transactional
     @Override
@@ -55,6 +58,8 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         var task = this.taskDomainService.createTask(project, stageId, taskDto);
         project = this.projectRepository.save(project);
+        // A task added to a done stage takes the stage back to in progress, so its deadline is due again
+        this.notificationSynchronizer.synchronize(NotificationItemType.STAGE, stageId);
         LOG.info("Task created.");
 
         return this.timeSpentAssembler.setTimeSpent(
@@ -112,6 +117,8 @@ public class TaskApplicationServiceImpl implements TaskApplicationService {
         this.taskDomainService.updateTaskStatus(project, stageId, taskId,
                 TaskStatus.valueOf(statusRequestDto.getStatus().name()));
         this.projectRepository.save(project);
+        // The stage's status follows its tasks: it is done when the last one is, and open again when one reopens
+        this.notificationSynchronizer.synchronize(NotificationItemType.STAGE, stageId);
 
         LOG.info("Task status updated.");
         return this.timeSpentAssembler.setTimeSpent(

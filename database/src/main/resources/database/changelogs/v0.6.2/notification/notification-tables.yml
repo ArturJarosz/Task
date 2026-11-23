@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - include:
+      file: "create-notification-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-notification-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-notification-setting-sequence.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "create-notification-setting-table.yml"
+      relativeToChangelogFile: true
+  - include:
+      file: "add-notification-reminders.yml"
+      relativeToChangelogFile: true

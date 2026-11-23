@@ -12,6 +12,8 @@ import com.arturjarosz.task.dto.CompanyCostChargeDto;
 import com.arturjarosz.task.dto.CompanyCostDto;
 import com.arturjarosz.task.dto.CompanyCostKindDto;
 import com.arturjarosz.task.dto.CompanyCostPaymentDto;
+import com.arturjarosz.task.notification.application.NotificationSynchronizer;
+import com.arturjarosz.task.notification.model.NotificationItemType;
 import com.arturjarosz.task.sharedkernel.annotations.ApplicationService;
 import com.arturjarosz.task.sharedkernel.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class CompanyCostApplicationServiceImpl implements CompanyCostApplication
     private final CompanyCostRepository companyCostRepository;
     private final CompanyCostValidator companyCostValidator;
     private final CompanyCostAssembler companyCostAssembler;
+    private final NotificationSynchronizer notificationSynchronizer;
 
     @Transactional(readOnly = true)
     @Override
@@ -84,6 +87,7 @@ public class CompanyCostApplicationServiceImpl implements CompanyCostApplication
             }
         }
         companyCost = this.companyCostRepository.save(companyCost);
+        this.notificationSynchronizer.synchronize(NotificationItemType.COMPANY_COST, companyCost.getId());
         LOG.info("Company cost with id {} created.", companyCost.getId());
         return this.companyCostAssembler.toDto(companyCost, today);
     }
@@ -103,6 +107,7 @@ public class CompanyCostApplicationServiceImpl implements CompanyCostApplication
             companyCost.updateOneTime(companyCostDto.getDate(), companyCostDto.getNetValue());
         }
         companyCost = this.companyCostRepository.save(companyCost);
+        this.notificationSynchronizer.synchronize(NotificationItemType.COMPANY_COST, companyCostId);
         LOG.info("Company cost with id {} updated.", companyCostId);
         return this.companyCostAssembler.toDto(companyCost, ChargeSchedule.today());
     }
@@ -112,6 +117,7 @@ public class CompanyCostApplicationServiceImpl implements CompanyCostApplication
     public void deleteCompanyCost(Long companyCostId) {
         LOG.info("Deleting company cost with id {}.", companyCostId);
         this.companyCostRepository.delete(this.loadCompanyCost(companyCostId));
+        this.notificationSynchronizer.synchronize(NotificationItemType.COMPANY_COST, companyCostId);
         LOG.info("Company cost with id {} deleted.", companyCostId);
     }
 
@@ -131,6 +137,7 @@ public class CompanyCostApplicationServiceImpl implements CompanyCostApplication
         var companyCost = this.loadCompanyCost(companyCostId);
         this.companyCostValidator.validateNewAmountDto(amountDto, companyCost);
         companyCost.addAmount(amountDto.getValidFrom(), amountDto.getNetValue());
+        this.notificationSynchronizer.synchronize(NotificationItemType.COMPANY_COST, companyCostId);
         return this.saveAndAssemble(companyCost);
     }
 
@@ -141,6 +148,7 @@ public class CompanyCostApplicationServiceImpl implements CompanyCostApplication
         var companyCost = this.loadCompanyCost(companyCostId);
         this.companyCostValidator.validateUpdatedAmountDto(amountDto, companyCost, amountId);
         companyCost.updateAmount(amountId, amountDto.getValidFrom(), amountDto.getNetValue());
+        this.notificationSynchronizer.synchronize(NotificationItemType.COMPANY_COST, companyCostId);
         return this.saveAndAssemble(companyCost);
     }
 
@@ -151,6 +159,7 @@ public class CompanyCostApplicationServiceImpl implements CompanyCostApplication
         var companyCost = this.loadCompanyCost(companyCostId);
         this.companyCostValidator.validateAmountRemoval(companyCost, amountId);
         companyCost.removeAmount(amountId);
+        this.notificationSynchronizer.synchronize(NotificationItemType.COMPANY_COST, companyCostId);
         return this.saveAndAssemble(companyCost);
     }
 
@@ -166,6 +175,7 @@ public class CompanyCostApplicationServiceImpl implements CompanyCostApplication
         // flushed, so the new payment has its id; saving merges it into a new instance, so it is looked up again
         companyCost = this.companyCostRepository.saveAndFlush(companyCost);
         var payment = companyCost.findPaymentOfCharge(chargeMonth).orElseThrow(ResourceNotFoundException::new);
+        this.notificationSynchronizer.synchronize(NotificationItemType.COMPANY_COST, companyCostId);
         LOG.info("Payment with id {} created.", payment.getId());
         return this.companyCostAssembler.toPaymentDto(companyCost, payment);
     }
@@ -180,6 +190,7 @@ public class CompanyCostApplicationServiceImpl implements CompanyCostApplication
                 ChargeSchedule.today());
         var payment = companyCost.changePaymentDate(paymentId, paymentDto.getPaymentDate());
         companyCost = this.companyCostRepository.save(companyCost);
+        this.notificationSynchronizer.synchronize(NotificationItemType.COMPANY_COST, companyCostId);
         return this.companyCostAssembler.toPaymentDto(companyCost, payment);
     }
 
@@ -191,6 +202,7 @@ public class CompanyCostApplicationServiceImpl implements CompanyCostApplication
         this.companyCostValidator.validatePaymentExistence(companyCost, paymentId);
         companyCost.removePayment(paymentId);
         this.companyCostRepository.save(companyCost);
+        this.notificationSynchronizer.synchronize(NotificationItemType.COMPANY_COST, companyCostId);
     }
 
     private CompanyCost loadCompanyCost(Long companyCostId) {

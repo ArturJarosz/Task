@@ -48,6 +48,11 @@ public class Installment extends AbstractHistoryAwareEntity implements PartialFi
     @Column(name = "NOTE")
     private String note;
 
+    // The day the client should pay; the payment date of the financial data is the day it was paid
+    @Getter
+    @Column(name = "DUE_DATE")
+    private LocalDate dueDate;
+
     protected Installment() {
         // needed by JPA
     }
@@ -62,6 +67,7 @@ public class Installment extends AbstractHistoryAwareEntity implements PartialFi
                 Boolean.TRUE.equals(installmentDto.getHasInvoice()), true, Boolean.TRUE.equals(installmentDto.getPaid()),
                 installmentDto.getPaymentDate());
         this.note = installmentDto.getNote();
+        this.dueDate = installmentDto.getDueDate();
         this.stageId = stageId;
         this.type = type;
     }
@@ -82,6 +88,7 @@ public class Installment extends AbstractHistoryAwareEntity implements PartialFi
         this.financialData = new FinancialData(new Money(installmentDto.getValue()), installmentDto.getHasInvoice(),
                 true, this.financialData.isPaid());
         this.note = installmentDto.getNote();
+        this.dueDate = installmentDto.getDueDate();
         this.financialData.setHasInvoice(installmentDto.getHasInvoice());
         if (this.financialData.isPaid()) {
             this.financialData.setPaymentDate(installmentDto.getPaymentDate());

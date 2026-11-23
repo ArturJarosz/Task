@@ -1,0 +1,101 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-notification-table"
+      changes:
+        - createTable:
+            tableName: "NOTIFICATION"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "USER_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TYPE"
+                  type: "VARCHAR2(40 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "ITEM_TYPE"
+                  type: "VARCHAR2(40 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "ITEM_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "PROJECT_ID"
+                  type: "${long.type}"
+              - column:
+                  name: "STAGE_ID"
+                  type: "${long.type}"
+              - column:
+                  name: "DUE_DATE"
+                  type: "DATE"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "DUE_DATETIME"
+                  type: "TIMESTAMP"
+              - column:
+                  name: "ITEM_NAME"
+                  type: "VARCHAR2(255 ${char.unit})"
+              - column:
+                  name: "PROJECT_NAME"
+                  type: "VARCHAR2(255 ${char.unit})"
+              - column:
+                  name: "READ_DATETIME"
+                  type: "TIMESTAMP"
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "TIMESTAMP"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "TIMESTAMP"
+        - addPrimaryKey:
+            tableName: "NOTIFICATION"
+            columnNames: "ID"
+            constraintName: "PK_NOTIFICATION"
+        - addForeignKeyConstraint:
+            baseTableName: "NOTIFICATION"
+            baseColumnNames: "USER_ID"
+            referencedTableName: "LOCAL_USER"
+            referencedColumnNames: "ID"
+            constraintName: "NOTIFICATION_USER_FK"
+            onDelete: "CASCADE"
+        # The nightly job and a save made at the same moment can't create the same notification twice
+        - addUniqueConstraint:
+            tableName: "NOTIFICATION"
+            columnNames: "USER_ID, TYPE, ITEM_TYPE, ITEM_ID, DUE_DATE"
+            constraintName: "UNIQ_NOTIFICATION_USER_ITEM"
+        - createIndex:
+            tableName: "NOTIFICATION"
+            indexName: "IDX_NOTIFICATION_USER_READ"
+            columns:
+              - column:
+                  name: "USER_ID"
+              - column:
+                  name: "READ_DATETIME"
+        - createIndex:
+            tableName: "NOTIFICATION"
+            indexName: "IDX_NOTIFICATION_ITEM"
+            columns:
+              - column:
+                  name: "ITEM_TYPE"
+              - column:
+                  name: "ITEM_ID"

@@ -24,6 +24,7 @@ public interface InstallmentMapper {
     @Mapping(source = "installment.note", target = "note")
     @Mapping(source = "installment.hasInvoice", target = "hasInvoice")
     @Mapping(source = "installment.paymentDate", target = "paymentDate")
+    @Mapping(source = "installment.dueDate", target = "dueDate")
     @Mapping(source = "installment.createdDateTime", target = "createdDateTime")
     @Mapping(source = "installment.stageId", target = "stageId")
     @Mapping(source = "installment.type", target = "type")

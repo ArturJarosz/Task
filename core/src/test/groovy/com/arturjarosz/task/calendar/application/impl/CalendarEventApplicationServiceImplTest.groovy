@@ -1,5 +1,6 @@
 package com.arturjarosz.task.calendar.application.impl
 
+import com.arturjarosz.task.architect.application.ArchitectValidator
 import com.arturjarosz.task.calendar.application.CalendarSyncService
 import com.arturjarosz.task.calendar.application.mapper.CalendarEventMapper
 import com.arturjarosz.task.calendar.infrastructure.repository.CalendarEventRepository
@@ -7,6 +8,7 @@ import com.arturjarosz.task.calendar.model.CalendarEvent
 import com.arturjarosz.task.calendar.model.CalendarEventSyncStatus
 import com.arturjarosz.task.client.application.ClientValidator
 import com.arturjarosz.task.dto.CalendarEventDto
+import com.arturjarosz.task.notification.application.NotificationSynchronizer
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.model.Project
 import com.arturjarosz.task.project.query.ProjectQueryService
@@ -31,12 +33,14 @@ class CalendarEventApplicationServiceImplTest extends Specification {
     def calendarEventMapper = Mock(CalendarEventMapper)
     def calendarSyncService = Mock(CalendarSyncService)
 
+    def architectValidator = Mock(ArchitectValidator)
     def clientValidator = Mock(ClientValidator)
     def projectValidator = Mock(ProjectValidator)
     def projectQueryService = Mock(ProjectQueryService)
 
     def subject = new CalendarEventApplicationServiceImpl(calendarEventRepository, calendarEventMapper,
-            calendarSyncService, clientValidator, projectValidator, projectQueryService)
+            calendarSyncService, architectValidator, clientValidator, projectValidator, projectQueryService,
+            Mock(NotificationSynchronizer))
 
     def "createCalendarEvent should save event and push it to Google Calendar"() {
         given:
@@ -118,7 +122,7 @@ class CalendarEventApplicationServiceImplTest extends Specification {
     def "updateCalendarEvent should replace connections of the event"() {
         given:
             def calendarEvent = new CalendarEvent(NAME, null, START_DATETIME, END_DATETIME, false)
-            calendarEvent.connect(CLIENT_ID, PROJECT_ID)
+            calendarEvent.connect(CLIENT_ID, PROJECT_ID, null)
             this.calendarEventRepository.findById(EVENT_ID) >> Optional.of(calendarEvent)
 
         when:
@@ -249,11 +253,11 @@ class CalendarEventApplicationServiceImplTest extends Specification {
     def "getCalendarEvents for #description should return only events connected with it"() {
         given:
             def forClient = new CalendarEvent("Client", null, START_DATETIME, END_DATETIME, false)
-            forClient.connect(CLIENT_ID, null)
+            forClient.connect(CLIENT_ID, null, null)
             def forClientProject = new CalendarEvent("Client project", null, START_DATETIME, END_DATETIME, false)
-            forClientProject.connect(null, PROJECT_ID)
+            forClientProject.connect(null, PROJECT_ID, null)
             def forOther = new CalendarEvent("Other", null, START_DATETIME, END_DATETIME, false)
-            forOther.connect(CLIENT_ID + 100, PROJECT_ID + 100)
+            forOther.connect(CLIENT_ID + 100, PROJECT_ID + 100, null)
             def notConnected = new CalendarEvent("Not connected", null, START_DATETIME, END_DATETIME, false)
             this.calendarEventRepository.findBySyncStatusNot(CalendarEventSyncStatus.DELETE_PENDING) >>
                     [forClient, forClientProject, forOther, notConnected]

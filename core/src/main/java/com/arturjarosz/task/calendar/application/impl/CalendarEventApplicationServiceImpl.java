@@ -1,5 +1,6 @@
 package com.arturjarosz.task.calendar.application.impl;
 
+import com.arturjarosz.task.architect.application.ArchitectValidator;
 import com.arturjarosz.task.calendar.application.CalendarEventApplicationService;
 import com.arturjarosz.task.calendar.application.CalendarSyncService;
 import com.arturjarosz.task.calendar.application.mapper.CalendarEventMapper;
@@ -8,6 +9,8 @@ import com.arturjarosz.task.calendar.model.CalendarEvent;
 import com.arturjarosz.task.calendar.model.CalendarEventSyncStatus;
 import com.arturjarosz.task.client.application.ClientValidator;
 import com.arturjarosz.task.dto.CalendarEventDto;
+import com.arturjarosz.task.notification.application.NotificationSynchronizer;
+import com.arturjarosz.task.notification.model.NotificationItemType;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.query.ProjectQueryService;
@@ -35,9 +38,11 @@ public class CalendarEventApplicationServiceImpl implements CalendarEventApplica
     private final CalendarEventRepository calendarEventRepository;
     private final CalendarEventMapper calendarEventMapper;
     private final CalendarSyncService calendarSyncService;
+    private final ArchitectValidator architectValidator;
     private final ClientValidator clientValidator;
     private final ProjectValidator projectValidator;
     private final ProjectQueryService projectQueryService;
+    private final NotificationSynchronizer notificationSynchronizer;
 
     @Transactional
     @Override
@@ -49,10 +54,12 @@ public class CalendarEventApplicationServiceImpl implements CalendarEventApplica
         var calendarEvent = new CalendarEvent(calendarEventDto.getName(), calendarEventDto.getDescription(),
                 LocalDateTime.parse(calendarEventDto.getStartDateTime()),
                 LocalDateTime.parse(calendarEventDto.getEndDateTime()), calendarEventDto.getAllDay());
-        calendarEvent.connect(calendarEventDto.getClientId(), calendarEventDto.getProjectId());
+        calendarEvent.connect(calendarEventDto.getClientId(), calendarEventDto.getProjectId(),
+                calendarEventDto.getArchitectId());
         calendarEvent = this.calendarEventRepository.save(calendarEvent);
         calendarEvent = this.calendarSyncService.pushEvent(calendarEvent);
 
+        this.notificationSynchronizer.synchronize(NotificationItemType.CALENDAR_EVENT, calendarEvent.getId());
         LOG.info("calendar event created");
         return this.calendarEventMapper.mapToDto(calendarEvent);
     }
@@ -70,10 +77,12 @@ public class CalendarEventApplicationServiceImpl implements CalendarEventApplica
         calendarEvent.update(calendarEventDto.getName(), calendarEventDto.getDescription(),
                 LocalDateTime.parse(calendarEventDto.getStartDateTime()),
                 LocalDateTime.parse(calendarEventDto.getEndDateTime()), calendarEventDto.getAllDay());
-        calendarEvent.connect(calendarEventDto.getClientId(), calendarEventDto.getProjectId());
+        calendarEvent.connect(calendarEventDto.getClientId(), calendarEventDto.getProjectId(),
+                calendarEventDto.getArchitectId());
         calendarEvent = this.calendarEventRepository.save(calendarEvent);
         calendarEvent = this.calendarSyncService.pushEvent(calendarEvent);
 
+        this.notificationSynchronizer.synchronize(NotificationItemType.CALENDAR_EVENT, eventId);
         LOG.info("calendar event with id {} updated", eventId);
         return this.calendarEventMapper.mapToDto(calendarEvent);
     }
@@ -94,6 +103,7 @@ public class CalendarEventApplicationServiceImpl implements CalendarEventApplica
             this.calendarSyncService.pushDelete(calendarEvent);
         }
 
+        this.notificationSynchronizer.synchronize(NotificationItemType.CALENDAR_EVENT, eventId);
         LOG.info("calendar event with id {} removed", eventId);
     }
 
@@ -139,6 +149,8 @@ public class CalendarEventApplicationServiceImpl implements CalendarEventApplica
         }
         if (projectId != null) {
             this.projectValidator.validateProjectExistence(projectId);
+        } else if (calendarEventDto.getArchitectId() != null) {
+            this.architectValidator.validateArchitectExistence(calendarEventDto.getArchitectId());
         }
         if (clientId != null && projectId != null) {
             validateProjectBelongsToClient(this.projectQueryService.getProjectsForClientId(clientId).stream()
