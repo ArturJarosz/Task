@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-notification-reminders"
+      comment: "A notification type can remind several times, each reminder making the item's notification unread again"
+      changes:
+        - createTable:
+            tableName: "NOTIFICATION_SETTING_REMINDER"
+            columns:
+              - column:
+                  name: "NOTIFICATION_SETTING_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "DAYS_BEFORE"
+                  type: "INTEGER"
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: "NOTIFICATION_SETTING_REMINDER"
+            columnNames: "NOTIFICATION_SETTING_ID, DAYS_BEFORE"
+            constraintName: "PK_NOTIFICATION_SETTING_REMINDER"
+        - addForeignKeyConstraint:
+            baseTableName: "NOTIFICATION_SETTING_REMINDER"
+            baseColumnNames: "NOTIFICATION_SETTING_ID"
+            referencedTableName: "NOTIFICATION_SETTING"
+            referencedColumnNames: "ID"
+            constraintName: "FK_NOTIFICATION_SETTING_REMINDER_SETTING"
+            onDelete: "CASCADE"
+        # Copies the saved settings; the H2 test database is created empty, so it has none to copy
+        - sql:
+            dbms: "postgresql"
+            sql: "insert into NOTIFICATION_SETTING_REMINDER (NOTIFICATION_SETTING_ID, DAYS_BEFORE)
+            select ID, DAYS_BEFORE from NOTIFICATION_SETTING"
+        - dropColumn:
+            tableName: "NOTIFICATION_SETTING"
+            columnName: "DAYS_BEFORE"
+        # Not released yet, so the startup run creates the notifications again rather than guessing their reminder
+        - delete:
+            tableName: "NOTIFICATION"
+        - addColumn:
+            tableName: "NOTIFICATION"
+            columns:
+              - column:
+                  name: "REMINDED_DAYS_BEFORE"
+                  type: "INTEGER"
+                  constraints:
+                    nullable: false

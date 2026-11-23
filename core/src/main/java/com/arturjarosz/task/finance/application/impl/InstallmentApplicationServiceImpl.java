@@ -13,6 +13,7 @@ import com.arturjarosz.task.finance.model.Installment;
 import com.arturjarosz.task.finance.model.PartialFinancialDataType;
 import com.arturjarosz.task.finance.model.ProjectFinancialData;
 import com.arturjarosz.task.finance.query.FinancialDataQueryService;
+import com.arturjarosz.task.notification.application.NotificationSynchronizer;
 import com.arturjarosz.task.project.application.ProjectExceptionCodes;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageValidator;
@@ -41,6 +42,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
     private final ProjectFinanceAwareObjectService projectFinanceAwareObjectService;
     private final InstallmentMapper installmentDtoMapper;
     private final InstallmentProjectDataMapper installmentProjectDataMapper;
+    private final NotificationSynchronizer notificationSynchronizer;
 
     @Transactional
     @Override
@@ -62,6 +64,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         var createdInstallment = this.installmentDtoMapper.mapToDto(installment, "");
         createdInstallment.setId(this.getIdForCreatedInstallment(projectFinancialData, installment));
         this.projectFinanceAwareObjectService.onCreate(projectId);
+        this.notificationSynchronizer.synchronizeProject(projectId);
         return createdInstallment;
     }
 
@@ -87,6 +90,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         var createdDeposit = this.installmentDtoMapper.mapToDto(deposit, null);
         createdDeposit.setId(this.getIdForCreatedInstallment(projectFinancialData, deposit));
         this.projectFinanceAwareObjectService.onCreate(projectId);
+        this.notificationSynchronizer.synchronizeProject(projectId);
         return createdDeposit;
     }
 
@@ -112,6 +116,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.projectFinancialDataRepository.save(projectFinancialData);
         this.projectFinanceAwareObjectService.onUpdate(projectId);
 
+        this.notificationSynchronizer.synchronizeProject(projectId);
         LOG.info("Installment updated");
         return this.installmentDtoMapper.mapToDto(installment, "");
     }
@@ -131,6 +136,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         this.projectFinancialDataRepository.save(projectFinancialData);
         this.projectFinanceAwareObjectService.onRemove(projectId);
 
+        this.notificationSynchronizer.synchronizeProject(projectId);
         LOG.info("Installment removed");
     }
 
@@ -147,6 +153,7 @@ public class InstallmentApplicationServiceImpl implements InstallmentApplication
         installment = projectFinancialData.payInstallment(installmentId, installmentDto.getPaymentDate());
         this.projectFinancialDataRepository.save(projectFinancialData);
 
+        this.notificationSynchronizer.synchronizeProject(projectId);
         LOG.info("Payment for Installment with id {} made", installmentId);
         return this.installmentDtoMapper.mapToDto(installment, "");
     }

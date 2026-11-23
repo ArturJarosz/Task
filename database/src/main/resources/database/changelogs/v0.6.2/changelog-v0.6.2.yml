@@ -56,6 +56,9 @@ databaseChangeLog:
   - include:
       file: "audit/audit-tables.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "notification/notification-tables.yml"
+      relativeToChangelogFile: true
   - changeSet:
       author: "liquibase"
       id: "tag-version_0.6.2"

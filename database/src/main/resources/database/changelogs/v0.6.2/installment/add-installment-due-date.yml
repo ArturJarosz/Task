@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-installment-due-date"
+      comment: "The day the client should pay; the payment date stays the day it was paid"
+      changes:
+        - addColumn:
+            tableName: "INSTALLMENT"
+            columns:
+              - column:
+                  name: "DUE_DATE"
+                  type: "DATE"

@@ -11,6 +11,7 @@ import com.arturjarosz.task.contract.status.ContractStatusWorkflow
 import com.arturjarosz.task.dto.*
 import com.arturjarosz.task.finance.application.CostApplicationService
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService
+import com.arturjarosz.task.notification.application.NotificationSynchronizer
 import com.arturjarosz.task.project.application.ProjectTypeValidator
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.TimeSpentAssembler
@@ -74,7 +75,7 @@ class ProjectApplicationServiceImplTest extends Specification {
             architectApplicationService, architectValidator, projectRepository, projectDomainService, projectValidator,
             projectTypeValidator, projectFinancialDataService, contractService, contractMapper, projectMapper,
             costApplicationService, supervisionApplicationService, timeEntryQueryService, timeEntryRepository,
-            timeSpentAssembler)
+            timeSpentAssembler, Mock(NotificationSynchronizer))
 
     def "createProject should call validateProjectBasicDto on projectValidator"() {
         given:

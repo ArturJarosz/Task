@@ -9,6 +9,7 @@ import com.arturjarosz.task.contract.query.ContractQueryService;
 import com.arturjarosz.task.dto.ArchitectDto;
 import com.arturjarosz.task.dto.ArchitectUserLinkDto;
 import com.arturjarosz.task.dto.EntityProjectsSummaryDto;
+import com.arturjarosz.task.notification.application.NotificationSynchronizer;
 import com.arturjarosz.task.project.application.mapper.ProjectsToEntityProjectsSummaryDtoMapper;
 import com.arturjarosz.task.project.model.Project;
 import com.arturjarosz.task.project.query.ProjectCounts;
@@ -50,6 +51,7 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
     private final ProjectsToEntityProjectsSummaryDtoMapper projectsToEntityProjectsSummaryDtoMapper;
     private final ProjectProperties projectProperties;
     private final UserApplicationService userApplicationService;
+    private final NotificationSynchronizer notificationSynchronizer;
 
     @Transactional
     @Override
@@ -157,6 +159,7 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
         architect.linkUser(userId);
         architect = this.saveWithUniqueUser(architect, userId);
 
+        this.notificationSynchronizer.synchronizeArchitect(architectId);
         LOG.info("User with id {} linked with architect with id {}.", userId, architectId);
         return this.withProjectsData(this.mapWithLinkedUsers(List.of(architect))).get(0);
     }
@@ -172,6 +175,7 @@ public class ArchitectApplicationServiceImpl implements ArchitectApplicationServ
         architect.unlinkUser();
         architect = this.architectRepository.save(architect);
 
+        this.notificationSynchronizer.synchronizeArchitect(architectId);
         LOG.info("User unlinked from architect with id {}.", architectId);
         return this.withProjectsData(this.mapWithLinkedUsers(List.of(architect))).get(0);
     }

@@ -1,5 +1,6 @@
 package com.arturjarosz.task.architect.application
 
+import com.arturjarosz.task.notification.application.NotificationSynchronizer
 import com.arturjarosz.task.project.query.TimeEntryQueryService
 import com.arturjarosz.task.architect.application.impl.ArchitectApplicationServiceImpl
 import com.arturjarosz.task.architect.application.mapper.ArchitectMapperImpl
@@ -94,7 +95,7 @@ class ArchitectApplicationServiceImplTest extends Specification {
 
     def subject = new ArchitectApplicationServiceImpl(architectRepository, architectValidator,
             architectMapper, projectQueryService, contractQueryService, projectsToEntityProjectsSummaryDtoMapper,
-            projectProperties, userApplicationService)
+            projectProperties, userApplicationService, Mock(NotificationSynchronizer))
 
     def "when passing null an exception should be thrown and architect should not be saved"() {
         given:

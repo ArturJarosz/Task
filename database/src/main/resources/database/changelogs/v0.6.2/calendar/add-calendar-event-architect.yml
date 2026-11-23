@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-calendar-event-architect"
+      comment: "Who a meeting without a project is for; a meeting with a project is for the project's architect"
+      changes:
+        - addColumn:
+            tableName: "CALENDAR_EVENT"
+            columns:
+              - column:
+                  name: "ARCHITECT_ID"
+                  type: "${long.type}"
+        - addForeignKeyConstraint:
+            baseTableName: "CALENDAR_EVENT"
+            baseColumnNames: "ARCHITECT_ID"
+            constraintName: "FK_CALENDAR_EVENT_ARCHITECT"
+            referencedTableName: "ARCHITECT"
+            referencedColumnNames: "ID"
+            onDelete: "SET NULL"

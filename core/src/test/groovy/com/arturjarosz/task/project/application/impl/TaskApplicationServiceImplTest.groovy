@@ -4,6 +4,8 @@ import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator
 import com.arturjarosz.task.dto.TaskDto
 import com.arturjarosz.task.dto.TaskStatusDto
 import com.arturjarosz.task.dto.UpdateStatusRequestDto
+import com.arturjarosz.task.notification.application.NotificationSynchronizer
+import com.arturjarosz.task.notification.model.NotificationItemType
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.project.application.TaskValidator
@@ -48,11 +50,44 @@ class TaskApplicationServiceImplTest extends Specification {
         setTimeSpent(_) >> { arguments -> arguments[0] }
     }
 
+    def notificationSynchronizer = Mock(NotificationSynchronizer)
+
     def taskMapper = new TaskMapperImpl()
 
     def taskApplicationService = new TaskApplicationServiceImpl(projectQueryService, projectRepository,
             projectValidator, stageValidator, taskDomainService, taskValidator, contractWorkflowValidator, taskMapper,
-            timeEntryRepository, timeSpentAssembler)
+            timeEntryRepository, timeSpentAssembler, notificationSynchronizer)
+
+    def "createTask should check the notifications of the task's stage"() {
+        given:
+            def taskDto = this.prepareNewTaskDto()
+            this.mockProjectRepositoryLoad()
+            this.mockTaskDomainServiceCreateTask()
+            this.projectRepository.save(_ as Project) >> this.prepareProjectWithStageWithTask()
+        when:
+            this.taskApplicationService.createTask(PROJECT_ID, STAGE_ID, taskDto)
+        then:
+            1 * this.notificationSynchronizer.synchronize(NotificationItemType.STAGE, STAGE_ID)
+    }
+
+    def "updateTaskStatus should check the notifications of the task's stage"() {
+        given:
+            def statusRequestDto = this.prepareUpdateStatusTaskDto()
+            this.mockProjectRepositoryLoadProjectWithStageAndTask()
+        when:
+            this.taskApplicationService.updateTaskStatus(PROJECT_ID, STAGE_ID, TASK_ID, statusRequestDto)
+        then:
+            1 * this.notificationSynchronizer.synchronize(NotificationItemType.STAGE, STAGE_ID)
+    }
+
+    def "deleteTask should not check notifications, as it doesn't change the stage's status"() {
+        given:
+            this.mockProjectRepositoryLoadProjectWithStageAndTask()
+        when:
+            this.taskApplicationService.deleteTask(PROJECT_ID, STAGE_ID, TASK_ID)
+        then:
+            0 * this.notificationSynchronizer._
+    }
 
     def "createTask should call validateProjectExistence on ProjectValidator"() {
         given:

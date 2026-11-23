@@ -12,6 +12,7 @@ import com.arturjarosz.task.dto.ProjectDto;
 import com.arturjarosz.task.dto.ProjectTimeSummaryDto;
 import com.arturjarosz.task.finance.application.CostApplicationService;
 import com.arturjarosz.task.finance.application.ProjectFinancialDataService;
+import com.arturjarosz.task.notification.application.NotificationSynchronizer;
 import com.arturjarosz.task.project.application.ProjectApplicationService;
 import com.arturjarosz.task.project.application.ProjectTypeValidator;
 import com.arturjarosz.task.project.application.ProjectValidator;
@@ -74,6 +75,8 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
     private final TimeEntryRepository timeEntryRepository;
     @NonNull
     private final TimeSpentAssembler timeSpentAssembler;
+    @NonNull
+    private final NotificationSynchronizer notificationSynchronizer;
 
     @Transactional
     @Override
@@ -92,6 +95,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
 
         this.projectFinancialDataService.createProjectFinancialData(project.getId());
 
+        this.notificationSynchronizer.synchronizeProject(project.getId());
         LOG.info("Project created.");
         return this.projectMapper.mapToDto(project, contract);
     }
@@ -158,6 +162,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectDomainService.updateProject(project, projectDto);
         project = this.projectRepository.save(project);
 
+        this.notificationSynchronizer.synchronizeProject(projectId);
         LOG.info("Project with id {} updated", projectId);
         return this.projectMapper.mapToDto(project);
     }
@@ -173,6 +178,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         this.timeEntryRepository.deleteByProjectId(projectId);
         this.projectRepository.deleteById(projectId);
 
+        this.notificationSynchronizer.synchronizeProject(projectId);
         LOG.info("Project with id {} removed.", projectId);
     }
 
@@ -187,6 +193,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectDomainService.finishProject(project, projectContractDto.getEndDate());
         this.projectRepository.save(project);
 
+        this.notificationSynchronizer.synchronizeProject(projectId);
         LOG.info("Project with id {} is finished.", projectId);
         return this.projectMapper.mapToDto(project);
     }
@@ -226,6 +233,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectDomainService.rejectProject(project);
         this.projectRepository.save(project);
 
+        this.notificationSynchronizer.synchronizeProject(projectId);
         return this.projectMapper.mapToDto(project);
     }
 
@@ -240,6 +248,7 @@ public class ProjectApplicationServiceImpl implements ProjectApplicationService 
         project = this.projectDomainService.reopenProject(project);
         this.projectRepository.save(project);
 
+        this.notificationSynchronizer.synchronizeProject(projectId);
         return this.projectMapper.mapToDto(project);
     }
 

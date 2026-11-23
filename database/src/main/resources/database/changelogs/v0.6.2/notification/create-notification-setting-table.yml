@@ -1,0 +1,62 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-notification-setting-table"
+      comment: "Holds only the notification types a user has changed; the others use their defaults"
+      changes:
+        - createTable:
+            tableName: "NOTIFICATION_SETTING"
+            columns:
+              - column:
+                  name: "ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "UUID"
+                  type: "UUID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "USER_ID"
+                  type: "${long.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "TYPE"
+                  type: "VARCHAR2(40 ${char.unit})"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "ENABLED"
+                  type: "${boolean.type}"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "DAYS_BEFORE"
+                  type: "INTEGER"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "CREATED_DATETIME"
+                  type: "TIMESTAMP"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: "LAST_MODIFIED_DATETIME"
+                  type: "TIMESTAMP"
+        - addPrimaryKey:
+            tableName: "NOTIFICATION_SETTING"
+            columnNames: "ID"
+            constraintName: "PK_NOTIFICATION_SETTING"
+        - addForeignKeyConstraint:
+            baseTableName: "NOTIFICATION_SETTING"
+            baseColumnNames: "USER_ID"
+            referencedTableName: "LOCAL_USER"
+            referencedColumnNames: "ID"
+            constraintName: "NOTIFICATION_SETTING_USER_FK"
+            onDelete: "CASCADE"
+        - addUniqueConstraint:
+            tableName: "NOTIFICATION_SETTING"
+            columnNames: "USER_ID, TYPE"
+            constraintName: "UNIQ_NOTIFICATION_SETTING_USER_TYPE"

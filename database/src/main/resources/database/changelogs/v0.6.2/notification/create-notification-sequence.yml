@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "create-notification-sequence"
+      changes:
+        - createSequence:
+            sequenceName: "notification_sequence"
+            startValue: 100
+            cacheSize: 10
+            incrementBy: 1

@@ -2,3 +2,6 @@ databaseChangeLog:
   - include:
       file: "add-installment-type.yml"
       relativeToChangelogFile: true
+  - include:
+      file: "add-installment-due-date.yml"
+      relativeToChangelogFile: true

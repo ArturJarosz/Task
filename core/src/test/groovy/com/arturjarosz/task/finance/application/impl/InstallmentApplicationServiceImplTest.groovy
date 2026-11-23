@@ -15,6 +15,7 @@ import com.arturjarosz.task.finance.model.PartialFinancialDataType
 import com.arturjarosz.task.finance.model.ProjectFinancialData
 import com.arturjarosz.task.finance.model.ProjectFinancialPartialData
 import com.arturjarosz.task.finance.query.FinancialDataQueryService
+import com.arturjarosz.task.notification.application.NotificationSynchronizer
 import com.arturjarosz.task.project.application.ProjectValidator
 import com.arturjarosz.task.project.application.StageValidator
 import com.arturjarosz.task.sharedkernel.exceptions.IllegalArgumentException
@@ -52,7 +53,8 @@ class InstallmentApplicationServiceImplTest extends Specification {
 
     def installmentApplicationService = new InstallmentApplicationServiceImpl(projectValidator, contractWorkflowValidator, stageValidator,
             projectFinancialDataRepository, financialDataQueryService, installmentValidator,
-            projectFinanceAwareObjectService, installmentMapper, installmentProjectSummaryMapper)
+            projectFinanceAwareObjectService, installmentMapper, installmentProjectSummaryMapper,
+            Mock(NotificationSynchronizer))
 
     def setup() {
         def moneyMapper = new MoneyMapperImpl()

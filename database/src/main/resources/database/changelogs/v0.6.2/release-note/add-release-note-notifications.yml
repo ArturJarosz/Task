@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-notifications"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-NOTIFICATIONS"
+              - column:
+                  name: "TYPE"
+                  value: "NEW"
+              - column:
+                  name: "TITLE"
+                  value: "Get notified about upcoming meetings, payments and deadlines"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "The bell in the top bar shows what is coming up on your projects: meetings, installments to be paid, and contract and stage deadlines. Choose what you hear about and when you are reminded in Settings, Notifications."
+              - column:
+                  name: "APPLICATION_VERSION"
+                  value: "0.6.2"
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"
+  - changeSet:
+      author: "liquibase"
+      id: "add-release-note-notifications-installment-due-date"
+      changes:
+        - insert:
+            tableName: "RELEASE_NOTE"
+            columns:
+              - column:
+                  name: "ID"
+                  valueSequenceNext: "release_note_sequence"
+              - column:
+                  name: "UUID"
+                  valueComputed: "${uuid.function}"
+              - column:
+                  name: "TICKET"
+                  value: "TA-NOTIFICATIONS"
+              - column:
+                  name: "TYPE"
+                  value: "NEW"
+              - column:
+                  name: "TITLE"
+                  value: "Set the day an installment should be paid"
+              - column:
+                  name: "DESCRIPTION"
+                  value: "Installments have a due date, so you can see which ones are late and get notified before they are due."
+              - column:
+                  name: "APPLICATION_VERSION"
+                  value: "0.6.2"
+              - column:
+                  name: "CREATED_DATETIME"
+                  valueComputed: "now()"

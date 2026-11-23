@@ -3,6 +3,7 @@ package com.arturjarosz.task.project.application.impl;
 import com.arturjarosz.task.contract.status.validator.ContractWorkflowValidator;
 import com.arturjarosz.task.dto.StageDto;
 import com.arturjarosz.task.finance.application.InstallmentApplicationService;
+import com.arturjarosz.task.notification.application.NotificationSynchronizer;
 import com.arturjarosz.task.project.application.ProjectValidator;
 import com.arturjarosz.task.project.application.StageApplicationService;
 import com.arturjarosz.task.project.application.StageValidator;
@@ -37,6 +38,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
     private final StageMapper stageMapper;
     private final TimeEntryRepository timeEntryRepository;
     private final TimeSpentAssembler timeSpentAssembler;
+    private final NotificationSynchronizer notificationSynchronizer;
 
     @Transactional
     @Override
@@ -60,6 +62,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
             newlyCreatedStageDto.setInstallment(installmentDto);
         }
 
+        this.notificationSynchronizer.synchronizeProject(projectId);
         LOG.info("Stage for Project with id {} created.", projectId);
         return this.timeSpentAssembler.setTimeSpent(newlyCreatedStageDto);
     }
@@ -84,6 +87,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         }
 
         this.projectRepository.save(project);
+        this.notificationSynchronizer.synchronizeProject(projectId);
         LOG.info("Stage with id {} for Project with id {} removed.", stageId, projectId);
     }
 
@@ -100,6 +104,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         var stage = this.stageDomainService.updateStage(project, stageId, stageDto);
         this.projectRepository.save(project);
 
+        this.notificationSynchronizer.synchronizeProject(projectId);
         LOG.info("Stage updated.");
         return this.timeSpentAssembler.setTimeSpent(this.stageMapper.mapToDto(stage));
     }
@@ -138,6 +143,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         this.stageDomainService.rejectStage(project, stageId);
         this.projectRepository.save(project);
 
+        this.notificationSynchronizer.synchronizeProject(projectId);
         return this.timeSpentAssembler.setTimeSpent(this.stageMapper.mapToDto(this.getStageById(project, stageId)));
     }
 
@@ -151,6 +157,7 @@ public class StageApplicationServiceImpl implements StageApplicationService {
         var project = maybeProject.orElseThrow(ResourceNotFoundException::new);
         this.stageDomainService.reopenStage(project, stageId);
         this.projectRepository.save(project);
+        this.notificationSynchronizer.synchronizeProject(projectId);
         return this.timeSpentAssembler.setTimeSpent(this.stageMapper.mapToDto(this.getStageById(project, stageId)));
     }
 
